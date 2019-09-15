@@ -12,11 +12,8 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import fr.tristiisch.olympa.api.bossbar.Witherbar;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
-import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
 import fr.tristiisch.olympa.api.task.TaskManager;
-import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.core.datamanagment.customevent.AsyncOlympaPlayerLoadEvent;
 import fr.tristiisch.olympa.core.datamanagment.redis.access.Account;
 
@@ -58,10 +55,6 @@ public class DataManagmentListener implements Listener {
 		if (!oldOlympaPlayer.equals(olympaPlayer)) {
 			account.saveToRedis(olympaPlayer);
 		}
-
-		// Witherbar.setProgress(100);
-		new Witherbar(OlympaPlugin.getInstance(), SpigotUtils.color("&eBienvenue sur &6Olympa&e !"));
-		Witherbar.addPlayer(player);
 	}
 
 	@EventHandler

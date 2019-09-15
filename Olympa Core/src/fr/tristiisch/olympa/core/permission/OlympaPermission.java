@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 
 import fr.tristiisch.olympa.api.objects.OlympaGroup;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
-import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
 import fr.tristiisch.olympa.core.datamanagment.redis.access.Account;
 import net.md_5.bungee.api.chat.BaseComponent;
 
@@ -38,10 +37,10 @@ public enum OlympaPermission {
 	}
 
 	public void getPlayers(Consumer<? super Set<Player>> success) {
-		Bukkit.getScheduler().runTaskAsynchronously(OlympaPlugin.getInstance(), () -> {
-			Set<Player> players = Bukkit.getOnlinePlayers().stream().filter(player -> this.hasPermission(new Account(player.getUniqueId()).getFromCache())).collect(Collectors.toSet());
+		Set<Player> players = Bukkit.getOnlinePlayers().stream().filter(player -> this.hasPermission(new Account(player.getUniqueId()).getFromCache())).collect(Collectors.toSet());
+		if (!players.isEmpty()) {
 			success.accept(players);
-		});
+		}
 	}
 
 	public boolean hasPermission(CommandSender sender) {
