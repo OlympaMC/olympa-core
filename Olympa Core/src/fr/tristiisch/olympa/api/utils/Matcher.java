@@ -1,4 +1,4 @@
-package fr.tristiisch.olympa.api;
+package fr.tristiisch.olympa.api.utils;
 
 import java.util.regex.Pattern;
 

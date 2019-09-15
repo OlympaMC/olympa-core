@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import fr.tristiisch.olympa.core.permission.OlympaPermission;
+import fr.tristiisch.olympa.api.permission.OlympaPermission;
 
 public interface OlympaPlayer {
 

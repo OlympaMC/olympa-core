@@ -13,17 +13,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import fr.tristiisch.olympa.api.Matcher;
-import fr.tristiisch.olympa.api.Prefix;
 import fr.tristiisch.olympa.api.command.OlympaCommand;
 import fr.tristiisch.olympa.api.objects.OlympaGroup;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
+import fr.tristiisch.olympa.api.permission.OlympaAccount;
+import fr.tristiisch.olympa.api.permission.OlympaPermission;
 import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
+import fr.tristiisch.olympa.api.utils.Matcher;
+import fr.tristiisch.olympa.api.utils.Prefix;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.api.utils.Utils;
-import fr.tristiisch.olympa.core.datamanagment.redis.access.Account;
+import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountObject;
 import fr.tristiisch.olympa.core.datamanagment.sql.MySQL;
-import fr.tristiisch.olympa.core.permission.OlympaPermission;
 import fr.tristiisch.olympa.core.permission.groups.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.tristiisch.olympa.core.permission.groups.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 
@@ -40,7 +41,7 @@ public class GroupCommand extends OlympaCommand {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		Player target;
 		OlympaPlayer olympaTarget;
-		Account account = null;
+		OlympaAccount olympaAccount = null;
 		if (args.length == 0) {
 			target = this.player;
 			olympaTarget = this.getOlympaPlayer();
@@ -58,11 +59,11 @@ public class GroupCommand extends OlympaCommand {
 					}
 					return true;
 				} else {
-					account = new Account(olympaTarget.getUniqueId());
+					olympaAccount = new OlympaAccountObject(olympaTarget.getUniqueId());
 				}
 			} else {
-				account = new Account(target.getUniqueId());
-				olympaTarget = account.getFromCache();
+				olympaAccount = new OlympaAccountObject(target.getUniqueId());
+				olympaTarget = olympaAccount.getFromCache();
 			}
 		} else {
 			this.sendUsage(label);
@@ -112,7 +113,7 @@ public class GroupCommand extends OlympaCommand {
 
 			if (target == null) {
 				olympaTarget.setGroup(newGroup, timestamp);
-				account.saveToDb(olympaTarget);
+				olympaAccount.saveToDb(olympaTarget);
 
 				Consumer<? super Boolean> done = b -> {
 					if (b) {
@@ -121,12 +122,12 @@ public class GroupCommand extends OlympaCommand {
 						this.sendMessage("&aLe joueur &2%player&a n'est pas connecté, la modification a bien été prise en compte.".replaceFirst("%player", olympaTarget.getName()));
 					}
 				};
-				account.sendModifications(olympaTarget, done);
+				olympaAccount.sendModifications(olympaTarget, done);
 			} else {
 				olympaTarget.setGroup(newGroup, timestamp);
 				OlympaPlugin.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, ChangeType.ADD, olympaTarget, newGroup));
-				account.saveToRedis(olympaTarget);
-				account.saveToDb(olympaTarget);
+				olympaAccount.saveToRedis(olympaTarget);
+				olympaAccount.saveToDb(olympaTarget);
 				this.sendMessage(target, "&aVous êtes désormais dans le groupe &2%group&a%time.".replaceFirst("%group", newGroup.getName()).replaceFirst("%time", timestampString));
 			}
 

@@ -4,7 +4,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import fr.tristiisch.olympa.core.datamanagment.customevent.AsyncOlympaPlayerLoadEvent;
+import fr.tristiisch.olympa.api.customevents.AsyncOlympaPlayerLoadEvent;
 import fr.tristiisch.olympa.core.permission.groups.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.tristiisch.olympa.core.permission.scoreboard.ScoreboardList;
 

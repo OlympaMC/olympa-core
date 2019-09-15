@@ -12,8 +12,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
+import fr.tristiisch.olympa.api.permission.OlympaPlayerObject;
 import fr.tristiisch.olympa.api.utils.Utils;
-import fr.tristiisch.olympa.core.datamanagment.OlympaPlayerObject;
 
 public class MySQL {
 

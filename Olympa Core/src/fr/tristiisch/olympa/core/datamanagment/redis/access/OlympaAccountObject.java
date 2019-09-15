@@ -9,13 +9,14 @@ import java.util.function.Consumer;
 import com.google.gson.Gson;
 
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
+import fr.tristiisch.olympa.api.permission.OlympaAccount;
+import fr.tristiisch.olympa.api.permission.OlympaPlayerObject;
 import fr.tristiisch.olympa.api.task.TaskManager;
-import fr.tristiisch.olympa.core.datamanagment.OlympaPlayerObject;
 import fr.tristiisch.olympa.core.datamanagment.redis.RedisAccess;
 import fr.tristiisch.olympa.core.datamanagment.sql.MySQL;
 import redis.clients.jedis.Jedis;
 
-public class Account {
+public class OlympaAccountObject implements OlympaAccount {
 
 	private static String REDIS_KEY = "player:";
 	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
@@ -24,11 +25,12 @@ public class Account {
 	RedisAccess redisAccesss;
 	UUID uuid;
 
-	public Account(final UUID uuid) {
+	public OlympaAccountObject(final UUID uuid) {
 		this.uuid = uuid;
 		this.redisAccesss = RedisAccess.INSTANCE;
 	}
 
+	@Override
 	public void accountExpire(OlympaPlayer olympaPlayer) {
 		try (Jedis jedis = this.redisAccesss.connect()) {
 			jedis.expire(this.getKey(), 60);
@@ -36,15 +38,18 @@ public class Account {
 		this.redisAccesss.closeResource();
 	}
 
+	@Override
 	public boolean createNew(OlympaPlayer olympaPlayer, String name, final String ip) {
 		olympaPlayer = new OlympaPlayerObject(this.uuid, name, ip);
 		return MySQL.createPlayer(olympaPlayer);
 	}
 
+	@Override
 	public OlympaPlayer fromDb() throws SQLException {
 		return MySQL.getPlayer(this.uuid);
 	}
 
+	@Override
 	public OlympaPlayer get() throws SQLException {
 		OlympaPlayer olympaPlayer = this.getFromCache();
 		if (olympaPlayer == null) {
@@ -56,6 +61,7 @@ public class Account {
 		return olympaPlayer;
 	}
 
+	@Override
 	public OlympaPlayer getFromCache() {
 		return cache.get(this.uuid);
 	}
@@ -81,18 +87,22 @@ public class Account {
 		return REDIS_KEY + this.uuid.toString();
 	}
 
+	@Override
 	public void removeFromCache() {
 		cache.remove(this.uuid);
 	}
 
+	@Override
 	public void saveToCache(OlympaPlayer olympaPlayer) {
 		cache.put(this.uuid, olympaPlayer);
 	}
 
+	@Override
 	public void saveToDb(OlympaPlayer olympaPlayer) {
 		TaskManager.runTaskAsynchronously(() -> MySQL.savePlayer(olympaPlayer));
 	}
 
+	@Override
 	public void saveToRedis(final OlympaPlayer olympaPlayer) {
 		TaskManager.runTaskAsynchronously(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
@@ -102,6 +112,7 @@ public class Account {
 		});
 	}
 
+	@Override
 	public void sendModifications(final OlympaPlayer olympaPlayer) {
 		TaskManager.runTaskAsynchronously(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
@@ -111,6 +122,7 @@ public class Account {
 		});
 	}
 
+	@Override
 	public void sendModifications(final OlympaPlayer olympaPlayer, Consumer<? super Boolean> done) {
 		this.sendModifications(olympaPlayer);
 		modificationReceive.put(olympaPlayer.getUniqueId(), done);
@@ -121,6 +133,7 @@ public class Account {
 		}, 5 * 20);
 	}
 
+	@Override
 	public void sendModificationsReceive() {
 		TaskManager.runTaskAsynchronously(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {

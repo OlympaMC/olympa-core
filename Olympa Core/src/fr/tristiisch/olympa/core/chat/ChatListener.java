@@ -15,15 +15,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import fr.tristiisch.olympa.api.Prefix;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.objects.OlympaServerSettings;
+import fr.tristiisch.olympa.api.permission.OlympaPermission;
 import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
+import fr.tristiisch.olympa.api.utils.Prefix;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.api.utils.Utils;
 import fr.tristiisch.olympa.core.chat.Chat.OlympaChat;
-import fr.tristiisch.olympa.core.datamanagment.redis.access.Account;
-import fr.tristiisch.olympa.core.permission.OlympaPermission;
+import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountObject;
 
 public class ChatListener implements Listener {
 
@@ -65,7 +65,7 @@ public class ChatListener implements Listener {
 		Player player = event.getPlayer();
 		OlympaServerSettings serverSettings = OlympaServerSettings.getInstance();
 
-		OlympaPlayer olympaPlayer = new Account(player.getUniqueId()).getFromCache();
+		OlympaPlayer olympaPlayer = new OlympaAccountObject(player.getUniqueId()).getFromCache();
 
 		OlympaChat olympaTchat = Chat.getPlayer(player.getUniqueId());
 

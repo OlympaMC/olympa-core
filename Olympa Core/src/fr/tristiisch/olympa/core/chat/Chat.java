@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
+import fr.tristiisch.olympa.api.permission.OlympaPermission;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
-import fr.tristiisch.olympa.core.permission.OlympaPermission;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;

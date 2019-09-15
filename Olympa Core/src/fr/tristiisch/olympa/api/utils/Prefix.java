@@ -1,8 +1,6 @@
-package fr.tristiisch.olympa.api;
+package fr.tristiisch.olympa.api.utils;
 
 import org.bukkit.ChatColor;
-
-import fr.tristiisch.olympa.api.utils.SpigotUtils;
 
 public enum Prefix {
 

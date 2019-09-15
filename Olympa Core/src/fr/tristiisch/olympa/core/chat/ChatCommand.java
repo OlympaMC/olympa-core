@@ -10,11 +10,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import fr.tristiisch.olympa.api.Prefix;
 import fr.tristiisch.olympa.api.command.OlympaCommand;
 import fr.tristiisch.olympa.api.objects.OlympaServerSettings;
+import fr.tristiisch.olympa.api.permission.OlympaPermission;
+import fr.tristiisch.olympa.api.utils.Prefix;
 import fr.tristiisch.olympa.api.utils.Utils;
-import fr.tristiisch.olympa.core.permission.OlympaPermission;
 
 public class ChatCommand extends OlympaCommand {
 

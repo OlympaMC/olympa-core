@@ -10,14 +10,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import fr.tristiisch.olympa.api.Prefix;
+import fr.tristiisch.olympa.api.customevents.AsyncOlympaPlayerLoadEvent;
 import fr.tristiisch.olympa.api.objects.OlympaGroup;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
+import fr.tristiisch.olympa.api.permission.OlympaPermission;
+import fr.tristiisch.olympa.api.utils.Prefix;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.api.utils.Utils;
-import fr.tristiisch.olympa.core.datamanagment.customevent.AsyncOlympaPlayerLoadEvent;
-import fr.tristiisch.olympa.core.datamanagment.redis.access.Account;
-import fr.tristiisch.olympa.core.permission.OlympaPermission;
+import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountObject;
 import fr.tristiisch.olympa.core.permission.scoreboard.ScoreboardList;
 
 public class GroupListener implements Listener {
@@ -54,7 +54,7 @@ public class GroupListener implements Listener {
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = new Account(player.getUniqueId()).getFromCache();
+		OlympaPlayer olympaPlayer = new OlympaAccountObject(player.getUniqueId()).getFromCache();
 		if (olympaPlayer == null) {
 			event.setFormat(SpigotUtils.color("&cERREUR &7") + "%s : %s");
 		}
