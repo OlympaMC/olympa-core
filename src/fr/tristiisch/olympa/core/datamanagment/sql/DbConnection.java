@@ -30,6 +30,7 @@ public class DbConnection {
 			this.connection.setNetworkTimeout(Executors.newSingleThreadExecutor(), 28800);
 			OlympaPlugin.getInstance().sendMessage("&aConnexion à la base de donnée établie");
 		} catch (final SQLException | ClassNotFoundException e) {
+			OlympaPlugin.getInstance().sendMessage("&cConnexion à la base de donnée impossible");
 			e.printStackTrace();
 		}
 	}

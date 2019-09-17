@@ -1,4 +1,4 @@
-package fr.tristiisch.olympa.api.permission;
+package fr.tristiisch.olympa.api.objects;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -9,8 +9,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import fr.tristiisch.olympa.api.objects.OlympaGroup;
-import fr.tristiisch.olympa.api.objects.OlympaPlayer;
+import fr.tristiisch.olympa.api.permission.OlympaPermission;
 import fr.tristiisch.olympa.api.utils.Utils;
 
 public class OlympaPlayerObject implements OlympaPlayer, Cloneable {

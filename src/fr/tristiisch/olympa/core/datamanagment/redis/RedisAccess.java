@@ -1,7 +1,10 @@
 package fr.tristiisch.olympa.core.datamanagment.redis;
 
+import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
+import fr.tristiisch.olympa.api.task.TaskManager;
 import fr.tristiisch.olympa.core.datamanagment.redis.listeners.OlympaPlayerListener;
 import fr.tristiisch.olympa.core.datamanagment.redis.listeners.OlympaPlayerReceiveListener;
+import fr.tristiisch.olympa.core.datamanagment.redis.listeners.TestListener;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -25,6 +28,17 @@ public class RedisAccess {
 		INSTANCE = this;
 		this.redisCredentials = redisCredentials;
 		this.initJedis();
+		Jedis jedis = this.connect();
+		if (jedis.isConnected()) {
+
+			TaskManager.runTaskAsynchronously("redis1", () -> jedis.subscribe(new TestListener(), "Test"));
+			TaskManager.runTaskAsynchronously("redis2", () -> this.connect().subscribe(new OlympaPlayerListener(), "OlympaPlayer"));
+			TaskManager.runTaskAsynchronously("redis3", () -> this.connect().subscribe(new OlympaPlayerReceiveListener(), "OlympaPlayerReceive"));
+			TaskManager.runTaskAsynchronously("redis4", () -> this.connect().subscribe(new TestListener(), "Test2"));
+			OlympaPlugin.getInstance().sendMessage("&aConnexion à Redis établie");
+		} else {
+			OlympaPlugin.getInstance().sendMessage("&cConnexion à Redis impossible");
+		}
 	}
 
 	public void closeResource() {
@@ -32,18 +46,12 @@ public class RedisAccess {
 	}
 
 	public Jedis connect() {
-		final Jedis jedis = this.getJedisPool().getResource();
-		jedis.auth(this.getCredentials().getPassword());
-		jedis.clientSetname(this.getCredentials().getClientName());
+		final Jedis jedis = this.pool.getResource();
+		jedis.auth(this.redisCredentials.getPassword());
+		jedis.clientSetname(this.redisCredentials.getClientName());
 		jedis.select(1);
 
-		jedis.subscribe(new OlympaPlayerListener(), "OlympaPlayer");
-		jedis.subscribe(new OlympaPlayerReceiveListener(), "OlympaPlayerReceive");
 		return jedis;
-	}
-
-	public RedisCredentials getCredentials() {
-		return this.redisCredentials;
 	}
 
 	public JedisPool getJedisPool() {

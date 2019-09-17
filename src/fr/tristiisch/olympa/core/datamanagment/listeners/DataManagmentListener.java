@@ -6,16 +6,19 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import fr.tristiisch.olympa.api.customevents.AsyncOlympaPlayerLoadEvent;
+import fr.tristiisch.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.permission.OlympaAccount;
 import fr.tristiisch.olympa.api.task.TaskManager;
+import fr.tristiisch.olympa.api.utils.SpigotUtils;
+import fr.tristiisch.olympa.api.utils.Utils;
 import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountObject;
 
 public class DataManagmentListener implements Listener {
@@ -32,7 +35,7 @@ public class DataManagmentListener implements Listener {
 					e.printStackTrace();
 					continue;
 				}
-				AsyncOlympaPlayerLoadEvent loginevent = new AsyncOlympaPlayerLoadEvent(player, olympaPlayer);
+				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer);
 				Bukkit.getPluginManager().callEvent(loginevent);
 				olympaAccountObject.saveToRedis(olympaPlayer);
 				olympaAccountObject.saveToCache(olympaPlayer);
@@ -41,7 +44,7 @@ public class DataManagmentListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerLogin(PlayerLoginEvent event) {
+	public void onPlayerLogin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		OlympaAccount olympaAccount = new OlympaAccountObject(player.getUniqueId());
 		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
@@ -50,12 +53,22 @@ public class DataManagmentListener implements Listener {
 			return;
 		}
 
+		olympaPlayer.setIp(player.getAddress().getAddress().getHostAddress());
+		olympaPlayer.setLastConnection(Utils.getCurrentTimeinSeconds());
+
 		OlympaPlayer oldOlympaPlayer = olympaPlayer.clone();
-		AsyncOlympaPlayerLoadEvent loginevent = new AsyncOlympaPlayerLoadEvent(player, olympaPlayer);
+		OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer);
+		loginevent.setJoinMessage("&7[&a+&7] %prefix%name");
 		Bukkit.getPluginManager().callEvent(loginevent);
+
+		if (loginevent.getJoinMessage() != null && !loginevent.getJoinMessage().isEmpty()) {
+			Bukkit.broadcastMessage(loginevent.getJoinMessage());
+		}
+
 		if (!oldOlympaPlayer.equals(olympaPlayer)) {
 			olympaAccount.saveToRedis(olympaPlayer);
 		}
+		event.setJoinMessage(null);
 	}
 
 	@EventHandler
@@ -66,7 +79,7 @@ public class DataManagmentListener implements Listener {
 		OlympaPlayer olympaPlayer;
 		try {
 			olympaPlayer = olympaAccount.get();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			event.disallow(Result.KICK_OTHER, "§cImpossible de récupérer vos données, merci de réessayer.\n\n§cSi le problème persiste, signalez-le nous.");
 			e.printStackTrace();
 			return;
@@ -82,9 +95,23 @@ public class DataManagmentListener implements Listener {
 		olympaAccount.saveToRedis(olympaPlayer);
 	}
 
-	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event) {
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerQuitHighest(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		new OlympaAccountObject(player.getUniqueId()).removeFromCache();
+	}
+
+	@EventHandler(priority = EventPriority.LOW)
+	public void onPlayerQuitLow(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+		OlympaPlayer olympaPlayer = new OlympaAccountObject(player.getUniqueId()).getFromCache();
+		if (olympaPlayer != null) {
+			event.setQuitMessage(SpigotUtils.color("&7[&c-&7] %prefix%name"
+					.replaceAll("%group", olympaPlayer.getGroup().getName())
+					.replaceAll("%prefix", olympaPlayer.getGroup().getPrefix())
+					.replaceAll("%name", player.getName())));
+		} else {
+			event.setQuitMessage(null);
+		}
 	}
 }

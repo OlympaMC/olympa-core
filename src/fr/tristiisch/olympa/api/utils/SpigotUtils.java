@@ -1,6 +1,7 @@
 package fr.tristiisch.olympa.api.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,11 +12,19 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 public class SpigotUtils {
-
 	public static Location addYToLocation(final Location location, final float y) {
 		return new Location(location.getWorld(), location.getX(), location.getY() + 1, location.getZ(), location.getYaw(), location.getPitch());
+	}
+
+	public static int clearPlayer(final Player player) {
+		final PlayerInventory inventory = player.getInventory();
+		final int size = (int) (Arrays.stream(inventory.getContents()).filter(item -> item != null).count() + Arrays.stream(inventory.getArmorContents()).filter(item -> item != null).count());
+		inventory.clear();
+		inventory.setArmorContents(new ItemStack[inventory.getArmorContents().length]);
+		return size;
 	}
 
 	public static List<String> color(final List<String> l) {

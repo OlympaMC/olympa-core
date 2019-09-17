@@ -9,8 +9,8 @@ import java.util.function.Consumer;
 import com.google.gson.Gson;
 
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
+import fr.tristiisch.olympa.api.objects.OlympaPlayerObject;
 import fr.tristiisch.olympa.api.permission.OlympaAccount;
-import fr.tristiisch.olympa.api.permission.OlympaPlayerObject;
 import fr.tristiisch.olympa.api.task.TaskManager;
 import fr.tristiisch.olympa.core.datamanagment.redis.RedisAccess;
 import fr.tristiisch.olympa.core.datamanagment.sql.MySQL;

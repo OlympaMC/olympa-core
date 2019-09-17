@@ -19,9 +19,9 @@ public class TaskManager {
 
 	public static void cancelAllTask() {
 		for (final int taskId : TaskManager.taskList.values()) {
-			System.out.println("cancel " + String.valueOf(taskId));
 			TaskManager.scheduler.cancelTask(taskId);
 		}
+		scheduler.cancelAllTasks();
 	}
 
 	public static void cancelTaskById(final int id) {
@@ -93,6 +93,16 @@ public class TaskManager {
 
 	public static BukkitTask runTaskAsynchronously(final Runnable runnable) {
 		return TaskManager.scheduler.runTaskAsynchronously(TaskManager.plugin, runnable);
+	}
+
+	public static BukkitTask runTaskAsynchronously(String taskName, Runnable runnable) {
+		Integer oldTask = TaskManager.taskList.get(taskName);
+		if (oldTask != null) {
+			getTask(oldTask).cancel();
+		}
+		final BukkitTask bukkitTask = runTaskAsynchronously(runnable);
+		addTask(taskName, bukkitTask.getTaskId());
+		return bukkitTask;
 	}
 
 	public static BukkitTask runTaskLater(final Runnable runnable, final int tick) {

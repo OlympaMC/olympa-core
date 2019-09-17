@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
-import fr.tristiisch.olympa.api.permission.OlympaPlayerObject;
+import fr.tristiisch.olympa.api.objects.OlympaPlayerObject;
 import fr.tristiisch.olympa.api.utils.Utils;
 
 public class MySQL {
@@ -27,7 +28,7 @@ public class MySQL {
 			pstate.setString(i++, olympaPlayer.getIp());
 			pstate.setString(i++, olympaPlayer.getGroupsToString());
 			pstate.setDate(i++, new Date(olympaPlayer.getFirstConnection() * 1000L));
-			pstate.setDate(i++, new Date(olympaPlayer.getLastConnection() * 1000L));
+			pstate.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
 			pstate.executeUpdate();
 		} catch (final SQLException e) {
 			e.printStackTrace();
@@ -103,7 +104,7 @@ public class MySQL {
 					resultSet.getString("groups"),
 					resultSet.getString("ip"),
 					resultSet.getDate("first_connection").getTime() / 1000L,
-					resultSet.getDate("last_connection").getTime() / 1000L);
+					resultSet.getTimestamp("last_connection").getTime() / 1000L);
 		} catch (final SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -322,7 +323,7 @@ public class MySQL {
 			pstate.setString(i++, olympaPlayer.getName());
 			pstate.setString(i++, olympaPlayer.getIp());
 			pstate.setString(i++, olympaPlayer.getGroupsToString());
-			pstate.setDate(i++, new Date(olympaPlayer.getLastConnection() * 1000L));
+			pstate.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
 			pstate.setString(i++, olympaPlayer.getUniqueId().toString());
 			pstate.executeUpdate();
 		} catch (final SQLException e) {
@@ -334,7 +335,6 @@ public class MySQL {
 	 * Lire une/des valeur(s) dans une table
 	 */
 	public static List<Object> selectTable(final String paramString, final String paramString2) {
-
 		if (!paramString.contains("SELECT")) {
 			throw new IllegalArgumentException("\"" + paramString + "\" n'est pas le bon argument pour lire une/des valeur(s).");
 		}

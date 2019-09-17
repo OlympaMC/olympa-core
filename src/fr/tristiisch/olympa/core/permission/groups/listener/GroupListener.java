@@ -4,13 +4,16 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scoreboard.Team;
 
-import fr.tristiisch.olympa.api.customevents.AsyncOlympaPlayerLoadEvent;
+import fr.tristiisch.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.tristiisch.olympa.api.objects.OlympaGroup;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.permission.OlympaPermission;
@@ -23,7 +26,7 @@ import fr.tristiisch.olympa.core.permission.scoreboard.ScoreboardList;
 public class GroupListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void onOlympaPlayerLoad(AsyncOlympaPlayerLoadEvent event) {
+	public void onOlympaPlayerLoad(OlympaPlayerLoadEvent event) {
 		long now = Utils.getCurrentTimeinSeconds();
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
 		TreeMap<OlympaGroup, Long> groups = olympaPlayer.getGroups();
@@ -57,10 +60,10 @@ public class GroupListener implements Listener {
 		OlympaPlayer olympaPlayer = new OlympaAccountObject(player.getUniqueId()).getFromCache();
 		if (olympaPlayer == null) {
 			event.setFormat(SpigotUtils.color("&cERREUR &7") + "%s : %s");
+			return;
 		}
 
-		OlympaGroup group = olympaPlayer.getGroups().firstKey();
-
+		OlympaGroup group = olympaPlayer.getGroup();
 		if (group != null) {
 			if (OlympaPermission.CHAT_COLOR.hasPermission(olympaPlayer)) {
 				event.setFormat(group.getPrefix() + "%s " + group.getChatSufix() + SpigotUtils.color(" %s"));
@@ -69,6 +72,14 @@ public class GroupListener implements Listener {
 			}
 		} else {
 			event.setFormat(SpigotUtils.color("&cGRADE ERREUR &7") + "%s : %s");
+		}
+	}
+
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+		for (final Team team : Bukkit.getScoreboardManager().getMainScoreboard().getTeams()) {
+			team.removeEntry(player.getName());
 		}
 	}
 }
