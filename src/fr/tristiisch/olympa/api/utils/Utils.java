@@ -142,15 +142,6 @@ public class Utils {
 		return s.substring(s.indexOf(after) + 1).trim();
 	}
 
-	/**
-	 * Permet de récupérer la lettre correspondant au nombre
-	 *
-	 * @param i 0 < i < 27
-	 */
-	public static String getCharForNumber(final int i) {
-		return i > 0 && i < 27 ? String.valueOf((char) (i + 64)) : null;
-	}
-
 	public static long getCurrentTimeinSeconds() {
 		return System.currentTimeMillis() / 1000L;
 	}
@@ -177,6 +168,15 @@ public class Utils {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	/**
+	 * Permet de récupérer la lettre correspondant au nombre
+	 *
+	 * @param i 0 < i < 27
+	 */
+	public static String getLetterOfNumber(final int i) {
+		return i > 0 && i < 27 ? String.valueOf((char) (i + 64 + 32)) : null;
 	}
 
 	/**

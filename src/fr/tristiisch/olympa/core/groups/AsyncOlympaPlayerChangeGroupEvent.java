@@ -1,4 +1,4 @@
-package fr.tristiisch.olympa.core.permission.groups.customevents;
+package fr.tristiisch.olympa.core.groups;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;

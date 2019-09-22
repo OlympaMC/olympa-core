@@ -1,4 +1,4 @@
-package fr.tristiisch.olympa.core.permission.groups;
+package fr.tristiisch.olympa.core.groups;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,8 +25,7 @@ import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.api.utils.Utils;
 import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountObject;
 import fr.tristiisch.olympa.core.datamanagment.sql.MySQL;
-import fr.tristiisch.olympa.core.permission.groups.customevents.AsyncOlympaPlayerChangeGroupEvent;
-import fr.tristiisch.olympa.core.permission.groups.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
+import fr.tristiisch.olympa.core.groups.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 
 public class GroupCommand extends OlympaCommand {
 

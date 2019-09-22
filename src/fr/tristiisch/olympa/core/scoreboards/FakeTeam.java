@@ -1,4 +1,4 @@
-package fr.tristiisch.olympa.core.permission.groups;
+package fr.tristiisch.olympa.core.scoreboards;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -24,9 +24,9 @@ import fr.tristiisch.olympa.api.utils.Reflection.ClassEnum;
  * To delete a Team just call {@link #remove()}.
  * N.B: You need to send the team of all new player. In PlayerJoinEvent for example, just add {@link #rebuildTeamPacket(Player)}.
  *
- * @author Vinetos
+ * @author Vinetos and modify by Tristiisch
  */
-public class FakeTeam {
+public class FakeTeam implements Cloneable {
 
 	/**
 	 * The NameTagVisility Parameter for the team
@@ -73,6 +73,7 @@ public class FakeTeam {
 
 	// Factories
 	private static Class<?> PACKET_CLASS = Reflection.getClass(ClassEnum.NMS, "PacketPlayOutScoreboardTeam");
+
 	// This fields haves to be updated for other version that 1.8.8 (1_8_R3)
 	private static Field TEAM_NAME = Reflection.getField(PACKET_CLASS, "a");
 	private static Field DISPLAY_NAME = Reflection.getField(PACKET_CLASS, "b");
@@ -80,47 +81,20 @@ public class FakeTeam {
 	private static Field SUFFIX = Reflection.getField(PACKET_CLASS, "d");
 	private static Field NAME_TAG_VISIBILITY = Reflection.getField(PACKET_CLASS, "e");
 	private static Field MEMBERS = Reflection.getField(PACKET_CLASS, "g");
-
 	private static Field TEAM_MODE = Reflection.getField(PACKET_CLASS, "h");
+
 	private static Field OPTIONS = Reflection.getField(PACKET_CLASS, "i");
 	// Defines attributes
-	private static Set<FakeTeam> teams = new HashSet<>();
-
-	/**
-	 * Get all created teams
-	 *
-	 * @return A {@link Set} of {@link FakeTeam}
-	 */
-	public static Set<FakeTeam> getRegisterTeams() {
-		return Collections.unmodifiableSet(teams);
-	}
-
-	/**
-	 * Get the team for a player
-	 *
-	 * @param player who is in a team
-	 * @return The {@link FakeTeam} of the player
-	 */
-	public static FakeTeam getTeamOfPlayer(Player player) {
-		for (FakeTeam team : getRegisterTeams()) {
-			if (team.hasPlayer(player)) {
-				return team;
-			}
-		}
-		return null;
-	}
-
 	private String name;
+
 	private String displayName = "";
 	private String suffix = "§r";// Remove the color for the health scoreboard for example
 	private String prefix = "";
-
 	private Set<String> players = new HashSet<>();
-	private List<Player> viewers = null;
+
+	private List<Player> viewers = new ArrayList<>();
 	private DyeColor teamColor;
-
-	private boolean created = false;
-
+	private boolean created;
 	// Options of the team
 	private NameTagVisibility nameTagVisibility = NameTagVisibility.ALWAYS;
 
@@ -134,7 +108,7 @@ public class FakeTeam {
 	 * @param name The name of the team (can't be changed after)
 	 */
 	public FakeTeam(String name) {
-		this(name, (List<Player>) null);
+		this(name, new ArrayList<>());
 	}
 
 	/**
@@ -144,7 +118,7 @@ public class FakeTeam {
 	 * @param teamColor The {@link DyeColor} of the team (to make a GUI for example)
 	 */
 	public FakeTeam(String name, DyeColor teamColor) {
-		this(name, null, teamColor);
+		this(name, new ArrayList<>(), teamColor);
 	}
 
 	/**
@@ -175,7 +149,7 @@ public class FakeTeam {
 	 * @param displayName The display name of the team (on the right scoreboard for example)
 	 */
 	public FakeTeam(String name, String displayName) {
-		this(name, "", displayName, "", new HashSet<>(), (List<Player>) null);
+		this(name, "", displayName, "", new HashSet<>(), new ArrayList<>());
 	}
 
 	/**
@@ -199,7 +173,7 @@ public class FakeTeam {
 	 * @param prefix      The prefix of the team (before the player's name)
 	 */
 	public FakeTeam(String name, String suffix, String displayName, String prefix) {
-		this(name, suffix, displayName, prefix, new HashSet<>(), (List<Player>) null);
+		this(name, suffix, displayName, prefix, new HashSet<>(), new ArrayList<>());
 	}
 
 	/**
@@ -212,7 +186,7 @@ public class FakeTeam {
 	 * @param teamColor   The {@link DyeColor} of the team (to make a GUI for example)
 	 */
 	public FakeTeam(String name, String suffix, String displayName, String prefix, DyeColor teamColor) {
-		this(name, suffix, displayName, prefix, new HashSet<>(), null, teamColor);
+		this(name, suffix, displayName, prefix, new HashSet<>(), new ArrayList<>(), teamColor);
 	}
 
 	/**
@@ -238,7 +212,7 @@ public class FakeTeam {
 	 * @param players     The players into the team
 	 */
 	public FakeTeam(String name, String suffix, String displayName, String prefix, Set<String> players) {
-		this(name, suffix, displayName, prefix, players, (List<Player>) null);
+		this(name, suffix, displayName, prefix, players, new ArrayList<>());
 	}
 
 	/**
@@ -252,7 +226,7 @@ public class FakeTeam {
 	 * @param teamColor   The {@link DyeColor} of the team (to make a GUI for example)
 	 */
 	public FakeTeam(String name, String suffix, String displayName, String prefix, Set<String> players, DyeColor teamColor) {
-		this(name, suffix, displayName, prefix, players, null, teamColor);
+		this(name, suffix, displayName, prefix, players, new ArrayList<>(), teamColor);
 	}
 
 	/**
@@ -317,12 +291,12 @@ public class FakeTeam {
 	 * @param player who can see the team
 	 */
 	public void addViewer(Player player) {
-		if (this.getViewers().contains(player)) {
+		if (this.isViewer(player)) {
 			return;
 		}
-		this.viewers.add(player);
 		// Send the team to the new viewers
 		this.create(player);
+		this.viewers.add(player);
 	}
 
 	/**
@@ -332,6 +306,16 @@ public class FakeTeam {
 	 */
 	public boolean allowFriendlyFire() {
 		return this.friendlyFire;
+	}
+
+	@Override
+	public FakeTeam clone() {
+		try {
+			return (FakeTeam) super.clone();
+		} catch (final CloneNotSupportedException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
@@ -397,11 +381,15 @@ public class FakeTeam {
 			return;
 		}
 
+		if (this.viewers.isEmpty()) {
+			this.viewers = new ArrayList<>(Bukkit.getOnlinePlayers());
+		}
+
 		// Sends the team packet
-		Reflection.sendPacket(this.getViewers(), this.constructDefaultPacket(TeamMode.CREATE));
+		Reflection.sendPacket(this.viewers, this.constructDefaultPacket(TeamMode.CREATE));
 
 		// Send players (have to be one by one)
-		this.getPlayers().forEach(playerName -> Reflection.sendPacket(this.getViewers(), this.constructPlayerTeamPacket(TeamMode.ADD_PLAYER, playerName)));
+		this.players.forEach(playerName -> Reflection.sendPacket(this.viewers, this.constructPlayerTeamPacket(TeamMode.ADD_PLAYER, playerName)));
 		this.created = true;
 	}
 
@@ -418,8 +406,7 @@ public class FakeTeam {
 		Reflection.sendPacket(player, this.constructDefaultPacket(TeamMode.CREATE));
 
 		// Send players (have to be one by one)
-		this.getPlayers().forEach(playerName -> Reflection.sendPacket(this.getViewers(), this.constructPlayerTeamPacket(TeamMode.ADD_PLAYER, playerName)));
-		teams.add(this);
+		this.players.forEach(playerName -> Reflection.sendPacket(player, this.constructPlayerTeamPacket(TeamMode.ADD_PLAYER, playerName)));
 	}
 
 	/**
@@ -429,8 +416,6 @@ public class FakeTeam {
 		if (this.created) {
 			this.remove();
 		}
-
-		teams.remove(this);
 	}
 
 	/**
@@ -457,9 +442,6 @@ public class FakeTeam {
 	 * @return A {@link Collection} of {@link String}
 	 */
 	public Set<String> getPlayers() {
-		if (this.players == null) {
-			this.players = new HashSet<>();
-		}
 		return Collections.unmodifiableSet(this.players);
 	}
 
@@ -496,10 +478,6 @@ public class FakeTeam {
 	 * @return A {@link List} of <code>? extends </code>{@link Player}
 	 */
 	public List<Player> getViewers() {
-		if (this.viewers == null) {
-			this.viewers = new ArrayList<>();
-			Bukkit.getOnlinePlayers().forEach(player -> this.viewers.add(player));
-		}
 		return Collections.unmodifiableList(this.viewers);
 	}
 
@@ -523,6 +501,10 @@ public class FakeTeam {
 		return this.players.contains(playerName);
 	}
 
+	public boolean hasViewers() {
+		return !this.viewers.isEmpty();
+	}
+
 	/**
 	 * Check if the team is created
 	 *
@@ -532,6 +514,10 @@ public class FakeTeam {
 		return this.created;
 	}
 
+	public boolean isEmpty() {
+		return this.players.isEmpty();
+	}
+
 	/**
 	 * Check if a player see the team
 	 *
@@ -539,7 +525,7 @@ public class FakeTeam {
 	 * @return <code>true</code> if the player see the team
 	 */
 	public boolean isViewer(Player player) {
-		return this.getViewers().contains(player);
+		return this.viewers.contains(player);
 	}
 
 	/**
@@ -568,7 +554,7 @@ public class FakeTeam {
 		Reflection.sendPacket(p, this.constructDefaultPacket(TeamMode.CREATE));
 
 		// Send players (have to be one by one)
-		this.getPlayers().forEach(playerName -> Reflection.sendPacket(p, this.constructPlayerTeamPacket(TeamMode.ADD_PLAYER, playerName)));
+		this.players.forEach(playerName -> Reflection.sendPacket(p, this.constructPlayerTeamPacket(TeamMode.ADD_PLAYER, playerName)));
 
 	}
 
@@ -580,12 +566,14 @@ public class FakeTeam {
 			return;
 		}
 
+		// TODO
+		System.out.println("remove team " + this.name);
+
 		// Remove players (have to be one by one)
-		this.getPlayers().forEach(playerName -> this.constructPlayerTeamPacket(TeamMode.REMOVE_PLAYER, playerName));
+		// this.players.forEach(playerName -> this.constructPlayerTeamPacket(TeamMode.REMOVE_PLAYER, playerName));
 
 		// Delete the team
-		Reflection.sendPacket(this.getViewers(), this.constructDefaultPacket(TeamMode.REMOVE));
-
+		Reflection.sendPacket(this.viewers, this.constructDefaultPacket(TeamMode.REMOVE));
 		this.created = false;
 	}
 
@@ -600,7 +588,7 @@ public class FakeTeam {
 			return;
 		}
 		// Remove players (have to be one by one)
-		this.getPlayers().forEach(playerName -> this.constructPlayerTeamPacket(TeamMode.REMOVE_PLAYER, playerName));
+		this.players.forEach(playerName -> this.constructPlayerTeamPacket(TeamMode.REMOVE_PLAYER, playerName));
 
 		// Delete the team
 		Reflection.sendPacket(player, this.constructDefaultPacket(TeamMode.REMOVE));
@@ -633,7 +621,7 @@ public class FakeTeam {
 	 * @param player who can see the team
 	 */
 	public void removeViewer(Player player) {
-		if (!this.getViewers().contains(player)) {
+		if (!this.isViewer(player)) {
 			return;
 		}
 		this.viewers.remove(player);
@@ -657,7 +645,6 @@ public class FakeTeam {
 	 */
 	public void setCanSeeFriendlyInvisibles(boolean seeFriendlyInvisibles) {
 		this.seeFriendlyInvisibles = seeFriendlyInvisibles;
-		this.update();
 	}
 
 	/**
@@ -667,7 +654,6 @@ public class FakeTeam {
 	 */
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
-		this.update();
 	}
 
 	/**
@@ -677,7 +663,6 @@ public class FakeTeam {
 	 */
 	public void setFriendlyFire(boolean friendlyFire) {
 		this.friendlyFire = friendlyFire;
-		this.update();
 	}
 
 	/**
@@ -687,7 +672,6 @@ public class FakeTeam {
 	 */
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
-		this.update();
 	}
 
 	/**
@@ -697,7 +681,6 @@ public class FakeTeam {
 	 */
 	public void setSuffix(String suffix) {
 		this.suffix = suffix;
-		this.update();
 	}
 
 	/**
@@ -718,7 +701,7 @@ public class FakeTeam {
 		}
 
 		// Send the team packet
-		Reflection.sendPacket(this.getViewers(), this.constructDefaultPacket(TeamMode.UPDATE));
+		Reflection.sendPacket(this.viewers, this.constructDefaultPacket(TeamMode.UPDATE));
 	}
 
 	/**
@@ -743,7 +726,7 @@ public class FakeTeam {
 		}
 
 		// Send the new player
-		Reflection.sendPacket(this.getViewers(), this.constructPlayerTeamPacket(mode, playerName));
+		Reflection.sendPacket(this.viewers, this.constructPlayerTeamPacket(mode, playerName));
 	}
 
 }

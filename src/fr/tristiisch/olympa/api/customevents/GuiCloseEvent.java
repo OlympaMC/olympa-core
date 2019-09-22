@@ -1,4 +1,4 @@
-package fr.tristiisch.olympa.api.gui.customevent;
+package fr.tristiisch.olympa.api.customevents;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;

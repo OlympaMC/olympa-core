@@ -35,10 +35,12 @@ public class DataManagmentListener implements Listener {
 					e.printStackTrace();
 					continue;
 				}
-				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer);
-				Bukkit.getPluginManager().callEvent(loginevent);
-				olympaAccountObject.saveToRedis(olympaPlayer);
-				olympaAccountObject.saveToCache(olympaPlayer);
+				TaskManager.runTask(() -> {
+					OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer);
+					Bukkit.getPluginManager().callEvent(loginevent);
+					olympaAccountObject.saveToRedis(olympaPlayer);
+					olympaAccountObject.saveToCache(olympaPlayer);
+				});
 			}
 		});
 	}

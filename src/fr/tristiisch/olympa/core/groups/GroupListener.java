@@ -1,17 +1,14 @@
-package fr.tristiisch.olympa.core.permission.groups.listener;
+package fr.tristiisch.olympa.core.groups;
 
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scoreboard.Team;
 
 import fr.tristiisch.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.tristiisch.olympa.api.objects.OlympaGroup;
@@ -21,7 +18,6 @@ import fr.tristiisch.olympa.api.utils.Prefix;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.api.utils.Utils;
 import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountObject;
-import fr.tristiisch.olympa.core.permission.scoreboard.ScoreboardList;
 
 public class GroupListener implements Listener {
 
@@ -30,9 +26,6 @@ public class GroupListener implements Listener {
 		long now = Utils.getCurrentTimeinSeconds();
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
 		TreeMap<OlympaGroup, Long> groups = olympaPlayer.getGroups();
-
-		OlympaGroup group = groups.firstKey();
-		new ScoreboardList(event.getPlayer(), group);
 
 		List<OlympaGroup> oldGroups = groups.entrySet().stream().filter(entry -> entry.getValue() != 0 && entry.getValue() < now).map(entry -> entry.getKey()).collect(Collectors.toList());
 		if (oldGroups.isEmpty()) {
@@ -72,14 +65,6 @@ public class GroupListener implements Listener {
 			}
 		} else {
 			event.setFormat(SpigotUtils.color("&cGRADE ERREUR &7") + "%s : %s");
-		}
-	}
-
-	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event) {
-		Player player = event.getPlayer();
-		for (final Team team : Bukkit.getScoreboardManager().getMainScoreboard().getTeams()) {
-			team.removeEntry(player.getName());
 		}
 	}
 }
