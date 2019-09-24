@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <groupId>fr.olympa</groupId>
-   <artifactId>olympacore</artifactId>
+   <artifactId>olympa-core</artifactId>
    <version>0.0.1-SNAPSHOT</version>
    <dependencies>
       <dependency>
@@ -32,6 +32,11 @@
          <artifactId>mariadb-java-client</artifactId>
          <version>2.4.2</version>
       </dependency>
+      <dependency>
+         <groupId>fr.olympa</groupId>
+         <artifactId>olympa-api</artifactId>
+         <version>[0.0.1-SNAPSHOT,)</version>
+      </dependency>
    </dependencies>
    <repositories>
       <repository>
@@ -45,7 +50,7 @@
    </repositories>
    <build>
       <defaultGoal>clean package</defaultGoal>
-      <sourceDirectory>${basedir}/src/</sourceDirectory>
+      <sourceDirectory>${basedir}/src/java/</sourceDirectory>
       <resources>
          <resource>
             <directory>src/resources</directory>
@@ -54,12 +59,12 @@
       <plugins>
          <plugin>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.1</version>
+            <version>3.8.0</version>
             <configuration>
                <source>1.8</source>
                <target>1.8</target>
             </configuration>
-         </plugin>
+         </plugin> 
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
@@ -78,6 +83,18 @@
                </execution>
             </executions>
          </plugin>
+ <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-source-plugin</artifactId>
+		<executions>
+			<execution>
+				<id>attach-sources</id>
+				<goals>
+					<goal>jar</goal>
+				</goals>
+			</execution>
+		</executions>
+	   </plugin>
       </plugins>
    </build>
 </project>
