@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import org.bukkit.entity.Player;
+
 import com.google.gson.Gson;
 
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
@@ -16,16 +18,33 @@ import fr.tristiisch.olympa.core.datamanagment.redis.RedisAccess;
 import fr.tristiisch.olympa.core.datamanagment.sql.MySQL;
 import redis.clients.jedis.Jedis;
 
-public class OlympaAccountObject implements OlympaAccount {
+public class OlympaAccountProvider implements OlympaAccount {
 
 	private static String REDIS_KEY = "player:";
 	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
-	public static Map<UUID, OlympaPlayer> cache = new HashMap<>();
+	private static Map<UUID, OlympaPlayer> cache = new HashMap<>();
+
+	public static OlympaPlayer get(Player player) {
+		return get(player.getUniqueId());
+	}
+
+	public static OlympaPlayer get(UUID uuid) {
+		return cache.get(uuid);
+	}
+
+	public static OlympaPlayer getFromDatabase(String name) throws SQLException {
+		return MySQL.getPlayer(name);
+	}
+
+	public static OlympaPlayer getFromDatabase(UUID uuid) throws SQLException {
+		return MySQL.getPlayer(uuid);
+	}
 
 	RedisAccess redisAccesss;
+
 	UUID uuid;
 
-	public OlympaAccountObject(final UUID uuid) {
+	public OlympaAccountProvider(final UUID uuid) {
 		this.uuid = uuid;
 		this.redisAccesss = RedisAccess.INSTANCE;
 	}

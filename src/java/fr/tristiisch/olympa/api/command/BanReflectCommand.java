@@ -1,22 +1,23 @@
 package fr.tristiisch.olympa.api.command;
 
 import java.util.List;
+import java.util.UUID;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import fr.tristiisch.olympa.api.objects.OlympaConsole;
 import fr.tristiisch.olympa.api.task.TaskManager;
 
-public class ReflectCommand extends Command {
+public abstract class BanReflectCommand extends ReflectCommand {
 
 	private OlympaCommand exe = null;
 
-	public ReflectCommand(String name) {
+	public BanReflectCommand(String name) {
 		super(name);
 	}
 
-	public ReflectCommand(String name, String description, String usageMessage, List<String> aliases) {
+	public BanReflectCommand(String name, String description, String usageMessage, List<String> aliases) {
 		super(name, description, usageMessage, aliases);
 	}
 
@@ -47,6 +48,13 @@ public class ReflectCommand extends Command {
 			return false;
 		}
 
+		UUID author;
+		if (sender instanceof Player) {
+			author = this.exe.player.getUniqueId();
+		} else {
+			author = OlympaConsole.getUniqueId();
+		}
+
 		if (!this.exe.isAsynchronous) {
 			return this.exe.onCommand(sender, this, label, args);
 		} else {
@@ -55,6 +63,7 @@ public class ReflectCommand extends Command {
 		}
 	}
 
+	@Override
 	public void setExecutor(final OlympaCommand exe) {
 		this.exe = exe;
 	}

@@ -19,14 +19,14 @@ import fr.tristiisch.olympa.api.permission.OlympaAccount;
 import fr.tristiisch.olympa.api.task.TaskManager;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.api.utils.Utils;
-import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountObject;
+import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountProvider;
 
 public class DataManagmentListener implements Listener {
 
 	static {
 		TaskManager.runTaskAsynchronously(() -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				OlympaAccountObject olympaAccountObject = new OlympaAccountObject(player.getUniqueId());
+				OlympaAccountProvider olympaAccountObject = new OlympaAccountProvider(player.getUniqueId());
 				OlympaPlayer olympaPlayer;
 				try {
 					olympaPlayer = olympaAccountObject.get();
@@ -48,7 +48,7 @@ public class DataManagmentListener implements Listener {
 	@EventHandler
 	public void onPlayerLogin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		OlympaAccount olympaAccount = new OlympaAccountObject(player.getUniqueId());
+		OlympaAccount olympaAccount = new OlympaAccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
 
 		if (olympaPlayer == null) {
@@ -77,7 +77,7 @@ public class DataManagmentListener implements Listener {
 	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
 		UUID uuid = event.getUniqueId();
 
-		OlympaAccount olympaAccount = new OlympaAccountObject(uuid);
+		OlympaAccount olympaAccount = new OlympaAccountProvider(uuid);
 		OlympaPlayer olympaPlayer;
 		try {
 			olympaPlayer = olympaAccount.get();
@@ -100,13 +100,13 @@ public class DataManagmentListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerQuitHighest(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		new OlympaAccountObject(player.getUniqueId()).removeFromCache();
+		new OlympaAccountProvider(player.getUniqueId()).removeFromCache();
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerQuitLow(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = new OlympaAccountObject(player.getUniqueId()).getFromCache();
+		OlympaPlayer olympaPlayer = new OlympaAccountProvider(player.getUniqueId()).getFromCache();
 		if (olympaPlayer != null) {
 			event.setQuitMessage(SpigotUtils.color("&7[&c-&7] %prefix%name"
 					.replaceAll("%group", olympaPlayer.getGroup().getName())

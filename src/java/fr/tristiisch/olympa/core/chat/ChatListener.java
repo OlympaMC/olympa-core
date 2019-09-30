@@ -23,7 +23,7 @@ import fr.tristiisch.olympa.api.utils.Prefix;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.api.utils.Utils;
 import fr.tristiisch.olympa.core.chat.Chat.OlympaChat;
-import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountObject;
+import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountProvider;
 
 public class ChatListener implements Listener {
 
@@ -65,7 +65,7 @@ public class ChatListener implements Listener {
 		Player player = event.getPlayer();
 		OlympaServerSettings serverSettings = OlympaServerSettings.getInstance();
 
-		OlympaPlayer olympaPlayer = new OlympaAccountObject(player.getUniqueId()).getFromCache();
+		OlympaPlayer olympaPlayer = new OlympaAccountProvider(player.getUniqueId()).getFromCache();
 
 		OlympaChat olympaTchat = Chat.getPlayer(player.getUniqueId());
 
