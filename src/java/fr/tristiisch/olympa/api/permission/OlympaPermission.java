@@ -23,10 +23,17 @@ public enum OlympaPermission {
 	CHAT_BYPASS(OlympaGroup.MODP),
 	CHAT_MUTEDBYPASS(OlympaGroup.MOD),
 
-	BAN_COMMAND(OlympaGroup.MOD),
+	BAN_BAN_COMMAND(OlympaGroup.MOD),
+	BAN_BANIP_COMMAND(OlympaGroup.MODP),
+	BAN_DELBAN_COMMAND(OlympaGroup.DEV),
+	BAN_UNBAN_COMMAND(OlympaGroup.MODP),
+	BAN_UNMUTE_COMMAND(OlympaGroup.MOD),
+	BAN_BANHIST_COMMAND(OlympaGroup.MOD),
+	BAN_SEEBANMSG(OlympaGroup.BUILDER),
 	BAN_BYPASS_BAN(OlympaGroup.BUILDER),
 	BAN_BYPASS_MAXTIME(OlympaGroup.DEV),
 	BAN_BYPASS_MINTIME(OlympaGroup.DEV),
+	BAN_DEF(OlympaGroup.MODP),
 
 	CHAT_COLOR(OlympaGroup.MODP);
 

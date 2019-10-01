@@ -23,7 +23,7 @@ public class IpHistory {
 
 	@SuppressWarnings("deprecation")
 	public static void histBan(final CommandSender sender, final String ip) {
-		final List<EmeraldBan> bans = BanMySQL.getAllSanction(ip);
+		final List<OlympaSanction> bans = BanMySQL.getSanctions(ip);
 		final List<EmeraldPlayer> players = MySQL.getPlayersByIp(ip);
 
 		final String playersShow = players.stream().map(EmeraldPlayer::getName).collect(Collectors.joining(", "));
@@ -39,11 +39,11 @@ public class IpHistory {
 		}
 
 		final TextComponent msg = new TextComponent(Utils.color("&6Historique des sanctions de l'ip de &e" + playersShow + "&6:\n"));
-		msg.addExtra(Utils.color("&6Bans: &e" + bans.stream().filter(b -> b.getType() == EmeraldBanType.BAN).count() + " "));
-		msg.addExtra(Utils.color("&6Mute: &e" + bans.stream().filter(b -> b.getType() == EmeraldBanType.MUTE).count() + " "));
-		msg.addExtra(Utils.color("&6Kick: &e" + bans.stream().filter(b -> b.getType() == EmeraldBanType.KICK).count() + "\n"));
+		msg.addExtra(Utils.color("&6Bans: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.BAN).count() + " "));
+		msg.addExtra(Utils.color("&6Mute: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.MUTE).count() + " "));
+		msg.addExtra(Utils.color("&6Kick: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.KICK).count() + "\n"));
 
-		final String sanctions = bans.stream().filter(b -> b.getStatus() == EmeraldBanStatus.ACTIVE).map(b -> "&c" + b.getType().getName()).collect(Collectors.joining("&7, "));
+		final String sanctions = bans.stream().filter(b -> b.getStatus() == OlympaSanctionStatus.ACTIVE).map(b -> "&c" + b.getType().getName()).collect(Collectors.joining("&7, "));
 		msg.addExtra(Utils.color("&6Sanction Active: " + (sanctions.isEmpty() ? "&aAucune" : sanctions) + "\n"));
 
 		msg.addExtra(Utils.color("&6Historique: "));

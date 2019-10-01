@@ -5,39 +5,39 @@ import java.util.List;
 import java.util.UUID;
 
 import fr.tristiisch.olympa.api.utils.Utils;
-import fr.tristiisch.olympa.core.ban.objects.EmeraldBan;
-import fr.tristiisch.olympa.core.ban.objects.EmeraldBanType;
+import fr.tristiisch.olympa.core.ban.objects.OlympaSanction;
+import fr.tristiisch.olympa.core.ban.objects.OlympaSanctionType;
 
 public class MuteUtils {
 
-	static private List<EmeraldBan> mutes = new ArrayList<>();
+	static private List<OlympaSanction> mutes = new ArrayList<>();
 
-	public static void addMute(final EmeraldBan mute) {
+	public static void addMute(final OlympaSanction mute) {
 		mutes.add(mute);
 	}
 
-	public static boolean chechExpireBan(final EmeraldBan mute) {
+	public static boolean chechExpireBan(final OlympaSanction mute) {
 		if (Utils.getCurrentTimeinSeconds() > mute.getExpires()) {
 			removeMute(mute);
-			BanMySQL.expireBan(mute);
+			BanMySQL.expireSanction(mute);
 			return true;
 		}
 		return false;
 	}
 
-	public static List<EmeraldBan> getMute() {
+	public static List<OlympaSanction> getMute() {
 		return mutes;
 	}
 
-	public static EmeraldBan getMute(final UUID uuid) {
+	public static OlympaSanction getMute(final UUID uuid) {
 		return mutes.stream().filter(emeraldMute -> String.valueOf(emeraldMute.getPlayer()).equals(String.valueOf(uuid))).findFirst().orElse(null);
 	}
 
-	public static EmeraldBan getMuteFromMySQL(final UUID uuid) {
-		return BanMySQL.getActiveSanction(uuid, EmeraldBanType.MUTE);
+	public static OlympaSanction getMuteFromMySQL(final UUID uuid) {
+		return BanMySQL.getSanctionActive(uuid, OlympaSanctionType.MUTE);
 	}
 
-	public static void removeMute(final EmeraldBan mute) {
+	public static void removeMute(final OlympaSanction mute) {
 		mutes.remove(mute);
 	}
 

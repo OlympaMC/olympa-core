@@ -66,7 +66,7 @@ public class UnmutePlayer {
 		} else {
 			throw new NullPointerException("The uuid or name must be specified");
 		}
-		EmeraldBan mute;
+		OlympaSanction mute;
 		if(target != null) {
 			mute = MuteUtils.getMute(target.getUniqueId());
 			// Si le joueur n'est pas mute
@@ -75,7 +75,7 @@ public class UnmutePlayer {
 				return;
 			}
 		} else {
-			mute = BanMySQL.getActiveSanction(emeraldTarget.getUniqueId(), EmeraldBanType.MUTE);
+			mute = BanMySQL.getSanctionActive(emeraldTarget.getUniqueId(), OlympaSanctionType.MUTE);
 			// Si le joueur n'est pas mute
 			if(mute == null) {
 				sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.notmuted").replaceAll("%player%", targetname));
@@ -86,8 +86,8 @@ public class UnmutePlayer {
 		final String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
 		MuteUtils.getMute(emeraldTarget.getUniqueId());
-		mute.setStatus(EmeraldBanStatus.CANCEL);
-		if(!BanMySQL.changeCurrentSanction(new EmeraldBanHistory(author, EmeraldBanStatus.CANCEL), mute.getId())) {
+		mute.setStatus(OlympaSanctionStatus.CANCEL);
+		if(!BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.CANCEL), mute.getId())) {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 			return;
 		}

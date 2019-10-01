@@ -2,44 +2,45 @@ package fr.tristiisch.olympa.core.ban;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
 
 public class BanUtils {
 
 	private static Pattern matchunit;
 	private static Pattern matchduration = Pattern.compile("\\b[0-9]+");
-	private static List<List<String>> units = new ArrayList<>();
+	public static List<List<String>> units = new ArrayList<>();
 
 	static {
 
-		final Collection<String> unit = BungeeConfigUtils.getDefaultConfig().getSection("commun.units").getKeys();
-		for (final String Sunit : unit) {
-			units.add(BungeeConfigUtils.getStringList("commun.units." + Sunit));
+		List<String> unit = OlympaPlugin.getInstance().getConfig().getStringList("ban.units");
+		for (String Sunit : unit) {
+			units.add(OlympaPlugin.getInstance().getConfig().getStringList("ban.units." + Sunit));
 		}
 
-		final List<String> units2 = new ArrayList<>();
-		for (final List<String> s2 : units) {
+		List<String> units2 = new ArrayList<>();
+		for (List<String> s2 : units) {
 			units2.add(String.join("|", s2));
 		}
 		matchunit = Pattern.compile("(?i)(" + String.join("|", units2) + ")\\b");
 	}
 
-	public static Matcher matchDuration(final String s) {
+	public static Matcher matchDuration(String s) {
 		return matchduration.matcher(s);
 	}
 
-	public static Matcher matchUnit(final String s) {
+	public static Matcher matchUnit(String s) {
 		return matchunit.matcher(s);
 	}
 
-	public static long toTimeStamp(final int time, final String unit) {
-		for (final List<String> u : units) {
+	public static long toTimeStamp(int time, String unit) {
+		for (List<String> u : units) {
 			if (u.stream().filter(s -> s.equalsIgnoreCase(unit)).findFirst().isPresent()) {
 
-				final Calendar calendar = Calendar.getInstance();
+				Calendar calendar = Calendar.getInstance();
 				switch (u.get(0)) {
 
 				case "year":

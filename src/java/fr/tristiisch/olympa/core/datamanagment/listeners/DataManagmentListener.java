@@ -58,7 +58,6 @@ public class DataManagmentListener implements Listener {
 		olympaPlayer.setIp(player.getAddress().getAddress().getHostAddress());
 		olympaPlayer.setLastConnection(Utils.getCurrentTimeinSeconds());
 
-		OlympaPlayer oldOlympaPlayer = olympaPlayer.clone();
 		OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer);
 		loginevent.setJoinMessage("&7[&a+&7] %prefix%name");
 		Bukkit.getPluginManager().callEvent(loginevent);
@@ -67,9 +66,7 @@ public class DataManagmentListener implements Listener {
 			Bukkit.broadcastMessage(loginevent.getJoinMessage());
 		}
 
-		if (!oldOlympaPlayer.equals(olympaPlayer)) {
-			olympaAccount.saveToRedis(olympaPlayer);
-		}
+		olympaAccount.saveToRedis(olympaPlayer);
 		event.setJoinMessage(null);
 	}
 
@@ -92,9 +89,9 @@ public class DataManagmentListener implements Listener {
 				event.disallow(Result.KICK_OTHER, "§cUne erreur de données est survenu, merci de réessayer.");
 				return;
 			}
+			olympaAccount.saveToRedis(olympaPlayer);
 		}
 		olympaAccount.saveToCache(olympaPlayer);
-		olympaAccount.saveToRedis(olympaPlayer);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)

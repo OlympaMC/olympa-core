@@ -61,9 +61,9 @@ public class UnbanPlayer {
 		}
 		final String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-		final EmeraldBan ban = BanMySQL.getActiveSanction(emeraldTarget.getUniqueId(), EmeraldBanType.BAN);
-		ban.setStatus(EmeraldBanStatus.CANCEL);
-		if(!BanMySQL.changeCurrentSanction(new EmeraldBanHistory(author, EmeraldBanStatus.CANCEL, reason), ban.getId())) {
+		final OlympaSanction ban = BanMySQL.getSanctionActive(emeraldTarget.getUniqueId(), OlympaSanctionType.BAN);
+		ban.setStatus(OlympaSanctionStatus.CANCEL);
+		if(!BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.CANCEL, reason), ban.getId())) {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 			return;
 		}

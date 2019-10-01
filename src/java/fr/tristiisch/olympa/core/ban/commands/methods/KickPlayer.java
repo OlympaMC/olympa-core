@@ -52,7 +52,7 @@ public class KickPlayer {
 			return;
 		}
 
-		final EmeraldBan kick = new EmeraldBan(EmeraldBan.getNextID(), EmeraldBanType.KICK, emeraldTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), 0, EmeraldBanStatus.EXPIRE);
+		final OlympaSanction kick = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.KICK, emeraldTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), 0, OlympaSanctionStatus.EXPIRE);
 		if(!BanMySQL.addSanction(kick)) {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 			return;

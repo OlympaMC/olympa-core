@@ -12,9 +12,9 @@ import fr.tristiisch.emeraldmc.api.commons.datamanagment.redis.AccountProvider;
 import fr.tristiisch.emeraldmc.api.commons.object.EmeraldConsole;
 import fr.tristiisch.emeraldmc.api.commons.object.EmeraldGroup;
 import fr.tristiisch.olympa.core.ban.BanMySQL;
-import fr.tristiisch.olympa.core.ban.objects.EmeraldBan;
-import fr.tristiisch.olympa.core.ban.objects.EmeraldBanHistory;
-import fr.tristiisch.olympa.core.ban.objects.EmeraldBanStatus;
+import fr.tristiisch.olympa.core.ban.objects.OlympaSanction;
+import fr.tristiisch.olympa.core.ban.objects.OlympaSanctionHistory;
+import fr.tristiisch.olympa.core.ban.objects.OlympaSanctionStatus;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -43,16 +43,16 @@ public class DelbanCommand extends BungeeCommand {
 
 		if(Matcher.isInt(args[0])) {
 			final int id = Integer.parseInt(args[0]);
-			final EmeraldBan ban = BanMySQL.getBanByID(id);
+			final OlympaSanction ban = BanMySQL.getSanction(id);
 			if(ban != null) {
-				if(ban.getStatus().isStatus(EmeraldBanStatus.DELETE)) {
+				if(ban.getStatus().isStatus(OlympaSanctionStatus.DELETE)) {
 					final TextComponent msg = BungeeUtils.formatStringToJSON(Prefix.DEFAULT_BAD + "Le ban n°&4" + ban.getId() + " &ca déjà été supprimé.");
 					msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
 					sender.sendMessage(msg);
 					return;
 				}
-				ban.setStatus(EmeraldBanStatus.DELETE);
-				if(BanMySQL.changeCurrentSanction(new EmeraldBanHistory(author, EmeraldBanStatus.DELETE), ban.getId())) {
+				ban.setStatus(OlympaSanctionStatus.DELETE);
+				if(BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.DELETE), ban.getId())) {
 					final TextComponent msg = BungeeUtils.formatStringToJSON(Prefix.DEFAULT_GOOD + "Le ban n°" + ban.getId() + " a été supprimé.");
 					msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
 					for(final ProxiedPlayer player : ProxyServer.getInstance()

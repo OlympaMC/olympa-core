@@ -18,7 +18,7 @@ import fr.tristiisch.olympa.api.utils.Utils;
 
 public class MySQL {
 
-	public static boolean createPlayer(final OlympaPlayer olympaPlayer) {
+	public static boolean createPlayer(OlympaPlayer olympaPlayer) {
 		try {
 			String ps = "INSERT INTO players (uuid, name, ip, `groups`, first_connection, last_connection) VALUES (?, ?, ?, ?, ?, ?);";
 			int i = 1;
@@ -30,7 +30,8 @@ public class MySQL {
 			pstate.setDate(i++, new Date(olympaPlayer.getFirstConnection() * 1000L));
 			pstate.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
 			pstate.executeUpdate();
-		} catch (final SQLException e) {
+			pstate.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -40,14 +41,15 @@ public class MySQL {
 	/**
 	 * Création d'une table
 	 */
-	public static void createTable(final String paramString) {
+	public static void createTable(String paramString) {
 		if (!paramString.contains("CREATE TABLE")) {
 			throw new IllegalArgumentException("\"" + paramString + "\" n'est pas le bon argument pour lire une/des valeur(s).");
 		}
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
+			Statement state = DatabaseManager.getConnection().createStatement();
 			state.executeUpdate(paramString);
-		} catch (final SQLException e) {
+			state.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -55,12 +57,13 @@ public class MySQL {
 	public static Set<String> getAllPlayersNames() {
 		Set<String> names = new HashSet<>();
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
-			final ResultSet resultSet = state.executeQuery("SELECT name FROM players;");
+			Statement state = DatabaseManager.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery("SELECT name FROM players;");
 			while (resultSet.next()) {
 				names.add(resultSet.getString(1));
 			}
-		} catch (final SQLException e) {
+			state.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -71,8 +74,8 @@ public class MySQL {
 	 * Récupère le nom exacte d'un joueur dans la base de données à l'aide de son
 	 * UUID
 	 */
-	public static String getNameFromUUID(final UUID uuid) {
-		final List<Object> list = MySQL.selectTable("SELECT name FROM players WHERE uuid = '" + uuid.toString() + "';", "name");
+	public static String getNameFromUUID(UUID uuid) {
+		List<Object> list = MySQL.selectTable("SELECT name FROM players WHERE uuid = '" + uuid.toString() + "';", "name");
 		if (!list.isEmpty()) {
 			return list.get(0).toString();
 		}
@@ -82,20 +85,21 @@ public class MySQL {
 	/**
 	 * Récupère la prochaine ID d'une table
 	 */
-	public static int getnextID(final String tableName, final String id) {
+	public static int getnextID(String tableName, String id) {
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
-			final ResultSet resultSet = state.executeQuery("SELECT " + id + " FROM " + tableName + " ORDER BY id DESC LIMIT 1;");
+			Statement state = DatabaseManager.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery("SELECT " + id + " FROM " + tableName + " ORDER BY id DESC LIMIT 1;");
 			if (resultSet.next()) {
 				return resultSet.getInt(1) + 1;
 			}
-		} catch (final SQLException e) {
+			state.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return -1;
 	}
 
-	public static OlympaPlayer getOlympaPlayer(final ResultSet resultSet) {
+	public static OlympaPlayer getOlympaPlayer(ResultSet resultSet) {
 		try {
 			return new OlympaPlayerObject(
 					resultSet.getInt("id"),
@@ -105,7 +109,7 @@ public class MySQL {
 					resultSet.getString("ip"),
 					resultSet.getDate("first_connection").getTime() / 1000L,
 					resultSet.getTimestamp("last_connection").getTime() / 1000L);
-		} catch (final SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -115,14 +119,15 @@ public class MySQL {
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son id
 	 */
-	public static OlympaPlayer getPlayer(final int id) {
+	public static OlympaPlayer getPlayer(int id) {
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
-			final ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE id = '" + id + "';");
+			Statement state = DatabaseManager.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE id = '" + id + "';");
 			if (resultSet.next()) {
 				return getOlympaPlayer(resultSet);
 			}
-		} catch (final SQLException e) {
+			state.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -132,14 +137,15 @@ public class MySQL {
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son pseudo
 	 */
-	public static OlympaPlayer getPlayer(final String playerName) {
+	public static OlympaPlayer getPlayer(String playerName) {
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
-			final ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE name = '" + playerName + "';");
+			Statement state = DatabaseManager.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE name = '" + playerName + "';");
 			if (resultSet.next()) {
 				return getOlympaPlayer(resultSet);
 			}
-		} catch (final SQLException e) {
+			state.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
@@ -152,12 +158,13 @@ public class MySQL {
 	 *
 	 * @throws SQLException
 	 */
-	public static OlympaPlayer getPlayer(final UUID playerUUID) throws SQLException {
-		final Statement state = DatabaseManager.getConnection().createStatement();
-		final ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE uuid = '" + playerUUID + "';");
+	public static OlympaPlayer getPlayer(UUID playerUUID) throws SQLException {
+		Statement state = DatabaseManager.getConnection().createStatement();
+		ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE uuid = '" + playerUUID + "';");
 		if (resultSet.next()) {
 			return getOlympaPlayer(resultSet);
 		}
+		state.close();
 		return null;
 	}
 
@@ -165,22 +172,22 @@ public class MySQL {
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son ts3databaseid
 	 */
-	public static OlympaPlayer getPlayerByTS3ID(final int ts3databaseid) {
+	public static OlympaPlayer getPlayerByTS3ID(int ts3databaseid) {
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
-			final ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE ts3databaseid = '" + ts3databaseid + "';");
+			Statement state = DatabaseManager.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE ts3databaseid = '" + ts3databaseid + "';");
 			if (resultSet.next()) {
-
 				return getOlympaPlayer(resultSet);
 			}
-		} catch (final SQLException e) {
+			state.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static String getPlayerExactName(final String playerName) {
-		final List<Object> list = MySQL.selectTable("SELECT name FROM players WHERE 'name' = " + playerName + ";", "name");
+	public static String getPlayerExactName(String playerName) {
+		List<Object> list = MySQL.selectTable("SELECT name FROM players WHERE 'name' = " + playerName + ";", "name");
 		if (list.isEmpty()) {
 			return null;
 		} else {
@@ -188,57 +195,61 @@ public class MySQL {
 		}
 	}
 
-	public static List<OlympaPlayer> getPlayersByIp(final String ip) {
-		final List<OlympaPlayer> olympaPlayers = new ArrayList<>();
+	public static List<OlympaPlayer> getPlayersByIp(String ip) {
+		List<OlympaPlayer> olympaPlayers = new ArrayList<>();
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
-			final ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE ip = '" + ip + "';");
+			Statement state = DatabaseManager.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE ip = '" + ip + "';");
 			while (resultSet.next()) {
 				olympaPlayers.add(getOlympaPlayer(resultSet));
 			}
-		} catch (final SQLException e) {
+			state.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return olympaPlayers;
 	}
 
-	public static List<OlympaPlayer> getPlayersByIpHistory(final String ipHistory) {
-		final List<OlympaPlayer> olympaPlayers = new ArrayList<>();
+	public static List<OlympaPlayer> getPlayersByIpHistory(String ipHistory) {
+		List<OlympaPlayer> olympaPlayers = new ArrayList<>();
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
-			final ResultSet resultSet = state.executeQuery("SELECT * FROM server.players WHERE `ip_history` LIKE '%" + ipHistory + "%';");
+			Statement state = DatabaseManager.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery("SELECT * FROM server.players WHERE `ip_history` LIKE '%" + ipHistory + "%';");
 			while (resultSet.next()) {
 				olympaPlayers.add(getOlympaPlayer(resultSet));
 			}
-		} catch (final SQLException e) {
+			state.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return olympaPlayers;
 	}
 
-	public static List<OlympaPlayer> getPlayersByNameHistory(final String nameHistory) {
-		final List<OlympaPlayer> olympaPlayers = new ArrayList<>();
+	public static List<OlympaPlayer> getPlayersByNameHistory(String nameHistory) {
+		List<OlympaPlayer> olympaPlayers = new ArrayList<>();
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
-			final ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE `name_history` LIKE '%" + nameHistory + "%';");
+			Statement state = DatabaseManager.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE `name_history` LIKE '%" + nameHistory + "%';");
 			while (resultSet.next()) {
 				olympaPlayers.add(getOlympaPlayer(resultSet));
 			}
-		} catch (final SQLException e) {
+			state.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return olympaPlayers;
 	}
 
-	public static Set<OlympaPlayer> getPlayersByRegex(final String regex) {
-		final Set<OlympaPlayer> olympaPlayers = new HashSet<>();
+	public static Set<OlympaPlayer> getPlayersByRegex(String regex) {
+		Set<OlympaPlayer> olympaPlayers = new HashSet<>();
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
-			final ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE `name` REGEXP '" + regex + "';");
+			Statement state = DatabaseManager.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE `name` REGEXP '" + regex + "';");
 			while (resultSet.next()) {
 				olympaPlayers.add(getOlympaPlayer(resultSet));
 			}
-		} catch (final SQLException e) {
+			state.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return olympaPlayers;
@@ -246,14 +257,15 @@ public class MySQL {
 
 	public static Set<OlympaPlayer> getPlayersBySimilarName(String name) {
 		name = Utils.insertChar(name, "%");
-		final Set<OlympaPlayer> olympaPlayers = new HashSet<>();
+		Set<OlympaPlayer> olympaPlayers = new HashSet<>();
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
-			final ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE `name` LIKE '" + name + "';");
+			Statement state = DatabaseManager.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE `name` LIKE '" + name + "';");
 			while (resultSet.next()) {
 				olympaPlayers.add(getOlympaPlayer(resultSet));
 			}
-		} catch (final SQLException e) {
+			state.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return olympaPlayers;
@@ -261,14 +273,15 @@ public class MySQL {
 
 	public static Set<String> getPlayersNamesBySimilarName(String name) {
 		name = Utils.insertChar(name, "%");
-		final Set<String> names = new HashSet<>();
+		Set<String> names = new HashSet<>();
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
-			final ResultSet resultSet = state.executeQuery("SELECT name FROM players WHERE `name` LIKE '" + name + "';");
+			Statement state = DatabaseManager.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery("SELECT name FROM players WHERE `name` LIKE '" + name + "';");
 			while (resultSet.next()) {
 				names.add(resultSet.getString(1));
 			}
-		} catch (final SQLException e) {
+			state.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return names;
@@ -277,8 +290,8 @@ public class MySQL {
 	/**
 	 * Récupère l'uuid d'un joueur dans la base de données à l'aide de son pseudo
 	 */
-	public static UUID getPlayerUniqueId(final String playerName) {
-		final List<Object> list = MySQL.selectTable("SELECT uuid FROM players WHERE 'name' = " + playerName + ";", "uuid");
+	public static UUID getPlayerUniqueId(String playerName) {
+		List<Object> list = MySQL.selectTable("SELECT uuid FROM players WHERE 'name' = " + playerName + ";", "uuid");
 		if (list.isEmpty()) {
 			return null;
 		} else {
@@ -289,24 +302,26 @@ public class MySQL {
 	/**
 	 * @param ts3databaseid ID de la base de donnés teamspeak
 	 */
-	public static UUID getUUIDfromTS3DatabaseID(final int ts3databaseid) {
-		final List<Object> players = MySQL.selectTable("SELECT uuid FROM players WHERE ts3_id = '" + ts3databaseid + ";", "uuid");
+	public static UUID getUUIDfromTS3DatabaseID(int ts3databaseid) {
+		List<Object> players = MySQL.selectTable("SELECT uuid FROM players WHERE ts3_id = '" + ts3databaseid + ";", "uuid");
 		if (!players.isEmpty()) {
 			return (UUID) players.get(0);
 		}
 		return null;
 	}
 
-	public static boolean playerExist(final UUID playerUuid) {
+	public static boolean playerExist(UUID playerUuid) {
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
-			final ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE uuid = '" + playerUuid + "';");
+			Statement state = DatabaseManager.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery("SELECT * FROM players WHERE uuid = '" + playerUuid + "';");
 			if (resultSet.next()) {
+				state.close();
 				return true;
 			} else {
+				state.close();
 				return false;
 			}
-		} catch (final SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
@@ -315,9 +330,9 @@ public class MySQL {
 	/**
 	 * Sauvegarde les infos du olympaPlayer
 	 */
-	public static void savePlayer(final OlympaPlayer olympaPlayer) {
+	public static void savePlayer(OlympaPlayer olympaPlayer) {
 		try {
-			final PreparedStatement pstate = DatabaseManager.getConnection()
+			PreparedStatement pstate = DatabaseManager.getConnection()
 					.prepareStatement("UPDATE players SET name = ?, ip = ?, `groups` = ?, last_connection = ? WHERE uuid = ?;");
 			int i = 1;
 			pstate.setString(i++, olympaPlayer.getName());
@@ -326,7 +341,8 @@ public class MySQL {
 			pstate.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
 			pstate.setString(i++, olympaPlayer.getUniqueId().toString());
 			pstate.executeUpdate();
-		} catch (final SQLException e) {
+			pstate.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -334,60 +350,63 @@ public class MySQL {
 	/**
 	 * Lire une/des valeur(s) dans une table
 	 */
-	public static List<Object> selectTable(final String paramString, final String paramString2) {
+	public static List<Object> selectTable(String paramString, String paramString2) {
 		if (!paramString.contains("SELECT")) {
 			throw new IllegalArgumentException("\"" + paramString + "\" n'est pas le bon argument pour lire une/des valeur(s).");
 		}
-		final List<Object> result = new ArrayList<>();
+		List<Object> result = new ArrayList<>();
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
-			final ResultSet resultSet = state.executeQuery(paramString);
+			Statement state = DatabaseManager.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery(paramString);
 			while (resultSet.next()) {
 				result.add(resultSet.getObject(paramString2));
 			}
-		} catch (final SQLException e) {
+			state.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return result;
 	}
 
 	/**
-	 * public static void updateIp(final String newIp, final OlympaPlayer
-	 * olympaPlayer) { try { final PreparedStatement pstate =
+	 * public static void updateIp(String newIp, OlympaPlayer
+	 * olympaPlayer) { try { PreparedStatement pstate =
 	 * DatabaseManager.getConnection().prepareStatement("UPDATE players SET `ip` =
 	 * ?, `ip_history` = ? WHERE `id` = ?;");
 	 *
 	 * int i = 1; pstate.setString(i++, newIp); pstate.setString(i++,
 	 * String.join(";", olympaPlayer.getIpHistory())); pstate.setInt(i++,
-	 * olympaPlayer.getId()); pstate.executeUpdate(); } catch (final SQLException e)
+	 * olympaPlayer.getId()); pstate.executeUpdate(); } catch (SQLException e)
 	 * { e.printStackTrace(); } olympaPlayer.setIP(newIp); }
 	 **/
 
 	/**
 	 * Update une/des valeur(s) dans une table
 	 */
-	public static void updateTable(final String paramString) {
+	public static void updateTable(String paramString) {
 		if (!paramString.contains("UPDATE")) {
 			throw new IllegalArgumentException("\"" + paramString + "\" n'est pas le bon argument pour lire une/des valeur(s).");
 		}
 		try {
-			final Statement state = DatabaseManager.getConnection().createStatement();
+			Statement state = DatabaseManager.getConnection().createStatement();
 			state.executeUpdate(paramString);
-		} catch (final SQLException e) {
+			state.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static void updateUsername(final String newName, final OlympaPlayer olympaPlayer) {
+	public static void updateUsername(String newName, OlympaPlayer olympaPlayer) {
 		try {
-			final PreparedStatement pstate = DatabaseManager.getConnection().prepareStatement("UPDATE players SET `name` = ?, `name_history` = CONCAT_WS(';', ?, name_history) WHERE `uuid` = ?;");
+			PreparedStatement pstate = DatabaseManager.getConnection().prepareStatement("UPDATE players SET `name` = ?, `name_history` = CONCAT_WS(';', ?, name_history) WHERE `uuid` = ?;");
 
 			int i = 1;
 			pstate.setString(i++, newName);
 			pstate.setString(i++, olympaPlayer.getName());
 			pstate.setString(i++, olympaPlayer.getUniqueId().toString());
 			pstate.executeUpdate();
-		} catch (final SQLException e) {
+			pstate.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		olympaPlayer.setName(newName);

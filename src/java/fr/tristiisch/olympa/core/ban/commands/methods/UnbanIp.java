@@ -34,9 +34,9 @@ public class UnbanIp {
 		}
 		final String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-		final EmeraldBan ban = BanMySQL.getActiveSanction(ip, EmeraldBanType.BANIP);
-		ban.setStatus(EmeraldBanStatus.CANCEL);
-		if(!BanMySQL.changeCurrentSanction(new EmeraldBanHistory(author, EmeraldBanStatus.CANCEL, reason), ban.getId())) {
+		final OlympaSanction ban = BanMySQL.getSanctionActive(ip, OlympaSanctionType.BANIP);
+		ban.setStatus(OlympaSanctionStatus.CANCEL);
+		if(!BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.CANCEL, reason), ban.getId())) {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 			return;
 		}

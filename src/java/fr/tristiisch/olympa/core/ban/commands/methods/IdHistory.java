@@ -18,7 +18,7 @@ public class IdHistory {
 
 	@SuppressWarnings("deprecation")
 	public static void histban(final CommandSender sender, final int id) {
-		final EmeraldBan ban = BanMySQL.getBanByID(id);
+		final OlympaSanction ban = BanMySQL.getSanction(id);
 		if(ban == null) {
 			sender.sendMessage(Utils.color(Prefix.DEFAULT_BAD + "L'id de ban n°&4" + id + "&c n'existe pas."));
 			return;
@@ -35,7 +35,7 @@ public class IdHistory {
 		if(i > 0) {
 			final List<TextComponent> msglist = new ArrayList<>();
 
-			for(final EmeraldBanHistory banhist : ban.getHistorys()) {
+			for(final OlympaSanctionHistory banhist : ban.getHistorys()) {
 				final TextComponent msg3 = new TextComponent(banhist.getStatus().getColor() + banhist.getAuthorName());
 
 				final BaseComponent[] showMsg = new ComponentBuilder(Utils.color("&6Auteur: &e" + banhist.getAuthorName() + "\n"))

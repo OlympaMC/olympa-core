@@ -8,15 +8,19 @@ import fr.tristiisch.olympa.api.utils.Utils;
 public enum OlympaGroup {
 
 	FONDA(1, 100, OlympaServer.ALL, "Fondateur", "&4%rank ", ":&c"),
-	ADMIN(2, 90, OlympaServer.ALL, "Admin", "&4%rank ", ":&r"),
-	ASSISTANT(3, 80, OlympaServer.ALL, "Assistant", "&a%rank ", ":&r"),
-	DEV(4, 60, OlympaServer.ALL, "Développeur", "&b%rank ", ":&r"),
-	MODP(5, 55, OlympaServer.ALL, "Modérateur+", "&6%rank ", ":&r"),
-	MOD(6, 50, OlympaServer.ALL, "Modérateur", "&6%rank ", ":&r"),
-	BUILDER(7, 40, OlympaServer.ALL, "Builder", "&b%rank ", ":&r"),
-	FRIEND(8, 30, OlympaServer.ALL, "Ami", "&a%rank ", ":&r"),
+	CO_FONDA(2, 95, OlympaServer.ALL, "Co-Fondateur", "&4%rank ", ":&c"),
+	ADMIN(3, 90, OlympaServer.ALL, "Admin", "&4%rank ", ":&r"),
+	DEV(4, 80, OlympaServer.ALL, "Développeur", "&b%rank ", ":&r"),
+	MODP(5, 75, OlympaServer.ALL, "Modérateur+", "&6%rank ", ":&r"),
+	MOD(6, 70, OlympaServer.ALL, "Modérateur", "&6%rank ", ":&r"),
+	ASSISTANT(7, 60, OlympaServer.ALL, "Assistant", "&a%rank ", ":&r"),
+	ANIMATEUR(8, 55, OlympaServer.ALL, "Animateur", "&a%rank ", ":&r"),
+	BUILDER(8, 50, OlympaServer.ALL, "Builder", "&b%rank ", ":&r"),
+	FRIEND(9, 40, OlympaServer.ALL, "Ami", "&a%rank ", ":&r"),
+	YOUTUBER(10, 35, OlympaServer.ALL, "Youtuber", "&e%rank ", ":&r"),
+	MINI_YOUTUBER(11, 30, OlympaServer.ALL, "Mini-Youtuber", "&e%rank ", ":&r"),
 
-	MAFIEUX(9, 30, OlympaServer.GTA, "Mafieux", "&d%rank ", ":&r"),
+	MAFIEUX(12, 10, OlympaServer.GTA, "Mafieux", "&d%rank ", ":&r"),
 
 	PLAYER(20, 0, OlympaServer.ALL, "Joueur", "&7", ":");
 

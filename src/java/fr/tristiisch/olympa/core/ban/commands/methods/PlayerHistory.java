@@ -58,7 +58,7 @@ public class PlayerHistory {
 			}
 		}
 
-		final List<EmeraldBan> bans = BanMySQL.getAllSanction(emeraldTarget.getUniqueId());
+		final List<OlympaSanction> bans = BanMySQL.getSanctions(emeraldTarget.getUniqueId());
 
 		if(bans == null) {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
@@ -71,11 +71,11 @@ public class PlayerHistory {
 		}
 
 		final TextComponent msg = new TextComponent(Utils.color("&6Historique des sanctions de " + emeraldTarget.getGroup().getPrefix() + emeraldTarget.getName() + "&6:\n"));
-		msg.addExtra(Utils.color("&6Bans: &e" + bans.stream().filter(b -> b.getType() == EmeraldBanType.BAN).count() + " "));
-		msg.addExtra(Utils.color("&6Mute: &e" + bans.stream().filter(b -> b.getType() == EmeraldBanType.MUTE).count() + " "));
-		msg.addExtra(Utils.color("&6Kick: &e" + bans.stream().filter(b -> b.getType() == EmeraldBanType.KICK).count() + "\n"));
+		msg.addExtra(Utils.color("&6Bans: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.BAN).count() + " "));
+		msg.addExtra(Utils.color("&6Mute: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.MUTE).count() + " "));
+		msg.addExtra(Utils.color("&6Kick: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.KICK).count() + "\n"));
 
-		final String sanctions = bans.stream().filter(b -> b.getStatus() == EmeraldBanStatus.ACTIVE).map(b -> "&c" + b.getType().getName()).collect(Collectors.joining("&7, "));
+		final String sanctions = bans.stream().filter(b -> b.getStatus() == OlympaSanctionStatus.ACTIVE).map(b -> "&c" + b.getType().getName()).collect(Collectors.joining("&7, "));
 		msg.addExtra(Utils.color("&6Sanction Active: " + (sanctions.isEmpty() ? "&aAucune" : sanctions) + "\n"));
 
 		msg.addExtra(Utils.color("&6Historique: "));

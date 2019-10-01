@@ -7,6 +7,8 @@ import org.bukkit.plugin.PluginManager;
 
 import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
 import fr.tristiisch.olympa.api.task.TaskManager;
+import fr.tristiisch.olympa.core.ban.commands.BanCommand;
+import fr.tristiisch.olympa.core.ban.listeners.SanctionListener;
 import fr.tristiisch.olympa.core.chat.ChatCommand;
 import fr.tristiisch.olympa.core.chat.ChatListener;
 import fr.tristiisch.olympa.core.datamanagment.listeners.DataManagmentListener;
@@ -45,6 +47,7 @@ public class OlympaCore extends OlympaPlugin {
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();
 		new ReportCommand(this).register();
+		new BanCommand(this).register();
 
 		final PluginManager pluginManager = this.getServer().getPluginManager();
 		pluginManager.registerEvents(new DataManagmentListener(), this);
@@ -54,6 +57,7 @@ public class OlympaCore extends OlympaPlugin {
 		pluginManager.registerEvents(new GuiListener(), this);
 		pluginManager.registerEvents(new TestListener(), this);
 		pluginManager.registerEvents(new ReportListener(), this);
+		pluginManager.registerEvents(new SanctionListener(), this);
 
 		this.sendMessage("§2" + this.getDescription().getName() + "§a by Tristiisch (" + this.getDescription().getVersion() + ") is activated.");
 		// Thread.getAllStackTraces().keySet().forEach((t) ->

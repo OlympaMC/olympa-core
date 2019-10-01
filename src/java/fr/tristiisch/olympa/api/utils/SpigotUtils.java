@@ -1,8 +1,10 @@
 package fr.tristiisch.olympa.api.utils;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -13,6 +15,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import fr.tristiisch.olympa.api.objects.OlympaPlayer;
+import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountProvider;
 
 public class SpigotUtils {
 	public static Location addYToLocation(final Location location, final float y) {
@@ -33,6 +38,10 @@ public class SpigotUtils {
 
 	public static String color(final String s) {
 		return s != null ? ChatColor.translateAlternateColorCodes('&', s) : "";
+	}
+
+	public static String connectScreen(final String s) {
+		return color("\n&e&m-------------------------------------------\n\n&e[&6Olympa&e]\n\n" + s + "\n\n&e&m-------------------------------------------");
 	}
 
 	public static List<Location> getBlockAround(final Location location, final int raduis) {
@@ -84,6 +93,22 @@ public class SpigotUtils {
 		return 14;
 	}
 
+	public static String getName(UUID playerUniqueId) {
+		Player player = Bukkit.getPlayer(playerUniqueId);
+		if (player != null) {
+			return player.getName();
+		}
+		try {
+			OlympaPlayer olympaPlayer = new OlympaAccountProvider(playerUniqueId).get();
+			if (olympaPlayer != null) {
+				return olympaPlayer.getName();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
 	public static Player getNearestPlayer(final Player checkNear) {
 		Player nearest = null;
 		for (final Player p : checkNear.getWorld().getPlayers()) {
@@ -128,18 +153,18 @@ public class SpigotUtils {
 		return false;
 	}
 
-	public static boolean isOnGround(final Player player) {
-		Location location = player.getLocation();
-		location = new Location(location.getWorld(), location.getBlockX(), location.getBlockY() - 1, location.getBlockZ());
-		return location.getBlock().getType() == Material.AIR;
-	}
-
 	/*
 	 * public static EmeraldPlayer getPlayer(final Player player) { final
 	 * EmeraldPlayer emeraldPlayer = EmeraldPlayers.getPlayer(player.getUniqueId());
 	 * if(emeraldPlayer != null) { return emeraldPlayer; } return
 	 * MySQL.getPlayer(player.getUniqueId()); }
 	 */
+
+	public static boolean isOnGround(final Player player) {
+		Location location = player.getLocation();
+		location = new Location(location.getWorld(), location.getBlockX(), location.getBlockY() - 1, location.getBlockZ());
+		return location.getBlock().getType() == Material.AIR;
+	}
 
 	public static boolean isSameLocation(final Location location1, final Location location2) {
 		return location1.getBlockX() == location2.getBlockX() && location1.getBlockY() == location2.getBlockY() && location1.getBlockZ() == location2.getBlockZ();

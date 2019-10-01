@@ -49,7 +49,7 @@ public class MutePlayer {
 		}
 
 		// Si le joueur n'est pas mute
-		final EmeraldBan alreadymute = MuteUtils.getMute(emeraldTarget.getUniqueId());
+		final OlympaSanction alreadymute = MuteUtils.getMute(emeraldTarget.getUniqueId());
 		if(alreadymute != null && !MuteUtils.chechExpireBan(alreadymute)) {
 			// Sinon annuler le ban
 			final TextComponent msg = BungeeUtils.formatStringToJSON(BungeeConfigUtils.getString("bungee.ban.messages.alreadymute").replaceAll("%player%", emeraldTarget.getName()));
@@ -86,7 +86,7 @@ public class MutePlayer {
 				}
 
 				final String Stimestamp = Utils.timestampToDuration(timestamp);
-				final EmeraldBan mute = new EmeraldBan(EmeraldBan.getNextID(), EmeraldBanType.MUTE, emeraldTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), timestamp);
+				final OlympaSanction mute = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.MUTE, emeraldTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), timestamp);
 				if(!BanMySQL.addSanction(mute)) {
 					sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 					return;
@@ -122,7 +122,7 @@ public class MutePlayer {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.usagemute"));
 			final String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-			final EmeraldBan mute = new EmeraldBan(EmeraldBan.getNextID(), EmeraldBanType.MUTE, emeraldTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), 0);
+			final OlympaSanction mute = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.MUTE, emeraldTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), 0);
 			if(!BanMySQL.addSanction(mute)) {
 				sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 				return;
