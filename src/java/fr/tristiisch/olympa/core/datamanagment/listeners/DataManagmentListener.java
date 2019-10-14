@@ -25,7 +25,7 @@ import fr.tristiisch.olympa.api.utils.Utils;
 public class DataManagmentListener implements Listener {
 
 	static {
-		TaskManager task = OlympaCore.getTask();
+		TaskManager task = OlympaCore.getInstance().getTask();
 		task.runTaskAsynchronously(() -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				AccountProvider olympaAccountObject = new AccountProvider(player.getUniqueId());

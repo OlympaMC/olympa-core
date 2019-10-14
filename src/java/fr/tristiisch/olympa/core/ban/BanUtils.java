@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
+import fr.tristiisch.olympa.OlympaCore;
 
 public class BanUtils {
 
@@ -16,9 +16,9 @@ public class BanUtils {
 
 	static {
 
-		List<String> unit = OlympaPlugin.getInstance().getConfig().getStringList("ban.units");
+		List<String> unit = OlympaCore.getInstance().getConfig().getStringList("ban.units");
 		for (String Sunit : unit) {
-			units.add(OlympaPlugin.getInstance().getConfig().getStringList("ban.units." + Sunit));
+			units.add(OlympaCore.getInstance().getConfig().getStringList("ban.units." + Sunit));
 		}
 
 		List<String> units2 = new ArrayList<>();

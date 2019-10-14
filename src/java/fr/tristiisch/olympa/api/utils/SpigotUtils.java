@@ -11,6 +11,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -20,6 +22,7 @@ import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.provider.AccountProvider;
 
 public class SpigotUtils {
+
 	public static Location addYToLocation(final Location location, final float y) {
 		return new Location(location.getWorld(), location.getX(), location.getY() + 1, location.getZ(), location.getYaw(), location.getPitch());
 	}
@@ -44,6 +47,36 @@ public class SpigotUtils {
 		return color("\n&e&m-------------------------------------------\n\n&e[&6Olympa&e]\n\n" + s + "\n\n&e&m-------------------------------------------");
 	}
 
+	public static String convertLocationToString(final Location loc) {
+		final String world = loc.getWorld().getName();
+		final double x = loc.getX();
+		final double y = loc.getY();
+		final double z = loc.getZ();
+		if ((int) loc.getPitch() != 0) {
+			final int pitch = (int) loc.getPitch();
+			final int yaw = (int) loc.getYaw();
+			return world + " " + x + " " + y + " " + z + " " + pitch + " " + yaw;
+		}
+		return world + " " + x + " " + y + " " + z;
+	}
+
+	public static Location convertStringToLocation(final String loc) {
+		if (loc != null) {
+			final String[] coords = loc.split(" ");
+			final World w = Bukkit.getWorld(coords[0]);
+			final double x = Double.parseDouble(coords[1]);
+			final double y = Double.parseDouble(coords[2]);
+			final double z = Double.parseDouble(coords[3]);
+			if (coords.length == 6) {
+				final float pitch = Float.parseFloat(coords[4]);
+				final float yaw = Float.parseFloat(coords[5]);
+				return new Location(w, x, y, z, pitch, yaw);
+			}
+			return new Location(w, x, y, z);
+		}
+		return null;
+	}
+
 	public static List<Location> getBlockAround(final Location location, final int raduis) {
 		final List<Location> locations = new ArrayList<>();
 		for (int x = raduis; x >= -raduis; x--) {
@@ -54,6 +87,16 @@ public class SpigotUtils {
 			}
 		}
 		return locations;
+	}
+
+	public static Cuboid getCuboid(ConfigurationSection section, String key) {
+		if (section != null) {
+			Location loc1 = convertStringToLocation(section.getString(key + ".pos1"));
+			Location loc2 = convertStringToLocation(section.getString(key + ".pos2"));
+			Cuboid cuboid = new Cuboid(loc1, loc2);
+			return cuboid;
+		}
+		return null;
 	}
 
 	public static Location getFirstBlockUnderPlayer(final Player player) {
@@ -151,6 +194,10 @@ public class SpigotUtils {
 		}
 
 		return false;
+	}
+
+	public static boolean isIn(final Location loc, final Location playerLoc) {
+		return playerLoc.getWorld() == loc.getWorld() && loc.getBlockX() == playerLoc.getBlockX() && loc.getBlockY() == playerLoc.getBlockY() && loc.getBlockZ() == playerLoc.getBlockZ();
 	}
 
 	/*

@@ -15,10 +15,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import fr.tristiisch.olympa.OlympaCore;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.objects.OlympaServerSettings;
 import fr.tristiisch.olympa.api.permission.OlympaPermission;
-import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
 import fr.tristiisch.olympa.api.provider.AccountProvider;
 import fr.tristiisch.olympa.api.utils.Prefix;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
@@ -41,7 +41,7 @@ public class ChatListener implements Listener {
 	public ChatListener() {
 
 		// Récupère la config et convertie String => Regex
-		List<String> swear_list = OlympaPlugin.getInstance().getConfig().getStringList("chat.insult");
+		List<String> swear_list = OlympaCore.getInstance().getConfig().getStringList("chat.insult");
 		for (String swear : swear_list) {
 			String swears = "";
 			String b = "\\b";
@@ -108,7 +108,7 @@ public class ChatListener implements Listener {
 		Matcher matcher = this.matchLink.matcher(msgNFD);
 		if (matcher.find()) {
 			String link = matcher.group();
-			Set<String> linkWhitelist = new HashSet<>(OlympaPlugin.getInstance().getConfig().getStringList("chat.linkwhitelist"));
+			Set<String> linkWhitelist = new HashSet<>(OlympaCore.getInstance().getConfig().getStringList("chat.linkwhitelist"));
 			if (!linkWhitelist.stream().filter(l -> link.contains(l)).findFirst().isPresent()) {
 				event.setCancelled(true);
 				player.sendMessage(SpigotUtils.color(Prefix.BAD + "Les liens sont interdits."));

@@ -9,10 +9,10 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import fr.tristiisch.olympa.OlympaCore;
 import fr.tristiisch.olympa.api.customevents.GuiClickEvent;
 import fr.tristiisch.olympa.api.gui.GuiHandler;
 import fr.tristiisch.olympa.api.gui.OlympaGuiBuild;
-import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
 
 public class GuiListener implements Listener {
 
@@ -28,7 +28,7 @@ public class GuiListener implements Listener {
 			return;
 		}
 
-		OlympaPlugin.getInstance().getServer().getPluginManager().callEvent(new GuiClickEvent(player, event, gui));
+		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new GuiClickEvent(player, event, gui));
 
 		if (!gui.canClick()) {
 			event.setCancelled(true);

@@ -10,13 +10,13 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 public class TaskManager {
-	public static BukkitScheduler scheduler = Bukkit.getScheduler();
 
 	private Plugin plugin;
 	private HashMap<String, Integer> taskList = new HashMap<>();
 
 	public TaskManager(Plugin plugin) {
 		this.plugin = plugin;
+
 	}
 
 	public void addTask(final String name, final int id) {
@@ -24,6 +24,7 @@ public class TaskManager {
 	}
 
 	public void cancelAllTask() {
+		BukkitScheduler scheduler = Bukkit.getScheduler();
 		for (final int taskId : this.taskList.values()) {
 			scheduler.cancelTask(taskId);
 		}
@@ -31,14 +32,14 @@ public class TaskManager {
 	}
 
 	public void cancelTaskById(final int id) {
-		scheduler.cancelTask(id);
+		Bukkit.getScheduler().cancelTask(id);
 	}
 
 	public boolean cancelTaskByName(final String taskName) {
 		if (this.taskExist(taskName)) {
 			final int taskId = this.getTaskId(taskName);
 			this.taskList.remove(taskName);
-			scheduler.cancelTask(taskId);
+			Bukkit.getScheduler().cancelTask(taskId);
 			return true;
 		}
 		return false;
@@ -53,7 +54,7 @@ public class TaskManager {
 	public BukkitTask getTask(final int id) {
 		final BukkitTask task = null;
 		if (id > 0) {
-			for (final BukkitTask pendingTask : scheduler.getPendingTasks()) {
+			for (final BukkitTask pendingTask : Bukkit.getScheduler().getPendingTasks()) {
 				if (pendingTask.getTaskId() == id) {
 					return task;
 				}
@@ -94,11 +95,11 @@ public class TaskManager {
 	}
 
 	public BukkitTask runTask(final Runnable runnable) {
-		return scheduler.runTask(this.plugin, runnable);
+		return Bukkit.getScheduler().runTask(this.plugin, runnable);
 	}
 
 	public BukkitTask runTaskAsynchronously(final Runnable runnable) {
-		return scheduler.runTaskAsynchronously(this.plugin, runnable);
+		return Bukkit.getScheduler().runTaskAsynchronously(this.plugin, runnable);
 	}
 
 	public BukkitTask runTaskAsynchronously(String taskName, Runnable runnable) {
@@ -112,7 +113,7 @@ public class TaskManager {
 	}
 
 	public BukkitTask runTaskLater(final Runnable runnable, final int tick) {
-		return scheduler.runTaskLater(this.plugin, runnable, tick);
+		return Bukkit.getScheduler().runTaskLater(this.plugin, runnable, tick);
 	}
 
 	public BukkitTask runTaskLater(final String taskName, final Runnable task, final int duration) {
@@ -120,7 +121,7 @@ public class TaskManager {
 		if (oldTask != null) {
 			this.getTask(oldTask).cancel();
 		}
-		final BukkitTask bukkitTask = scheduler.runTaskLater(this.plugin, task, duration);
+		final BukkitTask bukkitTask = Bukkit.getScheduler().runTaskLater(this.plugin, task, duration);
 		final int id = bukkitTask.getTaskId();
 		this.addTask(taskName, id);
 		this.runTaskLater(() -> {
@@ -133,7 +134,7 @@ public class TaskManager {
 
 	public BukkitTask scheduleSyncRepeatingTask(final String taskName, final Runnable runnable, final long delay, final long refresh) {
 		this.cancelTaskByName(taskName);
-		final BukkitTask task = scheduler.runTaskTimer(this.plugin, runnable, delay, refresh);
+		final BukkitTask task = Bukkit.getScheduler().runTaskTimer(this.plugin, runnable, delay, refresh);
 		this.taskList.put(taskName, task.getTaskId());
 		return task;
 	}

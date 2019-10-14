@@ -32,7 +32,7 @@ public class GuiHandler {
 		event.getClickedInventory().setItem(event.getSlot(), cancelItemBuild.lore("", "&c" + msg, "").build());
 		player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
 
-		OlympaCore.getTask().runTaskLater(player.getUniqueId() + String.valueOf(event.getSlot()), () -> {
+		OlympaCore.getInstance().getTask().runTaskLater(player.getUniqueId() + String.valueOf(event.getSlot()), () -> {
 			if (clickedInventory.equals(player.getOpenInventory().getTopInventory())) {
 				clickedInventory.setItem(event.getSlot(), item);
 			}

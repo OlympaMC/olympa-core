@@ -118,12 +118,12 @@ public class AccountProvider implements OlympaAccount {
 
 	@Override
 	public void saveToDb(OlympaPlayer olympaPlayer) {
-		OlympaCore.getTask().runTaskAsynchronously(() -> MySQL.savePlayer(olympaPlayer));
+		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> MySQL.savePlayer(olympaPlayer));
 	}
 
 	@Override
 	public void saveToRedis(final OlympaPlayer olympaPlayer) {
-		OlympaCore.getTask().runTaskAsynchronously(() -> {
+		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
 				jedis.set(this.getKey(), new Gson().toJson(olympaPlayer));
 			}
@@ -133,7 +133,7 @@ public class AccountProvider implements OlympaAccount {
 
 	@Override
 	public void sendModifications(final OlympaPlayer olympaPlayer) {
-		OlympaCore.getTask().runTaskAsynchronously(() -> {
+		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
 				jedis.publish("OlympaPlayer", new Gson().toJson(olympaPlayer));
 			}
@@ -145,7 +145,7 @@ public class AccountProvider implements OlympaAccount {
 	public void sendModifications(final OlympaPlayer olympaPlayer, Consumer<? super Boolean> done) {
 		this.sendModifications(olympaPlayer);
 		modificationReceive.put(olympaPlayer.getUniqueId(), done);
-		OlympaCore.getTask().runTaskLater("waitModifications" + olympaPlayer.getUniqueId().toString(), () -> {
+		OlympaCore.getInstance().getTask().runTaskLater("waitModifications" + olympaPlayer.getUniqueId().toString(), () -> {
 			Consumer<? super Boolean> callable = modificationReceive.get(this.uuid);
 			callable.accept(false);
 			modificationReceive.remove(this.uuid);
@@ -154,7 +154,7 @@ public class AccountProvider implements OlympaAccount {
 
 	@Override
 	public void sendModificationsReceive() {
-		OlympaCore.getTask().runTaskAsynchronously(() -> {
+		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
 				jedis.publish("OlympaPlayerReceive", this.uuid.toString());
 			}

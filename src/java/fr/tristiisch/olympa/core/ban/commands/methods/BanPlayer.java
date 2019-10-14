@@ -7,12 +7,12 @@ import java.util.regex.Matcher;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import fr.tristiisch.olympa.OlympaCore;
+import fr.tristiisch.olympa.api.config.CustomConfig;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.permission.OlympaPermission;
-import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
 import fr.tristiisch.olympa.api.provider.AccountProvider;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.api.utils.Utils;
@@ -39,7 +39,7 @@ public class BanPlayer {
 		// args[1] = time + unit
 		// args[2] & + = reason
 
-		FileConfiguration config = OlympaPlugin.getInstance().getConfig();
+		CustomConfig config = OlympaCore.getInstance().getConfig();
 		long currentTime = Utils.getCurrentTimeinSeconds();
 		Player player = null;
 		if (sender instanceof Player) {
@@ -64,12 +64,12 @@ public class BanPlayer {
 			try {
 				olympaTarget = AccountProvider.getFromDatabase(targetUUID);
 			} catch (SQLException e) {
-				sender.sendMessage(SpigotUtils.color("&cUne erreur avec la base de donné est survenu."));
+				sender.sendMessage("&cUne erreur avec la base de donné est survenu.");
 				e.printStackTrace();
 				return;
 			}
 			if (olympaTarget == null) {
-				sender.sendMessage(SpigotUtils.color(config.getString("ban.playerneverjoin").replace("%player%", args[0])));
+				sender.sendMessage(config.getString("ban.playerneverjoin").replace("%player%", args[0]));
 				return;
 			}
 		}
@@ -78,7 +78,7 @@ public class BanPlayer {
 		OlympaSanction alreadyban = BanMySQL.getSanctionActive(olympaTarget.getUniqueId(), OlympaSanctionType.BAN);
 		if (alreadyban != null) {
 			// Sinon annuler le ban
-			TextComponent msg = new TextComponent(SpigotUtils.color(config.getString("ban.alreadyban").replace("%player%", olympaTarget.getName())));
+			TextComponent msg = new TextComponent(config.getString("ban.alreadyban").replace("%player%", olympaTarget.getName()));
 			msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, alreadyban.toBaseComplement()));
 			msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + alreadyban.getId()));
 			if (player != null) {
@@ -93,7 +93,7 @@ public class BanPlayer {
 		// Si la command contient un temps et une unité valide
 		if (matcher1.find() && matcher2.find()) {
 			if (args.length <= 2) {
-				sender.sendMessage(SpigotUtils.color(config.getString("ban.usageban")));
+				sender.sendMessage(config.getString("ban.usageban"));
 				return;
 			}
 			// Si la command contient un motif
@@ -104,42 +104,42 @@ public class BanPlayer {
 			long seconds = expire - currentTime;
 
 			if (olympaTarget.hasPermission(OlympaPermission.BAN_BYPASS_BAN)) {
-				sender.sendMessage(SpigotUtils.color(config.getString("ban.cantbanstaffmembers")));
+				sender.sendMessage(config.getString("ban.cantbanstaffmembers"));
 				return;
 			}
 			// 600 = 10 mins
 			if (seconds < 600) {
-				sender.sendMessage(SpigotUtils.color(config.getString("ban.cantbypassmaxbantime")));
+				sender.sendMessage(config.getString("ban.cantbypassmaxbantime"));
 				return;
 			}
 			// 527040 = 1 an en année bisextille
 			if (seconds > 527040) {
-				sender.sendMessage(SpigotUtils.color(config.getString("ban.cantbypassmminbantime")));
+				sender.sendMessage(config.getString("ban.cantbypassmminbantime"));
 				return;
 			}
 			String expireString = Utils.timestampToDuration(expire);
 			OlympaSanction ban = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.BAN, olympaTarget.getUniqueId(), author, reason, currentTime, expire);
 			if (!BanMySQL.addSanction(ban)) {
-				sender.sendMessage(SpigotUtils.color(config.getString("ban.errordb")));
+				sender.sendMessage(config.getString("ban.errordb"));
 				return;
 			}
 			// Si Target est connecté
 			if (target != null) {
 				// Envoyer un message à Target lors de la déconnexion
-				target.kickPlayer(SpigotUtils.connectScreen(SpigotUtils.color(config.getString("ban.tempbandisconnect"))
+				target.kickPlayer(SpigotUtils.connectScreen(config.getString("ban.tempbandisconnect"))
 						.replace("%reason%", ban.getReason())
 						.replace("%time%", expireString)
-						.replace("%id%", String.valueOf(ban.getId()))));
+						.replace("%id%", String.valueOf(ban.getId())));
 
 				// Envoyer un message à tous les joueurs du même serveur spigot
-				Bukkit.broadcastMessage(SpigotUtils.color(config.getString("ban.tempbanannounce"))
+				Bukkit.broadcastMessage(config.getString("ban.tempbanannounce")
 						.replace("%player%", olympaTarget.getName())
 						.replace("%time%", expireString)
 						.replace("%reason%", reason));
 
 			}
 			// Envoye un message à l'auteur (+ staff)
-			TextComponent msg = new TextComponent(SpigotUtils.color(config.getString("ban.tempbanannouncetostaff"))
+			TextComponent msg = new TextComponent(config.getString("ban.tempbanannouncetostaff")
 					.replace("%player%", olympaTarget.getName())
 					.replace("%time%", expireString)
 					.replace("%reason%", reason)
@@ -153,14 +153,14 @@ public class BanPlayer {
 			// Sinon: ban def
 		} else {
 			if (OlympaPermission.BAN_DEF.hasPermission(olympaPlayer)) {
-				sender.sendMessage(SpigotUtils.color(config.getString("ban.usageban")));
+				sender.sendMessage(config.getString("ban.usageban"));
 				return;
 			}
 			String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
 			OlympaSanction ban = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.BAN, olympaTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), 0);
 			if (!BanMySQL.addSanction(ban)) {
-				sender.sendMessage(SpigotUtils.color(config.getString("ban.errordb")));
+				sender.sendMessage(config.getString("ban.errordb"));
 				return;
 			}
 
@@ -170,11 +170,11 @@ public class BanPlayer {
 				target.kickPlayer(SpigotUtils.connectScreen(config.getString("ban.bandisconnect").replace("%reason%", reason).replace("%id%", String.valueOf(ban.getId()))));
 
 				// Envoyer un message à tous les joueurs du même serveur spigot
-				Bukkit.broadcastMessage(SpigotUtils.color(config.getString("ban.banannounce")).replace("%player%", olympaTarget.getName()).replace("%reason%", reason));
+				Bukkit.broadcastMessage(config.getString("ban.banannounce").replace("%player%", olympaTarget.getName()).replace("%reason%", reason));
 
 			}
 			// Envoye un message à l'auteur (+ staff)
-			TextComponent msg = new TextComponent(SpigotUtils.color(config.getString("ban.banannouncetostaff"))
+			TextComponent msg = new TextComponent(config.getString("ban.banannouncetostaff")
 					.replace("%player%", olympaTarget.getName())
 					.replace("%reason%", reason)
 					.replace("%author%", SpigotUtils.getName(author)));

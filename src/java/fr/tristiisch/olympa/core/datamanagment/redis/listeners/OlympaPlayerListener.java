@@ -4,9 +4,9 @@ import org.bukkit.entity.Player;
 
 import com.google.gson.Gson;
 
+import fr.tristiisch.olympa.OlympaCore;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.permission.OlympaAccount;
-import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
 import fr.tristiisch.olympa.api.provider.AccountProvider;
 import fr.tristiisch.olympa.core.groups.AsyncOlympaPlayerChangeGroupEvent;
 import fr.tristiisch.olympa.core.groups.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
@@ -23,7 +23,7 @@ public class OlympaPlayerListener extends JedisPubSub {
 			return;
 		}
 		OlympaAccount olympaAccount = new AccountProvider(olympaPlayer.getUniqueId());
-		OlympaPlugin.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(player, ChangeType.ADD, olympaPlayer, olympaPlayer.getGroup()));
+		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(player, ChangeType.ADD, olympaPlayer, olympaPlayer.getGroup()));
 		olympaAccount.saveToCache(olympaPlayer);
 		olympaAccount.sendModificationsReceive();
 	}

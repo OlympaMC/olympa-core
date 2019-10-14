@@ -67,7 +67,7 @@ public class UnbanCommand extends BanOlympaCommand {
 			sender.sendMessage(config.getString("ban.typeunknown").replaceAll("%type%", args[0]));
 			return true;
 		}
-
+		return true;
 	}
 
 	@Override

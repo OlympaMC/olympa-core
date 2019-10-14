@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 
 import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
-import fr.tristiisch.olympa.api.task.TaskManager;
 import fr.tristiisch.olympa.core.ban.commands.BanCommand;
 import fr.tristiisch.olympa.core.ban.listeners.SanctionListener;
 import fr.tristiisch.olympa.core.chat.ChatCommand;
@@ -23,10 +22,8 @@ import fr.tristiisch.olympa.core.scoreboards.ScoreboardListener;
 
 public class OlympaCore extends OlympaPlugin {
 
-	private static TaskManager task;
-
-	public static TaskManager getTask() {
-		return task;
+	public static OlympaCore getInstance() {
+		return (OlympaCore) instance;
 	}
 
 	@Override
@@ -42,8 +39,6 @@ public class OlympaCore extends OlympaPlugin {
 	public void onEnable() {
 		Set<Thread> threads = Thread.getAllStackTraces().keySet();
 		threads.stream().filter(thread2 -> thread2.getName().startsWith("Craft Scheduler Thread") && thread2.isAlive()).forEach(thread2 -> thread2.interrupt());
-
-		task = new TaskManager(this);
 
 		RedisAccess.init(this.getServer().getName());
 		DatabaseManager.connect();

@@ -58,7 +58,7 @@ public abstract class BanReflectCommand extends ReflectCommand {
 		if (!this.exe.isAsynchronous) {
 			return this.exe.onCommand(sender, this, label, args);
 		} else {
-			OlympaCore.getTask().runTaskAsynchronously(() -> this.exe.onCommand(sender, this, label, args));
+			OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> this.exe.onCommand(sender, this, label, args));
 			return true;
 		}
 	}

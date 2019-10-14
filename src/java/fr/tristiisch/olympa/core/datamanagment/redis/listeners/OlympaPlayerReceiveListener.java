@@ -18,6 +18,6 @@ public class OlympaPlayerReceiveListener extends JedisPubSub {
 		}
 		consumer.accept(true);
 		AccountProvider.modificationReceive.remove(uuid);
-		OlympaCore.getTask().cancelTaskByName("waitModifications" + uuid);
+		OlympaCore.getInstance().getTask().cancelTaskByName("waitModifications" + uuid);
 	}
 }

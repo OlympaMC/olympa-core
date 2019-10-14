@@ -13,12 +13,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import fr.tristiisch.olympa.OlympaCore;
 import fr.tristiisch.olympa.api.command.OlympaCommand;
 import fr.tristiisch.olympa.api.objects.OlympaGroup;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.permission.OlympaAccount;
 import fr.tristiisch.olympa.api.permission.OlympaPermission;
-import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
 import fr.tristiisch.olympa.api.provider.AccountProvider;
 import fr.tristiisch.olympa.api.utils.Matcher;
 import fr.tristiisch.olympa.api.utils.Prefix;
@@ -124,7 +124,7 @@ public class GroupCommand extends OlympaCommand {
 				olympaAccount.sendModifications(olympaTarget, done);
 			} else {
 				olympaTarget.setGroup(newGroup, timestamp);
-				OlympaPlugin.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, ChangeType.ADD, olympaTarget, newGroup));
+				OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, ChangeType.ADD, olympaTarget, newGroup));
 				olympaAccount.saveToRedis(olympaTarget);
 				olympaAccount.saveToDb(olympaTarget);
 				this.sendMessage(target, "&aVous êtes désormais dans le groupe &2%group&a%time.".replaceFirst("%group", newGroup.getName()).replaceFirst("%time", timestampString));

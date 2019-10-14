@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.concurrent.Executors;
 
-import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
+import fr.tristiisch.olympa.OlympaCore;
 
 public class DbConnection {
 
@@ -28,9 +28,9 @@ public class DbConnection {
 			Class.forName("org.mariadb.jdbc.Driver");
 			this.connection = DriverManager.getConnection(this.dbcredentials.toURI(), this.dbcredentials.getUser(), this.dbcredentials.getPassword());
 			this.connection.setNetworkTimeout(Executors.newSingleThreadExecutor(), 28800);
-			OlympaPlugin.getInstance().sendMessage("&aConnexion à la base de donnée établie");
+			OlympaCore.getInstance().sendMessage("&aConnexion à la base de donnée établie");
 		} catch (final SQLException | ClassNotFoundException e) {
-			OlympaPlugin.getInstance().sendMessage("&cConnexion à la base de donnée impossible");
+			OlympaCore.getInstance().sendMessage("&cConnexion à la base de donnée impossible");
 			e.printStackTrace();
 		}
 	}

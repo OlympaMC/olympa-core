@@ -10,15 +10,15 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import fr.tristiisch.olympa.OlympaCore;
 import fr.tristiisch.olympa.api.command.BanOlympaCommand;
+import fr.tristiisch.olympa.api.config.CustomConfig;
 import fr.tristiisch.olympa.api.objects.OlympaConsole;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.permission.OlympaPermission;
-import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
 import fr.tristiisch.olympa.api.utils.Matcher;
 import fr.tristiisch.olympa.api.utils.Utils;
 import fr.tristiisch.olympa.core.ban.BanUtils;
@@ -42,7 +42,7 @@ public class BanCommand extends BanOlympaCommand {
 		} else {
 			author = OlympaConsole.getUniqueId();
 		}
-		FileConfiguration config = OlympaPlugin.getInstance().getConfig();
+		CustomConfig config = OlympaCore.getInstance().getConfig();
 
 		final String arg = args[0];
 

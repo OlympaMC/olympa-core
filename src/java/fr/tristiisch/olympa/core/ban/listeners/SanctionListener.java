@@ -15,7 +15,6 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerLoginEvent;
 
 import fr.tristiisch.olympa.OlympaCore;
-import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.api.utils.Utils;
 import fr.tristiisch.olympa.core.ban.BanMySQL;
@@ -45,7 +44,7 @@ public class SanctionListener implements Listener {
 		if (mute != null) {
 			if (!MuteUtils.chechExpireBan(mute)) {
 				player.sendMessage(
-						OlympaPlugin.getInstance().getConfig().getString("ban.youaremuted").replace("%reason%", mute.getReason()).replace("%expire%", Utils.timestampToDuration(mute.getExpires())));
+						OlympaCore.getInstance().getConfig().getString("ban.youaremuted").replace("%reason%", mute.getReason()).replace("%expire%", Utils.timestampToDuration(mute.getExpires())));
 				event.setCancelled(true);
 				return;
 			}
@@ -54,7 +53,7 @@ public class SanctionListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPlayerLogin(final PlayerLoginEvent event) {
-		OlympaCore.getTask().runTaskAsynchronously(() -> {
+		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> {
 			final Player player = event.getPlayer();
 			OlympaSanction mute = MuteUtils.getMute(player.getUniqueId());
 			if (mute == null) {
@@ -84,11 +83,11 @@ public class SanctionListener implements Listener {
 		}
 
 		if (ban.isPermanent()) {
-			event.disallow(Result.KICK_BANNED, SpigotUtils.connectScreen(OlympaPlugin.getInstance().getConfig().getString("ban.bandisconnect")
+			event.disallow(Result.KICK_BANNED, SpigotUtils.connectScreen(OlympaCore.getInstance().getConfig().getString("ban.bandisconnect")
 					.replaceAll("%reason%", ban.getReason())
 					.replaceAll("%id%", String.valueOf(ban.getId()))));
 		} else {
-			event.disallow(Result.KICK_BANNED, SpigotUtils.connectScreen(OlympaPlugin.getInstance().getConfig().getString("ban.tempbandisconnect")
+			event.disallow(Result.KICK_BANNED, SpigotUtils.connectScreen(OlympaCore.getInstance().getConfig().getString("ban.tempbandisconnect")
 					.replaceAll("%reason%", ban.getReason())
 					.replaceAll("%time%", Utils.timestampToDuration(ban.getExpires()))
 					.replaceAll("%id%", String.valueOf(ban.getId()))));
