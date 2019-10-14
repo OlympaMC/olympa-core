@@ -6,8 +6,8 @@ import java.util.UUID;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import fr.tristiisch.olympa.OlympaCore;
 import fr.tristiisch.olympa.api.objects.OlympaConsole;
-import fr.tristiisch.olympa.api.task.TaskManager;
 
 public abstract class BanReflectCommand extends ReflectCommand {
 
@@ -58,7 +58,7 @@ public abstract class BanReflectCommand extends ReflectCommand {
 		if (!this.exe.isAsynchronous) {
 			return this.exe.onCommand(sender, this, label, args);
 		} else {
-			TaskManager.runTaskAsynchronously(() -> this.exe.onCommand(sender, this, label, args));
+			OlympaCore.getTask().runTaskAsynchronously(() -> this.exe.onCommand(sender, this, label, args));
 			return true;
 		}
 	}

@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import fr.tristiisch.olympa.api.objects.OlympaGroup;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
-import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountProvider;
+import fr.tristiisch.olympa.api.provider.AccountProvider;
 import net.md_5.bungee.api.chat.BaseComponent;
 
 public enum OlympaPermission {
@@ -48,7 +48,7 @@ public enum OlympaPermission {
 	}
 
 	public void getPlayers(Consumer<? super Set<Player>> success) {
-		Set<Player> players = Bukkit.getOnlinePlayers().stream().filter(player -> this.hasPermission(new OlympaAccountProvider(player.getUniqueId()).getFromCache())).collect(Collectors.toSet());
+		Set<Player> players = Bukkit.getOnlinePlayers().stream().filter(player -> this.hasPermission(AccountProvider.get(player))).collect(Collectors.toSet());
 		if (!players.isEmpty()) {
 			success.accept(players);
 		}
@@ -70,7 +70,7 @@ public enum OlympaPermission {
 	}
 
 	public boolean hasPermission(Player player) {
-		return this.hasPermission(new OlympaAccountProvider(player.getUniqueId()).getFromCache());
+		return this.hasPermission(AccountProvider.get(player));
 	}
 
 	public void sendMessage(BaseComponent baseComponent) {

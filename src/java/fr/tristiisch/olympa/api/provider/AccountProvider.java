@@ -1,4 +1,4 @@
-package fr.tristiisch.olympa.core.datamanagment.redis.access;
+package fr.tristiisch.olympa.api.provider;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -10,15 +10,15 @@ import org.bukkit.entity.Player;
 
 import com.google.gson.Gson;
 
+import fr.tristiisch.olympa.OlympaCore;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.objects.OlympaPlayerObject;
 import fr.tristiisch.olympa.api.permission.OlympaAccount;
-import fr.tristiisch.olympa.api.task.TaskManager;
 import fr.tristiisch.olympa.core.datamanagment.redis.RedisAccess;
 import fr.tristiisch.olympa.core.datamanagment.sql.MySQL;
 import redis.clients.jedis.Jedis;
 
-public class OlympaAccountProvider implements OlympaAccount {
+public class AccountProvider implements OlympaAccount {
 
 	private static String REDIS_KEY = "player:";
 	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
@@ -44,7 +44,7 @@ public class OlympaAccountProvider implements OlympaAccount {
 
 	UUID uuid;
 
-	public OlympaAccountProvider(final UUID uuid) {
+	public AccountProvider(final UUID uuid) {
 		this.uuid = uuid;
 		this.redisAccesss = RedisAccess.INSTANCE;
 	}
@@ -118,12 +118,12 @@ public class OlympaAccountProvider implements OlympaAccount {
 
 	@Override
 	public void saveToDb(OlympaPlayer olympaPlayer) {
-		TaskManager.runTaskAsynchronously(() -> MySQL.savePlayer(olympaPlayer));
+		OlympaCore.getTask().runTaskAsynchronously(() -> MySQL.savePlayer(olympaPlayer));
 	}
 
 	@Override
 	public void saveToRedis(final OlympaPlayer olympaPlayer) {
-		TaskManager.runTaskAsynchronously(() -> {
+		OlympaCore.getTask().runTaskAsynchronously(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
 				jedis.set(this.getKey(), new Gson().toJson(olympaPlayer));
 			}
@@ -133,7 +133,7 @@ public class OlympaAccountProvider implements OlympaAccount {
 
 	@Override
 	public void sendModifications(final OlympaPlayer olympaPlayer) {
-		TaskManager.runTaskAsynchronously(() -> {
+		OlympaCore.getTask().runTaskAsynchronously(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
 				jedis.publish("OlympaPlayer", new Gson().toJson(olympaPlayer));
 			}
@@ -145,7 +145,7 @@ public class OlympaAccountProvider implements OlympaAccount {
 	public void sendModifications(final OlympaPlayer olympaPlayer, Consumer<? super Boolean> done) {
 		this.sendModifications(olympaPlayer);
 		modificationReceive.put(olympaPlayer.getUniqueId(), done);
-		TaskManager.runTaskLater("waitModifications" + olympaPlayer.getUniqueId().toString(), () -> {
+		OlympaCore.getTask().runTaskLater("waitModifications" + olympaPlayer.getUniqueId().toString(), () -> {
 			Consumer<? super Boolean> callable = modificationReceive.get(this.uuid);
 			callable.accept(false);
 			modificationReceive.remove(this.uuid);
@@ -154,7 +154,7 @@ public class OlympaAccountProvider implements OlympaAccount {
 
 	@Override
 	public void sendModificationsReceive() {
-		TaskManager.runTaskAsynchronously(() -> {
+		OlympaCore.getTask().runTaskAsynchronously(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
 				jedis.publish("OlympaPlayerReceive", this.uuid.toString());
 			}

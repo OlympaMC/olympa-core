@@ -13,20 +13,22 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import fr.tristiisch.olympa.OlympaCore;
 import fr.tristiisch.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.permission.OlympaAccount;
+import fr.tristiisch.olympa.api.provider.AccountProvider;
 import fr.tristiisch.olympa.api.task.TaskManager;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.api.utils.Utils;
-import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountProvider;
 
 public class DataManagmentListener implements Listener {
 
 	static {
-		TaskManager.runTaskAsynchronously(() -> {
+		TaskManager task = OlympaCore.getTask();
+		task.runTaskAsynchronously(() -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				OlympaAccountProvider olympaAccountObject = new OlympaAccountProvider(player.getUniqueId());
+				AccountProvider olympaAccountObject = new AccountProvider(player.getUniqueId());
 				OlympaPlayer olympaPlayer;
 				try {
 					olympaPlayer = olympaAccountObject.get();
@@ -35,7 +37,7 @@ public class DataManagmentListener implements Listener {
 					e.printStackTrace();
 					continue;
 				}
-				TaskManager.runTask(() -> {
+				task.runTask(() -> {
 					OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer);
 					Bukkit.getPluginManager().callEvent(loginevent);
 					olympaAccountObject.saveToRedis(olympaPlayer);
@@ -48,7 +50,7 @@ public class DataManagmentListener implements Listener {
 	@EventHandler
 	public void onPlayerLogin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		OlympaAccount olympaAccount = new OlympaAccountProvider(player.getUniqueId());
+		OlympaAccount olympaAccount = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
 
 		if (olympaPlayer == null) {
@@ -74,7 +76,7 @@ public class DataManagmentListener implements Listener {
 	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
 		UUID uuid = event.getUniqueId();
 
-		OlympaAccount olympaAccount = new OlympaAccountProvider(uuid);
+		OlympaAccount olympaAccount = new AccountProvider(uuid);
 		OlympaPlayer olympaPlayer;
 		try {
 			olympaPlayer = olympaAccount.get();
@@ -97,13 +99,13 @@ public class DataManagmentListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerQuitHighest(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		new OlympaAccountProvider(player.getUniqueId()).removeFromCache();
+		new AccountProvider(player.getUniqueId()).removeFromCache();
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerQuitLow(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = new OlympaAccountProvider(player.getUniqueId()).getFromCache();
+		OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromCache();
 		if (olympaPlayer != null) {
 			event.setQuitMessage(SpigotUtils.color("&7[&c-&7] %prefix%name"
 					.replaceAll("%group", olympaPlayer.getGroup().getName())

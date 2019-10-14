@@ -14,8 +14,8 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerLoginEvent;
 
+import fr.tristiisch.olympa.OlympaCore;
 import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
-import fr.tristiisch.olympa.api.task.TaskManager;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.api.utils.Utils;
 import fr.tristiisch.olympa.core.ban.BanMySQL;
@@ -54,7 +54,7 @@ public class SanctionListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPlayerLogin(final PlayerLoginEvent event) {
-		TaskManager.runTaskAsynchronously(() -> {
+		OlympaCore.getTask().runTaskAsynchronously(() -> {
 			final Player player = event.getPlayer();
 			OlympaSanction mute = MuteUtils.getMute(player.getUniqueId());
 			if (mute == null) {

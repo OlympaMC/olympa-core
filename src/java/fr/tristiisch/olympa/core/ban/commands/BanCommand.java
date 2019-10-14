@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -41,6 +42,7 @@ public class BanCommand extends BanOlympaCommand {
 		} else {
 			author = OlympaConsole.getUniqueId();
 		}
+		FileConfiguration config = OlympaPlugin.getInstance().getConfig();
 
 		final String arg = args[0];
 
@@ -52,7 +54,7 @@ public class BanCommand extends BanOlympaCommand {
 			if (Matcher.isIP(arg)) {
 				BanIp.addBanIP(author, sender, arg, args, olympaPlayer);
 			} else {
-				this.sendMessage(OlympaPlugin.getInstance().getConfig().getString("ban.ipinvalid").replace("%ip%", arg));
+				this.sendMessage(config.getString("ban.ipinvalid").replace("%ip%", arg));
 				return true;
 			}
 
@@ -61,12 +63,12 @@ public class BanCommand extends BanOlympaCommand {
 			if (Matcher.isUUID(arg)) {
 				BanPlayer.addBanPlayer(author, sender, null, UUID.fromString(arg), args, olympaPlayer);
 			} else {
-				this.sendMessage(OlympaPlugin.getInstance().getConfig().getString("ban.uuidinvalid").replace("%uuid%", arg));
+				this.sendMessage(config.getString("ban.uuidinvalid").replace("%uuid%", arg));
 				return true;
 			}
 
 		} else {
-			this.sendMessage(OlympaPlugin.getInstance().getConfig().getString("ban.typeunknown").replace("%type%", arg));
+			this.sendMessage(config.getString("ban.typeunknown").replace("%type%", arg));
 			return true;
 		}
 		return true;

@@ -9,10 +9,10 @@ ban:
   usagehistmute: '&cUsage &7» &c/histmute <joueur|uuid|ip>'
   usagehistkick: '&cUsage &7» &c/histkick <joueur|uuid|ip>'
   tempbanannounce: '&2[&cBAN&2] &7%player% a été banni pendant %time% pour %reason%'
-  tempbanannouncetoauthor: '&4%player%&c a été banni pendant &4%time%&c pour &4%reason%&c.'
-  tempbandisconnect: "&cVous avez été banni pour &4%reason%\n\n&cDurée restante: &4%time%\n\n&cID: &4%id%\n\n&2&n&lSachez qu'il est impossible de faire une demande de débannissement."
+  tempbanannouncetostaff: '&4%player%&c a été banni par &4%author%&c pendant &4%time%&c pour &4%reason%&c.'
+  tempbandisconnect: "&cVous avez été banni pour &4%reason%\n\n&cDurée restante: &4%time%\n\n&cId: &4%id%\n\n&2&n&lSachez qu'il est impossible de faire une demande de débannissement."
   banannounce: '&2[&cBAN&2] &7%player% a été banni &npermanent&7 pour %reason%'
-  banannouncetoauthor: '&4%player% &ca été banni &npermanent&c pour &4%reason%&c.'
+  banannouncetostaff: '&4%player% &ca été banni &npermanent&c par &4%author%&c pour &4%reason%&c.'
   bandisconnect: "&cVous avez été banni &npermanent&c pour &4%reason%\n\n&cID: &4%id%"
   alreadyban: '&4%player% &cest déjà banni.'
   muteannounce: '&2[&cBAN&2] &7%player% a été banni &npermanent&7 pour %reason%'

@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.permission.OlympaAccount;
 import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
-import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountProvider;
+import fr.tristiisch.olympa.api.provider.AccountProvider;
 import fr.tristiisch.olympa.core.groups.AsyncOlympaPlayerChangeGroupEvent;
 import fr.tristiisch.olympa.core.groups.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import redis.clients.jedis.JedisPubSub;
@@ -22,7 +22,7 @@ public class OlympaPlayerListener extends JedisPubSub {
 		if (player == null) {
 			return;
 		}
-		OlympaAccount olympaAccount = new OlympaAccountProvider(olympaPlayer.getUniqueId());
+		OlympaAccount olympaAccount = new AccountProvider(olympaPlayer.getUniqueId());
 		OlympaPlugin.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(player, ChangeType.ADD, olympaPlayer, olympaPlayer.getGroup()));
 		olympaAccount.saveToCache(olympaPlayer);
 		olympaAccount.sendModificationsReceive();

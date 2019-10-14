@@ -10,8 +10,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import fr.tristiisch.olympa.OlympaCore;
 import fr.tristiisch.olympa.api.item.OlympaItemBuild;
-import fr.tristiisch.olympa.api.task.TaskManager;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
 
 public class GuiHandler {
@@ -32,7 +32,7 @@ public class GuiHandler {
 		event.getClickedInventory().setItem(event.getSlot(), cancelItemBuild.lore("", "&c" + msg, "").build());
 		player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
 
-		TaskManager.runTaskLater(player.getUniqueId() + String.valueOf(event.getSlot()), () -> {
+		OlympaCore.getTask().runTaskLater(player.getUniqueId() + String.valueOf(event.getSlot()), () -> {
 			if (clickedInventory.equals(player.getOpenInventory().getTopInventory())) {
 				clickedInventory.setItem(event.getSlot(), item);
 			}

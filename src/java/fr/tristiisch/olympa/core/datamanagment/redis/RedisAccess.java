@@ -1,7 +1,7 @@
 package fr.tristiisch.olympa.core.datamanagment.redis;
 
+import fr.tristiisch.olympa.OlympaCore;
 import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
-import fr.tristiisch.olympa.api.task.TaskManager;
 import fr.tristiisch.olympa.core.datamanagment.redis.listeners.OlympaPlayerListener;
 import fr.tristiisch.olympa.core.datamanagment.redis.listeners.OlympaPlayerReceiveListener;
 import fr.tristiisch.olympa.core.datamanagment.redis.listeners.TestListener;
@@ -31,10 +31,10 @@ public class RedisAccess {
 		Jedis jedis = this.connect();
 		if (jedis.isConnected()) {
 
-			TaskManager.runTaskAsynchronously("redis1", () -> jedis.subscribe(new TestListener(), "Test"));
-			TaskManager.runTaskAsynchronously("redis2", () -> this.connect().subscribe(new OlympaPlayerListener(), "OlympaPlayer"));
-			TaskManager.runTaskAsynchronously("redis3", () -> this.connect().subscribe(new OlympaPlayerReceiveListener(), "OlympaPlayerReceive"));
-			TaskManager.runTaskAsynchronously("redis4", () -> this.connect().subscribe(new TestListener(), "Test2"));
+			OlympaCore.getTask().runTaskAsynchronously("redis1", () -> jedis.subscribe(new TestListener(), "Test"));
+			OlympaCore.getTask().runTaskAsynchronously("redis2", () -> this.connect().subscribe(new OlympaPlayerListener(), "OlympaPlayer"));
+			OlympaCore.getTask().runTaskAsynchronously("redis3", () -> this.connect().subscribe(new OlympaPlayerReceiveListener(), "OlympaPlayerReceive"));
+			OlympaCore.getTask().runTaskAsynchronously("redis4", () -> this.connect().subscribe(new TestListener(), "Test2"));
 			OlympaPlugin.getInstance().sendMessage("&aConnexion à Redis établie");
 		} else {
 			OlympaPlugin.getInstance().sendMessage("&cConnexion à Redis impossible");

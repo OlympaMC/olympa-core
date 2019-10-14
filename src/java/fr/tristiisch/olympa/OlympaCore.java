@@ -23,10 +23,15 @@ import fr.tristiisch.olympa.core.scoreboards.ScoreboardListener;
 
 public class OlympaCore extends OlympaPlugin {
 
+	private static TaskManager task;
+
+	public static TaskManager getTask() {
+		return task;
+	}
+
 	@Override
 	public void onDisable() {
 		Bukkit.getServer().getScheduler().cancelTasks(this);
-		TaskManager.cancelAllTask();
 		// ScoreboardPrefix.deleteTeams();
 		RedisAccess.close();
 		DatabaseManager.close();
@@ -38,7 +43,7 @@ public class OlympaCore extends OlympaPlugin {
 		Set<Thread> threads = Thread.getAllStackTraces().keySet();
 		threads.stream().filter(thread2 -> thread2.getName().startsWith("Craft Scheduler Thread") && thread2.isAlive()).forEach(thread2 -> thread2.interrupt());
 
-		new TaskManager(this);
+		task = new TaskManager(this);
 
 		RedisAccess.init(this.getServer().getName());
 		DatabaseManager.connect();
@@ -47,6 +52,7 @@ public class OlympaCore extends OlympaPlugin {
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();
 		new ReportCommand(this).register();
+
 		new BanCommand(this).register();
 
 		final PluginManager pluginManager = this.getServer().getPluginManager();

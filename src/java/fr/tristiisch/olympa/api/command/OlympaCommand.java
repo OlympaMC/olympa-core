@@ -15,9 +15,9 @@ import org.bukkit.plugin.Plugin;
 
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.permission.OlympaPermission;
+import fr.tristiisch.olympa.api.provider.AccountProvider;
 import fr.tristiisch.olympa.api.utils.Prefix;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
-import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountProvider;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public abstract class OlympaCommand implements CommandExecutor, TabExecutor {
@@ -86,7 +86,7 @@ public abstract class OlympaCommand implements CommandExecutor, TabExecutor {
 	}
 
 	public OlympaPlayer getOlympaPlayer() {
-		return new OlympaAccountProvider(this.player.getUniqueId()).getFromCache();
+		return new AccountProvider(this.player.getUniqueId()).getFromCache();
 	}
 
 	public Player getPlayer() {

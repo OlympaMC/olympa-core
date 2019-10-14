@@ -3,22 +3,18 @@ package fr.tristiisch.olympa.core.ban.commands.methods;
 import java.util.Arrays;
 import java.util.UUID;
 
-import fr.tristiisch.emeraldmc.api.bungee.ban.BanMySQL;
-import fr.tristiisch.emeraldmc.api.bungee.ban.objects.EmeraldBan;
-import fr.tristiisch.emeraldmc.api.bungee.ban.objects.EmeraldBanHistory;
-import fr.tristiisch.emeraldmc.api.bungee.ban.objects.EmeraldBanStatus;
-import fr.tristiisch.emeraldmc.api.bungee.ban.objects.EmeraldBanType;
-import fr.tristiisch.emeraldmc.api.bungee.utils.BungeeConfigUtils;
-import fr.tristiisch.emeraldmc.api.bungee.utils.BungeeUtils;
-import fr.tristiisch.emeraldmc.api.commons.datamanagment.redis.AccountProvider;
-import fr.tristiisch.emeraldmc.api.commons.datamanagment.sql.MySQL;
-import fr.tristiisch.emeraldmc.api.commons.object.EmeraldPlayer;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
+import org.bukkit.command.CommandSender;
+
+import fr.tristiisch.olympa.api.provider.AccountProvider;
+import fr.tristiisch.olympa.core.ban.BanMySQL;
+import fr.tristiisch.olympa.core.ban.objects.OlympaSanction;
+import fr.tristiisch.olympa.core.ban.objects.OlympaSanctionHistory;
+import fr.tristiisch.olympa.core.ban.objects.OlympaSanctionStatus;
+import fr.tristiisch.olympa.core.ban.objects.OlympaSanctionType;
+import fr.tristiisch.olympa.core.datamanagment.sql.MySQL;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class UnbanPlayer {
 
@@ -34,28 +30,28 @@ public class UnbanPlayer {
 
 		ProxiedPlayer target = null;
 		EmeraldPlayer emeraldTarget = null;
-		if(targetUUID != null) {
+		if (targetUUID != null) {
 			target = ProxyServer.getInstance().getPlayer(targetUUID);
 
-		} else if(targetname != null) {
+		} else if (targetname != null) {
 			target = ProxyServer.getInstance().getPlayer(targetname);
 
 		} else {
 			throw new NullPointerException("The uuid or name must be specified");
 		}
 
-		if(target != null) {
+		if (target != null) {
 			emeraldTarget = new AccountProvider(target.getUniqueId()).getEmeraldPlayer();
 		} else {
 			emeraldTarget = MySQL.getPlayer(targetUUID);
-			if(emeraldTarget == null) {
+			if (emeraldTarget == null) {
 				sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.playerneverjoin").replaceAll("%player%", args[0]));
 				return;
 			}
 		}
 
 		// Si le joueur n'est pas banni
-		if(!BanMySQL.isBanned(emeraldTarget.getUniqueId())) {
+		if (!BanMySQL.isBanned(emeraldTarget.getUniqueId())) {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.notbanned").replaceAll("%player%", targetname));
 			return;
 		}
@@ -63,7 +59,7 @@ public class UnbanPlayer {
 
 		final OlympaSanction ban = BanMySQL.getSanctionActive(emeraldTarget.getUniqueId(), OlympaSanctionType.BAN);
 		ban.setStatus(OlympaSanctionStatus.CANCEL);
-		if(!BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.CANCEL, reason), ban.getId())) {
+		if (!BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.CANCEL, reason), ban.getId())) {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 			return;
 		}

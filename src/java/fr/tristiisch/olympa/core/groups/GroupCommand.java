@@ -19,11 +19,11 @@ import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.permission.OlympaAccount;
 import fr.tristiisch.olympa.api.permission.OlympaPermission;
 import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
+import fr.tristiisch.olympa.api.provider.AccountProvider;
 import fr.tristiisch.olympa.api.utils.Matcher;
 import fr.tristiisch.olympa.api.utils.Prefix;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.api.utils.Utils;
-import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountProvider;
 import fr.tristiisch.olympa.core.datamanagment.sql.MySQL;
 import fr.tristiisch.olympa.core.groups.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 
@@ -58,10 +58,10 @@ public class GroupCommand extends OlympaCommand {
 					}
 					return true;
 				} else {
-					olympaAccount = new OlympaAccountProvider(olympaTarget.getUniqueId());
+					olympaAccount = new AccountProvider(olympaTarget.getUniqueId());
 				}
 			} else {
-				olympaAccount = new OlympaAccountProvider(target.getUniqueId());
+				olympaAccount = new AccountProvider(target.getUniqueId());
 				olympaTarget = olympaAccount.getFromCache();
 			}
 		} else {

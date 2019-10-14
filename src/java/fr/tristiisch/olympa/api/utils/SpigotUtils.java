@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
-import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountProvider;
+import fr.tristiisch.olympa.api.provider.AccountProvider;
 
 public class SpigotUtils {
 	public static Location addYToLocation(final Location location, final float y) {
@@ -99,7 +99,7 @@ public class SpigotUtils {
 			return player.getName();
 		}
 		try {
-			OlympaPlayer olympaPlayer = new OlympaAccountProvider(playerUniqueId).get();
+			OlympaPlayer olympaPlayer = new AccountProvider(playerUniqueId).get();
 			if (olympaPlayer != null) {
 				return olympaPlayer.getName();
 			}

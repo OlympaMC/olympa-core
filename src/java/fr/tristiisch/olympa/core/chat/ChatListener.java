@@ -19,11 +19,11 @@ import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.objects.OlympaServerSettings;
 import fr.tristiisch.olympa.api.permission.OlympaPermission;
 import fr.tristiisch.olympa.api.plugin.OlympaPlugin;
+import fr.tristiisch.olympa.api.provider.AccountProvider;
 import fr.tristiisch.olympa.api.utils.Prefix;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.api.utils.Utils;
 import fr.tristiisch.olympa.core.chat.Chat.OlympaChat;
-import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountProvider;
 
 public class ChatListener implements Listener {
 
@@ -65,7 +65,7 @@ public class ChatListener implements Listener {
 		Player player = event.getPlayer();
 		OlympaServerSettings serverSettings = OlympaServerSettings.getInstance();
 
-		OlympaPlayer olympaPlayer = new OlympaAccountProvider(player.getUniqueId()).getFromCache();
+		OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromCache();
 
 		OlympaChat olympaTchat = Chat.getPlayer(player.getUniqueId());
 

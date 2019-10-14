@@ -6,7 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import fr.tristiisch.olympa.api.task.TaskManager;
+import fr.tristiisch.olympa.OlympaCore;
 
 public class ReflectCommand extends Command {
 
@@ -50,7 +50,7 @@ public class ReflectCommand extends Command {
 		if (!this.exe.isAsynchronous) {
 			return this.exe.onCommand(sender, this, label, args);
 		} else {
-			TaskManager.runTaskAsynchronously(() -> this.exe.onCommand(sender, this, label, args));
+			OlympaCore.getTask().runTaskAsynchronously(() -> this.exe.onCommand(sender, this, label, args));
 			return true;
 		}
 	}

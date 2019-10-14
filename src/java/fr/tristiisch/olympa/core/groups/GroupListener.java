@@ -14,10 +14,10 @@ import fr.tristiisch.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.tristiisch.olympa.api.objects.OlympaGroup;
 import fr.tristiisch.olympa.api.objects.OlympaPlayer;
 import fr.tristiisch.olympa.api.permission.OlympaPermission;
+import fr.tristiisch.olympa.api.provider.AccountProvider;
 import fr.tristiisch.olympa.api.utils.Prefix;
 import fr.tristiisch.olympa.api.utils.SpigotUtils;
 import fr.tristiisch.olympa.api.utils.Utils;
-import fr.tristiisch.olympa.core.datamanagment.redis.access.OlympaAccountProvider;
 
 public class GroupListener implements Listener {
 
@@ -50,7 +50,7 @@ public class GroupListener implements Listener {
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = new OlympaAccountProvider(player.getUniqueId()).getFromCache();
+		OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromCache();
 		if (olympaPlayer == null) {
 			event.setFormat(SpigotUtils.color("&cERREUR &7") + "%s : %s");
 			return;
