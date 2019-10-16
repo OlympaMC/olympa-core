@@ -1,4 +1,5 @@
 name: OlympaCore
-main: fr.tristiisch.olympa.OlympaCore
+main: fr.olympa.OlympaCore
 author: Tristiisch
+api-version: 1.13
 version: 0.1
