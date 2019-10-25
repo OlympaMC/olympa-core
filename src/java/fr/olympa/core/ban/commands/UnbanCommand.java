@@ -15,9 +15,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.OlympaCore;
-import fr.olympa.OlympaCorePermissions;
 import fr.olympa.api.command.BanOlympaCommand;
 import fr.olympa.api.objects.OlympaConsole;
+import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.ban.commands.methods.UnbanIp;

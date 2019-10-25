@@ -1,4 +1,4 @@
-package fr.olympa.core.report;
+package fr.olympa.core.report.commands;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +11,7 @@ import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.report.gui.ReportGui;
 
 public class ReportCommand extends OlympaCommand {
 
@@ -32,7 +33,7 @@ public class ReportCommand extends OlympaCommand {
 			return true;
 		}
 
-		ReportGui.open(player, target);
+		new ReportGui().open(player, target);
 		return true;
 	}
 

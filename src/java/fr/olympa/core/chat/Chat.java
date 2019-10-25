@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import fr.olympa.OlympaCorePermissions;
+import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.SpigotUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;

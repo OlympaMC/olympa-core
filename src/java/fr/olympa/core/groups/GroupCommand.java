@@ -14,10 +14,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.OlympaCore;
-import fr.olympa.OlympaCorePermissions;
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.objects.OlympaGroup;
 import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Matcher;

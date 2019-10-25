@@ -3,6 +3,8 @@ package fr.olympa;
 import org.bukkit.plugin.PluginManager;
 
 import fr.olympa.api.gui.Inventories;
+import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.plugin.OlympaPlugin;
 import fr.olympa.core.ban.commands.BanCommand;
 import fr.olympa.core.ban.commands.MuteCommand;
@@ -14,9 +16,7 @@ import fr.olympa.core.datamanagment.listeners.DataManagmentListener;
 import fr.olympa.core.datamanagment.redis.RedisAccess;
 import fr.olympa.core.groups.GroupCommand;
 import fr.olympa.core.groups.GroupListener;
-import fr.olympa.core.gui.GuiListener;
-import fr.olympa.core.report.ReportCommand;
-import fr.olympa.core.report.ReportListener;
+import fr.olympa.core.report.commands.ReportCommand;
 import fr.olympa.core.scoreboards.ScoreboardListener;
 
 public class OlympaCore extends OlympaPlugin {
@@ -35,6 +35,7 @@ public class OlympaCore extends OlympaPlugin {
 
 	@Override
 	public void onEnable() {
+		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		this.enable(this);
 
 		RedisAccess.init(this.getServer().getName());
@@ -52,9 +53,7 @@ public class OlympaCore extends OlympaPlugin {
 		pluginManager.registerEvents(new GroupListener(), this);
 		pluginManager.registerEvents(new ChatListener(), this);
 		pluginManager.registerEvents(new ScoreboardListener(), this);
-		pluginManager.registerEvents(new GuiListener(), this);
 		pluginManager.registerEvents(new TestListener(), this);
-		pluginManager.registerEvents(new ReportListener(), this);
 		pluginManager.registerEvents(new SanctionListener(), this);
 		pluginManager.registerEvents(new Inventories(), this);
 

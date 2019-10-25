@@ -10,9 +10,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import fr.olympa.OlympaCorePermissions;
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.objects.OlympaServerSettings;
+import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 
