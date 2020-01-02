@@ -25,9 +25,9 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class UnbanIp {
 
-	public static void unBan(final UUID author, final CommandSender sender, final String ip, final String[] args) {
-		final List<OlympaPlayer> emeraldTargets = MySQL.getPlayersByIp(ip);
-		final String emeraldTargetsName = emeraldTargets.stream().map(OlympaPlayer::getName).collect(Collectors.joining(", "));
+	public static void unBan(UUID author, CommandSender sender, String ip, String[] args) {
+		List<OlympaPlayer> emeraldTargets = MySQL.getPlayersByIp(ip);
+		String emeraldTargetsName = emeraldTargets.stream().map(OlympaPlayer::getName).collect(Collectors.joining(", "));
 
 		CustomConfig config = OlympaCore.getInstance().getConfig();
 		// Si le joueur n'est pas banni
@@ -35,16 +35,16 @@ public class UnbanIp {
 			sender.sendMessage(config.getString("ban.notbanned").replaceAll("%player%", emeraldTargetsName));
 			return;
 		}
-		final String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+		String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-		final OlympaSanction ban = BanMySQL.getSanctionActive(ip, OlympaSanctionType.BANIP);
+		OlympaSanction ban = BanMySQL.getSanctionActive(ip, OlympaSanctionType.BANIP);
 		ban.setStatus(OlympaSanctionStatus.CANCEL);
 		if (!BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.CANCEL, reason), ban.getId())) {
 			sender.sendMessage(config.getString("ban.errordb"));
 			return;
 		}
 
-		final TextComponent msg = new TextComponent(config.getString("ban.unbanannouncetostaff")
+		TextComponent msg = new TextComponent(config.getString("ban.unbanannouncetostaff")
 				.replaceAll("%player%", emeraldTargetsName)
 				.replaceAll("%reason%", reason)
 				.replaceAll("%author%", SpigotUtils.getName(author)));

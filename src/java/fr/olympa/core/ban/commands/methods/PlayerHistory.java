@@ -26,7 +26,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 public class PlayerHistory {
 
 	@SuppressWarnings("deprecation")
-	public static void histBan(final CommandSender sender, final String name, final UUID uuid) {
+	public static void histBan(CommandSender sender, String name, UUID uuid) {
 		ProxiedPlayer target = null;
 		EmeraldPlayer emeraldTarget;
 		if(uuid != null) {
@@ -58,7 +58,7 @@ public class PlayerHistory {
 			}
 		}
 
-		final List<OlympaSanction> bans = BanMySQL.getSanctions(emeraldTarget.getUniqueId());
+		List<OlympaSanction> bans = BanMySQL.getSanctions(emeraldTarget.getUniqueId());
 
 		if(bans == null) {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
@@ -70,24 +70,24 @@ public class PlayerHistory {
 			return;
 		}
 
-		final TextComponent msg = new TextComponent(Utils.color("&6Historique des sanctions de " + emeraldTarget.getGroup().getPrefix() + emeraldTarget.getName() + "&6:\n"));
+		TextComponent msg = new TextComponent(Utils.color("&6Historique des sanctions de " + emeraldTarget.getGroup().getPrefix() + emeraldTarget.getName() + "&6:\n"));
 		msg.addExtra(Utils.color("&6Bans: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.BAN).count() + " "));
 		msg.addExtra(Utils.color("&6Mute: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.MUTE).count() + " "));
 		msg.addExtra(Utils.color("&6Kick: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.KICK).count() + "\n"));
 
-		final String sanctions = bans.stream().filter(b -> b.getStatus() == OlympaSanctionStatus.ACTIVE).map(b -> "&c" + b.getType().getName()).collect(Collectors.joining("&7, "));
+		String sanctions = bans.stream().filter(b -> b.getStatus() == OlympaSanctionStatus.ACTIVE).map(b -> "&c" + b.getType().getName()).collect(Collectors.joining("&7, "));
 		msg.addExtra(Utils.color("&6Sanction Active: " + (sanctions.isEmpty() ? "&aAucune" : sanctions) + "\n"));
 
 		msg.addExtra(Utils.color("&6Historique: "));
 
 		bans.stream().forEach(b -> {
-			final BaseComponent[] comp = new ComponentBuilder(
+			BaseComponent[] comp = new ComponentBuilder(
 				Utils.colorFix(b.getStatus().getColor() + b.getType().getName().toUpperCase() + " " + b.getStatus().getName().toUpperCase() + " " + b.getReason() + "\n"))
 						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, b.toBaseComplement()))
 						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + b.getId()))
 						.create();
 
-			for(final BaseComponent s : comp) {
+			for(BaseComponent s : comp) {
 				msg.addExtra(s);
 			}
 		});

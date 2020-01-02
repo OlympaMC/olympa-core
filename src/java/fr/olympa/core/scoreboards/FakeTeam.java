@@ -312,7 +312,7 @@ public class FakeTeam implements Cloneable {
 	public FakeTeam clone() {
 		try {
 			return (FakeTeam) super.clone();
-		} catch (final CloneNotSupportedException e) {
+		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 			return null;
 		}

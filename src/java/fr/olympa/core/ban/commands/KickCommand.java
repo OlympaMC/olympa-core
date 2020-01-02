@@ -16,7 +16,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 @SuppressWarnings("deprecation")
 public class KickCommand extends BungeeCommand {
 
-	public KickCommand(final Plugin plugin) {
+	public KickCommand(Plugin plugin) {
 		super(plugin, "kick", EmeraldGroup.MODERATEUR, "eject");
 		this.usageString = BungeeConfigUtils.getString("bungee.ban.messages.usagekick");
 		this.minArg = 1;
@@ -24,7 +24,7 @@ public class KickCommand extends BungeeCommand {
 	}
 
 	@Override
-	public void onCommand(final CommandSender sender, final String[] args) {
+	public void onCommand(CommandSender sender, String[] args) {
 		UUID author;
 		if(sender instanceof ProxiedPlayer) {
 			author = this.proxiedPlayer.getUniqueId();

@@ -25,7 +25,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 public class MutePlayer {
 
 	@SuppressWarnings("deprecation")
-	public static void addMute(final UUID author, final CommandSender sender, final String targetname, final UUID targetUUID, final String[] args, final EmeraldPlayer emeraldPlayer) {
+	public static void addMute(UUID author, CommandSender sender, String targetname, UUID targetUUID, String[] args, EmeraldPlayer emeraldPlayer) {
 		ProxiedPlayer target = null;
 		EmeraldPlayer emeraldTarget = null;
 		if(targetUUID != null) {
@@ -49,26 +49,26 @@ public class MutePlayer {
 		}
 
 		// Si le joueur n'est pas mute
-		final OlympaSanction alreadymute = MuteUtils.getMute(emeraldTarget.getUniqueId());
+		OlympaSanction alreadymute = MuteUtils.getMute(emeraldTarget.getUniqueId());
 		if(alreadymute != null && !MuteUtils.chechExpireBan(alreadymute)) {
 			// Sinon annuler le ban
-			final TextComponent msg = BungeeUtils.formatStringToJSON(BungeeConfigUtils.getString("bungee.ban.messages.alreadymute").replaceAll("%player%", emeraldTarget.getName()));
+			TextComponent msg = BungeeUtils.formatStringToJSON(BungeeConfigUtils.getString("bungee.ban.messages.alreadymute").replaceAll("%player%", emeraldTarget.getName()));
 			msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, alreadymute.toBaseComplement()));
 			msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + alreadymute.getId()));
 			sender.sendMessage(msg);
 			return;
 		}
-		final java.util.regex.Matcher matcher1 = BanUtils.matchDuration(args[1]);
-		final java.util.regex.Matcher matcher2 = BanUtils.matchUnit(args[1]);
+		java.util.regex.Matcher matcher1 = BanUtils.matchDuration(args[1]);
+		java.util.regex.Matcher matcher2 = BanUtils.matchUnit(args[1]);
 		// Si la command contient un temps et une unité valide
 		if(matcher1.find() && matcher2.find()) {
 			// Si la command contient un motif
 			if(args.length > 2) {
-				final String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
-				final String time = matcher1.group();
-				final String unit = matcher2.group();
-				final long timestamp = BanUtils.toTimeStamp(Integer.parseInt(time), unit);
-				final long seconds = timestamp - Utils.getCurrentTimeinSeconds();
+				String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+				String time = matcher1.group();
+				String unit = matcher2.group();
+				long timestamp = BanUtils.toTimeStamp(Integer.parseInt(time), unit);
+				long seconds = timestamp - Utils.getCurrentTimeinSeconds();
 
 				if(emeraldPlayer != null && emeraldTarget.getGroup().isStaffMember() && emeraldPlayer.hasPowerLessThan(EmeraldGroup.RESPMODO)) {
 					sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.cantmutestaffmembers"));
@@ -85,8 +85,8 @@ public class MutePlayer {
 					return;
 				}
 
-				final String Stimestamp = Utils.timestampToDuration(timestamp);
-				final OlympaSanction mute = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.MUTE, emeraldTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), timestamp);
+				String Stimestamp = Utils.timestampToDuration(timestamp);
+				OlympaSanction mute = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.MUTE, emeraldTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), timestamp);
 				if(!BanMySQL.addSanction(mute)) {
 					sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 					return;
@@ -95,7 +95,7 @@ public class MutePlayer {
 				// Si Target est connecté
 				if(target != null) {
 					// Envoyer un message à tous les joueurs du même serveur spigot
-					for(final ProxiedPlayer players : target.getServer().getInfo().getPlayers()) {
+					for(ProxiedPlayer players : target.getServer().getInfo().getPlayers()) {
 						players.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.tempmuteannounce")
 								.replaceAll("%player%", emeraldTarget.getName())
 								.replaceAll("%time%", Stimestamp)
@@ -105,7 +105,7 @@ public class MutePlayer {
 
 				}
 				// Envoye un message à l'auteur
-				final TextComponent msg = BungeeUtils.formatStringToJSON(BungeeConfigUtils.getString("bungee.ban.messages.tempmuteannouncetoauthor")
+				TextComponent msg = BungeeUtils.formatStringToJSON(BungeeConfigUtils.getString("bungee.ban.messages.tempmuteannouncetoauthor")
 						.replaceAll("%player%", emeraldTarget.getName())
 						.replaceAll("%time%", Stimestamp)
 						.replaceAll("%reason%", reason)
@@ -120,20 +120,20 @@ public class MutePlayer {
 			// Sinon: mute def
 		} else {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.usagemute"));
-			final String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+			String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-			final OlympaSanction mute = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.MUTE, emeraldTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), 0);
+			OlympaSanction mute = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.MUTE, emeraldTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), 0);
 			if(!BanMySQL.addSanction(mute)) {
 				sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 				return;
 			}
 			if(target != null) {
-				for(final ProxiedPlayer players : target.getServer().getInfo().getPlayers()) {
+				for(ProxiedPlayer players : target.getServer().getInfo().getPlayers()) {
 					players.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.muteannounce").replaceAll("%player%", emeraldTarget.getName()).replaceAll("%reason%", reason));
 				}
 			}
 
-			final TextComponent msg = BungeeUtils
+			TextComponent msg = BungeeUtils
 					.formatStringToJSON(BungeeConfigUtils.getString("bungee.ban.messages.muteannouncetoauthor").replaceAll("%player%", emeraldTarget.getName()).replaceAll("%reason%", reason));
 			msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, mute.toBaseComplement()));
 			msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + mute.getId()));

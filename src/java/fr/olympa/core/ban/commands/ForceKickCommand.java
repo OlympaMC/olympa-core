@@ -13,7 +13,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 public class ForceKickCommand extends BungeeCommand {
 
-	public ForceKickCommand(final Plugin plugin) {
+	public ForceKickCommand(Plugin plugin) {
 		super(plugin, "forcekick", EmeraldGroup.RESPMODO, "forceeject");
 		this.minArg = 1;
 		this.usageString = BungeeConfigUtils.getString("bungee.ban.messages.usagekick");
@@ -21,10 +21,10 @@ public class ForceKickCommand extends BungeeCommand {
 	}
 
 	@Override
-	public void onCommand(final CommandSender sender, final String[] args) {
+	public void onCommand(CommandSender sender, String[] args) {
 
 		if(Matcher.isUsername(args[0])) {
-			final ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[0]);
+			ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[0]);
 			if(target == null) {
 				this.sendMessage(Utils.color(Prefix.DEFAULT_BAD + "Le joueur &4" + args[0] + "&c n'est pas connecté."));
 				return;

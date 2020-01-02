@@ -2,19 +2,19 @@ package fr.olympa.core.datamanagment.redis;
 
 public class RedisCredentials {
 
-	final private String ip;
-	final private String password;
-	final private int port;
-	final private String clientName;
+	private String ip;
+	private String password;
+	private int port;
+	private String clientName;
 
-	public RedisCredentials(final String ip, final String password, final int port) {
+	public RedisCredentials(String ip, String password, int port) {
 		this.ip = ip;
 		this.password = password;
 		this.port = port;
 		this.clientName = "Olympa_Default";
 	}
 
-	public RedisCredentials(final String ip, final String password, final int port, final String clientName) {
+	public RedisCredentials(String ip, String password, int port, String clientName) {
 		this.ip = ip;
 		this.password = password;
 		this.port = port;

@@ -15,7 +15,7 @@ import fr.olympa.core.ban.commands.methods.MutePlayer;
 
 public class MuteCommand extends BanOlympaCommand {
 
-	public MuteCommand(final Plugin plugin) {
+	public MuteCommand(Plugin plugin) {
 		super(plugin, "mute", OlympaPermission.BAN_MUTE_COMMAND, "tempmute");
 		this.setMinArg(2);
 		this.setUsageString("<joueur|uuid|ip> [temps] <motif>");

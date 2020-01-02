@@ -24,7 +24,7 @@ public abstract class BanReflectCommand extends ReflectCommand {
 	}
 
 	@Override
-	public boolean execute(final CommandSender sender, final String label, final String[] args) {
+	public boolean execute(CommandSender sender, String label, String[] args) {
 		this.exe.sender = sender;
 		if (sender instanceof Player) {
 			this.exe.player = (Player) sender;
@@ -66,12 +66,12 @@ public abstract class BanReflectCommand extends ReflectCommand {
 	}
 
 	@Override
-	public void setExecutor(final OlympaCommand exe) {
+	public void setExecutor(OlympaCommand exe) {
 		this.exe = exe;
 	}
 
 	@Override
-	public List<String> tabComplete(final CommandSender sender, final String alias, final String[] args) {
+	public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
 		return this.exe.onTabComplete(sender, this, alias, args);
 	}
 

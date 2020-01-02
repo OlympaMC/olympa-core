@@ -7,12 +7,12 @@ import fr.olympa.core.report.items.ReportReason;
 
 public class OlympaReport {
 
-	final UUID target;
-	final UUID author;
-	final ReportReason reason;
-	final long time = Utils.getCurrentTimeinSeconds();
+	UUID target;
+	UUID author;
+	ReportReason reason;
+	long time = Utils.getCurrentTimeinSeconds();
 
-	final String serverName;
+	String serverName;
 
 	public OlympaReport(UUID target, UUID author, ReportReason reason, String serverName) {
 		this.target = target;

@@ -14,7 +14,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 public class UnmuteCommand extends BungeeCommand {
 
-	public UnmuteCommand(final Plugin plugin) {
+	public UnmuteCommand(Plugin plugin) {
 		super(plugin, "unmute", EmeraldGroup.MODERATEUR, "umute");
 		this.usageString = BungeeConfigUtils.getString("bungee.ban.messages.usageunmute");
 		this.minArg = 2;
@@ -22,7 +22,7 @@ public class UnmuteCommand extends BungeeCommand {
 	}
 
 	@Override
-	public void onCommand(final CommandSender sender, final String[] args) {
+	public void onCommand(CommandSender sender, String[] args) {
 		UUID author;
 		if(sender instanceof ProxiedPlayer) {
 			author = this.proxiedPlayer.getUniqueId();

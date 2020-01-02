@@ -8,7 +8,7 @@ import net.md_5.bungee.api.ProxyServer;
 
 public class MuteIp {
 
-	public static void addMute(final UUID author, final CommandSender sender, final String ip, final String[] args, final EmeraldPlayer emeraldPlayer) {
+	public static void addMute(UUID author, CommandSender sender, String ip, String[] args, EmeraldPlayer emeraldPlayer) {
 
 		ProxyServer.getInstance().getPlayers().stream().filter(player -> player.getAddress().getAddress().getHostAddress().equals(ip)).forEach(player -> {
 			MutePlayer.addMute(author, sender, player.getName(), player.getUniqueId(), args, emeraldPlayer);

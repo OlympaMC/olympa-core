@@ -21,15 +21,15 @@ public class OlympaSanction {
 
 	private int id;
 	private OlympaSanctionType type;
-	private final Object player;
-	private final String reason;
-	private final UUID author;
-	private final long expires;
-	private final long created;
+	private Object player;
+	private String reason;
+	private UUID author;
+	private long expires;
+	private long created;
 	private OlympaSanctionStatus status;
-	private final List<OlympaSanctionHistory> history;
+	private List<OlympaSanctionHistory> history;
 
-	private final boolean permanant;
+	private boolean permanant;
 
 	/**
 	 * @param id ID du ban
@@ -39,7 +39,7 @@ public class OlympaSanction {
 	 * @param created Timestamp de la creation du ban
 	 * @param expires Timestamp du temps de ban, 0 = permanant
 	 */
-	public OlympaSanction(final int id, final OlympaSanctionType type, final Object player, final UUID author, final String reason, final long created, final long expires) {
+	public OlympaSanction(int id, OlympaSanctionType type, Object player, UUID author, String reason, long created, long expires) {
 		this.id = id;
 		this.type = type;
 		this.player = player;
@@ -63,7 +63,7 @@ public class OlympaSanction {
 	 * @param expires Timestamp du temps de ban, 0 = permanant
 	 * @param status Status du ban
 	 */
-	public OlympaSanction(final int id, final OlympaSanctionType type, final Object player, final UUID author, final String reason, final long created, final long expires, final OlympaSanctionStatus status) {
+	public OlympaSanction(int id, OlympaSanctionType type, Object player, UUID author, String reason, long created, long expires, OlympaSanctionStatus status) {
 		this.id = id;
 		this.type = type;
 		this.player = player;
@@ -76,7 +76,7 @@ public class OlympaSanction {
 		this.permanant = this.expires == 0 ? true : false;
 	}
 
-	public void addHistory(final OlympaSanctionHistory history) {
+	public void addHistory(OlympaSanctionHistory history) {
 		this.history.add(history);
 	}
 
@@ -144,19 +144,19 @@ public class OlympaSanction {
 		return this.permanant;
 	}
 
-	public void removeHistory(final OlympaSanctionHistory history) {
+	public void removeHistory(OlympaSanctionHistory history) {
 		this.history.remove(history);
 	}
 
-	public void setId(final int id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
-	public void setStatus(final OlympaSanctionStatus status) {
+	public void setStatus(OlympaSanctionStatus status) {
 		this.status = status;
 	}
 
-	public void setType(final OlympaSanctionType type) {
+	public void setType(OlympaSanctionType type) {
 		this.type = type;
 	}
 

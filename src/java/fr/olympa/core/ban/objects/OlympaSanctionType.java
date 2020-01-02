@@ -13,8 +13,8 @@ public enum OlympaSanctionType {
 		return Arrays.stream(OlympaSanctionType.values()).filter(id -> id.getId() == i).findFirst().orElse(null);
 	}
 
-	final int id;
-	final String s;
+	int id;
+	String s;
 
 	private OlympaSanctionType(int id, String s) {
 		this.id = id;

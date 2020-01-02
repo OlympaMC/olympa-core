@@ -15,16 +15,16 @@ public class AsyncOlympaPlayerChangeGroupEvent extends PlayerEvent {
 		SET;
 	}
 
-	public static final HandlerList handlers = new HandlerList();
+	public static HandlerList handlers = new HandlerList();
 
 	public static HandlerList getHandlerList() {
 		return handlers;
 	}
 
-	final ChangeType olympaGroupChangeType;
+	ChangeType olympaGroupChangeType;
 
-	final private OlympaPlayer olympaPlayer;
-	final private OlympaGroup groupChange;
+	private OlympaPlayer olympaPlayer;
+	private OlympaGroup groupChange;
 
 	public AsyncOlympaPlayerChangeGroupEvent(Player who, ChangeType olympaGroupChangeType, OlympaPlayer olympaPlayer, OlympaGroup groupChange) {
 		super(who);

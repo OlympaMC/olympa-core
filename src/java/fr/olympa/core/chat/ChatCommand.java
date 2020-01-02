@@ -35,12 +35,12 @@ public class ChatCommand extends OlympaCommand {
 	 */
 
 	@Override
-	public boolean onCommand(final CommandSender sender, final Command cmd, final String label, final String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		OlympaServerSettings serverSettings = OlympaServerSettings.getInstance();
 
 		if (args[0].equalsIgnoreCase("slow")) {
 
-			final int timecooldown = 2;
+			int timecooldown = 2;
 			if (serverSettings.isChatSlow()) {
 				this.sendMessage(Prefix.DEFAULT, "L'antispam a été désactivé.");
 				serverSettings.setChatSlow(false);
@@ -51,7 +51,7 @@ public class ChatCommand extends OlympaCommand {
 
 		} else if (args[0].equalsIgnoreCase("clear")) {
 
-			for (final Player allPlayer : Bukkit.getOnlinePlayers()) {
+			for (Player allPlayer : Bukkit.getOnlinePlayers()) {
 				for (int i = 0; i < 100; i++) {
 					allPlayer.sendMessage("");
 				}

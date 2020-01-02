@@ -17,7 +17,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 @SuppressWarnings("deprecation")
 public class BanIpCommand extends BungeeCommand {
 
-	public BanIpCommand(final Plugin plugin) {
+	public BanIpCommand(Plugin plugin) {
 		super(plugin, "banip", EmeraldGroup.MODERATEUR, "tempbanip");
 		this.minArg = 2;
 		this.usageString = BungeeConfigUtils.getString("bungee.ban.messages.usageban");
@@ -25,7 +25,7 @@ public class BanIpCommand extends BungeeCommand {
 	}
 
 	@Override
-	public void onCommand(final CommandSender sender, final String[] args) {
+	public void onCommand(CommandSender sender, String[] args) {
 		UUID author;
 		if(sender instanceof ProxiedPlayer) {
 			author = this.proxiedPlayer.getUniqueId();
@@ -35,7 +35,7 @@ public class BanIpCommand extends BungeeCommand {
 
 		if(Matcher.isUsername(args[0])) {
 
-			final EmeraldPlayer emeraldTarget = MySQL.getPlayer(args[0]);
+			EmeraldPlayer emeraldTarget = MySQL.getPlayer(args[0]);
 			if(emeraldTarget != null) {
 				BanIp.addBanIP(author, sender, emeraldTarget.getIp(), args, this.emeraldPlayer);
 			}
@@ -53,7 +53,7 @@ public class BanIpCommand extends BungeeCommand {
 		} else if(Matcher.isFakeUUID(args[0])) {
 
 			if(Matcher.isUUID(args[0])) {
-				final EmeraldPlayer emeraldTarget = MySQL.getPlayer(UUID.fromString(args[0]));
+				EmeraldPlayer emeraldTarget = MySQL.getPlayer(UUID.fromString(args[0]));
 				if(emeraldTarget != null) {
 					BanIp.addBanIP(author, sender, emeraldTarget.getIp(), args, this.emeraldPlayer);
 				}

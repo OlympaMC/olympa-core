@@ -23,7 +23,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 public class KickPlayer {
 
 	@SuppressWarnings("deprecation")
-	public static void addKick(final UUID author, final CommandSender sender, final String targetname, final UUID targetUUID, final String[] args, final EmeraldPlayer emeraldPlayer) {
+	public static void addKick(UUID author, CommandSender sender, String targetname, UUID targetUUID, String[] args, EmeraldPlayer emeraldPlayer) {
 		ProxiedPlayer target = null;
 		EmeraldPlayer emeraldTarget = null;
 
@@ -45,14 +45,14 @@ public class KickPlayer {
 			return;
 		}
 
-		final String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+		String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
 		if(emeraldPlayer != null && emeraldTarget.getGroup().isStaffMember() && emeraldPlayer.hasPowerLessThan(EmeraldGroup.RESPMODO)) {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.cantkicktaffmembers"));
 			return;
 		}
 
-		final OlympaSanction kick = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.KICK, emeraldTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), 0, OlympaSanctionStatus.EXPIRE);
+		OlympaSanction kick = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.KICK, emeraldTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), 0, OlympaSanctionStatus.EXPIRE);
 		if(!BanMySQL.addSanction(kick)) {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 			return;
@@ -68,7 +68,7 @@ public class KickPlayer {
 		target.disconnect(
 			BungeeUtils.connectScreen(BungeeConfigUtils.getString("bungee.ban.messages.kickdisconnect").replaceAll("%reason%", kick.getReason()).replaceAll("%id%", String.valueOf(kick.getId()))));
 
-		final TextComponent msg = BungeeUtils.formatStringToJSON(BungeeConfigUtils.getString("bungee.ban.messages.kickannouncetoauthor")
+		TextComponent msg = BungeeUtils.formatStringToJSON(BungeeConfigUtils.getString("bungee.ban.messages.kickannouncetoauthor")
 				.replaceAll("%player%", emeraldTarget.getName())
 				.replaceAll("%reason%", reason)
 				.replaceAll("%author%", BungeeUtils.getName(author)));

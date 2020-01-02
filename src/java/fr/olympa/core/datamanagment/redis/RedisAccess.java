@@ -20,11 +20,11 @@ public class RedisAccess {
 		new RedisAccess(new RedisCredentials("127.0.0.1", "Qfr0HgyhGqX9T94BOMNLG3PI7o65JKyh", 6379, clientName));
 	}
 
-	private final RedisCredentials redisCredentials;
+	private RedisCredentials redisCredentials;
 
 	private JedisPool pool;
 
-	public RedisAccess(final RedisCredentials redisCredentials) {
+	public RedisAccess(RedisCredentials redisCredentials) {
 		INSTANCE = this;
 		this.redisCredentials = redisCredentials;
 		this.initJedis();
@@ -49,7 +49,7 @@ public class RedisAccess {
 	}
 
 	public Jedis connect() {
-		final Jedis jedis = this.pool.getResource();
+		Jedis jedis = this.pool.getResource();
 		jedis.auth(this.redisCredentials.getPassword());
 		jedis.clientSetname(this.redisCredentials.getClientName());
 		jedis.select(1);
@@ -62,7 +62,7 @@ public class RedisAccess {
 	}
 
 	public void initJedis() {
-		final ClassLoader previous = Thread.currentThread().getContextClassLoader();
+		ClassLoader previous = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(Jedis.class.getClassLoader());
 		this.pool = new JedisPool(this.redisCredentials.getIp(), this.redisCredentials.getPort());
 		Thread.currentThread().setContextClassLoader(previous);

@@ -14,7 +14,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 public class BanHistoryCommand extends BungeeCommand {
 
-	public BanHistoryCommand(final Plugin plugin) {
+	public BanHistoryCommand(Plugin plugin) {
 		super(plugin, "banhistory", EmeraldGroup.GUIDE, "banhist", "mutehist", "kickhist", "hist", "histban");
 		this.minArg = 1;
 		this.usageString = BungeeConfigUtils.getString("bungee.ban.messages.usagehistban");
@@ -22,7 +22,7 @@ public class BanHistoryCommand extends BungeeCommand {
 	}
 
 	@Override
-	public void onCommand(final CommandSender sender, final String[] args) {
+	public void onCommand(CommandSender sender, String[] args) {
 
 		if(Matcher.isInt(args[0])) {
 			IdHistory.histban(sender, Integer.parseInt(args[0]));

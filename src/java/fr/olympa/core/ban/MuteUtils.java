@@ -12,11 +12,11 @@ public class MuteUtils {
 
 	static private List<OlympaSanction> mutes = new ArrayList<>();
 
-	public static void addMute(final OlympaSanction mute) {
+	public static void addMute(OlympaSanction mute) {
 		mutes.add(mute);
 	}
 
-	public static boolean chechExpireBan(final OlympaSanction mute) {
+	public static boolean chechExpireBan(OlympaSanction mute) {
 		if (Utils.getCurrentTimeinSeconds() > mute.getExpires()) {
 			removeMute(mute);
 			BanMySQL.expireSanction(mute);
@@ -29,19 +29,19 @@ public class MuteUtils {
 		return mutes;
 	}
 
-	public static OlympaSanction getMute(final UUID uuid) {
+	public static OlympaSanction getMute(UUID uuid) {
 		return mutes.stream().filter(emeraldMute -> String.valueOf(emeraldMute.getPlayer()).equals(String.valueOf(uuid))).findFirst().orElse(null);
 	}
 
-	public static OlympaSanction getMuteFromMySQL(final UUID uuid) {
+	public static OlympaSanction getMuteFromMySQL(UUID uuid) {
 		return BanMySQL.getSanctionActive(uuid, OlympaSanctionType.MUTE);
 	}
 
-	public static void removeMute(final OlympaSanction mute) {
+	public static void removeMute(OlympaSanction mute) {
 		mutes.remove(mute);
 	}
 
-	public static void removeMute(final UUID uuid) {
+	public static void removeMute(UUID uuid) {
 		removeMute(getMute(uuid));
 	}
 

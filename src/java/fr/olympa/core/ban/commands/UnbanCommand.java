@@ -25,7 +25,7 @@ import fr.olympa.core.ban.commands.methods.UnbanPlayer;
 
 public class UnbanCommand extends BanOlympaCommand {
 
-	public UnbanCommand(final Plugin plugin) {
+	public UnbanCommand(Plugin plugin) {
 		super(plugin, "unban", OlympaCorePermissions.BAN_UNBAN_COMMAND, "pardon");
 		this.setMinArg(2);
 		this.setUsageString("<joueur|uuid|ip> <motif>");

@@ -23,9 +23,9 @@ public enum ReportReason {
 		return Arrays.stream(ReportReason.values()).filter(itemGui -> itemGui.name().equals(name)).findFirst().orElse(null);
 	}
 
-	final int id;
-	final String reason;
-	final OlympaItemBuild item;
+	int id;
+	String reason;
+	OlympaItemBuild item;
 
 	private ReportReason(int id, String reason, OlympaItemBuild item) {
 		this.id = id;

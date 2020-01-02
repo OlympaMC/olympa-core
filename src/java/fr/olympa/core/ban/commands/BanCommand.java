@@ -27,7 +27,7 @@ import fr.olympa.core.ban.commands.methods.BanPlayer;
 
 public class BanCommand extends BanOlympaCommand {
 
-	public BanCommand(final Plugin plugin) {
+	public BanCommand(Plugin plugin) {
 		super(plugin, "ban", OlympaCorePermissions.BAN_BAN_COMMAND, "tempban");
 		this.setMinArg(2);
 		this.setUsageString("<joueur|uuid|ip> [temps] <motif>");
@@ -44,7 +44,7 @@ public class BanCommand extends BanOlympaCommand {
 		}
 		CustomConfig config = OlympaCore.getInstance().getConfig();
 
-		final String arg = args[0];
+		String arg = args[0];
 
 		if (Matcher.isUsername(arg)) {
 			BanPlayer.addBanPlayer(author, sender, arg, null, args, olympaPlayer);

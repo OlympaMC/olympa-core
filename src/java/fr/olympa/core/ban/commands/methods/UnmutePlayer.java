@@ -24,7 +24,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 public class UnmutePlayer {
 
 	@SuppressWarnings("deprecation")
-	public static void unBan(final UUID author, final CommandSender sender, final UUID targetUUID, final String targetname, final String[] args) {
+	public static void unBan(UUID author, CommandSender sender, UUID targetUUID, String targetname, String[] args) {
 		// /ban <pseudo> <time unit> <reason>
 		// args[0] = target
 		// args[1] = time + unit
@@ -83,7 +83,7 @@ public class UnmutePlayer {
 			}
 		}
 
-		final String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+		String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
 		MuteUtils.getMute(emeraldTarget.getUniqueId());
 		mute.setStatus(OlympaSanctionStatus.CANCEL);
@@ -95,7 +95,7 @@ public class UnmutePlayer {
 		MuteUtils.removeMute(emeraldTarget.getUniqueId());
 
 		// Envoye un message au staff
-		final TextComponent msg = BungeeUtils.formatStringToJSON(BungeeConfigUtils.getString("bungee.ban.messages.unmuteannouncetoauthor")
+		TextComponent msg = BungeeUtils.formatStringToJSON(BungeeConfigUtils.getString("bungee.ban.messages.unmuteannouncetoauthor")
 				.replaceAll("%player%", emeraldTarget.getName())
 				.replaceAll("%reason%", reason)
 				.replaceAll("%author%", BungeeUtils.getName(author)));

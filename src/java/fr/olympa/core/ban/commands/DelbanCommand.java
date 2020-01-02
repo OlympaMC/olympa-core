@@ -25,7 +25,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 @SuppressWarnings("deprecation")
 public class DelbanCommand extends BungeeCommand {
 
-	public DelbanCommand(final Plugin plugin) {
+	public DelbanCommand(Plugin plugin) {
 		super(plugin, "delban", EmeraldGroup.RESPMODO, "bandel", "dban", "delmute", "mutedel", "delmute", "delkick", "kickdel", "dkick");
 		this.minArg = 1;
 		this.usageString = "&cUsage &7» &c/delban [id]";
@@ -33,7 +33,7 @@ public class DelbanCommand extends BungeeCommand {
 	}
 
 	@Override
-	public void onCommand(final CommandSender sender, final String[] args) {
+	public void onCommand(CommandSender sender, String[] args) {
 		UUID author;
 		if(sender instanceof ProxiedPlayer) {
 			author = this.proxiedPlayer.getUniqueId();
@@ -42,20 +42,20 @@ public class DelbanCommand extends BungeeCommand {
 		}
 
 		if(Matcher.isInt(args[0])) {
-			final int id = Integer.parseInt(args[0]);
-			final OlympaSanction ban = BanMySQL.getSanction(id);
+			int id = Integer.parseInt(args[0]);
+			OlympaSanction ban = BanMySQL.getSanction(id);
 			if(ban != null) {
 				if(ban.getStatus().isStatus(OlympaSanctionStatus.DELETE)) {
-					final TextComponent msg = BungeeUtils.formatStringToJSON(Prefix.DEFAULT_BAD + "Le ban n°&4" + ban.getId() + " &ca déjà été supprimé.");
+					TextComponent msg = BungeeUtils.formatStringToJSON(Prefix.DEFAULT_BAD + "Le ban n°&4" + ban.getId() + " &ca déjà été supprimé.");
 					msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
 					sender.sendMessage(msg);
 					return;
 				}
 				ban.setStatus(OlympaSanctionStatus.DELETE);
 				if(BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.DELETE), ban.getId())) {
-					final TextComponent msg = BungeeUtils.formatStringToJSON(Prefix.DEFAULT_GOOD + "Le ban n°" + ban.getId() + " a été supprimé.");
+					TextComponent msg = BungeeUtils.formatStringToJSON(Prefix.DEFAULT_GOOD + "Le ban n°" + ban.getId() + " a été supprimé.");
 					msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
-					for(final ProxiedPlayer player : ProxyServer.getInstance()
+					for(ProxiedPlayer player : ProxyServer.getInstance()
 							.getPlayers()
 							.stream()
 							.filter(p -> new AccountProvider(p.getUniqueId()).getEmeraldPlayer().getGroup().isStaffMember())

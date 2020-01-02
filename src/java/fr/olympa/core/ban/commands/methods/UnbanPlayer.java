@@ -26,7 +26,7 @@ public class UnbanPlayer {
 	 * @param targetname Name of player to ban. case insensitive
 	 */
 	@SuppressWarnings("deprecation")
-	public static void unBan(final UUID author, final CommandSender sender, final UUID targetUUID, final String targetname, final String[] args) {
+	public static void unBan(UUID author, CommandSender sender, UUID targetUUID, String targetname, String[] args) {
 
 		ProxiedPlayer target = null;
 		EmeraldPlayer emeraldTarget = null;
@@ -55,16 +55,16 @@ public class UnbanPlayer {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.notbanned").replaceAll("%player%", targetname));
 			return;
 		}
-		final String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+		String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-		final OlympaSanction ban = BanMySQL.getSanctionActive(emeraldTarget.getUniqueId(), OlympaSanctionType.BAN);
+		OlympaSanction ban = BanMySQL.getSanctionActive(emeraldTarget.getUniqueId(), OlympaSanctionType.BAN);
 		ban.setStatus(OlympaSanctionStatus.CANCEL);
 		if (!BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.CANCEL, reason), ban.getId())) {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 			return;
 		}
 		// Envoye un message à l'auteur
-		final TextComponent msg = BungeeUtils.formatStringToJSON(BungeeConfigUtils.getString("bungee.ban.messages.unbanannouncetoauthor")
+		TextComponent msg = BungeeUtils.formatStringToJSON(BungeeConfigUtils.getString("bungee.ban.messages.unbanannouncetoauthor")
 				.replaceAll("%player%", targetname)
 				.replaceAll("%reason%", reason)
 				.replaceAll("%author%", BungeeUtils.getName(author)));

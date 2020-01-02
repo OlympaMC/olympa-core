@@ -44,7 +44,7 @@ public class AccountProvider implements OlympaAccount {
 
 	UUID uuid;
 
-	public AccountProvider(final UUID uuid) {
+	public AccountProvider(UUID uuid) {
 		this.uuid = uuid;
 		this.redisAccesss = RedisAccess.INSTANCE;
 	}
@@ -56,13 +56,13 @@ public class AccountProvider implements OlympaAccount {
 		this.redisAccesss.closeResource();
 	}
 
-	public boolean createNew(OlympaPlayer olympaPlayer, String name, final String ip) {
+	public boolean createNew(OlympaPlayer olympaPlayer, String name, String ip) {
 		olympaPlayer = this.createOlympaPlayer(name, ip);
 		return MySQL.createPlayer(olympaPlayer);
 	}
 
 	@Override
-	public OlympaPlayerObject createOlympaPlayer(String name, final String ip) {
+	public OlympaPlayerObject createOlympaPlayer(String name, String ip) {
 		return new OlympaPlayerObject(this.uuid, name, ip);
 	}
 
@@ -121,7 +121,7 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	@Override
-	public void saveToRedis(final OlympaPlayer olympaPlayer) {
+	public void saveToRedis(OlympaPlayer olympaPlayer) {
 		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
 				jedis.set(this.getKey(), new Gson().toJson(olympaPlayer));
@@ -131,7 +131,7 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	@Override
-	public void sendModifications(final OlympaPlayer olympaPlayer) {
+	public void sendModifications(OlympaPlayer olympaPlayer) {
 		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
 				jedis.publish("OlympaPlayer", new Gson().toJson(olympaPlayer));
@@ -141,7 +141,7 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	@Override
-	public void sendModifications(final OlympaPlayer olympaPlayer, Consumer<? super Boolean> done) {
+	public void sendModifications(OlympaPlayer olympaPlayer, Consumer<? super Boolean> done) {
 		this.sendModifications(olympaPlayer);
 		modificationReceive.put(olympaPlayer.getUniqueId(), done);
 		OlympaCore.getInstance().getTask().runTaskLater("waitModifications" + olympaPlayer.getUniqueId().toString(), () -> {

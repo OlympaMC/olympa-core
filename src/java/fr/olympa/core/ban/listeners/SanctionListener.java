@@ -25,7 +25,7 @@ import fr.olympa.core.ban.objects.OlympaSanctionType;
 // TODO mute + ban = 1 request (at this moment this = 2)
 public class SanctionListener implements Listener {
 
-	private final List<String> commandDisableWhenMuted = new ArrayList<>();
+	private List<String> commandDisableWhenMuted = new ArrayList<>();
 
 	/**public MuteListener() {
 		this.commandDisableWhenMuted.addAll(PrivateMessage.privateMessageCommand);
@@ -33,14 +33,14 @@ public class SanctionListener implements Listener {
 	}*/
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onPlayerChat(final AsyncPlayerChatEvent event) {
-		final String command = event.getMessage().substring(1);
+	public void onPlayerChat(AsyncPlayerChatEvent event) {
+		String command = event.getMessage().substring(1);
 		if (event.getMessage().startsWith("/") && !this.commandDisableWhenMuted.contains(command)) {
 			return;
 		}
-		final Player player = event.getPlayer();
+		Player player = event.getPlayer();
 
-		final OlympaSanction mute = MuteUtils.getMute(player.getUniqueId());
+		OlympaSanction mute = MuteUtils.getMute(player.getUniqueId());
 		if (mute != null) {
 			if (!MuteUtils.chechExpireBan(mute)) {
 				player.sendMessage(
@@ -52,9 +52,9 @@ public class SanctionListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onPlayerLogin(final PlayerLoginEvent event) {
+	public void onPlayerLogin(PlayerLoginEvent event) {
 		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> {
-			final Player player = event.getPlayer();
+			Player player = event.getPlayer();
 			OlympaSanction mute = MuteUtils.getMute(player.getUniqueId());
 			if (mute == null) {
 				mute = BanMySQL.getSanctionActive(player.getUniqueId(), OlympaSanctionType.MUTE);
@@ -66,9 +66,9 @@ public class SanctionListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPlayerPreLogin(final AsyncPlayerPreLoginEvent event) {
-		final UUID playerUUID = event.getUniqueId();
-		final String playerIp = event.getAddress().getHostAddress();
+	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
+		UUID playerUUID = event.getUniqueId();
+		String playerIp = event.getAddress().getHostAddress();
 
 		OlympaSanction ban;
 		try {

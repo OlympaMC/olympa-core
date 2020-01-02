@@ -22,7 +22,7 @@ public class Chat {
 		private String lastMsg;
 		private long lastMsgTime;
 
-		public OlympaChat(final String lastMsg, final long lastMsgTime) {
+		public OlympaChat(String lastMsg, long lastMsgTime) {
 			this.lastMsg = lastMsg;
 			this.lastMsgTime = lastMsgTime;
 		}
@@ -35,22 +35,22 @@ public class Chat {
 			return this.lastMsgTime;
 		}
 
-		public boolean isLastMsg(final String msg) {
+		public boolean isLastMsg(String msg) {
 			return this.lastMsg != null && this.lastMsg.equalsIgnoreCase(msg);
 		}
 
-		public void setLastMsg(final String lastMsg) {
+		public void setLastMsg(String lastMsg) {
 			this.lastMsg = lastMsg;
 		}
 
-		public void setLastMsgTime(final long lastMsgTime) {
+		public void setLastMsgTime(long lastMsgTime) {
 			this.lastMsgTime = lastMsgTime;
 		}
 	}
 
-	private static final Map<UUID, OlympaChat> players = new HashMap<>();
+	private static Map<UUID, OlympaChat> players = new HashMap<>();
 
-	public static OlympaChat getPlayer(final UUID uuid) {
+	public static OlympaChat getPlayer(UUID uuid) {
 		if (players.containsKey(uuid)) {
 			return players.get(uuid);
 		} else {
@@ -59,11 +59,11 @@ public class Chat {
 		}
 	}
 
-	public static void sendToStaff(final String type, final Player player, final String msg) {
-		final TextComponent text = new TextComponent("\u2623 [" + type + "] " + player.getName() + " > ");
+	public static void sendToStaff(String type, Player player, String msg) {
+		TextComponent text = new TextComponent("\u2623 [" + type + "] " + player.getName() + " > ");
 		text.setColor(ChatColor.DARK_PURPLE);
 
-		for (final BaseComponent s : new ComponentBuilder(msg).color(ChatColor.LIGHT_PURPLE).create()) {
+		for (BaseComponent s : new ComponentBuilder(msg).color(ChatColor.LIGHT_PURPLE).create()) {
 			text.addExtra(s);
 		}
 		text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(SpigotUtils.color("&cCliquez pour mute " + player.getName())).create()));

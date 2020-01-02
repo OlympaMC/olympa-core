@@ -11,16 +11,16 @@ public enum OlympaSanctionStatus {
 	CANCEL(2, "Annulé", ChatColor.GREEN),
 	DELETE(3, "Supprimé", ChatColor.GREEN);
 
-	public static OlympaSanctionStatus getStatus(final int i) {
+	public static OlympaSanctionStatus getStatus(int i) {
 		return Arrays.stream(OlympaSanctionStatus.values()).filter(emeraldBanStatus -> emeraldBanStatus.getId() == i).findFirst().orElse(null);
 	}
 
-	final int id;
+	int id;
 
-	final String name;
-	final ChatColor color;
+	String name;
+	ChatColor color;
 
-	private OlympaSanctionStatus(final int id, final String name, final ChatColor color) {
+	private OlympaSanctionStatus(int id, String name, ChatColor color) {
 		this.id = id;
 		this.name = name;
 		this.color = color;
@@ -42,7 +42,7 @@ public enum OlympaSanctionStatus {
 		return this.color + this.name;
 	}
 
-	public boolean isStatus(final OlympaSanctionStatus status) {
+	public boolean isStatus(OlympaSanctionStatus status) {
 		if (this == status) {
 			return true;
 		}

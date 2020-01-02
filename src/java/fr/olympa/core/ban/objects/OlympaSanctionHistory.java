@@ -12,29 +12,29 @@ import fr.olympa.api.utils.Utils;
 
 public class OlympaSanctionHistory {
 
-	public static OlympaSanctionHistory fromJson(final String json) {
+	public static OlympaSanctionHistory fromJson(String json) {
 		return new Gson().fromJson(json, OlympaSanctionHistory.class);
 	}
 
-	private final UUID author;
-	private final long time;
-	private final OlympaSanctionStatus status;
+	private UUID author;
+	private long time;
+	private OlympaSanctionStatus status;
 
 	private String reason = null;
 
-	public OlympaSanctionHistory(final UUID author, final long time, final OlympaSanctionStatus status) {
+	public OlympaSanctionHistory(UUID author, long time, OlympaSanctionStatus status) {
 		this.author = author;
 		this.time = time;
 		this.status = status;
 	}
 
-	public OlympaSanctionHistory(final UUID author, final OlympaSanctionStatus status) {
+	public OlympaSanctionHistory(UUID author, OlympaSanctionStatus status) {
 		this.author = author;
 		this.time = Utils.getCurrentTimeinSeconds();
 		this.status = status;
 	}
 
-	public OlympaSanctionHistory(final UUID author, final OlympaSanctionStatus status, final String reason) {
+	public OlympaSanctionHistory(UUID author, OlympaSanctionStatus status, String reason) {
 		this.author = author;
 		this.time = Utils.getCurrentTimeinSeconds();
 		this.status = status;

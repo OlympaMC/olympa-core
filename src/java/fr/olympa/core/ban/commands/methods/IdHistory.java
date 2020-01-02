@@ -17,28 +17,28 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class IdHistory {
 
 	@SuppressWarnings("deprecation")
-	public static void histban(final CommandSender sender, final int id) {
-		final OlympaSanction ban = BanMySQL.getSanction(id);
+	public static void histban(CommandSender sender, int id) {
+		OlympaSanction ban = BanMySQL.getSanction(id);
 		if(ban == null) {
 			sender.sendMessage(Utils.color(Prefix.DEFAULT_BAD + "L'id de ban n°&4" + id + "&c n'existe pas."));
 			return;
 		}
 
-		final TextComponent msg = new TextComponent("");
-		for(final BaseComponent s : ban.toBaseComplement()) {
+		TextComponent msg = new TextComponent("");
+		for(BaseComponent s : ban.toBaseComplement()) {
 			msg.addExtra(s);
 		}
 
 		msg.addExtra(new TextComponent(Utils.color("\n&6Historique: ")));
 
-		final int i = ban.getHistorys().size();
+		int i = ban.getHistorys().size();
 		if(i > 0) {
-			final List<TextComponent> msglist = new ArrayList<>();
+			List<TextComponent> msglist = new ArrayList<>();
 
-			for(final OlympaSanctionHistory banhist : ban.getHistorys()) {
-				final TextComponent msg3 = new TextComponent(banhist.getStatus().getColor() + banhist.getAuthorName());
+			for(OlympaSanctionHistory banhist : ban.getHistorys()) {
+				TextComponent msg3 = new TextComponent(banhist.getStatus().getColor() + banhist.getAuthorName());
 
-				final BaseComponent[] showMsg = new ComponentBuilder(Utils.color("&6Auteur: &e" + banhist.getAuthorName() + "\n"))
+				BaseComponent[] showMsg = new ComponentBuilder(Utils.color("&6Auteur: &e" + banhist.getAuthorName() + "\n"))
 						.append(Utils.color("&6Status: &e" + banhist.getStatus().getNameColored() + " (" + banhist.getReason() + ")\n"))
 						.append(Utils.color("&6Date: &e" + Utils.timestampToDateAndHour(banhist.getTime())))
 						.create();
