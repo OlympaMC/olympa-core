@@ -24,6 +24,6 @@ public class OlympaPlayerListener extends JedisPubSub {
 		AccountProvider olympaAccount = new AccountProvider(olympaPlayer.getUniqueId());
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(player, ChangeType.ADD, olympaPlayer, olympaPlayer.getGroup()));
 		olympaAccount.saveToCache(olympaPlayer);
-		olympaAccount.sendModificationsReceive();
+		// olympaAccount.sendModificationsReceive();
 	}
 }

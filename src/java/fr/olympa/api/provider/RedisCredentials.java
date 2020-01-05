@@ -1,4 +1,4 @@
-package fr.olympa.core.datamanagment.redis;
+package fr.olympa.api.provider;
 
 public class RedisCredentials {
 

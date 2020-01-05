@@ -85,12 +85,8 @@ public class DataManagmentListener implements Listener {
 			return;
 		}
 		if (olympaPlayer == null) {
-			boolean isWork = olympaAccount.createNew(olympaPlayer, event.getName(), event.getAddress().getHostAddress());
-			if (!isWork) {
-				event.disallow(Result.KICK_OTHER, "§cUne erreur de données est survenu, merci de réessayer.");
-				return;
-			}
-			olympaAccount.saveToRedis(olympaPlayer);
+			event.disallow(Result.KICK_OTHER, "§cUne erreur de données est survenu, merci de réessayer.");
+			return;
 		}
 		olympaAccount.saveToCache(olympaPlayer);
 	}

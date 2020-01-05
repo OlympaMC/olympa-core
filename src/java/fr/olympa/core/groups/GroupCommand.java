@@ -121,7 +121,7 @@ public class GroupCommand extends OlympaCommand {
 						this.sendMessage("&aLe joueur &2%player&a n'est pas connecté, la modification a bien été prise en compte.".replaceFirst("%player", olympaTarget.getName()));
 					}
 				};
-				olympaAccount.sendModifications(olympaTarget, done);
+				// olympaAccount.sendModifications(olympaTarget, done);
 			} else {
 				olympaTarget.setGroup(newGroup, timestamp);
 				OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, ChangeType.ADD, olympaTarget, newGroup));

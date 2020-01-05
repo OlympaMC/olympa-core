@@ -4,54 +4,53 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
-import fr.olympa.api.gui.CustomInventory;
-import fr.olympa.api.gui.OlympaGui;
+import fr.olympa.OlympaCore;
+import fr.olympa.api.gui.OlympaGUI;
 import fr.olympa.api.item.OlympaItemBuild;
 import fr.olympa.core.report.OlympaReport;
 import fr.olympa.core.report.items.ReportReason;
 
-public class ReportGui implements CustomInventory {
+public class ReportGui extends OlympaGUI {
+
+	public static void open(Player player, Player target) {
+		ReportGui gui = new ReportGui("&6Report &e" + target.getName(), 3 * 9, target);
+
+		List<OlympaItemBuild> items = Arrays.stream(ReportReason.values()).map(ReportReason::getItem).collect(Collectors.toList());
+		int slot = gui.inv.getSize() / 2 - items.size() / 2;
+		for (OlympaItemBuild item : items) {
+			gui.inv.setItem(slot++, item.build());
+		}
+		gui.create(player);
+	}
 
 	public static void report(Player player, Player target, ReportReason reason) {
-		OlympaReport report = new OlympaReport(target.getUniqueId(), player.getUniqueId(), reason, "serverName");
-		// report.save();
+		OlympaReport report = new OlympaReport(target.getUniqueId(), player.getUniqueId(), reason, OlympaCore.getInstance().getServer().getName());
+
+		if (target.isOnline()) {
+
+		}
+		// TODO
+	}
+
+	Player target;
+
+	public ReportGui(String name, int rows, Player target) {
+		super(name, rows);
+		this.target = target;
 	}
 
 	@Override
-	public boolean onClick(Player player, OlympaGui gui, ItemStack current, int slot, ClickType click) {
-		Player target = Bukkit.getPlayer((String) gui.getData());
-
-		if (target == null) {
-			player.sendMessage("&cLe joueur s'est déconnecter, utilisez le forum pour signaler ce joueur.");
-			player.closeInventory();
-			return false;
-		}
-
+	public boolean onClick(Player player, ItemStack current, int slot, ClickType click) {
 		if (current == null) {
 			return false;
 		}
 
 		ReportReason reason = ReportReason.get(current);
-		new ReportGuiConfirm().open(player, target, reason);
+		ReportGuiConfirm.open(player, this.target, reason);
 		return false;
-	}
-
-	public void open(Player player, Player target) {
-		OlympaGui gui = new OlympaGui("&6Report &e" + target.getName(), "report", 3);
-		gui.setData(target.getUniqueId().toString());
-
-		List<OlympaItemBuild> items = Arrays.stream(ReportReason.values()).map(ReportReason::getItem).collect(Collectors.toList());
-		int slot = gui.getMiddleSlot() - items.size() / 2;
-		for (OlympaItemBuild item : items) {
-			gui.setItem(slot++, item.build());
-		}
-		gui.openInventory(player);
-
-		this.create(player, gui);
 	}
 }

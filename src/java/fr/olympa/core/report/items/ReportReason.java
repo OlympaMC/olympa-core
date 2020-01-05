@@ -13,7 +13,7 @@ public enum ReportReason {
 	CHEAT_AURA(2, "Cheat Combat", new OlympaItemBuild(Material.GOLDEN_SWORD, "&7Cheat Combat").lore("", "&eKillAura, Aimbot, TriggerBot, AutoClick ...")),
 	CHEAT_XRAY(3, "Cheat XRay", new OlympaItemBuild(Material.DIAMOND_ORE, "&7XRay")),
 	CHEAT_FLY(4, "Cheat Fly", new OlympaItemBuild(Material.FEATHER, "&7Fly")),
-	OTHER(5, "Cheat Autre", new OlympaItemBuild(Material.CAULDRON, "&7Autre"));
+	OTHER(5, "Autre", new OlympaItemBuild(Material.CAULDRON, "&7Autre"));
 
 	public static ReportReason get(ItemStack itemStack) {
 		return Arrays.stream(ReportReason.values()).filter(itemGui -> itemGui.getItem().build().isSimilar(itemStack)).findFirst().orElse(null);

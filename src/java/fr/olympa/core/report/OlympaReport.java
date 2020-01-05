@@ -40,5 +40,4 @@ public class OlympaReport {
 	public long getTime() {
 		return this.time;
 	}
-
 }

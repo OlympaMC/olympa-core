@@ -1,10 +1,7 @@
-package fr.olympa.core.datamanagment.redis;
+package fr.olympa.api.provider;
 
 import fr.olympa.OlympaCore;
 import fr.olympa.api.task.TaskManager;
-import fr.olympa.core.datamanagment.redis.listeners.OlympaPlayerListener;
-import fr.olympa.core.datamanagment.redis.listeners.OlympaPlayerReceiveListener;
-import fr.olympa.core.datamanagment.redis.listeners.TestListener;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -17,7 +14,7 @@ public class RedisAccess {
 	}
 
 	public static void init(String clientName) {
-		new RedisAccess(new RedisCredentials("127.0.0.1", "Qfr0HgyhGqX9T94BOMNLG3PI7o65JKyh", 6379, clientName));
+		new RedisAccess(new RedisCredentials("127.0.0.1", "1rWS1Fmj7s4snEDCQgw3Mcznf8ShfrLZpPkKtstu5coV9PpDI1", 6379, clientName));
 	}
 
 	private RedisCredentials redisCredentials;
@@ -34,10 +31,14 @@ public class RedisAccess {
 
 			TaskManager task = core.getTask();
 
-			task.runTaskAsynchronously("redis1", () -> jedis.subscribe(new TestListener(), "Test"));
-			task.runTaskAsynchronously("redis2", () -> this.connect().subscribe(new OlympaPlayerListener(), "OlympaPlayer"));
-			task.runTaskAsynchronously("redis3", () -> this.connect().subscribe(new OlympaPlayerReceiveListener(), "OlympaPlayerReceive"));
-			task.runTaskAsynchronously("redis4", () -> this.connect().subscribe(new TestListener(), "Test2"));
+			// task.runTaskAsynchronously("redis1", () -> jedis.subscribe(new
+			// TestListener(), "Test"));
+			// task.runTaskAsynchronously("redis2", () -> this.connect().subscribe(new
+			// OlympaPlayerListener(), "OlympaPlayer"));
+			// task.runTaskAsynchronously("redis3", () -> this.connect().subscribe(new
+			// OlympaPlayerReceiveListener(), "OlympaPlayerReceive"));
+			// task.runTaskAsynchronously("redis4", () -> this.connect().subscribe(new
+			// TestListener(), "Test2"));
 			core.sendMessage("&aConnexion à Redis établie");
 		} else {
 			core.sendMessage("&cConnexion à Redis impossible");

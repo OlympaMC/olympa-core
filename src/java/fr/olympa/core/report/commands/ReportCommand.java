@@ -33,7 +33,7 @@ public class ReportCommand extends OlympaCommand {
 			return true;
 		}
 
-		new ReportGui().open(player, target);
+		ReportGui.open(player, target);
 		return true;
 	}
 
