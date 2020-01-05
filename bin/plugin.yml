@@ -1,8 +1,0 @@
-name: OlympaPermission
-main: fr.tristiisch.olympa.permission.OlympaPermission
-author: Tristiisch
-version: 0.1
-
-commands:
-    group:
-      aliases: rank
