@@ -54,8 +54,7 @@ public class AccountProvider implements OlympaAccount {
 		this.redisAccesss.closeResource();
 	}
 
-	public boolean createNew(OlympaPlayer olympaPlayer, String name, String ip) {
-		olympaPlayer = this.createOlympaPlayer(name, ip);
+	public boolean createNew(OlympaPlayer olympaPlayer) {
 		return MySQL.createPlayer(olympaPlayer);
 	}
 
@@ -133,7 +132,7 @@ public class AccountProvider implements OlympaAccount {
 	 * OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> { try (Jedis
 	 * jedis = this.redisAccesss.connect()) { jedis.publish("OlympaPlayer", new
 	 * Gson().toJson(olympaPlayer)); } this.redisAccesss.closeResource(); }); }
-	 * 
+	 *
 	 * @Override public void sendModifications(OlympaPlayer olympaPlayer, Consumer<?
 	 * super Boolean> done) { this.sendModifications(olympaPlayer);
 	 * modificationReceive.put(olympaPlayer.getUniqueId(), done);
@@ -141,7 +140,7 @@ public class AccountProvider implements OlympaAccount {
 	 * olympaPlayer.getUniqueId().toString(), () -> { Consumer<? super Boolean>
 	 * callable = modificationReceive.get(this.uuid); callable.accept(false);
 	 * modificationReceive.remove(this.uuid); }, 5 * 20); }
-	 * 
+	 *
 	 * @Override public void sendModificationsReceive() {
 	 * OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> { try (Jedis
 	 * jedis = this.redisAccesss.connect()) { jedis.publish("OlympaPlayerReceive",
