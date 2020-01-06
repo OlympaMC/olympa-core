@@ -25,10 +25,9 @@ public class OlympaCore extends OlympaPlugin {
 
 	@Override
 	public void onDisable() {
-		this.disable();
 		// ScoreboardPrefix.deleteTeams();
 		RedisAccess.close();
-		this.sendMessage("§4" + this.getDescription().getName() + "§c (" + this.getDescription().getVersion() + ") is disabled.");
+		this.disable();
 	}
 
 	@Override
@@ -50,7 +49,6 @@ public class OlympaCore extends OlympaPlugin {
 		pluginManager.registerEvents(new TestListener(), this);
 		pluginManager.registerEvents(new Inventories(), this);
 
-		this.sendMessage("§2" + this.getDescription().getName() + "§a (" + this.getDescription().getVersion() + ") is activated.");
 		// Thread.getAllStackTraces().keySet().forEach((t) ->
 		// System.out.println(t.getName() + "\nIs Daemon " + t.isDaemon() + "\nIs Alive
 		// " + t.isAlive()));
