@@ -10,6 +10,7 @@ import net.ricecode.similarity.StringSimilarityService;
 import net.ricecode.similarity.StringSimilarityServiceImpl;
 
 public class UtilsCore {
+
 	public static Collection<String> similarWords(String word, Set<String> allWords) {
 		Map<Double, String> similarWordList = new TreeMap<>();
 		StringSimilarityService service = new StringSimilarityServiceImpl(new JaroWinklerStrategy());
@@ -21,5 +22,4 @@ public class UtilsCore {
 		}
 		return similarWordList.values();
 	}
-
 }

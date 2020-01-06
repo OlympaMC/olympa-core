@@ -1,9 +1,10 @@
 package fr.olympa.bungee.api.command;
 
 import java.util.Arrays;
+import java.util.List;
 
-import fr.olympa.api.objects.OlympaGroup;
 import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.SpigotUtils;
@@ -24,7 +25,7 @@ public abstract class BungeeCommand extends Command {
 	protected String description;
 
 	public OlympaPlayer olympaPlayer;
-	protected OlympaGroup[] groups;
+	protected OlympaPermission permission;
 
 	/**
 	 * Don't foget to set {@link BungeeCommand#usageString}
@@ -48,29 +49,21 @@ public abstract class BungeeCommand extends Command {
 		this.command = command;
 	}
 
-	public BungeeCommand(Plugin plugin, String command, OlympaGroup group, String... aliases) {
+	public BungeeCommand(Plugin plugin, String command, OlympaPermission permission, String... aliases) {
 		super(command, null, aliases);
 		this.plugin = plugin;
 		this.command = command;
-		this.groups = new OlympaGroup[] { group };
+		this.permission = permission;
 		this.aliases = aliases;
 	}
 
-	public BungeeCommand(Plugin plugin, String command, OlympaGroup[] groups, String... aliases) {
-		super(command, null, aliases);
-		this.plugin = plugin;
-		this.command = command;
-		this.groups = groups;
-		this.aliases = aliases;
-	}
-
-	public BungeeCommand(Plugin plugin, String command, OlympaGroup[] groups, String[] aliases, String description, String usageString, boolean allowConsole,
+	public BungeeCommand(Plugin plugin, String command, OlympaPermission permission, String[] aliases, String description, String usageString, boolean allowConsole,
 			Integer minArg) {
 
 		super(command, null, aliases);
 		this.plugin = plugin;
 		this.command = command;
-		this.groups = groups;
+		this.permission = permission;
 		this.aliases = aliases;
 		this.description = description;
 		this.usageString = usageString;
@@ -97,13 +90,13 @@ public abstract class BungeeCommand extends Command {
 			if (sender instanceof ProxiedPlayer) {
 				this.proxiedPlayer = (ProxiedPlayer) sender;
 
-				if (this.groups != null && this.groups.length != 0) {
+				if (this.permission != null) {
 					this.olympaPlayer = this.getOlympaPlayer();
 					if (this.olympaPlayer == null) {
-						this.sendImpossibleWithEmeraldPlayer();
+						this.sendImpossibleWithOlympaPlayer();
 						return;
 					}
-					if (!this.hasPermission()) {
+					if (!this.olympaPlayer.hasPermission(this.permission)) {
 						this.sendDoNotHavePermission();
 						return;
 					}
@@ -131,7 +124,7 @@ public abstract class BungeeCommand extends Command {
 		return this.olympaPlayer;
 	}
 
-	private OlympaPlayer getOlympaPlayer() {
+	protected OlympaPlayer getOlympaPlayer() {
 		return AccountProvider.get(this.proxiedPlayer.getUniqueId());
 	}
 
@@ -139,23 +132,12 @@ public abstract class BungeeCommand extends Command {
 		return this.proxiedPlayer;
 	}
 
-	public boolean hasPermission(OlympaGroup... groups) {
-		if (this.proxiedPlayer == null) {
-			return true;
-		}
-
-		if (groups.length == 0) {
-			groups = this.groups;
-		}
-
-		if (this.olympaPlayer == null) {
-			this.olympaPlayer = this.getOlympaPlayer();
-		}
-
-		return this.olympaPlayer.hasPower(groups);
-	}
-
 	public abstract void onCommand(CommandSender sender, String[] args);
+
+	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	public void register() {
 		this.plugin.getProxy().getPluginManager().registerCommand(this.plugin, this);
@@ -173,7 +155,7 @@ public abstract class BungeeCommand extends Command {
 		this.sendErreur("Impossible avec la console.");
 	}
 
-	public void sendImpossibleWithEmeraldPlayer() {
+	public void sendImpossibleWithOlympaPlayer() {
 		this.sendErreur("Une erreur est survenu avec vos donnés.");
 	}
 

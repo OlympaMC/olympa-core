@@ -1,12 +1,12 @@
-package fr.olympa.core.ban;
+package fr.olympa.bungee.ban;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import fr.olympa.api.utils.Utils;
-import fr.olympa.spigot.core.ban.objects.OlympaSanction;
-import fr.olympa.spigot.core.ban.objects.OlympaSanctionType;
+import fr.olympa.bungee.ban.objects.OlympaSanction;
+import fr.olympa.bungee.ban.objects.OlympaSanctionType;
 
 public class MuteUtils {
 
@@ -30,7 +30,7 @@ public class MuteUtils {
 	}
 
 	public static OlympaSanction getMute(UUID uuid) {
-		return mutes.stream().filter(emeraldMute -> String.valueOf(emeraldMute.getPlayer()).equals(String.valueOf(uuid))).findFirst().orElse(null);
+		return mutes.stream().filter(olympaMute -> String.valueOf(olympaMute.getPlayer()).equals(String.valueOf(uuid))).findFirst().orElse(null);
 	}
 
 	public static OlympaSanction getMuteFromMySQL(UUID uuid) {

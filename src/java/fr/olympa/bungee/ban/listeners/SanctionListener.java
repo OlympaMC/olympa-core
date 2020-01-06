@@ -1,4 +1,4 @@
-package fr.olympa.core.ban.listeners;
+package fr.olympa.bungee.ban.listeners;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,10 +17,10 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import fr.olympa.OlympaCore;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.spigot.core.ban.BanMySQL;
-import fr.olympa.spigot.core.ban.MuteUtils;
-import fr.olympa.spigot.core.ban.objects.OlympaSanction;
-import fr.olympa.spigot.core.ban.objects.OlympaSanctionType;
+import fr.olympa.bungee.ban.BanMySQL;
+import fr.olympa.bungee.ban.MuteUtils;
+import fr.olympa.bungee.ban.objects.OlympaSanction;
+import fr.olympa.bungee.ban.objects.OlympaSanctionType;
 
 // TODO mute + ban = 1 request (at this moment this = 2)
 public class SanctionListener implements Listener {

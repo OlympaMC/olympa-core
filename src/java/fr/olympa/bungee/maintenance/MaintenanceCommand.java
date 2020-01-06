@@ -1,22 +1,22 @@
 package fr.olympa.bungee.maintenance;
 
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import fr.olympa.api.objects.OlympaGroup;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.bungee.OlympaBungee;
+import fr.olympa.bungee.api.command.BungeeCommand;
 import fr.olympa.bungee.utils.BungeeConfigUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 
 @SuppressWarnings("deprecation")
-public class MaintenanceCommand extends Command {
+public class MaintenanceCommand extends BungeeCommand {
 
 	/*
 	 * Dev: Tristiisch74 Pemet de mettre le serveur en maintenance ./maintenance
@@ -25,25 +25,23 @@ public class MaintenanceCommand extends Command {
 	 * le même msg sur le site
 	 */
 
-	private OlympaGroup group;
+	private OlympaPermission permission;
 
-	public MaintenanceCommand() {
-		super("maintenance");
-		this.group = OlympaGroup.DEV;
+	public MaintenanceCommand(Plugin plugin) {
+		super(plugin, "maintenance", OlympaCorePermissions.MAINTENANCE_COMMAND, "tempban");
+		this.minArg = 2;
+		this.usageString = "<joueur|uuid|ip> [temps] <motif>";
+		this.register();
 	}
 
 	@Override
-	public void execute(CommandSender sender, String[] args) {
+	public void onCommand(CommandSender sender, String[] args) {
 		ProxyServer.getInstance().getScheduler().runAsync(OlympaBungee.getInstance(), () -> {
 			if (sender instanceof ProxiedPlayer) {
 				ProxiedPlayer player = (ProxiedPlayer) sender;
-				try {
-					if (!new AccountProvider(player.getUniqueId()).get().hasPower(this.group)) {
-						sender.sendMessage(SpigotUtils.color("Vous n'avez pas la permission &l(◑_◑)"));
-						return;
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
+				if (!this.permission.hasPermission(player.getUniqueId())) {
+					sender.sendMessage(SpigotUtils.color("Vous n'avez pas la permission &l(◑_◑)"));
+					return;
 				}
 			}
 			if (args.length == 0) {
@@ -129,12 +127,12 @@ public class MaintenanceCommand extends Command {
 
 				config = BungeeConfigUtils.getConfig("maintenance");
 				/*
-				 * EmeraldServerStatus status =
-				 * EmeraldServerStatus.getStatus(BungeeConfigUtils.getConfig("maintenance").
+				 * OlympaServerStatus status =
+				 * OlympaServerStatus.getStatus(BungeeConfigUtils.getConfig("maintenance").
 				 * getInt("bungee.maintenance.settings.status")); String message =
 				 * BungeeConfigUtils.getConfig("maintenance").getString(
 				 * "bungee.maintenance.settings.message"); String statusmsg;
-				 * if(status.equals(EmeraldServerStatus.)){ if(!message.isEmpty()) { statusmsg =
+				 * if(status.equals(OlympaServerStatus.)){ if(!message.isEmpty()) { statusmsg =
 				 * "&aActiver (" + message +"&a)"; } else { statusmsg = "&aActiver"; } } else if
 				 * (status == 2){ statusmsg = "&aActiver (&6Dev&a)"; } else { statusmsg =
 				 * "&cDésactiver"; } sender.sendMessage("&6Le mode maintenance est " +

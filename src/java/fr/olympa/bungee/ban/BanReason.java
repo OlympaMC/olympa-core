@@ -1,4 +1,4 @@
-package fr.olympa.core.ban;
+package fr.olympa.bungee.ban;
 
 public enum BanReason {
 

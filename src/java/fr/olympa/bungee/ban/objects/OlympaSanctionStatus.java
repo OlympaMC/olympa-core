@@ -1,4 +1,4 @@
-package fr.olympa.core.ban.objects;
+package fr.olympa.bungee.ban.objects;
 
 import java.util.Arrays;
 
@@ -12,7 +12,7 @@ public enum OlympaSanctionStatus {
 	DELETE(3, "Supprimé", ChatColor.GREEN);
 
 	public static OlympaSanctionStatus getStatus(int i) {
-		return Arrays.stream(OlympaSanctionStatus.values()).filter(emeraldBanStatus -> emeraldBanStatus.getId() == i).findFirst().orElse(null);
+		return Arrays.stream(OlympaSanctionStatus.values()).filter(olympaBanStatus -> olympaBanStatus.getId() == i).findFirst().orElse(null);
 	}
 
 	int id;

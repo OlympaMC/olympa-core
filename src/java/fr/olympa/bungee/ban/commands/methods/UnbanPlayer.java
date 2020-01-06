@@ -1,20 +1,26 @@
-package fr.olympa.core.ban.commands.methods;
+package fr.olympa.bungee.ban.commands.methods;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.UUID;
 
-import org.bukkit.command.CommandSender;
-
+import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
-import fr.olympa.spigot.core.ban.BanMySQL;
-import fr.olympa.spigot.core.ban.objects.OlympaSanction;
-import fr.olympa.spigot.core.ban.objects.OlympaSanctionHistory;
-import fr.olympa.spigot.core.ban.objects.OlympaSanctionStatus;
-import fr.olympa.spigot.core.ban.objects.OlympaSanctionType;
+import fr.olympa.bungee.ban.BanMySQL;
+import fr.olympa.bungee.ban.objects.OlympaSanction;
+import fr.olympa.bungee.ban.objects.OlympaSanctionHistory;
+import fr.olympa.bungee.ban.objects.OlympaSanctionStatus;
+import fr.olympa.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.bungee.utils.BungeeConfigUtils;
+import fr.olympa.bungee.utils.BungeeUtils;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class UnbanPlayer {
 
@@ -25,11 +31,10 @@ public class UnbanPlayer {
 	 * @param author is a UUID of author of ban or String (If the author is Console, author = "Console")
 	 * @param targetname Name of player to ban. case insensitive
 	 */
-	@SuppressWarnings("deprecation")
 	public static void unBan(UUID author, CommandSender sender, UUID targetUUID, String targetname, String[] args) {
 
 		ProxiedPlayer target = null;
-		EmeraldPlayer emeraldTarget = null;
+		OlympaPlayer emeraldTarget = null;
 		if (targetUUID != null) {
 			target = ProxyServer.getInstance().getPlayer(targetUUID);
 
@@ -40,19 +45,25 @@ public class UnbanPlayer {
 			throw new NullPointerException("The uuid or name must be specified");
 		}
 
-		if (target != null) {
-			emeraldTarget = new AccountProvider(target.getUniqueId()).getEmeraldPlayer();
-		} else {
-			emeraldTarget = MySQL.getPlayer(targetUUID);
-			if (emeraldTarget == null) {
-				sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.playerneverjoin").replaceAll("%player%", args[0]));
-				return;
+		try {
+			if (target != null) {
+				emeraldTarget = new AccountProvider(target.getUniqueId()).get();
+			} else {
+				emeraldTarget = MySQL.getPlayer(targetUUID);
+				if (emeraldTarget == null) {
+					sender.sendMessage(BungeeConfigUtils.getString("ban.messages.playerneverjoin").replace("%player%", args[0]));
+					return;
+				}
 			}
+		} catch (SQLException e) {
+			sender.sendMessage(BungeeConfigUtils.getString("ban.messages.errordb"));
+			e.printStackTrace();
+			return;
 		}
 
 		// Si le joueur n'est pas banni
 		if (!BanMySQL.isBanned(emeraldTarget.getUniqueId())) {
-			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.notbanned").replaceAll("%player%", targetname));
+			sender.sendMessage(BungeeConfigUtils.getString("ban.messages.notbanned").replace("%player%", targetname));
 			return;
 		}
 		String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
@@ -60,17 +71,17 @@ public class UnbanPlayer {
 		OlympaSanction ban = BanMySQL.getSanctionActive(emeraldTarget.getUniqueId(), OlympaSanctionType.BAN);
 		ban.setStatus(OlympaSanctionStatus.CANCEL);
 		if (!BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.CANCEL, reason), ban.getId())) {
-			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
+			sender.sendMessage(BungeeConfigUtils.getString("ban.messages.errordb"));
 			return;
 		}
 		// Envoye un message à l'auteur
-		TextComponent msg = BungeeUtils.formatStringToJSON(BungeeConfigUtils.getString("bungee.ban.messages.unbanannouncetoauthor")
-				.replaceAll("%player%", targetname)
-				.replaceAll("%reason%", reason)
-				.replaceAll("%author%", BungeeUtils.getName(author)));
+		TextComponent msg = BungeeUtils.formatStringToJSON(BungeeConfigUtils.getString("ban.messages.unbanannouncetoauthor")
+				.replace("%player%", targetname)
+				.replace("%reason%", reason)
+				.replace("%author%", BungeeUtils.getName(author)));
 		msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
 		msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + ban.getId()));
-		BungeeUtils.sendMessageToStaff(msg);
+		OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
 		ProxyServer.getInstance().getConsole().sendMessage(msg);
 	}
 }

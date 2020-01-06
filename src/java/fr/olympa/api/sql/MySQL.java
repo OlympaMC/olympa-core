@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import fr.olympa.OlympaCore;
+import fr.olympa.api.objects.OlympaGroup;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.OlympaPlayerObject;
 import fr.olympa.api.utils.Utils;
@@ -69,7 +70,7 @@ public class MySQL {
 	 * UUID
 	 */
 	public static String getNameFromUuid(UUID uuid) {
-		List<Object> list = MySQL.selectTable("SELECT name FROM " + tableName + " WHERE auth-uuid = '" + uuid.toString() + "';", "name");
+		List<Object> list = MySQL.selectTable("SELECT name FROM " + tableName + " WHERE auth-uuid = '" + uuid.toString() + "';");
 		if (!list.isEmpty()) {
 			return list.get(0).toString();
 		}
@@ -180,7 +181,7 @@ public class MySQL {
 	}
 
 	public static String getPlayerExactName(String playerName) {
-		List<Object> list = MySQL.selectTable("SELECT name FROM " + tableName + " WHERE `pseudo` = " + playerName + ";", "name");
+		List<?> list = MySQL.selectTable("SELECT name FROM " + tableName + " WHERE `pseudo` = " + playerName);
 		if (list.isEmpty()) {
 			return null;
 		} else {
@@ -284,19 +285,26 @@ public class MySQL {
 	 * Récupère l'uuid d'un joueur dans la base de données à l'aide de son pseudo
 	 */
 	public static UUID getPlayerUniqueId(String playerName) {
-		List<Object> list = MySQL.selectTable("SELECT auth-uuid FROM" + tableName + "WHERE `pseudo` = " + playerName + ";", "uuid");
-		if (list.isEmpty()) {
-			return null;
-		} else {
+		List<?> list = MySQL.selectTable("SELECT auth-uuid FROM" + tableName + "WHERE `pseudo` = " + playerName);
+		if (!list.isEmpty()) {
 			return (UUID) list.get(0);
 		}
+		return null;
+	}
+
+	public static int getRankIdSite(OlympaGroup group) {
+		List<?> list = MySQL.selectTable("SELECT rank_id FROM" + "'olympa.ranks'" + "WHERE `name` = " + group.getName());
+		if (!list.isEmpty()) {
+			return (int) list.get(0);
+		}
+		return -1;
 	}
 
 	/**
 	 * @param ts3databaseid ID de la base de donnés teamspeak
 	 */
 	public static UUID getUUIDfromTS3DatabaseID(int ts3databaseid) {
-		List<Object> players = MySQL.selectTable("SELECT auth-uuid FROM" + tableName + "WHERE ts3_id = '" + ts3databaseid + ";", "uuid");
+		List<?> players = MySQL.selectTable("SELECT auth-uuid FROM" + tableName + "WHERE ts3_id = '" + ts3databaseid);
 		if (!players.isEmpty()) {
 			return (UUID) players.get(0);
 		}
@@ -343,7 +351,7 @@ public class MySQL {
 	/**
 	 * Lire une/des valeur(s) dans une table
 	 */
-	public static List<Object> selectTable(String paramString, String paramString2) {
+	public static List<Object> selectTable(String paramString) {
 		if (!paramString.contains("SELECT")) {
 			throw new IllegalArgumentException("\"" + paramString + "\" n'est pas le bon argument pour lire une/des valeur(s).");
 		}
@@ -352,7 +360,7 @@ public class MySQL {
 			Statement state = OlympaCore.getInstance().getDatabase().createStatement();
 			ResultSet resultSet = state.executeQuery(paramString);
 			while (resultSet.next()) {
-				result.add(resultSet.getObject(paramString2));
+				result.add(resultSet.getObject(1));
 			}
 			state.close();
 		} catch (SQLException e) {

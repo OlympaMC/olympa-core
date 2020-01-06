@@ -1,4 +1,4 @@
-package fr.olympa.core.ban.commands.methods;
+package fr.olympa.bungee.ban.commands.methods;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,19 +6,19 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 
 import fr.olympa.OlympaCore;
 import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.objects.OlympaPlayer;
-import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.SpigotUtils;
-import fr.olympa.spigot.core.ban.BanMySQL;
-import fr.olympa.spigot.core.ban.objects.OlympaSanction;
-import fr.olympa.spigot.core.ban.objects.OlympaSanctionHistory;
-import fr.olympa.spigot.core.ban.objects.OlympaSanctionStatus;
-import fr.olympa.spigot.core.ban.objects.OlympaSanctionType;
+import fr.olympa.bungee.ban.BanMySQL;
+import fr.olympa.bungee.ban.objects.OlympaSanction;
+import fr.olympa.bungee.ban.objects.OlympaSanctionHistory;
+import fr.olympa.bungee.ban.objects.OlympaSanctionStatus;
+import fr.olympa.bungee.ban.objects.OlympaSanctionType;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -51,7 +51,7 @@ public class UnbanIp {
 		msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
 		msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + ban.getId()));
 
-		OlympaPermission.BAN_SEEBANMSG.sendMessage(msg);
+		OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
 		Bukkit.getConsoleSender().sendMessage(msg.toPlainText());
 	}
 

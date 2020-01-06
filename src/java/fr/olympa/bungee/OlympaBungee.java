@@ -37,7 +37,7 @@ public class OlympaBungee extends Plugin {
 		pluginManager.registerListener(this, new MaintenanceListener());
 		pluginManager.registerListener(this, new ConnectionListener());
 
-		pluginManager.registerCommand(this, new MaintenanceCommand());
+		new MaintenanceCommand(this).register();
 
 		this.sendMessage("§2" + this.getDescription().getName() + "§a (" + this.getDescription().getVersion() + ") is activated.");
 	}

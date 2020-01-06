@@ -1,4 +1,4 @@
-package fr.olympa.core.ban.commands;
+package fr.olympa.bungee.ban.commands;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -8,34 +8,34 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import fr.olympa.OlympaCore;
-import fr.olympa.api.command.BanOlympaCommand;
 import fr.olympa.api.objects.OlympaConsole;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.spigot.core.ban.commands.methods.UnbanIp;
-import fr.olympa.spigot.core.ban.commands.methods.UnbanPlayer;
+import fr.olympa.bungee.api.command.BungeeCommand;
+import fr.olympa.bungee.ban.commands.methods.UnbanIp;
+import fr.olympa.bungee.ban.commands.methods.UnbanPlayer;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.Plugin;
 
-public class UnbanCommand extends BanOlympaCommand {
+public class UnbanCommand extends BungeeCommand {
 
 	public UnbanCommand(Plugin plugin) {
 		super(plugin, "unban", OlympaCorePermissions.BAN_UNBAN_COMMAND, "pardon");
-		this.setMinArg(2);
-		this.setUsageString("<joueur|uuid|ip> <motif>");
+		this.minArg = 2;
+		this.usageString = "<joueur|uuid|ip> <motif>";
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public void onCommand(CommandSender sender, String[] args) {
 		UUID author;
 		if (sender instanceof Player) {
-			author = this.player.getUniqueId();
+			author = ((Player) sender).getUniqueId();
 		} else {
 			author = OlympaConsole.getUniqueId();
 		}
@@ -46,8 +46,8 @@ public class UnbanCommand extends BanOlympaCommand {
 				UnbanIp.unBan(author, sender, args[0], args);
 
 			} else {
-				sender.sendMessage(config.getString("ban.ipinvalid").replaceAll("%ip%", args[0]));
-				return true;
+				sender.sendMessage(config.getString("default.ipinvalid").replace("%ip%", args[0]));
+				return;
 			}
 
 		} else if (Matcher.isUsername(args[0])) {
@@ -59,17 +59,16 @@ public class UnbanCommand extends BanOlympaCommand {
 				UnbanPlayer.unBan(author, sender, UUID.fromString(args[0]), null, args);
 
 			} else {
-				sender.sendMessage(config.getString("ban.uuidinvalid").replaceAll("%uuid%", args[0]));
-				return true;
+				sender.sendMessage(config.getString("default.uuidinvalid").replace("%uuid%", args[0]));
+				return;
 			}
 		} else {
-			sender.sendMessage(config.getString("ban.typeunknown").replaceAll("%type%", args[0]));
-			return true;
+			sender.sendMessage(config.getString("default.typeunknown").replace("%type%", args[0]));
+			return;
 		}
-		return true;
+		return;
 	}
 
-	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		if (args.length == 1) {
 			// -> usless code, change to banned players

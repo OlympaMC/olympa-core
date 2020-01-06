@@ -1,21 +1,25 @@
-package fr.olympa.core.ban.commands.methods;
+package fr.olympa.bungee.ban.commands.methods;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.bukkit.command.CommandSender;
-
 import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.spigot.core.ban.BanMySQL;
-import fr.olympa.spigot.core.ban.BanUtils;
-import fr.olympa.spigot.core.ban.objects.OlympaSanction;
-import fr.olympa.spigot.core.ban.objects.OlympaSanctionType;
+import fr.olympa.bungee.ban.BanMySQL;
+import fr.olympa.bungee.ban.BanUtils;
+import fr.olympa.bungee.ban.objects.OlympaSanction;
+import fr.olympa.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.bungee.utils.BungeeConfigUtils;
+import fr.olympa.bungee.utils.BungeeUtils;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class BanIp {
 
@@ -76,7 +80,7 @@ public class BanIp {
 				msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
 				msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + ban.getId()));
 
-				BungeeUtils.sendMessageToStaff(msg);
+				OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
 			}
 		} else {
 			String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
@@ -105,7 +109,7 @@ public class BanIp {
 					BungeeConfigUtils.getString("bungee.ban.messages.banipannouncetoauthor").replaceAll("%ip%", BungeeUtils.getPlayersNamesByIp(ip)).replaceAll("%reason%", reason));
 			msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
 			msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + ban.getId()));
-			BungeeUtils.sendMessageToStaff(msg);
+			OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package fr.olympa.core.ban.objects;
+package fr.olympa.bungee.ban.objects;
 
 import java.util.Arrays;
 

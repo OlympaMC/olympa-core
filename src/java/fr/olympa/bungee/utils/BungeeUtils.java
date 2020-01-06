@@ -1,14 +1,10 @@
 package fr.olympa.bungee.utils;
 
-import java.util.stream.Collectors;
+import java.util.UUID;
 
-import fr.olympa.api.objects.OlympaGroup;
-import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.SpigotUtils;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class BungeeUtils {
 
@@ -25,15 +21,12 @@ public class BungeeUtils {
 		return textcomponent;
 	}
 
-	public static void sendMessageToStaff(TextComponent text) {
-		for (ProxiedPlayer player : ProxyServer.getInstance()
-				.getPlayers()
-				.stream() 
-				.filter(p -> {
-					return AccountProvider.get(p.getUniqueId()).hasPower(OlympaGroup.BUILDER);
-				})
-				.collect(Collectors.toList())) {
-			player.sendMessage(text);
-		}
+	public static String getName(UUID uuid) {
+		return null;
+	}
+
+	public static String getPlayersNamesByIp(String ip) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

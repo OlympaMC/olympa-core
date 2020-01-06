@@ -1,32 +1,39 @@
 package fr.olympa.api.permission;
 
 import fr.olympa.api.objects.OlympaGroup;
-import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.bungee.api.permission.OlympaBungeePermission;
 
 public class OlympaCorePermissions {
 
 	// TODO change to OlympaGroup.ADMIN
-	public static OlympaPermission GROUP_COMMAND = new OlympaPermission(OlympaGroup.DEV);
+	public static OlympaPermission MAINTENANCE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
+	public static OlympaPermission GROUP_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 
 	public static OlympaPermission CHAT_COMMAND = new OlympaPermission(OlympaGroup.MOD);
 	public static OlympaPermission CHAT_SEEINSULTS = new OlympaPermission(OlympaGroup.MOD);
 	public static OlympaPermission CHAT_BYPASS = new OlympaPermission(OlympaGroup.MODP);
 	public static OlympaPermission CHAT_MUTEDBYPASS = new OlympaPermission(OlympaGroup.MOD);
 
-	public static OlympaPermission BAN_BAN_COMMAND = new OlympaPermission(OlympaGroup.MOD);
-	public static OlympaPermission BAN_BANIP_COMMAND = new OlympaPermission(OlympaGroup.MODP);
-	public static OlympaPermission BAN_DELBAN_COMMAND = new OlympaPermission(OlympaGroup.DEV);
-	public static OlympaPermission BAN_UNBAN_COMMAND = new OlympaPermission(OlympaGroup.MODP);
-	public static OlympaPermission BAN_UNMUTE_COMMAND = new OlympaPermission(OlympaGroup.MOD);
-	public static OlympaPermission BAN_BANHIST_COMMAND = new OlympaPermission(OlympaGroup.MOD);
-	public static OlympaPermission BAN_SEEBANMSG = new OlympaPermission(OlympaGroup.BUILDER);
-	public static OlympaPermission BAN_BYPASS_BAN = new OlympaPermission(OlympaGroup.BUILDER);
-	public static OlympaPermission BAN_BYPASS_MAXTIME = new OlympaPermission(OlympaGroup.DEV);
-	public static OlympaPermission BAN_BYPASS_MINTIME = new OlympaPermission(OlympaGroup.DEV);
-	public static OlympaPermission BAN_DEF = new OlympaPermission(OlympaGroup.MODP);
+	public static OlympaPermission BAN_BYPASS_MAXTIME = new OlympaBungeePermission(OlympaGroup.FONDA);
+	public static OlympaPermission BAN_BYPASS_SANCTION_STAFF = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
+	public static OlympaPermission BAN_FORCEKICK_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
+	public static OlympaPermission BAN_DEF = new OlympaBungeePermission(OlympaGroup.MODP);
+	public static OlympaPermission BAN_BANIP_COMMAND = new OlympaBungeePermission(OlympaGroup.MODP);
+	public static OlympaPermission BAN_UNBAN_COMMAND = new OlympaBungeePermission(OlympaGroup.MODP);
+	public static OlympaPermission BAN_DELBAN_COMMAND = new OlympaBungeePermission(OlympaGroup.DEV);
+	public static OlympaPermission BAN_KICK_COMMAND = new OlympaBungeePermission(OlympaGroup.MOD);
+	public static OlympaPermission BAN_MUTE_COMMAND = new OlympaBungeePermission(OlympaGroup.MOD);
+	public static OlympaPermission BAN_UNMUTE_COMMAND = new OlympaBungeePermission(OlympaGroup.MOD);
+	public static OlympaPermission BAN_BANHIST_COMMAND = new OlympaBungeePermission(OlympaGroup.MOD);
+	public static OlympaPermission BAN_BAN_COMMAND = new OlympaBungeePermission(OlympaGroup.MOD);
+	public static OlympaPermission BAN_HISTORY_COMMAND = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
+	public static OlympaPermission BAN_SEEBANMSG = new OlympaBungeePermission(OlympaGroup.BUILDER);
+	public static OlympaPermission BAN_BYPASS_BAN = new OlympaBungeePermission(OlympaGroup.BUILDER);
 
-	public static OlympaPermission SPAWN_SPAWN_COMMAND_SET = new OlympaPermission(OlympaGroup.DEV);
+	public static OlympaPermission SPAWN_SPAWN_COMMAND_SET = new OlympaPermission(OlympaGroup.RESP_TECH);
 
 	public static OlympaPermission CHAT_COLOR = new OlympaPermission(OlympaGroup.MODP);
+
+	public static OlympaPermission STAFF = new OlympaPermission(OlympaGroup.GRAPHISTE);
 
 }

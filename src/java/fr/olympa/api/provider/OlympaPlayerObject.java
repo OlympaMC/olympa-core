@@ -1,6 +1,5 @@
 package fr.olympa.api.provider;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -169,24 +168,9 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public boolean hasPower(OlympaGroup group2) {
-		return this.groups.keySet().stream().filter(group -> group.getPower() >= group2.getPower()).findFirst().isPresent();
-	}
-
-	@Override
-	public boolean hasPower(OlympaGroup[] groups2) {
-		return Arrays.stream(groups2).filter(group -> this.hasPower(group)).findFirst().isPresent();
-	}
-
-	@Override
 	public boolean isSamePassword(String password) {
 		password = this.hashPassword(password);
 		return this.password.equals(password);
-	}
-
-	@Override
-	public boolean isSamePower(OlympaGroup group2) {
-		return this.groups.keySet().stream().filter(group -> group.getPower() == group2.getPower()).findFirst().isPresent();
 	}
 
 	private void removeGroup(OlympaGroup group) {

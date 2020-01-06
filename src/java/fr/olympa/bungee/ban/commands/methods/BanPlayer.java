@@ -1,4 +1,4 @@
-package fr.olympa.core.ban.commands.methods;
+package fr.olympa.bungee.ban.commands.methods;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -6,23 +6,25 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import fr.olympa.OlympaCore;
 import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.objects.OlympaPlayer;
-import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.spigot.core.ban.BanMySQL;
-import fr.olympa.spigot.core.ban.BanUtils;
-import fr.olympa.spigot.core.ban.objects.OlympaSanction;
-import fr.olympa.spigot.core.ban.objects.OlympaSanctionType;
+import fr.olympa.bungee.ban.BanMySQL;
+import fr.olympa.bungee.ban.BanUtils;
+import fr.olympa.bungee.ban.objects.OlympaSanction;
+import fr.olympa.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.bungee.utils.BungeeConfigUtils;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class BanPlayer {
 
@@ -33,6 +35,7 @@ public class BanPlayer {
 	 * @param author is a UUID of author of ban or String (If the author is Console, author = "Console")
 	 * @param targetname Name of player to ban. case insensitive
 	 */
+	@SuppressWarnings("deprecation")
 	public static void addBanPlayer(UUID author, CommandSender sender, String targetname, UUID targetUUID, String[] args, OlympaPlayer olympaPlayer) {
 		// /ban <pseudo> <time unit> <reason>
 		// args[0] = target
@@ -41,37 +44,34 @@ public class BanPlayer {
 
 		CustomConfig config = OlympaCore.getInstance().getConfig();
 		long currentTime = Utils.getCurrentTimeinSeconds();
-		Player player = null;
-		if (sender instanceof Player) {
-			player = (Player) sender;
+		ProxiedPlayer player = null;
+		if (sender instanceof ProxiedPlayer) {
+			player = (ProxiedPlayer) sender;
 		}
-		Player target = null;
+		ProxiedPlayer target = null;
 		OlympaPlayer olympaTarget = null;
 		if (targetUUID != null) {
-			target = Bukkit.getPlayer(targetUUID);
+			target = ProxyServer.getInstance().getPlayer(targetUUID);
 
 		} else if (targetname != null) {
-			target = Bukkit.getPlayer(targetname);
+			target = ProxyServer.getInstance().getPlayer(targetname);
 
 		} else {
 			throw new NullPointerException("The uuid or name must be specified");
 		}
 
-		if (target != null) {
-			olympaTarget = AccountProvider.get(target);
-
-		} else {
-			try {
+		try {
+			if (target != null) {
+				olympaTarget = AccountProvider.get(target.getUniqueId());
+			} else if (targetUUID != null) {
 				olympaTarget = AccountProvider.getFromDatabase(targetUUID);
-			} catch (SQLException e) {
-				sender.sendMessage("&cUne erreur avec la base de donné est survenu.");
-				e.printStackTrace();
-				return;
+			} else if (targetname != null) {
+				olympaTarget = AccountProvider.getFromDatabase(targetname);
 			}
-			if (olympaTarget == null) {
-				sender.sendMessage(config.getString("ban.playerneverjoin").replace("%player%", args[0]));
-				return;
-			}
+		} catch (SQLException e) {
+			sender.sendMessage(BungeeConfigUtils.getString("ban.messages.errordb"));
+			e.printStackTrace();
+			return;
 		}
 
 		// Si le joueur n'est pas banni
@@ -82,7 +82,7 @@ public class BanPlayer {
 			msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, alreadyban.toBaseComplement()));
 			msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + alreadyban.getId()));
 			if (player != null) {
-				player.spigot().sendMessage(msg);
+				player.sendMessage(msg);
 			} else {
 				sender.sendMessage(msg.toLegacyText());
 			}
@@ -103,7 +103,7 @@ public class BanPlayer {
 			long expire = BanUtils.toTimeStamp(Integer.parseInt(time), unit);
 			long seconds = expire - currentTime;
 
-			if (olympaTarget.hasPermission(OlympaPermission.BAN_BYPASS_BAN)) {
+			if (OlympaCorePermissions.BAN_BYPASS_BAN.hasPermission(olympaTarget)) {
 				sender.sendMessage(config.getString("ban.cantbanstaffmembers"));
 				return;
 			}
@@ -126,7 +126,7 @@ public class BanPlayer {
 			// Si Target est connecté
 			if (target != null) {
 				// Envoyer un message à Target lors de la déconnexion
-				target.kickPlayer(SpigotUtils.connectScreen(config.getString("ban.tempbandisconnect"))
+				target.disconnect(SpigotUtils.connectScreen(config.getString("ban.tempbandisconnect"))
 						.replace("%reason%", ban.getReason())
 						.replace("%time%", expireString)
 						.replace("%id%", String.valueOf(ban.getId())));
@@ -147,12 +147,12 @@ public class BanPlayer {
 			msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
 			msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + ban.getId()));
 
-			OlympaPermission.BAN_SEEBANMSG.sendMessage(msg);
+			OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
 			Bukkit.getConsoleSender().sendMessage(msg.toPlainText());
 
 			// Sinon: ban def
 		} else {
-			if (OlympaPermission.BAN_DEF.hasPermission(olympaPlayer)) {
+			if (OlympaCorePermissions.BAN_DEF.hasPermission(olympaPlayer)) {
 				sender.sendMessage(config.getString("ban.usageban"));
 				return;
 			}
@@ -167,7 +167,7 @@ public class BanPlayer {
 			// Si Target est connecté
 			if (target != null) {
 				// Envoyer un message à Target lors de la déconnexion
-				target.kickPlayer(SpigotUtils.connectScreen(config.getString("ban.bandisconnect").replace("%reason%", reason).replace("%id%", String.valueOf(ban.getId()))));
+				target.disconnect(SpigotUtils.connectScreen(config.getString("ban.bandisconnect").replace("%reason%", reason).replace("%id%", String.valueOf(ban.getId()))));
 
 				// Envoyer un message à tous les joueurs du même serveur spigot
 				Bukkit.broadcastMessage(config.getString("ban.banannounce").replace("%player%", olympaTarget.getName()).replace("%reason%", reason));
@@ -181,8 +181,8 @@ public class BanPlayer {
 			msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
 			msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + ban.getId()));
 
-			OlympaPermission.BAN_SEEBANMSG.sendMessage(msg);
-			Bukkit.getConsoleSender().sendMessage(msg.toPlainText());
+			OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
+			ProxyServer.getInstance().getConsole().sendMessage(msg);
 		}
 	}
 }

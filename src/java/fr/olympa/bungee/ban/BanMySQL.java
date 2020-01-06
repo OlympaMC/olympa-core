@@ -1,4 +1,4 @@
-package fr.olympa.core.ban;
+package fr.olympa.bungee.ban;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,10 +15,10 @@ import com.google.common.collect.Lists;
 import fr.olympa.OlympaCore;
 import fr.olympa.api.objects.OlympaConsole;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.spigot.core.ban.objects.OlympaSanction;
-import fr.olympa.spigot.core.ban.objects.OlympaSanctionHistory;
-import fr.olympa.spigot.core.ban.objects.OlympaSanctionStatus;
-import fr.olympa.spigot.core.ban.objects.OlympaSanctionType;
+import fr.olympa.bungee.ban.objects.OlympaSanction;
+import fr.olympa.bungee.ban.objects.OlympaSanctionHistory;
+import fr.olympa.bungee.ban.objects.OlympaSanctionStatus;
+import fr.olympa.bungee.ban.objects.OlympaSanctionType;
 
 public class BanMySQL {
 
@@ -41,18 +41,18 @@ public class BanMySQL {
 	 *
 	 * @return
 	 */
-	public static boolean addSanction(OlympaSanction emeraldban) {
+	public static boolean addSanction(OlympaSanction olympaban) {
 		try {
 			PreparedStatement pstate = OlympaCore.getInstance().getDatabase()
 					.prepareStatement("INSERT INTO sanctions (id, type_id, target, reason, author_uuid, expires, created, status_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-			pstate.setInt(1, emeraldban.getId());
-			pstate.setInt(2, emeraldban.getType().getId());
-			pstate.setString(3, emeraldban.getPlayer().toString());
-			pstate.setString(4, emeraldban.getReason());
-			pstate.setString(5, emeraldban.getAuthor().toString());
-			pstate.setTimestamp(6, new Timestamp(emeraldban.getExpires() * 1000L));
-			pstate.setTimestamp(7, new Timestamp(emeraldban.getCreated() * 1000L));
-			pstate.setLong(8, emeraldban.getStatus().getId());
+			pstate.setInt(1, olympaban.getId());
+			pstate.setInt(2, olympaban.getType().getId());
+			pstate.setString(3, olympaban.getPlayer().toString());
+			pstate.setString(4, olympaban.getReason());
+			pstate.setString(5, olympaban.getAuthor().toString());
+			pstate.setTimestamp(6, new Timestamp(olympaban.getExpires() * 1000L));
+			pstate.setTimestamp(7, new Timestamp(olympaban.getCreated() * 1000L));
+			pstate.setLong(8, olympaban.getStatus().getId());
 			pstate.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
