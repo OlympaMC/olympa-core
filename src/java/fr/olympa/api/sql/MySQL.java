@@ -295,7 +295,7 @@ public class MySQL {
 	public static int getRankIdSite(OlympaGroup group) {
 		List<?> list = MySQL.selectTable("SELECT rank_id FROM" + "'olympa.ranks'" + "WHERE `name` = " + group.getName());
 		if (!list.isEmpty()) {
-			return (int) list.get(0);
+			return (Integer) list.get(0);
 		}
 		return -1;
 	}

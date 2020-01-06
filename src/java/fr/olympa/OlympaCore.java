@@ -1,4 +1,4 @@
-package fr.olympa.spigot;
+package fr.olympa;
 
 import org.bukkit.plugin.PluginManager;
 
@@ -7,6 +7,7 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.plugin.OlympaPlugin;
 import fr.olympa.api.provider.RedisAccess;
+import fr.olympa.spigot.TestListener;
 import fr.olympa.spigot.core.chat.ChatCommand;
 import fr.olympa.spigot.core.chat.ChatListener;
 import fr.olympa.spigot.core.datamanagment.listeners.DataManagmentListener;
@@ -18,7 +19,6 @@ import fr.olympa.spigot.core.scoreboards.ScoreboardListener;
 public class OlympaCore extends OlympaPlugin {
 
 	private static OlympaCore instance;
-
 	public static OlympaCore getInstance() {
 		return instance;
 	}
@@ -32,6 +32,8 @@ public class OlympaCore extends OlympaPlugin {
 
 	@Override
 	public void onEnable() {
+		instance = this;
+
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		this.enable();
 
