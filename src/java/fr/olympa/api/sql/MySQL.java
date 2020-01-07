@@ -81,11 +81,11 @@ public class MySQL {
 		try {
 			return new OlympaPlayerObject(
 					resultSet.getInt("id"),
-					UUID.fromString(resultSet.getString("`uuid-server`")),
-					resultSet.getString("name"),
+					UUID.fromString(resultSet.getString("uuid-server")),
+					resultSet.getString("pseudo"),
 					resultSet.getString("groups"),
 					resultSet.getString("ip"),
-					resultSet.getDate("first_connection").getTime() / 1000L,
+					resultSet.getDate("created").getTime() / 1000L,
 					resultSet.getTimestamp("last_connection").getTime() / 1000L,
 					resultSet.getString("password"),
 					resultSet.getString("email"));
