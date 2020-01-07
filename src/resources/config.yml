@@ -189,8 +189,8 @@ database:
       host: localhost
       port: 3306
       user: olympa
-      password: hwTyJqzj7wqxNrDtZyyA
-      database: olympa
+      password: password
+      database: server
 default:
    noperm: '&6Olympa &7» &cVous n''avez pas la permission &l(◑_◑)'
    homeamade: '&6Olympa &7» &aTous nos plugins sont développés par nos soins. &2&lᕙ(＾▿＾)ᕗ'

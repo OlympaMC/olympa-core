@@ -24,7 +24,7 @@ public class MySQL {
 
 	public static boolean createPlayer(OlympaPlayer olympaPlayer) {
 		try {
-			String ps = "INSERT INTO " + tableName + " (auth-uuid, name, uuid, ip, `groups`, created, last_connection, email, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+			String ps = "INSERT INTO " + tableName + " (`uuid-server`, name, uuid, ip, `groups`, created, last_connection, email, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 			int i = 1;
 			PreparedStatement pstate = OlympaCore.getInstance().getDatabase().prepareStatement(ps);
 			pstate.setString(i++, olympaPlayer.getUniqueId().toString());
@@ -70,7 +70,7 @@ public class MySQL {
 	 * UUID
 	 */
 	public static String getNameFromUuid(UUID uuid) {
-		List<Object> list = MySQL.selectTable("SELECT name FROM " + tableName + " WHERE auth-uuid = '" + uuid.toString() + "';");
+		List<Object> list = MySQL.selectTable("SELECT name FROM " + tableName + " WHERE `uuid-server` = '" + uuid.toString() + "';");
 		if (!list.isEmpty()) {
 			return list.get(0).toString();
 		}
@@ -81,7 +81,7 @@ public class MySQL {
 		try {
 			return new OlympaPlayerObject(
 					resultSet.getInt("id"),
-					UUID.fromString(resultSet.getString("auth-uuid")),
+					UUID.fromString(resultSet.getString("`uuid-server`")),
 					resultSet.getString("name"),
 					resultSet.getString("groups"),
 					resultSet.getString("ip"),
@@ -140,7 +140,7 @@ public class MySQL {
 	 */
 	public static OlympaPlayer getPlayer(UUID playerUUID) throws SQLException {
 		Statement state = OlympaCore.getInstance().getDatabase().createStatement();
-		ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE auth-uuid = '" + playerUUID + "';");
+		ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `uuid-server` = '" + playerUUID + "';");
 		if (resultSet.next()) {
 			return getOlympaPlayer(resultSet);
 		}
@@ -285,7 +285,7 @@ public class MySQL {
 	 * Récupère l'uuid d'un joueur dans la base de données à l'aide de son pseudo
 	 */
 	public static UUID getPlayerUniqueId(String playerName) {
-		List<?> list = MySQL.selectTable("SELECT auth-uuid FROM" + tableName + "WHERE `pseudo` = " + playerName);
+		List<?> list = MySQL.selectTable("SELECT `uuid-server` FROM" + tableName + "WHERE `pseudo` = " + playerName);
 		if (!list.isEmpty()) {
 			return (UUID) list.get(0);
 		}
@@ -293,7 +293,7 @@ public class MySQL {
 	}
 
 	public static int getRankIdSite(OlympaGroup group) {
-		List<?> list = MySQL.selectTable("SELECT rank_id FROM" + "'olympa.ranks'" + "WHERE `name` = " + group.getName());
+		List<?> list = MySQL.selectTable("SELECT `rank_id` FROM" + "'olympa.ranks'" + "WHERE `name` = " + group.getName());
 		if (!list.isEmpty()) {
 			return (Integer) list.get(0);
 		}
@@ -304,7 +304,7 @@ public class MySQL {
 	 * @param ts3databaseid ID de la base de donnés teamspeak
 	 */
 	public static UUID getUUIDfromTS3DatabaseID(int ts3databaseid) {
-		List<?> players = MySQL.selectTable("SELECT auth-uuid FROM" + tableName + "WHERE ts3_id = '" + ts3databaseid);
+		List<?> players = MySQL.selectTable("SELECT `uuid-server` FROM" + tableName + "WHERE `ts3_id` = '" + ts3databaseid);
 		if (!players.isEmpty()) {
 			return (UUID) players.get(0);
 		}
@@ -314,7 +314,7 @@ public class MySQL {
 	public static boolean playerExist(UUID playerUuid) {
 		try {
 			Statement state = OlympaCore.getInstance().getDatabase().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT * FROM" + tableName + "WHERE auth-uuid = '" + playerUuid + "';");
+			ResultSet resultSet = state.executeQuery("SELECT * FROM" + tableName + "WHERE `uuid-server` = '" + playerUuid + "';");
 			if (resultSet.next()) {
 				state.close();
 				return true;
@@ -334,7 +334,7 @@ public class MySQL {
 	public static void savePlayer(OlympaPlayer olympaPlayer) {
 		try {
 			PreparedStatement pstate = OlympaCore.getInstance().getDatabase()
-					.prepareStatement("UPDATE" + tableName + "SET name = ?, ip = ?, `groups` = ?, last_connection = ? WHERE auth-uuid = ?;");
+					.prepareStatement("UPDATE" + tableName + "SET name = ?, ip = ?, `groups` = ?, last_connection = ? WHERE `uuid-server` = ?;");
 			int i = 1;
 			pstate.setString(i++, olympaPlayer.getName());
 			pstate.setString(i++, olympaPlayer.getIp());
@@ -383,7 +383,7 @@ public class MySQL {
 
 	public static void updateUsername(String newName, OlympaPlayer olympaPlayer) {
 		try {
-			PreparedStatement pstate = OlympaCore.getInstance().getDatabase().prepareStatement("UPDATE" + tableName + "SET `pseudo` = ?, `name_history` = CONCAT_WS(';', ?, name_history) WHERE `auth-uuid` = ?;");
+			PreparedStatement pstate = OlympaCore.getInstance().getDatabase().prepareStatement("UPDATE" + tableName + "SET `pseudo` = ?, `name_history` = CONCAT_WS(';', ?, name_history) WHERE `uuid-server` = ?;");
 
 			int i = 1;
 			pstate.setString(i++, newName);
