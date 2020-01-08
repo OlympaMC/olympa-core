@@ -10,10 +10,11 @@ import org.bukkit.entity.Player;
 
 import com.google.gson.Gson;
 
-import fr.olympa.OlympaCore;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaAccount;
+import fr.olympa.api.provider.OlympaPlayerObject;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
 
 public class AccountProvider implements OlympaAccount {

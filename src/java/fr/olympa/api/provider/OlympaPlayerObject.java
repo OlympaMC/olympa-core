@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import fr.olympa.api.objects.OlympaGroup;
+import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.utils.Passwords;
@@ -23,12 +23,14 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	String email;
 	String name;
 	TreeMap<OlympaGroup, Long> groups = new TreeMap<>(Comparator.comparing(OlympaGroup::getPower).reversed());
-
 	String ip;
-
 	long firstConnection;
-
 	long lastConnection;
+
+	double money;
+	boolean vanish;
+	boolean verifMode;
+	boolean afk;
 
 	public OlympaPlayerObject(int id, UUID uuid, String name, String groupsString, String ip, long firstConnection, long lastConnection, String password, String email) {
 		this.id = id;
@@ -62,6 +64,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		if (this.groups.size() > 1 && this.groups.containsKey(OlympaGroup.PLAYER)) {
 			this.removeGroup(OlympaGroup.PLAYER);
 		}
+	}
+
+	@Override
+	public void addMoney(double money) {
+		this.money += money;
 	}
 
 	@Override
@@ -126,6 +133,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
+	public double getMoney() {
+		return this.money;
+	}
+
+	@Override
 	public String getName() {
 		return this.name;
 	}
@@ -168,13 +180,38 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
+	public boolean isAfk() {
+		return this.afk;
+	}
+
+	@Override
 	public boolean isSamePassword(String password) {
 		password = this.hashPassword(password);
 		return this.password.equals(password);
 	}
 
+	@Override
+	public boolean isVanish() {
+		return this.vanish;
+	}
+
+	@Override
+	public boolean isVerifMode() {
+		return this.verifMode;
+	}
+
 	private void removeGroup(OlympaGroup group) {
 		this.groups.remove(group);
+	}
+
+	@Override
+	public void removeMoney(double money) {
+		this.money -= money;
+	}
+
+	@Override
+	public void setAfk(boolean afk) {
+		this.afk = afk;
 	}
 
 	@Override
@@ -219,6 +256,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
+	public void setMoney(double money) {
+		this.money = money;
+	}
+
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -236,5 +278,15 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void setUniqueId(UUID uuid) {
 		this.uuid = uuid;
+	}
+
+	@Override
+	public void setVanish(boolean vanish) {
+		this.vanish = vanish;
+	}
+
+	@Override
+	public void setVerifMode(boolean verifMode) {
+		this.verifMode = verifMode;
 	}
 }

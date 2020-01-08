@@ -1,5 +1,5 @@
 name: OlympaCore
-main: fr.olympa.OlympaCore
+main: fr.olympa.core.spigot.OlympaCore
 author: Tristiisch
 api-version: 1.13
 version: 0.1

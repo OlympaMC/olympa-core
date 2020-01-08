@@ -1,7 +1,7 @@
 package fr.olympa.api.permission;
 
-import fr.olympa.api.objects.OlympaGroup;
-import fr.olympa.bungee.api.permission.OlympaBungeePermission;
+import fr.olympa.api.groups.OlympaGroup;
+import fr.olympa.core.bungee.api.permission.OlympaBungeePermission;
 
 public class OlympaCorePermissions {
 

@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>fr.olympa</groupId>
 			<artifactId>olympa-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>[0.0.1-SNAPSHOT,)</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
@@ -66,19 +66,31 @@
 		</resources>
 		<plugins>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.3</version>
+				<version>3.0.0</version>
 				<configuration>
 					<minimizeJar>false</minimizeJar>
+					<filters>
+						<filter>
+							<artifact>*:*</artifact>
+							<excludes>
+								<exclude>META-INF/</exclude>
+							</excludes>
+						</filter>
+						<filter>
+							<artifact>*:*</artifact>
+							<excludes>
+								<exclude>Version.java.template</exclude>
+							</excludes>
+						</filter>
+						<filter>
+							<artifact>mariadb</artifact>
+							<includes>
+								<include>**</include>
+							</includes>
+						</filter>
+					</filters>
 					<finalName>OlympaCore</finalName>
 					<outputDirectory>target</outputDirectory>
 				</configuration>
@@ -91,18 +103,17 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.debug>true</maven.compiler.debug>
+		<maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
+		<argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+		<failOnMissingWebXml>false</failOnMissingWebXml>
+		<mainClass>x.Main</mainClass>
+	</properties>
 </project>

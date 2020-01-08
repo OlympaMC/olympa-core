@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import fr.olympa.OlympaCore;
-import fr.olympa.api.objects.OlympaGroup;
+import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.OlympaPlayerObject;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.spigot.OlympaCore;
 
 public class MySQL {
 
