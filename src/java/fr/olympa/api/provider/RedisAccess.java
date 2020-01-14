@@ -1,6 +1,5 @@
 package fr.olympa.api.provider;
 
-import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -26,7 +25,6 @@ public class RedisAccess {
 		INSTANCE = this;
 		this.redisCredentials = redisCredentials;
 		Jedis jedis = this.connect();
-		OlympaCore core = OlympaCore.getInstance();
 		if (jedis.isConnected()) {
 
 			/*TaskManager task = core.getTask();
@@ -35,9 +33,9 @@ public class RedisAccess {
 			task.runTaskAsynchronously("redis2", () -> this.connect().subscribe(new OlympaPlayerListener(), "OlympaPlayer"));
 			task.runTaskAsynchronously("redis3", () -> this.connect().subscribe(new OlympaPlayerReceiveListener(), "OlympaPlayerReceive"));
 			*/
-			core.sendMessage("&aConnexion à Redis établie");
+			System.out.println("&aConnexion à Redis établie");
 		} else {
-			core.sendMessage("&cConnexion à Redis impossible");
+			System.out.println("&cConnexion à Redis impossible");
 		}
 	}
 

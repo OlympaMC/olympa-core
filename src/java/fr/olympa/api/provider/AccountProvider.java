@@ -12,8 +12,8 @@ import com.google.gson.Gson;
 
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaAccount;
-import fr.olympa.api.provider.OlympaPlayerObject;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
 
@@ -48,7 +48,7 @@ public class AccountProvider implements OlympaAccount {
 		this.redisAccesss = RedisAccess.INSTANCE;
 	}
 
-	public void accountExpire(OlympaPlayer olympaPlayer) {
+	public void accountExpire() {
 		try (Jedis jedis = this.redisAccesss.connect()) {
 			jedis.expire(this.getKey(), 60);
 		}
@@ -84,7 +84,7 @@ public class AccountProvider implements OlympaAccount {
 		return cache.get(this.uuid);
 	}
 
-	protected OlympaPlayer getFromRedis() {
+	public OlympaPlayer getFromRedis() {
 		String json = null;
 
 		try (Jedis jedis = this.redisAccesss.connect()) {
@@ -118,9 +118,24 @@ public class AccountProvider implements OlympaAccount {
 		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> MySQL.savePlayer(olympaPlayer));
 	}
 
+	@Deprecated
+	public void saveToDbBungee(OlympaPlayer olympaPlayer) {
+		OlympaBungee.getInstance().getTask().runAsync(OlympaBungee.getInstance(), () -> MySQL.savePlayer(olympaPlayer));
+	}
+
 	@Override
 	public void saveToRedis(OlympaPlayer olympaPlayer) {
 		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> {
+			try (Jedis jedis = this.redisAccesss.connect()) {
+				jedis.set(this.getKey(), new Gson().toJson(olympaPlayer));
+			}
+			this.redisAccesss.closeResource();
+		});
+	}
+
+	@Deprecated
+	public void saveToRedisBungee(OlympaPlayer olympaPlayer) {
+		OlympaBungee.getInstance().getTask().runAsync(OlympaBungee.getInstance(), () -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
 				jedis.set(this.getKey(), new Gson().toJson(olympaPlayer));
 			}

@@ -32,7 +32,7 @@ public class DataManagmentListener implements Listener {
 				try {
 					olympaPlayer = olympaAccountObject.get();
 				} catch (SQLException e) {
-					player.kickPlayer("§cImpossible de récupérer vos données, merci de réessayer.\n\n§cSi le problème persiste, signalez-le nous.");
+					player.kickPlayer("§cUne erreur est survenue. Merci de réessayer\n\n§e§lSi le problème persiste, signaler-le au staff.\n§eCode d'erreur: §l#SQLSpigotReload");
 					e.printStackTrace();
 					continue;
 				}
@@ -80,22 +80,22 @@ public class DataManagmentListener implements Listener {
 		try {
 			olympaPlayer = olympaAccount.get();
 		} catch (Exception e) {
-			event.disallow(Result.KICK_OTHER, "§cImpossible de récupérer vos données, merci de réessayer.\n\n§cSi le problème persiste, signalez-le nous.");
+			event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotPreLogin"));
 			e.printStackTrace();
 			return;
 		}
 		if (olympaPlayer == null) {
-			event.disallow(Result.KICK_OTHER, "§cUne erreur de données est survenu, merci de réessayer.");
+			event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotNoData"));
 			return;
 		}
 		olympaAccount.saveToCache(olympaPlayer);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	/*@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerQuitHighest(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		new AccountProvider(player.getUniqueId()).removeFromCache();
-	}
+		new AccountProvider(player.getUniqueId()).accountExpire();
+	}*/
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerQuitLow(PlayerQuitEvent event) {

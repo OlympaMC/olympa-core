@@ -20,7 +20,6 @@ public class KickCommand extends BungeeCommand {
 		super(plugin, "kick", OlympaCorePermissions.BAN_KICK_COMMAND, "eject");
 		this.usageString = BungeeConfigUtils.getString("bungee.ban.messages.usagekick");
 		this.minArg = 1;
-		this.register();
 	}
 
 	@Override

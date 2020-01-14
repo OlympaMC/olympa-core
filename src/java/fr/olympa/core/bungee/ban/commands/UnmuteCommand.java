@@ -18,7 +18,6 @@ public class UnmuteCommand extends BungeeCommand {
 		super(plugin, "unmute", OlympaCorePermissions.BAN_UNMUTE_COMMAND, "umute");
 		this.usageString = BungeeConfigUtils.getString("ban.messages.usageunmute");
 		this.minArg = 2;
-		this.register();
 	}
 
 	@Override

@@ -14,11 +14,11 @@ import com.google.common.collect.Lists;
 
 import fr.olympa.api.objects.OlympaConsole;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionHistory;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
-import fr.olympa.core.spigot.OlympaCore;
 
 public class BanMySQL {
 
@@ -34,7 +34,7 @@ public class BanMySQL {
 	`status_id` INT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
-
+	
 	 */
 	/**
 	 * Ajoute un sanction/mute
@@ -43,7 +43,7 @@ public class BanMySQL {
 	 */
 	public static boolean addSanction(OlympaSanction olympaban) {
 		try {
-			PreparedStatement pstate = OlympaCore.getInstance().getDatabase()
+			PreparedStatement pstate = OlympaBungee.getInstance().getDatabase()
 					.prepareStatement("INSERT INTO sanctions (id, type_id, target, reason, author_uuid, expires, created, status_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 			pstate.setInt(1, olympaban.getId());
 			pstate.setInt(2, olympaban.getType().getId());
@@ -63,7 +63,7 @@ public class BanMySQL {
 
 	public static boolean changeCurrentSanction(OlympaSanctionHistory banhistory, int banid) {
 		try {
-			PreparedStatement pstate = OlympaCore.getInstance().getDatabase().prepareStatement("UPDATE sanctions SET `status_id` = ?, `history` = CONCAT_WS(';', ?, history) WHERE `id` = ?;");
+			PreparedStatement pstate = OlympaBungee.getInstance().getDatabase().prepareStatement("UPDATE sanctions SET `status_id` = ?, `history` = CONCAT_WS(`;`, ?, history) WHERE `id` = ?;");
 			pstate.setInt(1, banhistory.getStatus().getId());
 			pstate.setString(2, banhistory.toJson());
 			pstate.setInt(3, banid);
@@ -83,7 +83,7 @@ public class BanMySQL {
 		sanction.setStatus(OlympaSanctionStatus.EXPIRE);
 		sanction.addHistory(banhistory);
 		try {
-			PreparedStatement pstate = OlympaCore.getInstance().getDatabase().prepareStatement("UPDATE sanctions SET `status_id` = ?, `history` = CONCAT_WS(';', ?, history) WHERE `id` = ?;");
+			PreparedStatement pstate = OlympaBungee.getInstance().getDatabase().prepareStatement("UPDATE sanctions SET `status_id` = ?, `history` = CONCAT_WS(`;`, ?, history) WHERE `id` = ?;");
 			pstate.setInt(1, sanction.getStatus().getId());
 			pstate.setString(2, banhistory.toJson());
 			pstate.setInt(3, sanction.getId());
@@ -98,8 +98,8 @@ public class BanMySQL {
 	}
 
 	public static OlympaSanction getBanActive(UUID targetUuid, String targetIp) throws SQLException {
-		Connection connection = OlympaCore.getInstance().getDatabase();
-		PreparedStatement pstate = connection.prepareStatement("SELECT * FROM sanctions WHERE (`target` = '?' OR `target` = '?') AND (`type_id` = '?' OR `type_id` = '?') AND `status_id` = ?;");
+		Connection connection = OlympaBungee.getInstance().getDatabase();
+		PreparedStatement pstate = connection.prepareStatement("SELECT * FROM sanctions WHERE (`target` = ? OR `target` = ?) AND (`type_id` = ? OR `type_id` = ?) AND `status_id` = ?;");
 		int i = 1;
 		pstate.setString(i++, targetUuid.toString());
 		pstate.setString(i++, targetIp);
@@ -120,7 +120,7 @@ public class BanMySQL {
 	public static OlympaSanction getSanction(int id) {
 		OlympaSanction sanction = null;
 		try {
-			Statement state = OlympaCore.getInstance().getDatabase().createStatement();
+			Statement state = OlympaBungee.getInstance().getDatabase().createStatement();
 			ResultSet resultSet = state.executeQuery("SELECT * FROM sanctions WHERE `id` = '" + id + "';");
 			if (resultSet.next()) {
 				sanction = getSanction(resultSet);
@@ -165,7 +165,7 @@ public class BanMySQL {
 			if (bantype != null) {
 				exe += " AND `type_id` = '" + bantype.getId() + "'";
 			}
-			Statement state = OlympaCore.getInstance().getDatabase().createStatement();
+			Statement state = OlympaBungee.getInstance().getDatabase().createStatement();
 			ResultSet resultSet = state.executeQuery(exe);
 			if (resultSet.next()) {
 				sanction = getSanction(resultSet);
@@ -182,7 +182,7 @@ public class BanMySQL {
 	public static List<OlympaSanction> getSanctionByAuthor(UUID authorUUID) {
 		List<OlympaSanction> sanctions = new ArrayList<>();
 		try {
-			Statement state = OlympaCore.getInstance().getDatabase().createStatement();
+			Statement state = OlympaBungee.getInstance().getDatabase().createStatement();
 			ResultSet resultSet = state.executeQuery("SELECT * FROM sanctions WHERE `author_uuid` = '" + authorUUID + "';");
 			while (resultSet.next()) {
 				OlympaSanction sanction = getSanction(resultSet);
@@ -209,7 +209,7 @@ public class BanMySQL {
 			if (bantype != null) {
 				exe = " AND `type_id` = '" + bantype.getId() + "';";
 			}
-			Statement state = OlympaCore.getInstance().getDatabase().createStatement();
+			Statement state = OlympaBungee.getInstance().getDatabase().createStatement();
 			ResultSet resultSet = state.executeQuery(exe);
 			while (resultSet.next()) {
 				OlympaSanction sanction = getSanction(resultSet);
@@ -228,7 +228,7 @@ public class BanMySQL {
 	public static List<OlympaSanction> getSanctionsActive(Object target) {
 		List<OlympaSanction> sanctions = new ArrayList<>();
 		try {
-			Statement state = OlympaCore.getInstance().getDatabase().createStatement();
+			Statement state = OlympaBungee.getInstance().getDatabase().createStatement();
 			ResultSet resultSet = state.executeQuery("SELECT * FROM sanctions WHERE `target` = '" + target + "' AND `status_id` = " + OlympaSanctionStatus.ACTIVE);
 			while (resultSet.next()) {
 				OlympaSanction sanction = getSanction(resultSet);
@@ -246,7 +246,7 @@ public class BanMySQL {
 
 	public static List<OlympaSanction> getSanctionsActive(UUID targetUuid, String targetIp) throws SQLException {
 		List<OlympaSanction> sanctions = new ArrayList<>();
-		Statement state = OlympaCore.getInstance().getDatabase().createStatement();
+		Statement state = OlympaBungee.getInstance().getDatabase().createStatement();
 		ResultSet resultSet = state.executeQuery("SELECT * FROM sanctions WHERE (`target` = '" + targetUuid + "' OR `target` = '" + targetIp + "') AND `status_id` = " + OlympaSanctionStatus.ACTIVE);
 		while (resultSet.next()) {
 			OlympaSanction sanction = getSanction(resultSet);

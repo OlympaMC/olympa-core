@@ -3,5 +3,3 @@ main: fr.olympa.core.bungee.OlympaBungee
 author: Tristiisch
 version: 0.1
 website: https://olympa.fr
-commands:
-    maintenance:

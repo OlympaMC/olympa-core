@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import fr.olympa.api.objects.OlympaConsole;
@@ -18,11 +17,12 @@ import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.commands.methods.UnbanIp;
 import fr.olympa.core.bungee.ban.commands.methods.UnbanPlayer;
-import fr.olympa.core.spigot.OlympaCore;
+import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
 
+@SuppressWarnings("deprecation")
 public class UnbanCommand extends BungeeCommand {
 
 	public UnbanCommand(Plugin plugin) {
@@ -39,14 +39,13 @@ public class UnbanCommand extends BungeeCommand {
 		} else {
 			author = OlympaConsole.getUniqueId();
 		}
-		FileConfiguration config = OlympaCore.getInstance().getConfig();
 
 		if (Matcher.isFakeIP(args[0])) {
 			if (Matcher.isIP(args[0])) {
 				UnbanIp.unBan(author, sender, args[0], args);
 
 			} else {
-				sender.sendMessage(config.getString("default.ipinvalid").replace("%ip%", args[0]));
+				sender.sendMessage(BungeeConfigUtils.getString("default.ipinvalid").replace("%ip%", args[0]));
 				return;
 			}
 
@@ -59,16 +58,17 @@ public class UnbanCommand extends BungeeCommand {
 				UnbanPlayer.unBan(author, sender, UUID.fromString(args[0]), null, args);
 
 			} else {
-				sender.sendMessage(config.getString("default.uuidinvalid").replace("%uuid%", args[0]));
+				sender.sendMessage(BungeeConfigUtils.getString("default.uuidinvalid").replace("%uuid%", args[0]));
 				return;
 			}
 		} else {
-			sender.sendMessage(config.getString("default.typeunknown").replace("%type%", args[0]));
+			sender.sendMessage(BungeeConfigUtils.getString("default.typeunknown").replace("%type%", args[0]));
 			return;
 		}
 		return;
 	}
 
+	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		if (args.length == 1) {
 			// -> usless code, change to banned players

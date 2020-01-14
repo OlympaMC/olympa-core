@@ -39,7 +39,7 @@ public class MotdListener implements Listener {
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(this.separator, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.welcome.replace("%player", playerName) + " " + this.separator2 + " " + this.version, UUID.randomUUID()),
+					//new ServerPing.PlayerInfo(this.welcome.replace("%player", playerName) + " " + this.separator2 + " " + this.version, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo(this.games, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
@@ -111,9 +111,8 @@ public class MotdListener implements Listener {
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(this.separator, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.welcome.replace("%player", playerName) + " " + this.separator2 + " " + this.version, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§2Serveur en développement depuis", UUID.randomUUID()),
-					new ServerPing.PlayerInfo("§2le 1 juillet 2019", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("§2le 18 octobre 2019", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo(this.teamspeak, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(this.twitter, UUID.randomUUID()),

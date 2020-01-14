@@ -1,6 +1,7 @@
 package fr.olympa.api.provider;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	int id;
 	UUID uuid;
-	UUID premium_uuid;
+	UUID premiumUuid;
 	String password;
 	String email;
 	String name;
@@ -26,14 +27,16 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	String ip;
 	long firstConnection;
 	long lastConnection;
+	TreeMap<Date, String> histname = new TreeMap<>(Comparator.comparing(Date::getTime).reversed());
 
 	double money;
 	boolean vanish;
 	boolean verifMode;
 	boolean afk;
 
-	public OlympaPlayerObject(int id, UUID uuid, String name, String groupsString, String ip, long firstConnection, long lastConnection, String password, String email) {
+	public OlympaPlayerObject(int id, UUID uuid, UUID premiumUuid, String name, String groupsString, String ip, long firstConnection, long lastConnection, String password, String email) {
 		this.id = id;
+		this.premiumUuid = premiumUuid;
 		this.uuid = uuid;
 		this.name = name;
 		this.setGroupsFromString(groupsString);
@@ -153,12 +156,12 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	public UUID getPremium_uuid() {
-		return this.premium_uuid;
+		return this.premiumUuid;
 	}
 
 	@Override
 	public UUID getPremiumUniqueId() {
-		return this.premium_uuid;
+		return this.premiumUuid;
 	}
 
 	@Override
@@ -272,7 +275,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public void setPremiumUniqueId(UUID premium_uuid) {
-		this.premium_uuid = premium_uuid;
+		this.premiumUuid = premium_uuid;
 	}
 
 	@Override

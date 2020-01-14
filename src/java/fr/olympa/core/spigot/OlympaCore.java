@@ -7,6 +7,7 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.plugin.OlympaPlugin;
 import fr.olympa.api.provider.RedisAccess;
+import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
 import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
@@ -17,7 +18,7 @@ import fr.olympa.core.spigot.scoreboards.ScoreboardListener;
 
 public class OlympaCore extends OlympaPlugin {
 
-	private static OlympaCore instance;
+	private static OlympaCore instance = null;
 
 	public static OlympaCore getInstance() {
 		return instance;
@@ -38,6 +39,7 @@ public class OlympaCore extends OlympaPlugin {
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		this.enable();
 
+		new MySQL(this.database);
 		RedisAccess.init(this.getServer().getName());
 
 		new GroupCommand(this).register();

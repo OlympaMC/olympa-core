@@ -27,7 +27,6 @@ public class DelbanCommand extends BungeeCommand {
 		super(plugin, "delban", OlympaCorePermissions.BAN_DELBAN_COMMAND, "bandel", "dban", "delmute", "mutedel", "delmute", "delkick", "kickdel", "dkick");
 		this.minArg = 1;
 		this.usageString = "&cUsage &7» &c/delban [id]";
-		this.register();
 	}
 
 	@Override

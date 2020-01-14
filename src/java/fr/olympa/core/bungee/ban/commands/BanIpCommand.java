@@ -23,7 +23,6 @@ public class BanIpCommand extends BungeeCommand {
 		super(plugin, "banip", OlympaCorePermissions.BAN_BANIP_COMMAND, "tempbanip");
 		this.minArg = 2;
 		this.usageString = BungeeConfigUtils.getString("bungee.ban.messages.usageban");
-		this.register();
 	}
 
 	@Override
@@ -55,7 +54,7 @@ public class BanIpCommand extends BungeeCommand {
 					BanIp.addBanIP(author, sender, args[0], args, this.olympaPlayer);
 
 				} else {
-					sender.sendMessage(BungeeConfigUtils.getString("commun.messages.ipinvalid").replaceAll("%ip%", args[0]));
+					sender.sendMessage(BungeeConfigUtils.getString("default.messages.ipinvalid").replaceAll("%ip%", args[0]));
 					return;
 				}
 
@@ -68,12 +67,12 @@ public class BanIpCommand extends BungeeCommand {
 					}
 
 				} else {
-					sender.sendMessage(BungeeConfigUtils.getString("commun.messages.uuidinvalid").replaceAll("%uuid%", args[0]));
+					sender.sendMessage(BungeeConfigUtils.getString("default.messages.uuidinvalid").replaceAll("%uuid%", args[0]));
 					return;
 				}
 
 			} else {
-				sender.sendMessage(BungeeConfigUtils.getString("commun.messages.typeunknown").replaceAll("%type%", args[0]));
+				sender.sendMessage(BungeeConfigUtils.getString("default.messages.typeunknown").replaceAll("%type%", args[0]));
 				return;
 			}
 

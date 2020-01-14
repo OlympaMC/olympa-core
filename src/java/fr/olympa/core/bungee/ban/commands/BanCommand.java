@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.objects.OlympaConsole;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
@@ -20,7 +19,7 @@ import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.BanUtils;
 import fr.olympa.core.bungee.ban.commands.methods.BanIp;
 import fr.olympa.core.bungee.ban.commands.methods.BanPlayer;
-import fr.olympa.core.spigot.OlympaCore;
+import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -31,7 +30,6 @@ public class BanCommand extends BungeeCommand {
 		super(plugin, "ban", OlympaCorePermissions.BAN_BAN_COMMAND, "tempban");
 		this.minArg = 2;
 		this.usageString = "<joueur|uuid|ip> [temps] <motif>";
-		this.register();
 	}
 
 	@Override
@@ -43,7 +41,6 @@ public class BanCommand extends BungeeCommand {
 		} else {
 			author = OlympaConsole.getUniqueId();
 		}
-		CustomConfig config = OlympaCore.getInstance().getConfig();
 
 		String arg = args[0];
 
@@ -55,7 +52,7 @@ public class BanCommand extends BungeeCommand {
 			if (Matcher.isIP(arg)) {
 				BanIp.addBanIP(author, sender, arg, args, olympaPlayer);
 			} else {
-				this.sendMessage(config.getString("ban.ipinvalid").replace("%ip%", arg));
+				this.sendMessage(BungeeConfigUtils.getString("ban.ipinvalid").replace("%ip%", arg));
 				return;
 			}
 
@@ -64,12 +61,12 @@ public class BanCommand extends BungeeCommand {
 			if (Matcher.isUUID(arg)) {
 				BanPlayer.addBanPlayer(author, sender, null, UUID.fromString(arg), args, olympaPlayer);
 			} else {
-				this.sendMessage(config.getString("ban.uuidinvalid").replace("%uuid%", arg));
+				this.sendMessage(BungeeConfigUtils.getString("ban.uuidinvalid").replace("%uuid%", arg));
 				return;
 			}
 
 		} else {
-			this.sendMessage(config.getString("ban.typeunknown").replace("%type%", arg));
+			this.sendMessage(BungeeConfigUtils.getString("ban.typeunknown").replace("%type%", arg));
 			return;
 		}
 		return;
