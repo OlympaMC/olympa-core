@@ -41,7 +41,7 @@ public class AuthListener implements Listener {
 		}
 
 		olympaAccount.accountExpire();
-		olympaAccount.saveToDbBungee(olympaPlayer);
+		olympaAccount.saveToDb(olympaPlayer);
 	}
 
 	/*@EventHandler(priority = EventPriority.LOWEST)
@@ -98,7 +98,7 @@ public class AuthListener implements Listener {
 			e.printStackTrace();
 		}
 
-		olympaAccount.saveToRedisBungee(olympaPlayer);
+		olympaAccount.saveToRedis(olympaPlayer);
 	}
 
 	@EventHandler

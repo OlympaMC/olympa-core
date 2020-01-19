@@ -3,6 +3,7 @@ package fr.olympa.core.bungee;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
@@ -65,6 +66,8 @@ public class OlympaBungee extends Plugin {
 		this.setupDatabase();
 		new MySQL(this.database);
 		RedisAccess.init("bungee");
+
+		AccountProvider.asyncLaunch = (run) -> getTask().runAsync(this, run);
 
 		PluginManager pluginManager = this.getProxy().getPluginManager();
 		pluginManager.registerListener(this, new MotdListener());
