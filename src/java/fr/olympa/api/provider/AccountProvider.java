@@ -22,6 +22,7 @@ public class AccountProvider implements OlympaAccount {
 	private static String REDIS_KEY = "player:";
 	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
 	private static Map<UUID, OlympaPlayer> cache = new HashMap<>();
+	public static Consumer<Runnable> asyncLaunch;
 
 	public static OlympaPlayer get(Player player) {
 		return get(player.getUniqueId());

@@ -123,7 +123,7 @@ public class AuthListener implements Listener {
 			System.out.println("NEW UUID " + connection.getUniqueId());
 		}
 
-		olympaAccount.saveToRedisBungee(olympaPlayer);
+		olympaAccount.saveToRedis(olympaPlayer);
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
@@ -142,7 +142,7 @@ public class AuthListener implements Listener {
 			return;
 		}
 		olympaAccount.accountExpire();
-		olympaAccount.saveToDbBungee(olympaPlayer);
+		olympaAccount.saveToDb(olympaPlayer);
 	}
 
 }
