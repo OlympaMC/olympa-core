@@ -28,9 +28,9 @@ public class MaintenanceCommand extends BungeeCommand {
 	private OlympaPermission permission;
 
 	public MaintenanceCommand(Plugin plugin) {
-		super(plugin, "maintenance", OlympaCorePermissions.MAINTENANCE_COMMAND, "tempban");
-		this.minArg = 2;
-		this.usageString = "<joueur|uuid|ip> [temps] <motif>";
+		super(plugin, "maintenance", OlympaCorePermissions.MAINTENANCE_COMMAND);
+		this.minArg = 1;
+		this.usageString = "<on|off|dev|soon|add|remove|list|status> [joueur]";
 		this.register();
 	}
 
@@ -40,14 +40,9 @@ public class MaintenanceCommand extends BungeeCommand {
 			if (sender instanceof ProxiedPlayer) {
 				ProxiedPlayer player = (ProxiedPlayer) sender;
 				if (!this.permission.hasPermission(player.getUniqueId())) {
-					sender.sendMessage(SpigotUtils.color("Vous n'avez pas la permission &l(◑_◑)"));
+					this.sendDoNotHavePermission();
 					return;
 				}
-			}
-			if (args.length == 0) {
-				sender.sendMessage(SpigotUtils.color("Usage > /maintenance <on|off|dev|soon|add|remove|list|status>"));
-				return;
-
 			}
 			switch (args[0].toLowerCase()) {
 
@@ -82,7 +77,7 @@ public class MaintenanceCommand extends BungeeCommand {
 
 			case "add":
 				if (args.length < 2) {
-					sender.sendMessage(BungeeConfigUtils.getString("maintenance.messages.usage"));
+					this.sendUsage();
 					return;
 				}
 

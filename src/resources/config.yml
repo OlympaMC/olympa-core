@@ -1,4 +1,13 @@
 version: 1.0
+maintenance:
+   messages:
+      usage: '&cUsage &7» &c/maintenance [on|off|dev|add|remove|list|status] <raison|joueur>'
+      whitelist: '&6Olympa &7» &aWhitelist (%size%): %list%.'
+      whitelist_separator: ', '
+      added: '&a%player% a été ajouté à la whitelist.'
+      alreadyadded: '&c%player% est déjà dans la whitelist.'
+      removed: '&a%player% a été retiré de la whitelist.'
+      alreadyremoved: '&c%player% n''est pas dans la whitelist.'
 ban:
    usageban: '&cUsage &7» &c/ban <joueur|uuid|ip> [temps] <motif>'
    usageunban: '&cUsage &7» &c/unban <pseudo|uuid|ip> <motif>'

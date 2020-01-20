@@ -8,6 +8,7 @@ import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.bungee.auth.AuthListener;
+import fr.olympa.core.bungee.auth.BasicSecurityListener;
 import fr.olympa.core.bungee.ban.commands.BanCommand;
 import fr.olympa.core.bungee.ban.commands.BanHistoryCommand;
 import fr.olympa.core.bungee.ban.commands.BanIpCommand;
@@ -22,6 +23,7 @@ import fr.olympa.core.bungee.maintenance.ConnectionListener;
 import fr.olympa.core.bungee.maintenance.MaintenanceCommand;
 import fr.olympa.core.bungee.maintenance.MaintenanceListener;
 import fr.olympa.core.bungee.motd.MotdListener;
+import fr.olympa.core.bungee.serveurs.ServeursListener;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
@@ -71,8 +73,9 @@ public class OlympaBungee extends Plugin {
 		pluginManager.registerListener(this, new MaintenanceListener());
 		pluginManager.registerListener(this, new ConnectionListener());
 		pluginManager.registerListener(this, new AuthListener());
-
+		pluginManager.registerListener(this, new BasicSecurityListener());
 		pluginManager.registerListener(this, new SanctionListener());
+		pluginManager.registerListener(this, new ServeursListener());
 		pluginManager.registerListener(this, new TestListener());
 
 		new BanCommand(this).register();
