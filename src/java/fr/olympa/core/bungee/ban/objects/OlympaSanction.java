@@ -173,8 +173,8 @@ public class OlympaSanction {
 				.append(SpigotUtils.color("&6Raison: &e" + this.getReason() + "\n"))
 				.append(SpigotUtils.color("&6Crée: &e" + Utils.timestampToDateAndHour(this.getCreated()) + "\n"))
 				.append(SpigotUtils.color("&6Expire: &e" + (this.getExpires() != 0 ? Utils.timestampToDateAndHour(this.getExpires()) + "\n&6Durée de base: &e" + Utils
-						.timestampToDuration(Utils.getCurrentTimeinSeconds() + this.getBanTime())
-						+ (this.getExpires() >= Utils.getCurrentTimeinSeconds() ? "\n&6Durée restante: &e" + Utils
+						.timestampToDuration(Utils.getCurrentTimeInSeconds() + this.getBanTime())
+						+ (this.getExpires() >= Utils.getCurrentTimeInSeconds() ? "\n&6Durée restante: &e" + Utils
 								.timestampToDuration(this.getExpires()) : "")
 						: "permanant") + "\n"))
 				.append(SpigotUtils.color("&6Status: &e" + this.getStatus().getColor() + this.getStatus().getName()))

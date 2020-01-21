@@ -17,7 +17,7 @@ public class MuteUtils {
 	}
 
 	public static boolean chechExpireBan(OlympaSanction mute) {
-		if (Utils.getCurrentTimeinSeconds() > mute.getExpires()) {
+		if (Utils.getCurrentTimeInSeconds() > mute.getExpires()) {
 			removeMute(mute);
 			BanMySQL.expireSanction(mute);
 			return true;

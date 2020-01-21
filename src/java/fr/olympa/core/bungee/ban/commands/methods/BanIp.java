@@ -36,7 +36,7 @@ public class BanIp {
 				String unit = matcher2.group();
 				String ip = args[0];
 				long timestamp = BanUtils.toTimeStamp(Integer.parseInt(time), unit);
-				long seconds = timestamp - Utils.getCurrentTimeinSeconds();
+				long seconds = timestamp - Utils.getCurrentTimeInSeconds();
 
 				if (seconds <= BungeeConfigUtils.getInt("bungee.ban.settings.minbantime")) {
 					sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.cantbypassmaxbantime"));
@@ -47,7 +47,7 @@ public class BanIp {
 					return;
 				}
 				String Stimestamp = Utils.timestampToDuration(timestamp);
-				OlympaSanction ban = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.BANIP, ip, author, reason, Utils.getCurrentTimeinSeconds(), timestamp);
+				OlympaSanction ban = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.BANIP, ip, author, reason, Utils.getCurrentTimeInSeconds(), timestamp);
 				if (!BanMySQL.addSanction(ban)) {
 					sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 					return;
@@ -85,7 +85,7 @@ public class BanIp {
 		} else {
 			String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 			String ip = args[0];
-			OlympaSanction ban = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.BANIP, ip, author, reason, Utils.getCurrentTimeinSeconds(), 0);
+			OlympaSanction ban = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.BANIP, ip, author, reason, Utils.getCurrentTimeInSeconds(), 0);
 
 			if (!BanMySQL.addSanction(ban)) {
 				sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));

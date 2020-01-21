@@ -86,7 +86,7 @@ public class ChatListener implements Listener {
 
 		String message = event.getMessage();
 		String msgNFD = Normalizer.normalize(message, Form.NFD);
-		long currentTime = Utils.getCurrentTimeinSeconds();
+		long currentTime = Utils.getCurrentTimeInSeconds();
 		long time = currentTime - olympaTchat.getLastMsgTime();
 		if (olympaTchat.isLastMsg(msgNFD) && time < 10) {
 			event.setCancelled(true);

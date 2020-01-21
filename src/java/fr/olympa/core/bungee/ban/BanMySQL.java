@@ -148,7 +148,7 @@ public class BanMySQL {
 				sanction.addHistory(OlympaSanctionHistory.fromJson(hist));
 			}
 		}
-		if (sanction.getStatus() == OlympaSanctionStatus.ACTIVE && sanction.getExpires() != 0 && Utils.getCurrentTimeinSeconds() > sanction.getExpires()) {
+		if (sanction.getStatus() == OlympaSanctionStatus.ACTIVE && sanction.getExpires() != 0 && Utils.getCurrentTimeInSeconds() > sanction.getExpires()) {
 			BanMySQL.expireSanction(sanction);
 		}
 		return sanction;

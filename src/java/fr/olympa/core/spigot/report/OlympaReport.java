@@ -10,7 +10,7 @@ public class OlympaReport {
 	UUID target;
 	UUID author;
 	ReportReason reason;
-	long time = Utils.getCurrentTimeinSeconds();
+	long time = Utils.getCurrentTimeInSeconds();
 
 	String serverName;
 

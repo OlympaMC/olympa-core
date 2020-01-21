@@ -8,6 +8,7 @@ import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.auth.AuthListener;
 import fr.olympa.core.bungee.auth.BasicSecurityListener;
 import fr.olympa.core.bungee.ban.commands.BanCommand;
@@ -35,13 +36,14 @@ import net.md_5.bungee.config.Configuration;
 
 public class OlympaBungee extends Plugin {
 
-	private static OlympaBungee INSTANCE;
+	private static OlympaBungee instance;
 
 	public static OlympaBungee getInstance() {
-		return INSTANCE;
+		return instance;
 	}
 
 	protected DbConnection database = null;
+	protected long uptime = Utils.getCurrentTimeInSeconds();
 
 	public Connection getDatabase() throws SQLException {
 		return this.database.getConnection();
@@ -52,8 +54,15 @@ public class OlympaBungee extends Plugin {
 	}
 
 	public TaskScheduler getTask() {
-		// TODO Auto-generated method stub
 		return ProxyServer.getInstance().getScheduler();
+	}
+
+	public String getUptime() {
+		return Utils.timestampToDuration(this.uptime);
+	}
+
+	public long getUptimeLong() {
+		return this.uptime;
 	}
 
 	@Override
@@ -63,13 +72,13 @@ public class OlympaBungee extends Plugin {
 
 	@Override
 	public void onEnable() {
-		INSTANCE = this;
+		instance = this;
 		BungeeConfigUtils.loadConfigs();
 		this.setupDatabase();
 		new MySQL(this.database);
 		RedisAccess.init("bungee");
 
-		AccountProvider.asyncLaunch = (run) -> getTask().runAsync(this, run);
+		AccountProvider.asyncLaunch = (run) -> this.getTask().runAsync(this, run);
 
 		PluginManager pluginManager = this.getProxy().getPluginManager();
 		pluginManager.registerListener(this, new MotdListener());

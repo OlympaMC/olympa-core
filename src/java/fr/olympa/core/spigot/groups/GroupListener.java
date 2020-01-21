@@ -23,7 +23,7 @@ public class GroupListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onOlympaPlayerLoad(OlympaPlayerLoadEvent event) {
-		long now = Utils.getCurrentTimeinSeconds();
+		long now = Utils.getCurrentTimeInSeconds();
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
 		TreeMap<OlympaGroup, Long> groups = olympaPlayer.getGroups();
 

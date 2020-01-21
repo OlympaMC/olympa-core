@@ -76,7 +76,7 @@ public class MutePlayer {
 				String time = matcher1.group();
 				String unit = matcher2.group();
 				long timestamp = BanUtils.toTimeStamp(Integer.parseInt(time), unit);
-				long seconds = timestamp - Utils.getCurrentTimeinSeconds();
+				long seconds = timestamp - Utils.getCurrentTimeInSeconds();
 
 				if (olymaPlayer != null && OlympaCorePermissions.STAFF.hasPermission(olympaTarget) && OlympaCorePermissions.BAN_BYPASS_SANCTION_STAFF.hasPermission(olymaPlayer)) {
 					sender.sendMessage(BungeeConfigUtils.getString("ban.messages.cantmutestaffmembers"));
@@ -94,7 +94,7 @@ public class MutePlayer {
 				}
 
 				String Stimestamp = Utils.timestampToDuration(timestamp);
-				OlympaSanction mute = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.MUTE, olympaTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), timestamp);
+				OlympaSanction mute = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.MUTE, olympaTarget.getUniqueId(), author, reason, Utils.getCurrentTimeInSeconds(), timestamp);
 				if (!BanMySQL.addSanction(mute)) {
 					sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 					return;
@@ -130,7 +130,7 @@ public class MutePlayer {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.usagemute"));
 			String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-			OlympaSanction mute = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.MUTE, olympaTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), 0);
+			OlympaSanction mute = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.MUTE, olympaTarget.getUniqueId(), author, reason, Utils.getCurrentTimeInSeconds(), 0);
 			if (!BanMySQL.addSanction(mute)) {
 				sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 				return;

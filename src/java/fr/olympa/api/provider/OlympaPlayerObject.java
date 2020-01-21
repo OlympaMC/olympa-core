@@ -52,8 +52,8 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		this.name = name;
 		this.ip = ip;
 		this.groups.put(OlympaGroup.PLAYER, 0l);
-		this.firstConnection = Utils.getCurrentTimeinSeconds();
-		this.lastConnection = Utils.getCurrentTimeinSeconds();
+		this.firstConnection = Utils.getCurrentTimeInSeconds();
+		this.lastConnection = Utils.getCurrentTimeInSeconds();
 	}
 
 	@Override

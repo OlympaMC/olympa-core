@@ -30,13 +30,13 @@ public class OlympaSanctionHistory {
 
 	public OlympaSanctionHistory(UUID author, OlympaSanctionStatus status) {
 		this.author = author;
-		this.time = Utils.getCurrentTimeinSeconds();
+		this.time = Utils.getCurrentTimeInSeconds();
 		this.status = status;
 	}
 
 	public OlympaSanctionHistory(UUID author, OlympaSanctionStatus status, String reason) {
 		this.author = author;
-		this.time = Utils.getCurrentTimeinSeconds();
+		this.time = Utils.getCurrentTimeInSeconds();
 		this.status = status;
 		this.reason = reason;
 	}

@@ -57,7 +57,7 @@ public class DataManagmentListener implements Listener {
 		}
 
 		olympaPlayer.setIp(player.getAddress().getAddress().getHostAddress());
-		olympaPlayer.setLastConnection(Utils.getCurrentTimeinSeconds());
+		olympaPlayer.setLastConnection(Utils.getCurrentTimeInSeconds());
 
 		OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer);
 		loginevent.setJoinMessage("&7[&a+&7] %prefix%name");

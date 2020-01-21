@@ -52,7 +52,7 @@ public class KickPlayer {
 			return;
 		}
 
-		OlympaSanction kick = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.KICK, olympaTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), 0, OlympaSanctionStatus.EXPIRE);
+		OlympaSanction kick = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.KICK, olympaTarget.getUniqueId(), author, reason, Utils.getCurrentTimeInSeconds(), 0, OlympaSanctionStatus.EXPIRE);
 		if (!BanMySQL.addSanction(kick)) {
 			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
 			return;

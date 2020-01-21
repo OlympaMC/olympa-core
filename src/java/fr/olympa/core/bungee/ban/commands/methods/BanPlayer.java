@@ -43,7 +43,7 @@ public class BanPlayer {
 		// args[2] & + = reason
 
 		CustomConfig config = OlympaCore.getInstance().getConfig();
-		long currentTime = Utils.getCurrentTimeinSeconds();
+		long currentTime = Utils.getCurrentTimeInSeconds();
 		ProxiedPlayer player = null;
 		if (sender instanceof ProxiedPlayer) {
 			player = (ProxiedPlayer) sender;
@@ -158,7 +158,7 @@ public class BanPlayer {
 			}
 			String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-			OlympaSanction ban = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.BAN, olympaTarget.getUniqueId(), author, reason, Utils.getCurrentTimeinSeconds(), 0);
+			OlympaSanction ban = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.BAN, olympaTarget.getUniqueId(), author, reason, Utils.getCurrentTimeInSeconds(), 0);
 			if (!BanMySQL.addSanction(ban)) {
 				sender.sendMessage(config.getString("ban.errordb"));
 				return;
