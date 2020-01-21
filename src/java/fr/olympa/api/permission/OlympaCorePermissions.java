@@ -5,6 +5,7 @@ import fr.olympa.core.bungee.api.permission.OlympaBungeePermission;
 
 public class OlympaCorePermissions {
 
+	public static OlympaPermission DEV = new OlympaPermission(OlympaGroup.ADMIN_SYS, OlympaGroup.RESP_TECH);
 	// TODO change to OlympaGroup.ADMIN
 	public static OlympaPermission MAINTENANCE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 	public static OlympaPermission GROUP_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
@@ -16,7 +17,7 @@ public class OlympaCorePermissions {
 
 	public static OlympaPermission BAN_BYPASS_MAXTIME = new OlympaBungeePermission(OlympaGroup.FONDA);
 	public static OlympaPermission BAN_BYPASS_SANCTION_STAFF = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
-	public static OlympaPermission BAN_FORCEKICK_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
+	public static OlympaPermission BAN_FORCEKICK_COMMAND = new OlympaPermission(OlympaGroup.ASSISTANT);
 	public static OlympaPermission BAN_DEF = new OlympaBungeePermission(OlympaGroup.MODP);
 	public static OlympaPermission BAN_BANIP_COMMAND = new OlympaBungeePermission(OlympaGroup.MODP);
 	public static OlympaPermission BAN_UNBAN_COMMAND = new OlympaBungeePermission(OlympaGroup.MODP);
@@ -35,5 +36,6 @@ public class OlympaCorePermissions {
 	public static OlympaPermission CHAT_COLOR = new OlympaPermission(OlympaGroup.MODP);
 
 	public static OlympaPermission STAFF = new OlympaPermission(OlympaGroup.GRAPHISTE);
+	public static OlympaPermission MESSAGE_TOGGLE = new OlympaPermission(OlympaGroup.MINI_YOUTUBER);
 
 }

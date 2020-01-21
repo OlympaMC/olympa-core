@@ -53,6 +53,7 @@ public class DataManagmentListener implements Listener {
 		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
 
 		if (olympaPlayer == null) {
+			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur est impossible, contactez-vite le staff. \n§eCode d'erreur: §l#Nucléaire"));
 			return;
 		}
 

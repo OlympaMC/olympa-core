@@ -72,7 +72,7 @@ public abstract class BungeeCommand extends Command {
 		this.register();
 	}
 
-	public BungeeCommand(Plugin plugin, String command, String[] aliases) {
+	public BungeeCommand(Plugin plugin, String command, String... aliases) {
 		super(command, null, aliases);
 		this.plugin = plugin;
 		this.command = command;

@@ -28,10 +28,9 @@ public class MaintenanceCommand extends BungeeCommand {
 	private OlympaPermission permission;
 
 	public MaintenanceCommand(Plugin plugin) {
-		super(plugin, "maintenance", OlympaCorePermissions.MAINTENANCE_COMMAND);
+		super(plugin, "maintenance", OlympaCorePermissions.MAINTENANCE_COMMAND, "maint");
 		this.minArg = 1;
 		this.usageString = "<on|off|dev|soon|add|remove|list|status> [joueur]";
-		this.register();
 	}
 
 	@Override

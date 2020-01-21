@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Passwords;
 import fr.olympa.api.utils.Utils;
 
@@ -84,6 +85,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	public void addNewName(String name) {
 		this.histName.put(Utils.getCurrentTimeInSeconds(), this.name);
 		this.name = name;
+		MySQL.savePlayer(this);
 	}
 
 	@Override
@@ -247,7 +249,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public void setGroupsFromString(String groupsString) {
-		for (final String groupInfos : groupsString.split(";")) {
+		for (String groupInfos : groupsString.split(";")) {
 			String[] groupInfo = groupInfos.split(":");
 			OlympaGroup olympaGroup = OlympaGroup.getById(Integer.parseInt(groupInfo[0]));
 			Long until;

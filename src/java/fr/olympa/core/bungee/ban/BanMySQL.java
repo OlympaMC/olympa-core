@@ -34,7 +34,7 @@ public class BanMySQL {
 	`status_id` INT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
-	
+
 	 */
 	/**
 	 * Ajoute un sanction/mute
@@ -95,26 +95,6 @@ public class BanMySQL {
 		}
 		return true;
 
-	}
-
-	public static OlympaSanction getBanActive(UUID targetUuid, String targetIp) throws SQLException {
-		Connection connection = OlympaBungee.getInstance().getDatabase();
-		PreparedStatement pstate = connection.prepareStatement("SELECT * FROM sanctions WHERE (`target` = ? OR `target` = ?) AND (`type_id` = ? OR `type_id` = ?) AND `status_id` = ?;");
-		int i = 1;
-		pstate.setString(i++, targetUuid.toString());
-		pstate.setString(i++, targetIp);
-		pstate.setInt(i++, OlympaSanctionType.BAN.getId());
-		pstate.setInt(i++, OlympaSanctionType.BANIP.getId());
-		pstate.setInt(i++, OlympaSanctionStatus.ACTIVE.getId());
-		ResultSet resultSet = pstate.executeQuery();
-		while (resultSet.next()) {
-			OlympaSanction sanction = getSanction(resultSet);
-			if (!OlympaSanctionStatus.EXPIRE.equals(sanction.getStatus())) {
-				return getSanction(resultSet);
-			}
-		}
-		pstate.close();
-		return null;
 	}
 
 	public static OlympaSanction getSanction(int id) {
@@ -246,15 +226,17 @@ public class BanMySQL {
 
 	public static List<OlympaSanction> getSanctionsActive(UUID targetUuid, String targetIp) throws SQLException {
 		List<OlympaSanction> sanctions = new ArrayList<>();
-		Statement state = OlympaBungee.getInstance().getDatabase().createStatement();
-		ResultSet resultSet = state.executeQuery("SELECT * FROM sanctions WHERE (`target` = '" + targetUuid + "' OR `target` = '" + targetIp + "') AND `status_id` = " + OlympaSanctionStatus.ACTIVE);
+		Connection connection = OlympaBungee.getInstance().getDatabase();
+		PreparedStatement pstate = connection.prepareStatement("SELECT * FROM sanctions WHERE (`target` = ? OR `target` = ?) AND `status_id` = ?;");
+		int i = 1;
+		pstate.setString(i++, targetUuid.toString());
+		pstate.setString(i++, targetIp);
+		pstate.setInt(i++, OlympaSanctionStatus.ACTIVE.getId());
+		ResultSet resultSet = pstate.executeQuery();
 		while (resultSet.next()) {
-			OlympaSanction sanction = getSanction(resultSet);
-			if (sanction != null) {
-				sanctions.add(sanction);
-			}
+			sanctions.add(getSanction(resultSet));
 		}
-		state.close();
+		pstate.close();
 		return Lists.reverse(sanctions);
 	}
 

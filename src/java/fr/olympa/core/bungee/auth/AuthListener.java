@@ -30,7 +30,7 @@ import net.md_5.bungee.event.EventPriority;
 public class AuthListener implements Listener {
 
 	private Cache<String, UUID> cachePremiumUUID = CacheBuilder.newBuilder().expireAfterWrite(4, TimeUnit.SECONDS).build();
-	private Cache<String, OlympaPlayer> cacheAccountRename = CacheBuilder.newBuilder().expireAfterWrite(4, TimeUnit.SECONDS).build();
+	private Cache<String, OlympaPlayer> cachePlayer = CacheBuilder.newBuilder().expireAfterWrite(4, TimeUnit.SECONDS).build();
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void on1PreLogin(PreLoginEvent event) {
@@ -49,13 +49,13 @@ public class AuthListener implements Listener {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			event.setCancelled(true);
-			event.setCancelReason(BungeeUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLBungeePreLogin"));
+			event.setCancelReason(BungeeUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLBungeeLost"));
 			return;
 		}
 		if (olympaPlayer == null) {
 			UUID uuidPremium = AuthUtils.getUuid(connection);
 			try {
-				uuidCrack = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes("UTF_8"));
+				uuidCrack = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes("UTF-8"));
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
@@ -76,12 +76,11 @@ public class AuthListener implements Listener {
 				} catch (SQLException e) {
 					e.printStackTrace();
 					event.setCancelled(true);
-					event.setCancelReason(BungeeUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLBungeePreLogin2"));
+					event.setCancelReason(BungeeUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLBungeePreLogin"));
 					return;
 				}
 				if (olympaPlayer != null) {
 					olympaPlayer.addNewName(name);
-					this.cacheAccountRename.put(name, olympaPlayer);
 				}
 				System.out.println("null onlinemode");
 			}
@@ -97,30 +96,28 @@ public class AuthListener implements Listener {
 			}
 			account = new AccountProvider(olympaPlayer.getUniqueId());
 			account.saveToCache(olympaPlayer);
+			this.cachePlayer.put(name, olympaPlayer);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void on2Login(LoginEvent event) throws SQLException {
+	public void on2Login(LoginEvent event) throws SQLException, UnsupportedEncodingException {
 		if (event.isCancelled()) {
 			return;
 		}
 		PendingConnection connection = event.getConnection();
+		System.out.println("LoginEvent onlinemode ? " + connection.isOnlineMode());
 		String name = connection.getName();
-		UUID uuid = connection.getUniqueId();
 		UUID uuidPremium = this.cachePremiumUUID.getIfPresent(name);
 		String ip = connection.getAddress().getAddress().getHostAddress();
-		OlympaPlayer olympaPlayer = this.cacheAccountRename.getIfPresent(name);
-		AccountProvider olympaAccount = new AccountProvider(uuid);
+		OlympaPlayer olympaPlayer = this.cachePlayer.getIfPresent(name);
+		AccountProvider olympaAccount;
 		if (olympaPlayer != null) {
 			olympaAccount = new AccountProvider(olympaPlayer.getUniqueId());
-			this.cacheAccountRename.invalidate(name);
-		}
-		System.out.println("LoginEvent onlinemode ? " + connection.isOnlineMode());
-		if (olympaPlayer == null) {
-			olympaPlayer = olympaAccount.getFromCache();
-		}
-		if (olympaPlayer == null) {
+			this.cachePlayer.invalidate(name);
+		} else {
+			UUID uuidCrack = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes("UTF-8"));
+			olympaAccount = new AccountProvider(uuidCrack);
 			olympaPlayer = olympaAccount.createOlympaPlayer(name, ip);
 			if (uuidPremium != null) {
 				olympaPlayer.setPremiumUniqueId(uuidPremium);
@@ -143,7 +140,6 @@ public class AuthListener implements Listener {
 			e.printStackTrace();
 		}
 		olympaAccount.saveToRedis(olympaPlayer);
-		olympaAccount.removeFromCache();
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
