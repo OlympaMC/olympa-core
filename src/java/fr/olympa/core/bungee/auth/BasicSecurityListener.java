@@ -3,6 +3,9 @@ package fr.olympa.core.bungee.auth;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 import fr.olympa.api.objects.OlympaConsole;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -12,12 +15,21 @@ import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
+import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
 @SuppressWarnings("deprecation")
 public class BasicSecurityListener implements Listener {
+
+	private Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
+
+	@EventHandler
+	public void on0Ping(ProxyPingEvent event) {
+		PendingConnection connection = event.getConnection();
+		this.cache.put(connection.getAddress().getAddress().getHostAddress(), "");
+	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on1PreLogin(PreLoginEvent event) {
@@ -30,6 +42,13 @@ public class BasicSecurityListener implements Listener {
 		if (!name.matches("[a-zA-Z0-9_]*")) {
 			event.setCancelled(true);
 			event.setCancelReason(BungeeUtils.connectScreen("&6Ton pseudo doit contenir uniquement des chiffres, des lettres et des tiret bas."));
+			return;
+		}
+
+		String test = this.cache.asMap().get(ip);
+		long uptime = Utils.getCurrentTimeInSeconds() - OlympaBungee.getInstance().getUptimeLong();
+		if (uptime > 60 && test == null) {
+			event.setCancelReason(BungeeUtils.connectScreen("§7[§cSécuriter§7] §6Tu dois ajouter le serveur avant de pouvoir te connecter.\n La connexion direct n'est pas autoriser."));
 			return;
 		}
 

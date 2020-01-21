@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.google.gson.Gson;
+
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.OlympaPlayerObject;
@@ -95,7 +97,8 @@ public class MySQL {
 					resultSet.getDate("created").getTime() / 1000L,
 					resultSet.getTimestamp("last_connection").getTime() / 1000L,
 					resultSet.getString("password"),
-					resultSet.getString("email"));
+					resultSet.getString("email"),
+					resultSet.getString("name_history"));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -160,7 +163,7 @@ public class MySQL {
 		OlympaPlayer olympaPlayer = null;
 		Statement state = dbConnection.getConnection().createStatement();
 		ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `pseudo` = '" + name + "';");
-		if (resultSet.next()) {
+		while (resultSet.next() && resultSet.getString(2).equalsIgnoreCase(name)) {
 			olympaPlayer = getOlympaPlayer(resultSet);
 		}
 		state.close();
@@ -199,15 +202,6 @@ public class MySQL {
 		return olympaPlayer;
 	}
 
-	public static String getPlayerExactName(String playerName) {
-		List<?> list = MySQL.selectTable("SELECT pseudo FROM " + tableName + " WHERE `pseudo` = " + playerName);
-		if (list.isEmpty()) {
-			return null;
-		} else {
-			return (String) list.get(0);
-		}
-	}
-
 	public static List<OlympaPlayer> getPlayersByIp(String ip) {
 		List<OlympaPlayer> olympaPlayers = new ArrayList<>();
 		try {
@@ -242,7 +236,7 @@ public class MySQL {
 		List<OlympaPlayer> olympaPlayers = new ArrayList<>();
 		try {
 			Statement state = dbConnection.getConnection().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `name_history` = '" + nameHistory + "';");
+			ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `name_history` LIKE '%" + nameHistory + "%';");
 			while (resultSet.next()) {
 				olympaPlayers.add(getOlympaPlayer(resultSet));
 			}
@@ -318,17 +312,6 @@ public class MySQL {
 		return -1;
 	}
 
-	/**
-	 * @param ts3databaseid ID de la base de donnés teamspeak
-	 */
-	public static UUID getUUIDfromTS3DatabaseID(int ts3databaseid) {
-		List<?> players = MySQL.selectTable("SELECT `uuid-server` FROM " + tableName + " WHERE `ts3_id` = '" + ts3databaseid);
-		if (!players.isEmpty()) {
-			return (UUID) players.get(0);
-		}
-		return null;
-	}
-
 	public static boolean playerExist(UUID playerUuid) {
 		try {
 			Statement state = dbConnection.getConnection().createStatement();
@@ -351,19 +334,42 @@ public class MySQL {
 	 */
 	public static void savePlayer(OlympaPlayer olympaPlayer) {
 		try {
+			UUID premiumUuid = olympaPlayer.getPremiumUniqueId();
 			PreparedStatement pstate = dbConnection.getConnection()
-					.prepareStatement("UPDATE " + tableName + " SET pseudo = ?, ip = ?, `groups` = ?, last_connection = ? WHERE `uuid-server` = ?;");
+					.prepareStatement("UPDATE " + tableName + " SET `pseudo` = ?, `uuid-server` = ?, `uuid` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ? WHERE `id` = ?;");
 			int i = 1;
 			pstate.setString(i++, olympaPlayer.getName());
+			pstate.setString(i++, olympaPlayer.getUniqueId().toString());
+			if (premiumUuid != null) {
+				pstate.setString(i++, premiumUuid.toString());
+			} else {
+				pstate.setString(i++, null);
+			}
 			pstate.setString(i++, olympaPlayer.getIp());
 			pstate.setString(i++, olympaPlayer.getGroupsToString());
 			pstate.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
-			pstate.setString(i++, olympaPlayer.getUniqueId().toString());
+			if (!olympaPlayer.getHistHame().isEmpty()) {
+				pstate.setString(i++, new Gson().toJson(olympaPlayer.getHistHame()));
+			} else {
+				pstate.setString(i++, null);
+			}
+			pstate.setLong(i++, olympaPlayer.getId());
 			pstate.executeUpdate();
 			pstate.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void savePlayerPassOrEmail(OlympaPlayer olympaPlayer) throws SQLException {
+		PreparedStatement pstate = dbConnection.getConnection()
+				.prepareStatement("UPDATE " + tableName + " SET `email` = ?, `password` = ? WHERE `id` = ?;");
+		int i = 1;
+		pstate.setString(i++, olympaPlayer.getEmail());
+		pstate.setString(i++, olympaPlayer.getPassword());
+		pstate.setLong(i++, olympaPlayer.getId());
+		pstate.executeUpdate();
+		pstate.close();
 	}
 
 	/**
@@ -398,23 +404,6 @@ public class MySQL {
 	 * olympaPlayer.getId()); pstate.executeUpdate(); } catch (SQLException e)
 	 * { e.printStackTrace(); } olympaPlayer.setIP(newIp); }
 	 **/
-
-	public static void updateUsername(String newName, OlympaPlayer olympaPlayer) {
-		try {
-			PreparedStatement pstate = dbConnection.getConnection().prepareStatement("UPDATE " + tableName + " SET `pseudo` = ?, `name_history` = CONCAT_WS(';', ?, name_history) WHERE `uuid-server` = ?;");
-
-			int i = 1;
-			pstate.setString(i++, newName);
-			pstate.setString(i++, olympaPlayer.getName());
-			pstate.setString(i++, olympaPlayer.getUniqueId().toString());
-			pstate.executeUpdate();
-			pstate.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		olympaPlayer.setName(newName);
-	}
-
 	public MySQL(DbConnection dbConnection) {
 		MySQL.dbConnection = dbConnection;
 	}

@@ -2,6 +2,7 @@ package fr.olympa.core.bungee.serveurs;
 
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -25,7 +26,7 @@ public class ServeursListener implements Listener {
 			ServerInfo server = event.getKickedFrom();
 			ServerInfo serverInfolobby = ProxyServer.getInstance().getServers().values().stream().filter(Sname -> server != Sname && Sname.getName().startsWith("lobby")).findFirst().orElse(null);
 			if (serverInfolobby == null) {
-				event.setKickReason(SpigotUtils.color("&eLe &6" + Utils.capitalize(server.getName()) + "&e s'est redémarré, merci de vous reconnecter."));
+				event.setKickReason(BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(server.getName()) + "&e s'est redémarré, merci de vous reconnecter."));
 				return;
 			}
 			event.setCancelServer(serverInfolobby);
@@ -39,6 +40,9 @@ public class ServeursListener implements Listener {
 				return;
 			}
 			event.setCancelServer(serverInfolobby);
+			event.setCancelled(true);
+		} else {
+			event.setKickReasonComponent(event.getKickReasonComponent());
 			event.setCancelled(true);
 		}
 	}

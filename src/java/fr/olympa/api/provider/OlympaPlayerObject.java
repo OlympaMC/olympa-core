@@ -1,13 +1,15 @@
 package fr.olympa.api.provider;
 
 import java.util.Comparator;
-import java.util.Date;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import com.google.gson.Gson;
 
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.OlympaPlayer;
@@ -27,14 +29,15 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	String ip;
 	long firstConnection;
 	long lastConnection;
-	TreeMap<Date, String> histname = new TreeMap<>(Comparator.comparing(Date::getTime).reversed());
+	TreeMap<Long, String> histName = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
 
 	double money;
+
 	boolean vanish;
 	boolean verifMode;
 	boolean afk;
 
-	public OlympaPlayerObject(int id, UUID uuid, UUID premiumUuid, String name, String groupsString, String ip, long firstConnection, long lastConnection, String password, String email) {
+	public OlympaPlayerObject(int id, UUID uuid, UUID premiumUuid, String name, String groupsString, String ip, long firstConnection, long lastConnection, String password, String email, String histName) {
 		this.id = id;
 		this.premiumUuid = premiumUuid;
 		this.uuid = uuid;
@@ -45,6 +48,9 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		this.lastConnection = lastConnection;
 		this.password = password;
 		this.email = email;
+		if (histName != null && !histName.isEmpty()) {
+			this.setHistNameFromString(histName);
+		}
 	}
 
 	public OlympaPlayerObject(UUID uuid, String name, String ip) {
@@ -72,6 +78,12 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void addMoney(double money) {
 		this.money += money;
+	}
+
+	@Override
+	public void addNewName(String name) {
+		this.histName.put(Utils.getCurrentTimeInSeconds(), this.name);
+		this.name = name;
 	}
 
 	@Override
@@ -118,6 +130,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public String getGroupsToString() {
 		return this.groups.entrySet().stream().map(entry -> entry.getKey().getId() + (entry.getValue() != 0 ? ":" + entry.getValue() : "")).collect(Collectors.joining(";"));
+	}
+
+	@Override
+	public TreeMap<Long, String> getHistHame() {
+		return this.histName;
 	}
 
 	@Override
@@ -229,11 +246,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public void setGroupsFromString(final String groupsString) {
+	public void setGroupsFromString(String groupsString) {
 		for (final String groupInfos : groupsString.split(";")) {
-			final String[] groupInfo = groupInfos.split(":");
-			final OlympaGroup olympaGroup = OlympaGroup.getById(Integer.parseInt(groupInfo[0]));
-			final Long until;
+			String[] groupInfo = groupInfos.split(":");
+			OlympaGroup olympaGroup = OlympaGroup.getById(Integer.parseInt(groupInfo[0]));
+			Long until;
 			if (groupInfo.length > 1) {
 				until = Long.parseLong(groupInfo[1]);
 			} else {
@@ -241,6 +258,12 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			}
 			this.groups.put(olympaGroup, until);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setHistNameFromString(String histNameString) {
+		Map<Long, String> histName2 = new Gson().fromJson(histNameString, Map.class);
+		histName2.putAll(histName2);
 	}
 
 	@Override
