@@ -30,7 +30,8 @@ import fr.olympa.core.bungee.privatemessage.PrivateMessageCommand;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageListener;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageToggleCommand;
 import fr.olympa.core.bungee.privatemessage.ReplyCommand;
-import fr.olympa.core.bungee.serveurs.ServeursListener;
+import fr.olympa.core.bungee.servers.MonitorServers;
+import fr.olympa.core.bungee.servers.ServersListener;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
@@ -92,7 +93,7 @@ public class OlympaBungee extends Plugin {
 		pluginManager.registerListener(this, new AuthListener());
 		pluginManager.registerListener(this, new BasicSecurityListener());
 		pluginManager.registerListener(this, new SanctionListener());
-		pluginManager.registerListener(this, new ServeursListener());
+		pluginManager.registerListener(this, new ServersListener());
 		pluginManager.registerListener(this, new TestListener());
 		pluginManager.registerListener(this, new PrivateMessageListener());
 
@@ -112,6 +113,8 @@ public class OlympaBungee extends Plugin {
 		new PrivateMessageToggleCommand(this).register();
 
 		new MaintenanceCommand(this).register();
+
+		new MonitorServers(this);
 
 		this.sendMessage("§2" + this.getDescription().getName() + "§a (" + this.getDescription().getVersion() + ") is activated.");
 	}
