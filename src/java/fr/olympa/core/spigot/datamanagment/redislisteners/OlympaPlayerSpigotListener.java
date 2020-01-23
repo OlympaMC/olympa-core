@@ -11,7 +11,7 @@ import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.JedisPubSub;
 
-public class OlympaPlayerListener extends JedisPubSub {
+public class OlympaPlayerSpigotListener extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
@@ -24,6 +24,6 @@ public class OlympaPlayerListener extends JedisPubSub {
 		AccountProvider olympaAccount = new AccountProvider(olympaPlayer.getUniqueId());
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(player, ChangeType.ADD, olympaPlayer, olympaPlayer.getGroup()));
 		olympaAccount.saveToCache(olympaPlayer);
-		// olympaAccount.sendModificationsReceive();
+		OlympaCore.getInstance().sendMessage("&c[DEBUG] NEW DATA from Redis for " + olympaPlayer.getName());
 	}
 }

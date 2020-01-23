@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaAccount;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
 
 public class AccountProvider implements OlympaAccount {
@@ -156,23 +157,39 @@ public class AccountProvider implements OlympaAccount {
 		});
 	}
 
+	public void sendModifications(OlympaPlayer olympaPlayer) {
+		asyncLaunch.accept(() -> {
+			try (Jedis jedis = this.redisAccesss.connect()) {
+				jedis.publish("OlympaPlayer", new Gson().toJson(olympaPlayer));
+			}
+			this.redisAccesss.closeResource();
+		});
+	}
+
 	/*
-	 * @Override public void sendModifications(OlympaPlayer olympaPlayer) {
-	 * OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> { try (Jedis
-	 * jedis = this.redisAccesss.connect()) { jedis.publish("OlympaPlayer", new
-	 * Gson().toJson(olympaPlayer)); } this.redisAccesss.closeResource(); }); }
-	 *
-	 * @Override public void sendModifications(OlympaPlayer olympaPlayer, Consumer<?
-	 * super Boolean> done) { this.sendModifications(olympaPlayer);
-	 * modificationReceive.put(olympaPlayer.getUniqueId(), done);
-	 * OlympaCore.getInstance().getTask().runTaskLater("waitModifications" +
-	 * olympaPlayer.getUniqueId().toString(), () -> { Consumer<? super Boolean>
-	 * callable = modificationReceive.get(this.uuid); callable.accept(false);
-	 * modificationReceive.remove(this.uuid); }, 5 * 20); }
-	 *
-	 * @Override public void sendModificationsReceive() {
-	 * OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> { try (Jedis
-	 * jedis = this.redisAccesss.connect()) { jedis.publish("OlympaPlayerReceive",
-	 * this.uuid.toString()); } this.redisAccesss.closeResource(); }); }
+	 * Only Spigot
 	 */
+	public void sendModifications(OlympaPlayer olympaPlayer, Consumer<? super Boolean> done) {
+		this.sendModifications(olympaPlayer);
+		modificationReceive.put(olympaPlayer.getUniqueId(), done);
+		OlympaCore.getInstance().getTask().runTaskLater("waitModifications" + olympaPlayer.getUniqueId().toString(), () -> {
+			Consumer<? super Boolean> callable = modificationReceive.get(this.uuid);
+			callable.accept(false);
+			modificationReceive.remove(this.uuid);
+		}, 5 * 20);
+	}
+
+	/*
+	 * Only Spigot
+	 */
+	public void sendModificationsReceive() {
+		asyncLaunch.accept(() -> {
+			try (Jedis jedis = this.redisAccesss.connect()) {
+				jedis.publish("OlympaPlayerReceive",
+						this.uuid.toString());
+			}
+			this.redisAccesss.closeResource();
+		});
+	}
+
 }

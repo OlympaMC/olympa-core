@@ -12,10 +12,15 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
 import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
+import fr.olympa.core.spigot.datamanagment.redislisteners.OlympaPlayerReceiveListener;
+import fr.olympa.core.spigot.datamanagment.redislisteners.OlympaPlayerSpigotListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
 import fr.olympa.core.spigot.report.commands.ReportCommand;
 import fr.olympa.core.spigot.scoreboards.ScoreboardListener;
+import fr.olympa.core.spigot.status.SetStatusCommand;
+import fr.olympa.core.spigot.status.StatusMotdListener;
+import redis.clients.jedis.Jedis;
 
 public class OlympaCore extends OlympaPlugin {
 
@@ -40,14 +45,22 @@ public class OlympaCore extends OlympaPlugin {
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		this.enable();
 
-		AccountProvider.asyncLaunch = (run) -> getTask().runTaskAsynchronously(run);
+		AccountProvider.asyncLaunch = (run) -> this.getTask().runTaskAsynchronously(run);
 
 		new MySQL(this.database);
-		RedisAccess.init(this.getServer().getName());
+		Jedis jedis = RedisAccess.init(this.getServer().getName()).connect();
+		if (jedis.isConnected()) {
+			this.sendMessage("&aConnexion à &2Redis&a établie.");
+		} else {
+			this.sendMessage("&cConnexion à &4Redis&c impossible.");
+		}
+		this.getTask().runTaskAsynchronously("redis1", () -> jedis.subscribe(new OlympaPlayerSpigotListener(), "OlympaPlayer"));
+		this.getTask().runTaskAsynchronously("redis2", () -> jedis.subscribe(new OlympaPlayerReceiveListener(), "OlympaPlayerReceive"));
 
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();
 		new ReportCommand(this).register();
+		new SetStatusCommand(this).register();
 
 		PluginManager pluginManager = this.getServer().getPluginManager();
 		pluginManager.registerEvents(new DataManagmentListener(), this);
@@ -56,6 +69,7 @@ public class OlympaCore extends OlympaPlugin {
 		pluginManager.registerEvents(new ScoreboardListener(), this);
 		pluginManager.registerEvents(new TestListener(), this);
 		pluginManager.registerEvents(new Inventories(), this);
+		pluginManager.registerEvents(new StatusMotdListener(), this);
 
 		// Thread.getAllStackTraces().keySet().forEach((t) ->
 		// System.out.println(t.getName() + "\nIs Daemon " + t.isDaemon() + "\nIs Alive

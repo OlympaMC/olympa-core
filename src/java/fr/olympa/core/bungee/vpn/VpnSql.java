@@ -1,0 +1,100 @@
+package fr.olympa.core.bungee.vpn;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.sql.DbConnection;
+
+public class VpnSql {
+	private static String tableName = "vpn";
+	private static DbConnection dbConnection;
+
+	public static boolean addIp(OlympaPlayer olympaPlayer, boolean isVpn) {
+		try {
+			String ps = "INSERT INTO " + tableName + " (`ip`, is_vpn, users) VALUES (?, ?, ?);";
+			int i = 1;
+			PreparedStatement pstate = dbConnection.getConnection().prepareStatement(ps);
+			pstate.setString(i++, olympaPlayer.getIp());
+			pstate.setInt(i++, isVpn ? 1 : 0);
+			pstate.setLong(i++, olympaPlayer.getId());
+
+			pstate.executeUpdate();
+			pstate.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	private static OlympaVpn getInfo(ResultSet resultSet) {
+		try {
+			return new OlympaVpn(resultSet.getLong(1), resultSet.getString(2), resultSet.getInt(3) == 1 ? true : false, resultSet.getString(4));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static OlympaVpn getIp(OlympaPlayer olympaPlayer) {
+		OlympaVpn info = null;
+		try {
+			Statement state = dbConnection.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE users REGEXP '" + olympaPlayer.getId() + "($|\\W)';");
+			while (resultSet.next()) {
+				info = getInfo(resultSet);
+				if (info != null && info.getUsers().contains(olympaPlayer.getId())) {
+					info = getInfo(resultSet);
+				}
+			}
+			state.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return info;
+	}
+
+	public static OlympaVpn getIpInfo(String ip) {
+		OlympaVpn info = null;
+		try {
+			Statement state = dbConnection.getConnection().createStatement();
+			ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE ip = '" + ip + "';");
+			if (resultSet.next()) {
+				info = getInfo(resultSet);
+			}
+			state.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return info;
+	}
+
+	public static void saveIp(OlympaVpn olympaVpn) {
+		try {
+			PreparedStatement pstate = dbConnection.getConnection()
+					.prepareStatement("UPDATE " + tableName + " SET `is_vpn` = ?, `users` = ? WHERE `id` = ?;");
+			int i = 1;
+			pstate.setInt(i++, olympaVpn.isVpn() ? 1 : 0);
+			List<String> strings = olympaVpn.getUsers().stream().map(Object::toString).collect(Collectors.toList());
+			if (!strings.isEmpty()) {
+				pstate.setString(i++, String.join(",", strings));
+			} else {
+				pstate.setString(i++, null);
+			}
+			pstate.setLong(i++, olympaVpn.getId());
+			pstate.executeUpdate();
+			pstate.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public VpnSql(DbConnection dbConnection) {
+		VpnSql.dbConnection = dbConnection;
+	}
+}

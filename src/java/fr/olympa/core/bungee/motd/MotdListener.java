@@ -3,7 +3,9 @@ package fr.olympa.core.bungee.motd;
 import java.util.Random;
 import java.util.UUID;
 
+import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.utils.SpigotUtils;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -13,29 +15,52 @@ import net.md_5.bungee.event.EventHandler;
 
 public class MotdListener implements Listener {
 
-	String motd_base = "§3⬣ §e§lOlympa §6§n1.15.1§3 ⬣\n";
+	String motd_base = "§3⬣ §e§lOlympa §6§n1.15+§3 ⬣\n";
 	// §6Fun \u2606 Tryhard \u2606 Ranked
 	String teamspeak = "§7Teamspeak: §8§nts.olympa.fr";
 	String site = "§eSite: §6§nwww.olympa.fr";
 	String twitter = "§bTwitter: §3@Olympa_fr";
-	String discord = "§dDiscord: §5§nwww.olympa.fr/discord";
-	String games = "§b§mZTA§c \u00a4§b PvPFaction §c\u00a4 §b§mPvP Box";
+	String discord = "§dDiscord: §5§nwww.discord.olympa.fr/";
+	String games = "§b§mZTA§c \u00a4§b PvPFaction §c\u00a4 §b§mPvPBox";
 	String welcome = "§eBienvenue sur Olympa §6%player";
-	String version = "§cVersion 1.15.1§l✖";
+	String version = "§cVersion 1.9+ à 1.15+§l✖";
 	String reason = "§6Raison de la maintenance :";
 	String separator2 = "§7|";
 	String separator = "§e--------------------------------";
 
 	@EventHandler
 	public void onPing(ProxyPingEvent event) {
-		String playerName = event.getConnection().getName();
+		//String playerName = event.getConnection().getName();
+		String ipUse = event.getConnection().getVirtualHost().getHostString();
+		System.out.println("ping to " + ipUse);
 		ServerPing ping = event.getResponse();
 		ServerPing.Protocol ver = ping.getVersion();
 		ver.setName(this.version);
 		ping.setVersion(ver);
 		ServerPing.Players players = ping.getPlayers();
-		Byte status = BungeeConfigUtils.getConfig("maintenance").getByte("settings.status");
-		if (status == 0) {
+		String statusString = BungeeConfigUtils.getConfig("maintenance").getString("settings.status");
+		MaintenanceStatus status = MaintenanceStatus.get(statusString);
+		if (status == null) {
+			status = MaintenanceStatus.DEV;
+		}
+
+		String connectIp = event.getConnection().getVirtualHost().getHostName();
+
+		if (!connectIp.equals("localhost")) {
+			String connectDomain = Utils.getAfterFirst(connectIp, ".");
+			// Vérifie si l'adresse est correct
+			if (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net")) {
+				ping.setDescriptionComponent(new TextComponent(this.motd_base + "§4§l⚠ §cUtilise la bonne IP: §4§nplay.olympa.fr"));
+				return;
+			}
+			String connectSubDomain = connectIp.split("\\.")[0];
+			if (connectSubDomain.equalsIgnoreCase("buildeur")) {
+				ping.setDescriptionComponent(new TextComponent(this.motd_base + "§aServeur §2Buildeur"));
+				return;
+			}
+		}
+
+		if (status == MaintenanceStatus.OPEN) {
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(this.separator, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
@@ -90,7 +115,7 @@ public class MotdListener implements Listener {
 				ping.setDescriptionComponent(new TextComponent(this.motd_base + sb.toString()));
 			}
 
-		} else if (status == 1) {
+		} else if (status == MaintenanceStatus.MAINTENANCE) {
 			String maintenanceMessage = SpigotUtils.color(BungeeConfigUtils.getConfig("maintenance").getString("settings.message"));
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(this.separator, UUID.randomUUID()),
@@ -107,7 +132,7 @@ public class MotdListener implements Listener {
 			});
 			ping.setVersion(new ServerPing.Protocol("§c§lINFOS ICI §4§l➤", ping.getVersion().getProtocol() - 1));
 			ping.setDescriptionComponent(new TextComponent(this.motd_base + "§4§l⚠ §cSERVEUR EN MAINTENANCE §4§l⚠"));
-		} else if (status == 2) {
+		} else if (status == MaintenanceStatus.DEV) {
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(this.separator, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
@@ -122,7 +147,7 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo(this.separator, UUID.randomUUID()),
 			});
 			ping.setDescriptionComponent(new TextComponent(this.motd_base + "§cServeur en développement"));
-		} else if (status == 3) {
+		} else if (status == MaintenanceStatus.SOON) {
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(this.separator, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
@@ -136,7 +161,24 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo(this.separator, UUID.randomUUID()), });
 			ping.setVersion(new ServerPing.Protocol("§c§lINFOS ICI §4§l➤", ping.getVersion().getProtocol() - 1));
-			ping.setDescriptionComponent(new TextComponent(this.motd_base + "§bHé " + playerName + ", on ouvre bientôt t'inquiète."));
+			ping.setDescriptionComponent(new TextComponent(this.motd_base + "§bOn ouvre bientôt t'inquiète."));
+		} else if (status == MaintenanceStatus.BETA) {
+			players.setSample(new ServerPing.PlayerInfo[] {
+					new ServerPing.PlayerInfo(this.separator, UUID.randomUUID()),
+					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("§6Serveur Ouvert en Beta", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("§eInscrit-toi sur notre site pour", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("§eêtre pententiellement selectionner", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("§eà rejoindre la beta fermer.", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+					new ServerPing.PlayerInfo(this.teamspeak, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(this.twitter, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(this.discord, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(this.site, UUID.randomUUID()),
+					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+					new ServerPing.PlayerInfo(this.separator, UUID.randomUUID()), });
+			ping.setDescriptionComponent(new TextComponent(this.motd_base + "§c[§6Beta&c] &e-> &binscrit-toi sur www.olympa.fr"));
 		}
 	}
 }

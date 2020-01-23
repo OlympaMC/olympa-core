@@ -17,7 +17,7 @@ public class PrivateMessageToggleCommand extends BungeeCommand {
 	public static List<UUID> players = new ArrayList<>();
 
 	public PrivateMessageToggleCommand(Plugin plugin) {
-		super(plugin, "msgtoggle", OlympaCorePermissions.MESSAGE_TOGGLE, "msgt");
+		super(plugin, "msgtoggle", OlympaCorePermissions.PRIVATEMESSAGE_TOGGLE, "msgt");
 		this.allowConsole = false;
 	}
 

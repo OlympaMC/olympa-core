@@ -32,7 +32,7 @@ public class TestListener implements Listener {
 		String eventName = event.getClass().getName();
 		PendingConnection connection = event.getConnection();
 		try {
-			OlympaBungee.getInstance().sendMessage("UUID CRACK: " + UUID.nameUUIDFromBytes(("OfflinePlayer:" + connection.getName()).getBytes("UTF-8")));
+			OlympaBungee.getInstance().sendMessage("UUID CRACK: " + UUID.nameUUIDFromBytes(("OfflinePlayer:" + connection.getName().toLowerCase()).getBytes("UTF-8")));
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}

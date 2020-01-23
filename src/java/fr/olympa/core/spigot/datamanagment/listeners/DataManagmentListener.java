@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.task.TaskManager;
+import fr.olympa.api.task.OlympaTask;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
@@ -24,7 +24,7 @@ import fr.olympa.core.spigot.OlympaCore;
 public class DataManagmentListener implements Listener {
 
 	static {
-		TaskManager task = OlympaCore.getInstance().getTask();
+		OlympaTask task = OlympaCore.getInstance().getTask();
 		task.runTaskAsynchronously(() -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				AccountProvider olympaAccountObject = new AccountProvider(player.getUniqueId());

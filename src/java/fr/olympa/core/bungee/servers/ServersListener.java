@@ -17,25 +17,38 @@ public class ServersListener implements Listener {
 
 	@EventHandler
 	public void ServerKickEvent(ServerKickEvent event) {
-		ServerInfo serveurKicked = event.getKickedFrom();
-		if (serveurKicked.getName().contains("auth")) {
+		ServerInfo serverKicked = event.getKickedFrom();
+		String kickReason = ChatColor.stripColor(BaseComponent.toLegacyText(event.getKickReasonComponent()));
+		ProxiedPlayer player = event.getPlayer();
+		System.out.println("KICK " + player.getName() + " FOR " + kickReason + " " + event.getState());
+		if (kickReason.contains("whitelist")) {
+			event.setKickReasonComponent(TextComponent.fromLegacyText(BungeeUtils.connectScreen("&cTu n'a pas accès au serveur &4" + serverKicked.getName() + "&c.")));
 			return;
 		}
-		ProxiedPlayer player = event.getPlayer();
-		String kickReason = ChatColor.stripColor(BaseComponent.toLegacyText(event.getKickReasonComponent()));
-		System.out.println("KICK " + player.getName() + " FOR " + kickReason + " " + event.getState());
+		if (serverKicked.getName().contains("auth")) {
+			if (kickReason.contains("restarting") || kickReason.contains("closed")) {
+				ServerInfo authServer = ServersConnection.getLobby(serverKicked);
+				if (authServer == null) {
+					event.setKickReasonComponent(TextComponent.fromLegacyText(BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e s'est redémarré, merci de vous reconnecter.")));
+					return;
+				}
+				event.setCancelServer(authServer);
+				player.sendMessage(TextComponent.fromLegacyText(SpigotUtils.color("&6Olympa &7» &eLe &6" + Utils.capitalize(serverKicked.getName())
+						+ "&e s'est redémarré, vous êtes désormais au " + Utils.capitalize(authServer.getName()) + ".")));
+			}
+			return;
+		}
 
 		if (kickReason.contains("restarting") || kickReason.contains("closed")) {
 
-			ServerInfo server = event.getKickedFrom();
-			ServerInfo serverInfolobby = ProxyServer.getInstance().getServers().values().stream().filter(Sname -> server != Sname && Sname.getName().startsWith("lobby")).findFirst().orElse(null);
+			ServerInfo serverInfolobby = ServersConnection.getLobby(serverKicked);
 			if (serverInfolobby == null) {
-				event.setKickReasonComponent(TextComponent.fromLegacyText(BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(server.getName()) + "&e s'est redémarré, merci de vous reconnecter.")));
+				event.setKickReasonComponent(TextComponent.fromLegacyText(BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e s'est redémarré, merci de vous reconnecter.")));
 				return;
 			}
 			event.setCancelServer(serverInfolobby);
-			player.sendMessage(
-					TextComponent.fromLegacyText(SpigotUtils.color("&6Olympa &7» &eLe &6" + Utils.capitalize(server.getName()) + "&e s'est redémarré, vous êtes désormais au " + Utils.capitalize(serverInfolobby.getName()) + ".")));
+			player.sendMessage(TextComponent.fromLegacyText(SpigotUtils.color("&6Olympa &7» &eLe &6" + Utils.capitalize(serverKicked.getName()) +
+					"&e s'est redémarré, vous êtes désormais au " + Utils.capitalize(serverInfolobby.getName()) + ".")));
 			return;
 		} else if (!kickReason.contains("ban")) {
 			ServerInfo server = event.getKickedFrom();

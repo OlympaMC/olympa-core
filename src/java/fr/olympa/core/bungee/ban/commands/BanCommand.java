@@ -1,9 +1,8 @@
 package fr.olympa.core.bungee.ban.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -75,16 +74,16 @@ public class BanCommand extends BungeeCommand {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		if (args.length == 1) {
-			List<String> postentielNames = Utils.startWords(args[0], Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toSet()));
+			List<String> postentielNames = Utils.startWords(args[0], Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
 			return postentielNames;
 		} else if (args.length == 2) {
-			Set<String> units = new HashSet<>();
+			List<String> units = new ArrayList<>();
 			for (List<String> unit : BanUtils.units) {
 				units.addAll(unit);
 			}
 			return Utils.startWords(args[1], units);
 		} else if (args.length == 3) {
-			Set<String> reasons = new HashSet<>(Arrays.asList("Cheat", "Insulte", "Provocation", "Spam", "Harcèlement"));
+			List<String> reasons = Arrays.asList("Cheat", "Insulte", "Provocation", "Spam", "Harcèlement");
 			return Utils.startWords(args[1], reasons);
 		}
 		return null;

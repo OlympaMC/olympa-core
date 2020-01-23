@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.auth;
+package fr.olympa.core.bungee.datamanagment;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -11,11 +11,16 @@ import com.google.common.cache.CacheBuilder;
 import com.google.gson.Gson;
 
 import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.servers.ServersConnection;
 import fr.olympa.core.bungee.utils.BungeeUtils;
+import fr.olympa.core.bungee.vpn.OlympaVpn;
+import fr.olympa.core.bungee.vpn.VpnSql;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
@@ -139,6 +144,21 @@ public class AuthListener implements Listener {
 		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
+
+		if (!olympaPlayer.hasPermission(OlympaCorePermissions.VPN_BYPASS)) {
+			OlympaVpn olympaVpn = VpnSql.getIpInfo(ip);
+			boolean isVpn;
+			if (olympaVpn == null) {
+				isVpn = OlympaVpn.isVPN(event.getConnection());
+				VpnSql.addIp(olympaPlayer, isVpn);
+			} else {
+				isVpn = olympaVpn.isVpn();
+			}
+			if (isVpn) {
+				event.setCancelReason(BungeeUtils.connectScreen("&cImpossible d'utiliser un VPN. \n\n&e&lSi tu pense qu'il y a erreur, contacte un membre du staff."));
+				return;
+			}
+		}
 		olympaAccount.saveToRedis(olympaPlayer);
 	}
 
@@ -146,6 +166,14 @@ public class AuthListener implements Listener {
 	public void on3PostLogin(PostLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		System.out.println("PostLoginEvent onlinemode ? " + player.getPendingConnection().isOnlineMode());
+		if (!player.getPendingConnection().isOnlineMode()) {
+			return;
+		}
+		ServerInfo lobby = ServersConnection.getLobby();
+		if (lobby != null) {
+			player.setReconnectServer(lobby);
+			//player.connect(target);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -160,7 +188,7 @@ public class AuthListener implements Listener {
 				return;
 			}
 			olympaAccount.saveToDb(olympaPlayer);
-		}, 1, TimeUnit.SECONDS);
+		}, 2, TimeUnit.SECONDS);
 	}
 
 }

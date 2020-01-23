@@ -1,7 +1,6 @@
 package fr.olympa.core.spigot.chat;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -77,7 +76,7 @@ public class ChatCommand extends OlympaCommand {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		if (args.length == 1) {
-			List<String> postentielArgs = Utils.startWords(args[0], new HashSet<>(Arrays.asList("slow", "clear", "mute")));
+			List<String> postentielArgs = Utils.startWords(args[0], Arrays.asList("slow", "clear", "mute"));
 			return postentielArgs;
 		}
 		return null;

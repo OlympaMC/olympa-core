@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import com.google.gson.Gson;
 
 import fr.olympa.api.groups.OlympaGroup;
+import fr.olympa.api.objects.Gender;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.sql.MySQL;
@@ -20,25 +21,28 @@ import fr.olympa.api.utils.Utils;
 
 public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
-	int id;
+	long id;
 	UUID uuid;
 	UUID premiumUuid;
+	Gender gender = Gender.MALE;
 	String password;
+
 	String email;
+
 	String name;
 	TreeMap<OlympaGroup, Long> groups = new TreeMap<>(Comparator.comparing(OlympaGroup::getPower).reversed());
 	String ip;
 	long firstConnection;
 	long lastConnection;
 	TreeMap<Long, String> histName = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
-
 	double money;
-
 	boolean vanish;
+
 	boolean verifMode;
+
 	boolean afk;
 
-	public OlympaPlayerObject(int id, UUID uuid, UUID premiumUuid, String name, String groupsString, String ip, long firstConnection, long lastConnection, String password, String email, String histName) {
+	public OlympaPlayerObject(long id, UUID uuid, UUID premiumUuid, String name, String groupsString, String ip, long firstConnection, long lastConnection, String password, String email, Gender gender, String histName) {
 		this.id = id;
 		this.premiumUuid = premiumUuid;
 		this.uuid = uuid;
@@ -49,6 +53,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		this.lastConnection = lastConnection;
 		this.password = password;
 		this.email = email;
+		this.gender = gender;
 		if (histName != null && !histName.isEmpty()) {
 			this.setHistNameFromString(histName);
 		}
@@ -109,6 +114,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
+	public Gender getGender() {
+		return this.gender;
+	}
+
+	@Override
 	public OlympaGroup getGroup() {
 		return this.groups.firstKey();
 	}
@@ -140,7 +150,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public int getId() {
+	public long getId() {
 		return this.id;
 	}
 
@@ -174,10 +184,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		return Bukkit.getPlayer(this.uuid);
 	}
 
-	public UUID getPremium_uuid() {
-		return this.premiumUuid;
-	}
-
 	@Override
 	public UUID getPremiumUniqueId() {
 		return this.premiumUuid;
@@ -188,11 +194,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		return this.uuid;
 	}
 
-	public UUID getUuid() {
-		return this.uuid;
-	}
-
-	private String hashPassword(String password_toHash) {
+	public String hashPassword(String password_toHash) {
 		return Passwords.getSHA512(password_toHash, "DYhG9guiRVoUubWwvn2G0Fg3b0qyJfIxfs2aC9mi".getBytes());
 	}
 
@@ -237,6 +239,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	@Override
 	public void setGroup(OlympaGroup group) {
 		this.setGroup(group, 0l);
 	}
@@ -269,7 +276,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

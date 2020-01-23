@@ -1,9 +1,7 @@
 package fr.olympa.core.bungee.ban.commands;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -72,10 +70,10 @@ public class UnbanCommand extends BungeeCommand {
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		if (args.length == 1) {
 			// -> usless code, change to banned players
-			List<String> postentielNames = Utils.startWords(args[0], Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toSet()));
+			List<String> postentielNames = Utils.startWords(args[0], Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
 			return postentielNames;
 		} else if (args.length == 2) {
-			Set<String> reasons = new HashSet<>(Arrays.asList("Demande de déban", "Erreur", "Tromper de Joueur", "Augmentation de peine", "Réduction de peine"));
+			List<String> reasons = Arrays.asList("Demande de déban", "Erreur", "Tromper de Joueur", "Augmentation de peine", "Réduction de peine");
 			return Utils.startWords(args[1], reasons);
 		}
 		return null;

@@ -13,8 +13,8 @@ public class RedisAccess {
 		}
 	}
 
-	public static void init(String clientName) {
-		new RedisAccess(new RedisCredentials("127.0.0.1", "1rWS1Fmj7s4snEDCQgw3Mcznf8ShfrLZpPkKtstu5coV9PpDI1", 6379, clientName));
+	public static RedisAccess init(String clientName) {
+		return new RedisAccess(new RedisCredentials("127.0.0.1", "1rWS1Fmj7s4snEDCQgw3Mcznf8ShfrLZpPkKtstu5coV9PpDI1", 6379, clientName));
 	}
 
 	private RedisCredentials redisCredentials;
@@ -24,19 +24,6 @@ public class RedisAccess {
 	public RedisAccess(RedisCredentials redisCredentials) {
 		INSTANCE = this;
 		this.redisCredentials = redisCredentials;
-		Jedis jedis = this.connect();
-		if (jedis.isConnected()) {
-
-			/*TaskManager task = core.getTask();
-
-			task.runTaskAsynchronously("redis1", () -> this.connect().subscribe(new TestListener(), "Test"));
-			task.runTaskAsynchronously("redis2", () -> this.connect().subscribe(new OlympaPlayerListener(), "OlympaPlayer"));
-			task.runTaskAsynchronously("redis3", () -> this.connect().subscribe(new OlympaPlayerReceiveListener(), "OlympaPlayerReceive"));
-			*/
-			System.out.println("&aConnexion à Redis établie");
-		} else {
-			System.out.println("&cConnexion à Redis impossible");
-		}
 	}
 
 	public void closeResource() {

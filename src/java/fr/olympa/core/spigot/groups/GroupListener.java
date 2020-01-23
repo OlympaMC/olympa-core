@@ -40,10 +40,10 @@ public class GroupListener implements Listener {
 		Player player = event.getPlayer();
 
 		if (oldGroups.size() == 1) {
-			player.sendMessage(SpigotUtils.color(Prefix.INFO + "Votre grade &6" + oldGroups.get(0).getName() + "&e a expiré, vous êtes désormais &6" + olympaPlayer.getGroupsToHumainString() + "&e."));
+			player.sendMessage(SpigotUtils.color(Prefix.INFO + "Ton grade &6" + oldGroups.get(0).getName() + "&e a expiré, tu êtes désormais &6" + olympaPlayer.getGroupsToHumainString() + "&e."));
 		} else {
 			player.sendMessage(SpigotUtils
-					.color(Prefix.INFO + "Vos grades &6" + oldGroups.stream().map(OlympaGroup::getName).collect(Collectors.joining(", ")) + "&e ont expiré, vous êtes désormais &6" + olympaPlayer.getGroupsToHumainString() + "&e."));
+					.color(Prefix.INFO + "Tes grades &6" + oldGroups.stream().map(OlympaGroup::getName).collect(Collectors.joining(", ")) + "&e ont expiré, tu es désormais &6" + olympaPlayer.getGroupsToHumainString() + "&e."));
 		}
 	}
 

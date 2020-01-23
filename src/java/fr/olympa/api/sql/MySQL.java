@@ -15,6 +15,7 @@ import java.util.UUID;
 import com.google.gson.Gson;
 
 import fr.olympa.api.groups.OlympaGroup;
+import fr.olympa.api.objects.Gender;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.OlympaPlayerObject;
 import fr.olympa.api.utils.Utils;
@@ -88,7 +89,7 @@ public class MySQL {
 				uuidPremium = UUID.fromString(uuidPremiumString);
 			}
 			return new OlympaPlayerObject(
-					resultSet.getInt("id"),
+					resultSet.getLong("id"),
 					UUID.fromString(resultSet.getString("uuid-server")),
 					uuidPremium,
 					resultSet.getString("pseudo"),
@@ -98,6 +99,7 @@ public class MySQL {
 					resultSet.getTimestamp("last_connection").getTime() / 1000L,
 					resultSet.getString("password"),
 					resultSet.getString("email"),
+					Gender.get(resultSet.getInt("gender")),
 					resultSet.getString("name_history"));
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -336,7 +338,7 @@ public class MySQL {
 		try {
 			UUID premiumUuid = olympaPlayer.getPremiumUniqueId();
 			PreparedStatement pstate = dbConnection.getConnection()
-					.prepareStatement("UPDATE " + tableName + " SET `pseudo` = ?, `uuid-server` = ?, `uuid` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ? WHERE `id` = ?;");
+					.prepareStatement("UPDATE " + tableName + " SET `pseudo` = ?, `uuid-server` = ?, `uuid` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ?, `gender` = ? WHERE `id` = ?;");
 			int i = 1;
 			pstate.setString(i++, olympaPlayer.getName());
 			pstate.setString(i++, olympaPlayer.getUniqueId().toString());
@@ -353,6 +355,7 @@ public class MySQL {
 			} else {
 				pstate.setString(i++, null);
 			}
+			pstate.setInt(i++, olympaPlayer.getGender().getId());
 			pstate.setLong(i++, olympaPlayer.getId());
 			pstate.executeUpdate();
 			pstate.close();

@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.auth;
+package fr.olympa.core.bungee.datamanagment;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -40,9 +40,21 @@ public class BasicSecurityListener implements Listener {
 		String name = connection.getName();
 		String ip = connection.getAddress().getAddress().getHostAddress();
 		if (!name.matches("[a-zA-Z0-9_]*")) {
-			event.setCancelled(true);
 			event.setCancelReason(BungeeUtils.connectScreen("&6Ton pseudo doit contenir uniquement des chiffres, des lettres et des tiret bas."));
 			return;
+		}
+
+		String connectIp = event.getConnection().getVirtualHost().getHostName();
+		String connectDomain = Utils.getAfterFirst(connectIp, ".");
+		// Vérifie si l'adresse est correct
+		if (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net")) {
+			ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> {
+				ProxiedPlayer player = ProxyServer.getInstance().getPlayer(name);
+				if (player != null) {
+					event.setCancelReason(BungeeUtils.connectScreen("§7[§cSécuriter§7] &cTu dois te connecter avec l'adresse &nplay.olympa.fr&c."));
+				}
+
+			}, 5, TimeUnit.SECONDS);
 		}
 
 		String test = this.cache.asMap().get(ip);
@@ -52,27 +64,14 @@ public class BasicSecurityListener implements Listener {
 			return;
 		}
 
-		// Vérifie si l'adresse est correct
-		if (!Utils.getAfterFirst(event.getConnection().getVirtualHost().getHostName(), ".").equalsIgnoreCase("olympa.fr")) {
-			ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> {
-				ProxiedPlayer player = ProxyServer.getInstance().getPlayer(name);
-				if (player != null) {
-					player.sendMessage(BungeeUtils.color("&cMerci de vous connecter avec l'adresse &nplay.olympa.fr&c la prochaine fois, l'adresse que vous utilier ne fonctionnera bientôt plus."));
-				}
-
-			}, 5, TimeUnit.SECONDS);
-		}
-
 		// Vérifie si le joueur n'est pas déjà connecté
 		ProxiedPlayer target = ProxyServer.getInstance().getPlayer(name);
 		if (target != null) {
 			if (!target.getAddress().getAddress().getHostAddress().equals(ip)) {
 				event.setCancelReason(BungeeUtils.connectScreen("&cTon compte est déjà connecté avec une IP différente de la tienne."));
-				event.setCancelled(true);
 				return;
 			}
 			event.setCancelReason(BungeeUtils.connectScreen("&cTon compte est déjà connecté."));
-			event.setCancelled(true);
 		}
 
 		/*String test = this.cache.asMap().get(ip);

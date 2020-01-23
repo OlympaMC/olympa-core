@@ -36,6 +36,8 @@ public class OlympaCorePermissions {
 	public static OlympaPermission CHAT_COLOR = new OlympaPermission(OlympaGroup.MODP);
 
 	public static OlympaPermission STAFF = new OlympaPermission(OlympaGroup.GRAPHISTE);
-	public static OlympaPermission MESSAGE_TOGGLE = new OlympaPermission(OlympaGroup.MINI_YOUTUBER);
+	public static OlympaPermission PRIVATEMESSAGE_TOGGLE = new OlympaPermission(OlympaGroup.MINI_YOUTUBER);
+	public static OlympaPermission SETSTATUS_COMMAND = new OlympaPermission(OlympaGroup.MODP);
+	public static OlympaPermission VPN_BYPASS = new OlympaPermission(OlympaGroup.FONDA);
 
 }

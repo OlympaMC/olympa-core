@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.auth;
+package fr.olympa.core.bungee.datamanagment;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import net.md_5.bungee.api.connection.PendingConnection;
 
+@SuppressWarnings("deprecation")
 public class AuthUtils {
 
 	public static UUID getUuid(PendingConnection con) {
@@ -36,4 +37,5 @@ public class AuthUtils {
 			return null;
 		}
 	}
+
 }

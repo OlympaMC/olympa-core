@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.auth;
+package fr.olympa.core.bungee.datamanagment;
 
 import java.io.UnsupportedEncodingException;
 import java.util.UUID;

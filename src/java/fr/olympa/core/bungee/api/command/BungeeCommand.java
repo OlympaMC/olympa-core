@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.api.command;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -125,7 +126,12 @@ public abstract class BungeeCommand extends Command {
 	}
 
 	protected OlympaPlayer getOlympaPlayer() {
-		return AccountProvider.get(this.proxiedPlayer.getUniqueId());
+		try {
+			return new AccountProvider(this.proxiedPlayer.getUniqueId()).get();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public ProxiedPlayer getProxiedPlayer() {
