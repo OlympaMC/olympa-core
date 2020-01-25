@@ -271,8 +271,21 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public void removeMoney(double money) {
-		this.money -= money;
+	public void giveMoney(double money) {
+		this.money += money;
+	}
+
+	@Override
+	public boolean hasMoney(double money) {
+		return this.money >= money;
+	}
+
+	@Override
+	public boolean withdrawMoney(double money) {
+		if (this.money >= money) {
+			this.money -= money;
+			return true;
+		}else return false;
 	}
 
 	@Override
