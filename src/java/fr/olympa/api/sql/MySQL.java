@@ -9,7 +9,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import com.google.gson.Gson;
@@ -100,7 +102,9 @@ public class MySQL {
 					resultSet.getString("password"),
 					resultSet.getString("email"),
 					Gender.get(resultSet.getInt("gender")),
-					resultSet.getString("name_history"));
+					resultSet.getString("name_history"),
+					resultSet.getString("ip_history"),
+					resultSet.getString("data"));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -336,12 +340,12 @@ public class MySQL {
 	 */
 	public static void savePlayer(OlympaPlayer olympaPlayer) {
 		try {
-			UUID premiumUuid = olympaPlayer.getPremiumUniqueId();
-			PreparedStatement pstate = dbConnection.getConnection()
-					.prepareStatement("UPDATE " + tableName + " SET `pseudo` = ?, `uuid-server` = ?, `uuid` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ?, `gender` = ? WHERE `id` = ?;");
+			PreparedStatement pstate = dbConnection.getConnection().prepareStatement("UPDATE " + tableName + " SET `pseudo` = ?, `uuid-server` = ?,"
+					+ " `uuid` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ?, `ip_history` = ?, `gender` = ?, `data` = ? WHERE `id` = ?;");
 			int i = 1;
 			pstate.setString(i++, olympaPlayer.getName());
 			pstate.setString(i++, olympaPlayer.getUniqueId().toString());
+			UUID premiumUuid = olympaPlayer.getPremiumUniqueId();
 			if (premiumUuid != null) {
 				pstate.setString(i++, premiumUuid.toString());
 			} else {
@@ -350,12 +354,25 @@ public class MySQL {
 			pstate.setString(i++, olympaPlayer.getIp());
 			pstate.setString(i++, olympaPlayer.getGroupsToString());
 			pstate.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
-			if (!olympaPlayer.getHistHame().isEmpty()) {
-				pstate.setString(i++, new Gson().toJson(olympaPlayer.getHistHame()));
+			TreeMap<Long, String> histName = olympaPlayer.getHistHame();
+			if (!histName.isEmpty()) {
+				pstate.setString(i++, new Gson().toJson(histName));
 			} else {
 				pstate.setString(i++, null);
 			}
 			pstate.setInt(i++, olympaPlayer.getGender().getId());
+			TreeMap<Long, String> histIp = olympaPlayer.getHistIp();
+			if (!histIp.isEmpty()) {
+				pstate.setString(i++, new Gson().toJson(histIp));
+			} else {
+				pstate.setString(i++, null);
+			}
+			Map<String, String> data = olympaPlayer.getData();
+			if (!data.isEmpty()) {
+				pstate.setString(i++, new Gson().toJson(data));
+			} else {
+				pstate.setString(i++, null);
+			}
 			pstate.setLong(i++, olympaPlayer.getId());
 			pstate.executeUpdate();
 			pstate.close();

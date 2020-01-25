@@ -98,8 +98,8 @@ public class DataManagmentListener implements Listener {
 		new AccountProvider(player.getUniqueId()).accountExpire();
 	}*/
 
-	@EventHandler(priority = EventPriority.LOW)
-	public void onPlayerQuitLow(PlayerQuitEvent event) {
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onPlayerQuitHigh(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = AccountProvider.get(player);
 		if (olympaPlayer != null) {
@@ -109,6 +109,17 @@ public class DataManagmentListener implements Listener {
 					.replaceAll("%name", player.getName())));
 		} else {
 			event.setQuitMessage(null);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOW)
+	public void onPlayerQuitLow(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+		AccountProvider olympaAccount = new AccountProvider(player.getUniqueId());
+		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
+		if (olympaPlayer != null) {
+			olympaPlayer.setLastConnection(Utils.getCurrentTimeInSeconds());
+			olympaAccount.saveToCache(olympaPlayer);
 		}
 	}
 }

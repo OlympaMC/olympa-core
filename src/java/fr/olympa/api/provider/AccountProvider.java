@@ -185,8 +185,7 @@ public class AccountProvider implements OlympaAccount {
 	public void sendModificationsReceive() {
 		asyncLaunch.accept(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
-				jedis.publish("OlympaPlayerReceive",
-						this.uuid.toString());
+				jedis.publish("OlympaPlayerReceive", this.uuid.toString());
 			}
 			this.redisAccesss.closeResource();
 		});

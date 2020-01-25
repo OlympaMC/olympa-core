@@ -48,7 +48,6 @@ public class AuthListener implements Listener {
 		OlympaPlayer olympaPlayer;
 		UUID uuidCrack = null;
 
-		System.out.println("PreLoginEvent onlinemode ? " + connection.isOnlineMode());
 		try {
 			olympaPlayer = AccountProvider.get(name);
 		} catch (SQLException e) {
@@ -89,7 +88,7 @@ public class AuthListener implements Listener {
 				}
 				System.out.println("null onlinemode");
 			}
-			System.out.println("NEW JOUEUR  " + connection.getUniqueId() + " UUID CRACK: " + uuidCrack + " HAS PREMIUM ? " + uuidPremium);
+			OlympaBungee.getInstance().sendMessage("NEW JOUEUR  " + connection.getUniqueId() + " UUID CRACK: " + uuidCrack + " HAS PREMIUM ? " + uuidPremium + " HIS PREMIUM ? " + connection.isOnlineMode());
 		}
 
 		if (olympaPlayer != null) {

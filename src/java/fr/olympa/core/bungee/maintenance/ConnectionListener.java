@@ -2,6 +2,7 @@ package fr.olympa.core.bungee.maintenance;
 
 import java.util.logging.Level;
 
+import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
@@ -23,10 +24,35 @@ public class ConnectionListener implements Listener {
 
 		String playername = event.getConnection().getName();
 		Configuration config = BungeeConfigUtils.getConfig("maintenance");
-		int status = config.getInt("settings.status");
+		String message = config.getString("settings.message");
+		String statusString = config.getString("settings.status");
+		MaintenanceStatus maintenanceStatus = MaintenanceStatus.get(statusString);
 
 		// Vérifie si le serveur n'est pas en maintenance
-		if (status == 1) {
+
+		if (maintenanceStatus == MaintenanceStatus.DEV) {
+			String playerName = playername;
+			if (!config.getStringList("whitelist").contains(playerName)) {
+				String reason = message;
+				if (message != null && !message.isEmpty()) {
+					reason = "Plus d'infos sur le twitter &b&n@Olympa_fr";
+				} else {
+					reason = "Raison: &2" + reason;
+				}
+				event.setCancelReason(BungeeUtils.connectScreen("&cLe serveur est actuellement en développement.\n\n&a" + reason));
+				event.setCancelled(true);
+				ProxyServer.getInstance().getLogger().log(Level.INFO, SpigotUtils.color("&d" + playername + " ne peux pas se connecter (serveur en dev)"));
+				return;
+			}
+		} else if (maintenanceStatus == MaintenanceStatus.SOON) {
+			String playerName = playername;
+			if (!config.getStringList("whitelist").contains(playerName)) {
+				event.setCancelReason(BungeeUtils.connectScreen("&cNous ouvrons bientôt !.\n\n&aPlus d'infos sur le twitter &n@Olympa_fr"));
+				event.setCancelled(true);
+				ProxyServer.getInstance().getLogger().log(Level.INFO, SpigotUtils.color("&d" + playername + " ne peux pas se connecter (serveur en dev, open soon)"));
+				return;
+			}
+		} else if (maintenanceStatus == null || maintenanceStatus != MaintenanceStatus.OPEN || maintenanceStatus == MaintenanceStatus.DEV) {
 			if (!config.getStringList("whitelist").contains(playername)) {
 				if (config.getString("settings.message").isEmpty()) {
 					event.setCancelReason(BungeeUtils.connectScreen("&cLe serveur est actuellement en maintenance."));
@@ -36,23 +62,6 @@ public class ConnectionListener implements Listener {
 				}
 				event.setCancelled(true);
 				ProxyServer.getInstance().getLogger().log(Level.INFO, SpigotUtils.color("&d" + playername + " ne peux pas se connecter (serveur en maintenance)"));
-				return;
-			}
-
-		} else if (status == 2) {
-			String playerName = playername;
-			if (!config.getStringList("whitelist").contains(playerName)) {
-				event.setCancelReason(BungeeUtils.connectScreen("&cLe serveur est actuellement en développement.\n\n&aPlus d'infos sur le twitter &n@Olympa_fr"));
-				event.setCancelled(true);
-				ProxyServer.getInstance().getLogger().log(Level.INFO, SpigotUtils.color("&d" + playername + " ne peux pas se connecter (serveur en dev)"));
-				return;
-			}
-		} else if (status == 3) {
-			String playerName = playername;
-			if (!config.getStringList("whitelist").contains(playerName)) {
-				event.setCancelReason(BungeeUtils.connectScreen("&cNous ouvrons bientôt !.\n\n&aPlus d'infos sur le twitter &n@Olympa_fr"));
-				event.setCancelled(true);
-				ProxyServer.getInstance().getLogger().log(Level.INFO, SpigotUtils.color("&d" + playername + " ne peux pas se connecter (serveur en dev, open soon)"));
 				return;
 			}
 		}

@@ -1,5 +1,6 @@
 package fr.olympa.core.spigot.scoreboards;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -12,21 +13,15 @@ public class ScoreboardListener implements Listener {
 
 	@EventHandler
 	public void onOlympaPlayerChangeGroup(AsyncOlympaPlayerChangeGroupEvent event) {
-		// TODO BUGS
-		// TaskManager.runTask(() -> ScoreboardPrefix.create(event.getOlympaPlayer()));
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onOlympaPlayerLoad(OlympaPlayerLoadEvent event) {
-		//Player player = event.getPlayer();
-		//ScoreboardPrefix.sendCurrentTeams(player);
-		//ScoreboardPrefix.create(event.getOlympaPlayer());
+		Player player = event.getPlayer();
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		//Player player = event.getPlayer();
-		//ScoreboardPrefix.removeFromTeam(player);
-		//ScoreboardPrefix.removeFromView(player);
+
 	}
 }

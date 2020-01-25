@@ -1,4 +1,4 @@
-package fr.olympa.core.spigot.datamanagment.redislisteners;
+package fr.olympa.core.spigot.datamanagment.redis;
 
 import org.bukkit.entity.Player;
 

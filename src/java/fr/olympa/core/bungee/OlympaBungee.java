@@ -120,7 +120,7 @@ public class OlympaBungee extends Plugin {
 		pluginManager.registerListener(this, new BasicSecurityListener());
 		pluginManager.registerListener(this, new SanctionListener());
 		pluginManager.registerListener(this, new ServersListener());
-		pluginManager.registerListener(this, new TestListener());
+		//pluginManager.registerListener(this, new TestListener());
 		pluginManager.registerListener(this, new PrivateMessageListener());
 
 		new BanCommand(this).register();

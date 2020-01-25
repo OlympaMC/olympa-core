@@ -12,8 +12,8 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
 import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
-import fr.olympa.core.spigot.datamanagment.redislisteners.OlympaPlayerReceiveListener;
-import fr.olympa.core.spigot.datamanagment.redislisteners.OlympaPlayerSpigotListener;
+import fr.olympa.core.spigot.datamanagment.redis.OlympaPlayerReceiveListener;
+import fr.olympa.core.spigot.datamanagment.redis.OlympaPlayerSpigotListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
 import fr.olympa.core.spigot.report.commands.ReportCommand;
@@ -71,9 +71,6 @@ public class OlympaCore extends OlympaPlugin {
 		pluginManager.registerEvents(new Inventories(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
 
-		// Thread.getAllStackTraces().keySet().forEach((t) ->
-		// System.out.println(t.getName() + "\nIs Daemon " + t.isDaemon() + "\nIs Alive
-		// " + t.isAlive()));
 		this.sendMessage("§2" + this.getDescription().getName() + "§a (" + this.getDescription().getVersion() + ") est activé.");
 	}
 }

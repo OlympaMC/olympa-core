@@ -32,7 +32,7 @@ public class MaintenanceCommand extends BungeeCommand {
 		super(plugin, "maintenance", OlympaCorePermissions.MAINTENANCE_COMMAND, "maint");
 		this.minArg = 1;
 
-		this.usageString = "<add|remove|list|status| " + String.join("|", MaintenanceStatus.getNames()) + "> [joueur]";
+		this.usageString = "<add|remove|list|status|" + String.join("|", MaintenanceStatus.getNames()).toLowerCase() + "> [joueur]";
 	}
 
 	@Override
@@ -46,41 +46,46 @@ public class MaintenanceCommand extends BungeeCommand {
 				}
 			}
 			MaintenanceStatus maintenanceStatus = MaintenanceStatus.getByCommandArg(args[0]);
-			switch (maintenanceStatus) {
+			if (maintenanceStatus != null) {
+				switch (maintenanceStatus) {
 
-			case OPEN:
-				this.setMaintenance(maintenanceStatus, null, sender);
-				break;
+				case OPEN:
+					this.setMaintenance(maintenanceStatus, null, sender);
+					break;
 
-			case MAINTENANCE:
-				if (args.length >= 2) {
-					String[] reason = Arrays.copyOfRange(args, 1, args.length);
-					int i1 = 0;
-					for (int i2 = 0; reason.length > i2; i2++) {
-						i1 += reason[i2].length() + 1;
-						if (i1 >= 25) {
-							reason[i2] += "\n&c";
-							i1 = 0;
+				case MAINTENANCE:
+					if (args.length >= 2) {
+						String[] reason = Arrays.copyOfRange(args, 1, args.length);
+						int i1 = 0;
+						for (int i2 = 0; reason.length > i2; i2++) {
+							i1 += reason[i2].length() + 1;
+							if (i1 >= 25) {
+								reason[i2] += "\n&c";
+								i1 = 0;
+							}
 						}
+						this.setMaintenance(maintenanceStatus, "&c" + String.join(" ", reason), sender);
+					} else {
+						this.setMaintenance(maintenanceStatus, "", sender);
 					}
-					this.setMaintenance(maintenanceStatus, "&c" + String.join(" ", reason), sender);
-				} else {
-					this.setMaintenance(maintenanceStatus, "", sender);
+					break;
+
+				case DEV:
+					this.setMaintenance(maintenanceStatus, null, sender);
+					break;
+
+				case SOON:
+					this.setMaintenance(maintenanceStatus, null, sender);
+					break;
+
+				case BETA:
+					this.setMaintenance(maintenanceStatus, null, sender);
+					break;
+				default:
+					break;
 				}
-				break;
-
-			case DEV:
-				this.setMaintenance(maintenanceStatus, null, sender);
-				break;
-
-			case SOON:
-				this.setMaintenance(maintenanceStatus, null, sender);
-				break;
-
-			case BETA:
-				this.setMaintenance(maintenanceStatus, null, sender);
-				break;
-			default:
+			} else {
+				Configuration config = BungeeConfigUtils.getConfig("maintenance");
 				switch (args[0].toLowerCase()) {
 				case "add":
 					if (args.length < 2) {
@@ -88,7 +93,6 @@ public class MaintenanceCommand extends BungeeCommand {
 						return;
 					}
 
-					Configuration config = BungeeConfigUtils.getConfig("maintenance");
 					List<String> whitelist = config.getStringList("whitelist");
 
 					if (!whitelist.contains(args[1])) {
@@ -103,14 +107,13 @@ public class MaintenanceCommand extends BungeeCommand {
 
 				case "remove":
 					if (args.length < 2) {
-						sender.sendMessage(BungeeConfigUtils.getString("maintenance.messages.usage"));
+						this.sendUsage();
 						return;
 					}
-					config = BungeeConfigUtils.getConfig("maintenance");
 					whitelist = config.getStringList("whitelist");
 					if (whitelist.contains(args[1])) {
 						whitelist.remove(args[1]);
-						sender.sendMessage(BungeeConfigUtils.getString("maintenance.messages.").replace("%player%", args[1]));
+						sender.sendMessage(BungeeConfigUtils.getString("maintenance.messages.removed").replace("%player%", args[1]));
 					} else {
 						sender.sendMessage(BungeeConfigUtils.getString("maintenance.messages.alreadyremoved").replace("%player%", args[1]));
 					}
@@ -120,54 +123,42 @@ public class MaintenanceCommand extends BungeeCommand {
 
 				case "list":
 					whitelist = BungeeConfigUtils.getConfig("maintenance").getStringList("whitelist");
-					sender.sendMessage(BungeeConfigUtils.getString("maintenance.messages.whitelist")
+					sender.sendMessage(BungeeConfigUtils.getString("messages.whitelist")
 							.replace("%size%", String.valueOf(whitelist.size()))
-							.replace("%list%", String.join(BungeeConfigUtils.getString("bungee.maintenance.messages.whitelist_separator"), whitelist)));
+							.replace("%list%", String.join(BungeeConfigUtils.getString("maintenance.messages.whitelist_separator"), whitelist)));
 					break;
 
 				case "status":
 
-					config = BungeeConfigUtils.getConfig("maintenance");
-					/*
-					 * OlympaServerStatus status =
-					 * OlympaServerStatus.getStatus(BungeeConfigUtils.getConfig("maintenance").
-					 * getInt("bungee.maintenance.settings.status")); String message =
-					 * BungeeConfigUtils.getConfig("maintenance").getString(
-					 * "bungee.maintenance.settings.message"); String statusmsg;
-					 * if(status.equals(OlympaServerStatus.)){ if(!message.isEmpty()) { statusmsg =
-					 * "&aActiver (" + message +"&a)"; } else { statusmsg = "&aActiver"; } } else if
-					 * (status == 2){ statusmsg = "&aActiver (&6Dev&a)"; } else { statusmsg =
-					 * "&cDésactiver"; } sender.sendMessage("&6Le mode maintenance est " +
-					 * statusmsg.replace("\n", ""));
-					 */
+					String message = config.getString("settings.message");
+					String statusString = config.getString("settings.status");
+					maintenanceStatus = MaintenanceStatus.get(statusString);
+					String statusmsg = "";
+					if (message != "") {
+						statusmsg = "(" + message.replaceAll("\n", "") + ")";
+					}
+					sender.sendMessage(SpigotUtils.color("&6Le mode maintenance est en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
 					break;
 
 				default:
-					sender.sendMessage(BungeeConfigUtils.getString("bungee.maintenance.messages.usage"));
+					this.sendUsage();
 					break;
 				}
-				break;
 			}
 		});
+
 	}
 
 	private void setMaintenance(MaintenanceStatus maintenanceStatus, String message, CommandSender player) {
-		BungeeConfigUtils.getConfig("maintenance").set("settings.status", maintenanceStatus.getName());
-		BungeeConfigUtils.getConfig("maintenance").set("settings.message", message);
+		Configuration config = BungeeConfigUtils.getConfig("maintenance");
+		config.set("settings.status", maintenanceStatus.getName());
+		config.set("settings.message", message);
 		BungeeConfigUtils.saveConfig("maintenance");
-		String statusmsg;
-		if (maintenanceStatus == MaintenanceStatus.OPEN) {
-			statusmsg = "&cDésactivé";
-		} else if (maintenanceStatus == MaintenanceStatus.MAINTENANCE) {
-			if (message != "") {
-				statusmsg = "&aActivé (" + message + "&a)";
-			} else {
-				statusmsg = "&aActivé";
-			}
-		} else {
-			statusmsg = "&aActivé en mode " + maintenanceStatus.getNameColored();
+		String statusmsg = "";
+		if (message != null && !message.isEmpty()) {
+			statusmsg = "(" + message.replace("\n", "") + ")";
 		}
-		player.sendMessage(SpigotUtils.color("&6Le mode maintenance est désormais " + statusmsg.replaceAll("\n", "")));
+		player.sendMessage(SpigotUtils.color("&6Le mode maintenance est désormais en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
 	}
 
 }

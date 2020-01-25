@@ -1,5 +1,5 @@
 version: 1.1
-status: 'Ouvert'
+status: 'Développement'
 maintenance:
    messages:
       usage: '&cUsage &7» &c/maintenance [on|off|dev|add|remove|list|status] <raison|joueur>'

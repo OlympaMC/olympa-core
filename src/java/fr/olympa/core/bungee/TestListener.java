@@ -1,8 +1,5 @@
 package fr.olympa.core.bungee;
 
-import java.io.UnsupportedEncodingException;
-import java.util.UUID;
-
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
@@ -31,11 +28,6 @@ public class TestListener implements Listener {
 	public void onJoin(PreLoginEvent event) {
 		String eventName = event.getClass().getName();
 		PendingConnection connection = event.getConnection();
-		try {
-			OlympaBungee.getInstance().sendMessage("UUID CRACK: " + UUID.nameUUIDFromBytes(("OfflinePlayer:" + connection.getName().toLowerCase()).getBytes("UTF-8")));
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}
 		OlympaBungee.getInstance().sendMessage("EVENT : " + eventName + " UUID " + connection.getUniqueId() + " USERNAME " + connection.getName() + " IP " + connection.getAddress().getAddress().getHostAddress());
 	}
 
