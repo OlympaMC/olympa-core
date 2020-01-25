@@ -5,7 +5,7 @@ import org.bukkit.plugin.PluginManager;
 import fr.olympa.api.gui.Inventories;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
-import fr.olympa.api.plugin.OlympaPlugin;
+import fr.olympa.api.plugin.OlympaPluginInterface;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.sql.MySQL;
@@ -22,7 +22,7 @@ import fr.olympa.core.spigot.status.SetStatusCommand;
 import fr.olympa.core.spigot.status.StatusMotdListener;
 import redis.clients.jedis.Jedis;
 
-public class OlympaCore extends OlympaPlugin {
+public class OlympaCore extends OlympaSpigot implements OlympaPluginInterface {
 
 	private static OlympaCore instance = null;
 
