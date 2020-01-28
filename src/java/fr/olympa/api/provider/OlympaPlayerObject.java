@@ -77,7 +77,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			this.histName.putAll(histName2);
 		}
 		if (histIpJson != null && !histIpJson.isEmpty()) {
-
 			Map<Long, String> histIps = new Gson().fromJson(histIpJson, Map.class);
 			this.histIp.putAll(histIps);
 		}
@@ -128,6 +127,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		}
 	}
 
+	@Override
 	public Map<String, String> getData() {
 		return this.data;
 	}
@@ -228,8 +228,18 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		return this.uuid;
 	}
 
+	@Override
+	public void giveMoney(double money) {
+		this.money += money;
+	}
+
 	public String hashPassword(String password_toHash) {
 		return Passwords.getSHA512(password_toHash, "DYhG9guiRVoUubWwvn2G0Fg3b0qyJfIxfs2aC9mi".getBytes());
+	}
+
+	@Override
+	public boolean hasMoney(double money) {
+		return this.money >= money;
 	}
 
 	@Override
@@ -268,24 +278,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	private void removeGroup(OlympaGroup group) {
 		this.groups.remove(group);
-	}
-
-	@Override
-	public void giveMoney(double money) {
-		this.money += money;
-	}
-
-	@Override
-	public boolean hasMoney(double money) {
-		return this.money >= money;
-	}
-
-	@Override
-	public boolean withdrawMoney(double money) {
-		if (this.money >= money) {
-			this.money -= money;
-			return true;
-		}else return false;
 	}
 
 	@Override
@@ -357,5 +349,15 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void setVerifMode(boolean verifMode) {
 		this.verifMode = verifMode;
+	}
+
+	@Override
+	public boolean withdrawMoney(double money) {
+		if (this.money >= money) {
+			this.money -= money;
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

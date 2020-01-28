@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.provider.BungeeNewPlayerEvent;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -88,6 +89,12 @@ public class SanctionListener implements Listener {
 				}
 			}
 		});
+	}
+
+	@EventHandler
+	public void onBungeeNewPlayerEvent(BungeeNewPlayerEvent event) {
+		PendingConnection connection = event.getConnection();
+
 	}
 
 	@SuppressWarnings("deprecation")

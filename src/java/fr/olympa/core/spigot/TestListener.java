@@ -1,6 +1,5 @@
 package fr.olympa.core.spigot;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -14,11 +13,6 @@ public class TestListener implements Listener {
 	public void onJoin(AsyncPlayerPreLoginEvent event) {
 		String eventName = event.getEventName();
 		OlympaCore.getInstance().sendMessage("EVENT : " + eventName);
-	}
-
-	@EventHandler
-	public void onJoin(Player event) {
-
 	}
 
 	@EventHandler

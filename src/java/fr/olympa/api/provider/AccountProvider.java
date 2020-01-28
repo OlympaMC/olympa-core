@@ -84,8 +84,8 @@ public class AccountProvider implements OlympaAccount {
 		this.redisAccesss.closeResource();
 	}
 
-	public boolean createNew(OlympaPlayer olympaPlayer) {
-		return MySQL.createPlayer(olympaPlayer);
+	public void createNew(OlympaPlayer olympaPlayer) throws SQLException {
+		MySQL.createPlayer(olympaPlayer);
 	}
 
 	@Override

@@ -17,6 +17,7 @@ public class RegisterCommand extends BungeeCommand {
 		this.usageString = "<mot de passe>";
 		this.description = "Crée un mot de passe";
 		this.allowConsole = false;
+		this.bypassAuth = true;
 		HandlerHideLogin.command.add(this.command);
 		for (String aliase : this.aliases) {
 			HandlerHideLogin.command.add(aliase);
@@ -36,7 +37,7 @@ public class RegisterCommand extends BungeeCommand {
 		}
 
 		if (args.length == 0) {
-			this.sendMessage(Prefix.DEFAULT_GOOD, "Cette commande permet de choisir un mot de passe pour son compte Olympa. Valable sur notre site, forum, et minecraft (besoin si version non premium).");
+			this.sendMessage(Prefix.DEFAULT_GOOD, "Cette commande permet de choisir un mot de passe pour son compte Olympa. Valable sur notre site, forum, et minecraft (obligatoire si version non premium).");
 			return;
 		}
 

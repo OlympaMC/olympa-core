@@ -111,15 +111,4 @@ public class DataManagmentListener implements Listener {
 			event.setQuitMessage(null);
 		}
 	}
-
-	@EventHandler(priority = EventPriority.LOW)
-	public void onPlayerQuitLow(PlayerQuitEvent event) {
-		Player player = event.getPlayer();
-		AccountProvider olympaAccount = new AccountProvider(player.getUniqueId());
-		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
-		if (olympaPlayer != null) {
-			olympaPlayer.setLastConnection(Utils.getCurrentTimeInSeconds());
-			olympaAccount.saveToCache(olympaPlayer);
-		}
-	}
 }

@@ -1,18 +1,18 @@
-package fr.olympa.core.spigot;
+package fr.olympa.api.plugin;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.maintenance.MaintenanceStatus;
-import fr.olympa.api.plugin.OlympaAPIPlugin;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.task.TaskManager;
 
-public abstract class OlympaSpigot extends OlympaAPIPlugin {
+public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCoreInterface, OlympaPluginInterface {
 
 	protected DbConnection database = null;
+	protected MaintenanceStatus status;
 
 	public void disable() {
 		if (this.database != null) {
@@ -45,6 +45,16 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin {
 	@Override
 	public Connection getDatabase() throws SQLException {
 		return this.database.getConnection();
+	}
+
+	@Override
+	public MaintenanceStatus getStatus() {
+		return this.status;
+	}
+
+	@Override
+	public void setStatus(MaintenanceStatus status) {
+		this.status = status;
 	}
 
 	private void setupDatabase() {

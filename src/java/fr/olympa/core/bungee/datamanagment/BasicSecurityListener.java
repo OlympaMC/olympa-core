@@ -39,8 +39,12 @@ public class BasicSecurityListener implements Listener {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
 		String ip = connection.getAddress().getAddress().getHostAddress();
+
+		//ProtocolSupport.
+
 		if (!name.matches("[a-zA-Z0-9_]*")) {
 			event.setCancelReason(BungeeUtils.connectScreen("&6Ton pseudo doit contenir uniquement des chiffres, des lettres et des tiret bas."));
+			event.setCancelled(true);
 			return;
 		}
 
@@ -61,6 +65,7 @@ public class BasicSecurityListener implements Listener {
 		long uptime = Utils.getCurrentTimeInSeconds() - OlympaBungee.getInstance().getUptimeLong();
 		if (uptime > 60 && test == null) {
 			event.setCancelReason(BungeeUtils.connectScreen("§7[§cSécuriter§7] §6Tu dois ajouter le serveur avant de pouvoir te connecter.\n La connexion direct n'est pas autoriser."));
+			event.setCancelled(true);
 			return;
 		}
 
@@ -69,9 +74,11 @@ public class BasicSecurityListener implements Listener {
 		if (target != null) {
 			if (!target.getAddress().getAddress().getHostAddress().equals(ip)) {
 				event.setCancelReason(BungeeUtils.connectScreen("&cTon compte est déjà connecté avec une IP différente de la tienne."));
+				event.setCancelled(true);
 				return;
 			}
 			event.setCancelReason(BungeeUtils.connectScreen("&cTon compte est déjà connecté."));
+			event.setCancelled(true);
 		}
 
 		/*String test = this.cache.asMap().get(ip);
@@ -83,7 +90,7 @@ public class BasicSecurityListener implements Listener {
 		this.cache.invalidate(ip);*/
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on2Login(LoginEvent event) {
 		if (event.isCancelled()) {
 			return;

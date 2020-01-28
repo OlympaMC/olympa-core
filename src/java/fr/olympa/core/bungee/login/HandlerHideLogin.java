@@ -11,7 +11,7 @@ public class HandlerHideLogin implements Filter {
 
 	@Override
 	public boolean isLoggable(LogRecord record) {
-		System.out.println("DEBUG commands: " + String.join(", ", command) + " MSG" + record.getMessage());
+		System.out.println("DEBUG commands: " + String.join(", ", command) + " MSG " + record.getMessage() + " name " + record.getLoggerName());
 		return !command.stream().anyMatch(cmd -> record.getMessage().contains("executed command: /" + cmd));
 	}
 

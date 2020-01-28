@@ -9,6 +9,7 @@ import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.SpigotUtils;
+import fr.olympa.core.bungee.servers.ServersConnection;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -19,12 +20,10 @@ import net.md_5.bungee.api.plugin.Plugin;
 public abstract class BungeeCommand extends Command {
 
 	protected String[] aliases;
-
 	public boolean allowConsole = true;
 	protected String command;
-
 	protected String description;
-
+	protected boolean bypassAuth = false;
 	public OlympaPlayer olympaPlayer;
 	protected OlympaPermission permission;
 
@@ -90,6 +89,10 @@ public abstract class BungeeCommand extends Command {
 			this.sender = sender;
 			if (sender instanceof ProxiedPlayer) {
 				this.proxiedPlayer = (ProxiedPlayer) sender;
+				if (!this.bypassAuth && ServersConnection.isAuth(this.proxiedPlayer)) {
+					this.sendErreur("Tu dois être connecté. Fait &4/login <mdp>&c.");
+					return;
+				}
 
 				if (this.permission != null) {
 					this.olympaPlayer = this.getOlympaPlayer();
@@ -126,12 +129,18 @@ public abstract class BungeeCommand extends Command {
 	}
 
 	protected OlympaPlayer getOlympaPlayer() {
-		try {
-			return new AccountProvider(this.proxiedPlayer.getUniqueId()).get();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
+		if (this.proxiedPlayer != null) {
+			try {
+				return new AccountProvider(this.proxiedPlayer.getUniqueId()).get();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
+		return null;
+	}
+
+	public OlympaPermission getPerm() {
+		return this.permission;
 	}
 
 	public ProxiedPlayer getProxiedPlayer() {
@@ -150,7 +159,7 @@ public abstract class BungeeCommand extends Command {
 	}
 
 	public void sendDoNotHavePermission() {
-		this.sendErreur("Vous n'avez pas la permission &l(◑_◑)");
+		this.sendErreur("Tu as pas la permission &l(◑_◑)");
 	}
 
 	public void sendErreur(String message) {
@@ -162,7 +171,7 @@ public abstract class BungeeCommand extends Command {
 	}
 
 	public void sendImpossibleWithOlympaPlayer() {
-		this.sendErreur("Une erreur est survenu avec vos donnés.");
+		this.sendErreur("Une erreur est survenu avec tes donnés.");
 	}
 
 	public void sendMessage(CommandSender sender, Prefix prefix, String text) {
@@ -192,6 +201,6 @@ public abstract class BungeeCommand extends Command {
 	}
 
 	public void sendUsage() {
-		this.sendMessage(Prefix.USAGE, this.usageString);
+		this.sendMessage(Prefix.USAGE, "/" + this.command + " " + this.usageString);
 	}
 }

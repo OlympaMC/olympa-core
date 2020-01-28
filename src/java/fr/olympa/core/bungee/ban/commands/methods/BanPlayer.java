@@ -11,10 +11,12 @@ import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.BanUtils;
+import fr.olympa.core.bungee.ban.commands.BanIpCommand;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
@@ -152,8 +154,8 @@ public class BanPlayer {
 
 			// Sinon: ban def
 		} else {
-			if (OlympaCorePermissions.BAN_DEF.hasPermission(olympaPlayer)) {
-				sender.sendMessage(config.getString("ban.usageban"));
+			if (olympaPlayer != null && BanIpCommand.permToBandef.hasPermission(olympaPlayer)) {
+				sender.sendMessage(Prefix.DEFAULT_BAD + "Tu as pas la permission de ban définitivement, tu peux ban maximum 1 an.");
 				return;
 			}
 			String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));

@@ -7,9 +7,11 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.BanUtils;
+import fr.olympa.core.bungee.ban.commands.BanCommand;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
@@ -83,6 +85,10 @@ public class BanIp {
 				OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
 			}
 		} else {
+			if (olympaPlayer != null && BanCommand.permToBandef.hasPermission(olympaPlayer)) {
+				sender.sendMessage(Prefix.DEFAULT_BAD + "Tu as pas la permission de ban définitivement, tu peux ban maximum 1 an.");
+				return;
+			}
 			String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 			String ip = args[0];
 			OlympaSanction ban = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.BANIP, ip, author, reason, Utils.getCurrentTimeInSeconds(), 0);

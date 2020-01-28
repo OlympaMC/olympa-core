@@ -20,6 +20,8 @@ public class OlympaCorePermissions {
 	public static OlympaPermission BAN_FORCEKICK_COMMAND = new OlympaPermission(OlympaGroup.ASSISTANT);
 	public static OlympaPermission BAN_DEF = new OlympaBungeePermission(OlympaGroup.MODP);
 	public static OlympaPermission BAN_BANIP_COMMAND = new OlympaBungeePermission(OlympaGroup.MODP);
+	public static OlympaPermission BAN_BANIPDEF_COMMAND = new OlympaPermission(OlympaGroup.MODP);
+	public static OlympaPermission BAN_BANDEF_COMMAND = new OlympaBungeePermission(OlympaGroup.MODP);
 	public static OlympaPermission BAN_UNBAN_COMMAND = new OlympaBungeePermission(OlympaGroup.MODP);
 	public static OlympaPermission BAN_DELBAN_COMMAND = new OlympaBungeePermission(OlympaGroup.DEV);
 	public static OlympaPermission BAN_KICK_COMMAND = new OlympaBungeePermission(OlympaGroup.MOD);

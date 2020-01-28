@@ -25,7 +25,7 @@ public class ServersListener implements Listener {
 			event.setKickReasonComponent(TextComponent.fromLegacyText(BungeeUtils.connectScreen("&cTu n'a pas accès au serveur &4" + serverKicked.getName() + "&c.")));
 			return;
 		}
-		if (serverKicked.getName().contains("auth")) {
+		if (serverKicked.getName().startsWith("auth")) {
 			if (kickReason.contains("restarting") || kickReason.contains("closed")) {
 				ServerInfo authServer = ServersConnection.getLobby(serverKicked);
 				if (authServer == null) {
@@ -38,7 +38,7 @@ public class ServersListener implements Listener {
 			}
 			return;
 		}
-
+		// Server is restarting
 		if (kickReason.contains("restarting") || kickReason.contains("closed")) {
 
 			ServerInfo serverInfolobby = ServersConnection.getLobby(serverKicked);

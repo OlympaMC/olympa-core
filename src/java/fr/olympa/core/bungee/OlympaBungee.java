@@ -2,7 +2,6 @@ package fr.olympa.core.bungee;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.logging.Logger;
 
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.provider.RedisAccess;
@@ -107,21 +106,21 @@ public class OlympaBungee extends Plugin {
 		}
 
 		BungeeTaskManager tasks = new BungeeTaskManager(this);
-		tasks.runTaskAsynchronously(() -> redisAcces.connect().subscribe(new RedisTestListener(), "test"));
-		tasks.runTaskAsynchronously(() -> redisAcces.connect().subscribe(new OlympaPlayerBungeeReceiveListener(), "OlympaPlayerReceive"));
+		tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new RedisTestListener(), "test"));
+		tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new OlympaPlayerBungeeReceiveListener(), "OlympaPlayerReceive"));
 
 		AccountProvider.asyncLaunch = (run) -> this.getTask().runAsync(this, run);
 
 		PluginManager pluginManager = this.getProxy().getPluginManager();
 		pluginManager.registerListener(this, new MotdListener());
-		pluginManager.registerListener(this, new MaintenanceListener());
 		pluginManager.registerListener(this, new ConnectionListener());
 		pluginManager.registerListener(this, new AuthListener());
 		pluginManager.registerListener(this, new BasicSecurityListener());
 		pluginManager.registerListener(this, new SanctionListener());
 		pluginManager.registerListener(this, new ServersListener());
-		//pluginManager.registerListener(this, new TestListener());
+		pluginManager.registerListener(this, new TestListener());
 		pluginManager.registerListener(this, new PrivateMessageListener());
+		pluginManager.registerListener(this, new MaintenanceListener());
 
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();
@@ -143,7 +142,8 @@ public class OlympaBungee extends Plugin {
 		new RegisterCommand(this).register();
 
 		new MonitorServers(this);
-		Logger.getGlobal().setFilter(new HandlerHideLogin());
+		this.getLogger().setFilter(new HandlerHideLogin());
+		ProxyServer.getInstance().getLogger().setFilter(new HandlerHideLogin());
 		this.sendMessage("§2" + this.getDescription().getName() + "§a (" + this.getDescription().getVersion() + ") is activated.");
 	}
 

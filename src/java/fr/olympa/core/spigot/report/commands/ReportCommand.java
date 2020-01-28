@@ -18,8 +18,7 @@ public class ReportCommand extends OlympaCommand {
 	public ReportCommand(Plugin plugin) {
 		super(plugin, "report", "signaler");
 		this.allowConsole = false;
-		this.setMinArg(1);
-		this.setUsageString("<joueur>");
+		this.addArgs(true, "joueur");
 	}
 
 	@Override

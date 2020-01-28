@@ -32,8 +32,10 @@ public class GroupCommand extends OlympaCommand {
 
 	public GroupCommand(Plugin plugin) {
 		super(plugin, "group", "Permet la gestion des groupes de Olympa.", OlympaCorePermissions.GROUP_COMMAND, "groupe", "rank");
-		this.setUsageString("<joueur> <group> [until] [add|remove]");
-		this.setMinArg(1);
+		this.addArgs(true, "joueur");
+		this.addArgs(false, "group");
+		this.addArgs(false, "until");
+		this.addArgs(false, "add", "remove");
 		this.isAsynchronous = true;
 	}
 
@@ -122,6 +124,7 @@ public class GroupCommand extends OlympaCommand {
 						this.sendMessage("&aLe joueur &2%player&a n'est pas connecté, la modification a bien été prise en compte.".replaceFirst("%player", olympaTarget.getName()));
 					}
 				};
+				done.accept(false);
 				// olympaAccount.sendModifications(olympaTarget, done);
 			} else {
 				olympaTarget.setGroup(newGroup, timestamp);
@@ -131,7 +134,7 @@ public class GroupCommand extends OlympaCommand {
 				this.sendMessage(target, "&aVous êtes désormais dans le groupe &2%group&a%time.".replaceFirst("%group", newGroup.getName()).replaceFirst("%time", timestampString));
 			}
 
-			if (target == null || !SpigotUtils.isSamePlayer((Player) this.sender, target)) {
+			if (this.player == null || target == null || !SpigotUtils.isSamePlayer(this.player, target)) {
 				this.sendMessage("&aLe joueur &2%player&a est désormais dans le groupe &2%group&a%time."
 						.replaceFirst("%player", olympaTarget.getName())
 						.replaceFirst("%group", newGroup.getName())

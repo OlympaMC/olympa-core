@@ -6,6 +6,8 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.maintenance.MaintenanceStatus;
+import fr.olympa.api.utils.Matcher;
+import fr.olympa.api.utils.TPS;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import net.md_5.bungee.api.ChatColor;
@@ -36,34 +38,42 @@ public class ListAllCommand extends BungeeCommand {
 		for (Entry<ServerInfo, ServerPing> entry : servers.entrySet()) {
 			ServerInfo info = entry.getKey();
 			ServerPing ping = entry.getValue();
-			String pingProtocol = "";
+			String tps = "";
 			String players = "";
-			String playersNames = "";
+			String hover = "";
 			MaintenanceStatus status = MaintenanceStatus.CLOSE;
 			if (ping != null) {
-				String motd = ping.getDescriptionComponent().toLegacyText();
-				MaintenanceStatus status2 = MaintenanceStatus.get(motd.substring(2));
-				System.out.println("MOTD " + info.getName() + ": " + motd.substring(2) + " " + status2);
+				String[] motd = ping.getDescriptionComponent().toLegacyText().split(" ");
+				MaintenanceStatus status2 = MaintenanceStatus.get(motd[0]);
+				System.out.println("Status " + info.getName() + ": " + status2 + " MOTD: " + motd[0]);
 				if (status2 != null) {
+					if (this.olympaPlayer != null && status2.getPermission().hasPermission(this.olympaPlayer)) {
+						continue;
+					}
 					status = status2;
 				} else {
-					status = MaintenanceStatus.OPEN;
+					status = MaintenanceStatus.UNKNOWN;
 				}
-				pingProtocol = ping.getVersion().getName();
+				if (motd.length >= 2) {
+					String tpsString = motd[1];
+					if (Matcher.isDouble(tpsString)) {
+						tps = TPS.getColor(Double.parseDouble(motd[1]));
+					}
+				}
 				players = ping.getPlayers().getOnline() + " connecté" + Utils.withOrWithoutS(ping.getPlayers().getOnline()) + "";
 				if (ping.getPlayers().getSample() != null) {
-					playersNames = Arrays.stream(ping.getPlayers().getSample()).map(PlayerInfo::getName).collect(Collectors.joining(", "));
+					hover = Arrays.stream(ping.getPlayers().getSample()).map(PlayerInfo::getName).collect(Collectors.joining(", "));
 				}
 			}
-			i++;
 			if (size > i) {
-				pingProtocol += "\n";
+				tps += "\n";
 			}
-			TextComponent text2 = new TextComponent("§7[" + status.getNameColored() + "§7] " + status.getColor() + info.getName() + "§e: " + players + " " + pingProtocol);
-			if (!playersNames.isEmpty()) {
-				text2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(playersNames).color(ChatColor.GREEN).create()));
+			TextComponent text2 = new TextComponent("§7[" + status.getNameColored() + "§7] " + status.getColor() + info.getName() + "§e: " + players + " " + tps);
+			if (!hover.isEmpty()) {
+				text2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).color(ChatColor.GREEN).create()));
 			}
 			text.addExtra(text2);
+			i++;
 		}
 		sender.sendMessage(text);
 	}

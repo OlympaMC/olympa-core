@@ -6,6 +6,7 @@ import java.util.UUID;
 import fr.olympa.api.objects.OlympaConsole;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
@@ -19,10 +20,13 @@ import net.md_5.bungee.api.plugin.Plugin;
 @SuppressWarnings("deprecation")
 public class BanIpCommand extends BungeeCommand {
 
+	public static OlympaPermission permToBandef;
+
 	public BanIpCommand(Plugin plugin) {
 		super(plugin, "banip", OlympaCorePermissions.BAN_BANIP_COMMAND, "tempbanip");
+		permToBandef = OlympaCorePermissions.BAN_BANIPDEF_COMMAND;
 		this.minArg = 2;
-		this.usageString = BungeeConfigUtils.getString("bungee.ban.messages.usageban");
+		this.usageString = BungeeConfigUtils.getString("ban.messages.usageban");
 	}
 
 	@Override

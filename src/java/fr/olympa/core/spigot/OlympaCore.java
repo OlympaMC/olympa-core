@@ -3,17 +3,16 @@ package fr.olympa.core.spigot;
 import org.bukkit.plugin.PluginManager;
 
 import fr.olympa.api.gui.Inventories;
+import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
-import fr.olympa.api.plugin.OlympaPluginInterface;
+import fr.olympa.api.plugin.OlympaSpigot;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
 import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
-import fr.olympa.core.spigot.datamanagment.redis.OlympaPlayerReceiveListener;
-import fr.olympa.core.spigot.datamanagment.redis.OlympaPlayerSpigotListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
 import fr.olympa.core.spigot.report.commands.ReportCommand;
@@ -22,7 +21,7 @@ import fr.olympa.core.spigot.status.SetStatusCommand;
 import fr.olympa.core.spigot.status.StatusMotdListener;
 import redis.clients.jedis.Jedis;
 
-public class OlympaCore extends OlympaSpigot implements OlympaPluginInterface {
+public class OlympaCore extends OlympaSpigot {
 
 	private static OlympaCore instance = null;
 
@@ -41,7 +40,7 @@ public class OlympaCore extends OlympaSpigot implements OlympaPluginInterface {
 	@Override
 	public void onEnable() {
 		instance = this;
-
+		this.status = MaintenanceStatus.DEV;
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		this.enable();
 
@@ -54,8 +53,8 @@ public class OlympaCore extends OlympaSpigot implements OlympaPluginInterface {
 		} else {
 			this.sendMessage("&cConnexion à &4Redis&c impossible.");
 		}
-		this.getTask().runTaskAsynchronously("redis1", () -> jedis.subscribe(new OlympaPlayerSpigotListener(), "OlympaPlayer"));
-		this.getTask().runTaskAsynchronously("redis2", () -> jedis.subscribe(new OlympaPlayerReceiveListener(), "OlympaPlayerReceive"));
+		//this.getTask().runTaskAsynchronously("redis1", () -> jedis.subscribe(new OlympaPlayerSpigotListener(), "OlympaPlayer"));
+		//this.getTask().runTaskAsynchronously("redis2", () -> jedis.subscribe(new OlympaPlayerReceiveListener(), "OlympaPlayerReceive"));
 
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();
@@ -73,4 +72,5 @@ public class OlympaCore extends OlympaSpigot implements OlympaPluginInterface {
 
 		this.sendMessage("§2" + this.getDescription().getName() + "§a (" + this.getDescription().getVersion() + ") est activé.");
 	}
+
 }

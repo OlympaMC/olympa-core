@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class ServersConnection {
 
@@ -40,5 +41,9 @@ public class ServersConnection {
 		}
 		// TODO create new server
 		return null;
+	}
+
+	public static boolean isAuth(ProxiedPlayer player) {
+		return player.getServer().getInfo().getName().startsWith("auth");
 	}
 }

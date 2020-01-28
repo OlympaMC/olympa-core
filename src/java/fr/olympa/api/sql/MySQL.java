@@ -27,32 +27,25 @@ public class MySQL {
 	static DbConnection dbConnection;
 	static String tableName = "olympa.users";
 
-	public static boolean createPlayer(OlympaPlayer olympaPlayer) {
-		try {
-
-			String ps = "INSERT INTO " + tableName + " (`uuid-server`, uuid, pseudo, ip, `groups`, created, last_connection, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
-			int i = 1;
-			PreparedStatement pstate = dbConnection.getConnection().prepareStatement(ps);
-			pstate.setString(i++, olympaPlayer.getUniqueId().toString());
-			if (olympaPlayer.getPremiumUniqueId() != null) {
-				pstate.setString(i++, olympaPlayer.getPremiumUniqueId().toString());
-			} else {
-				pstate.setString(i++, null);
-			}
-			pstate.setString(i++, olympaPlayer.getName());
-			pstate.setString(i++, olympaPlayer.getIp());
-			pstate.setString(i++, olympaPlayer.getGroupsToString());
-			pstate.setDate(i++, new Date(olympaPlayer.getFirstConnection() * 1000L));
-			pstate.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
-			pstate.setString(i++, olympaPlayer.getPassword());
-
-			pstate.executeUpdate();
-			pstate.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
+	public static void createPlayer(OlympaPlayer olympaPlayer) throws SQLException {
+		String ps = "INSERT INTO " + tableName + " (`uuid-server`, uuid, pseudo, ip, `groups`, created, last_connection, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+		int i = 1;
+		PreparedStatement pstate = dbConnection.getConnection().prepareStatement(ps);
+		pstate.setString(i++, olympaPlayer.getUniqueId().toString());
+		if (olympaPlayer.getPremiumUniqueId() != null) {
+			pstate.setString(i++, olympaPlayer.getPremiumUniqueId().toString());
+		} else {
+			pstate.setString(i++, null);
 		}
-		return true;
+		pstate.setString(i++, olympaPlayer.getName());
+		pstate.setString(i++, olympaPlayer.getIp());
+		pstate.setString(i++, olympaPlayer.getGroupsToString());
+		pstate.setDate(i++, new Date(olympaPlayer.getFirstConnection() * 1000L));
+		pstate.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
+		pstate.setString(i++, olympaPlayer.getPassword());
+
+		pstate.executeUpdate();
+		pstate.close();
 	}
 
 	public static Set<String> getAllPlayersNames() {
@@ -360,13 +353,13 @@ public class MySQL {
 			} else {
 				pstate.setString(i++, null);
 			}
-			pstate.setInt(i++, olympaPlayer.getGender().getId());
 			TreeMap<Long, String> histIp = olympaPlayer.getHistIp();
 			if (!histIp.isEmpty()) {
 				pstate.setString(i++, new Gson().toJson(histIp));
 			} else {
 				pstate.setString(i++, null);
 			}
+			pstate.setInt(i++, olympaPlayer.getGender().getId());
 			Map<String, String> data = olympaPlayer.getData();
 			if (!data.isEmpty()) {
 				pstate.setString(i++, new Gson().toJson(data));

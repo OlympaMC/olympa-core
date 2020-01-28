@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.maintenance;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,11 +14,12 @@ import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 
 @SuppressWarnings("deprecation")
-public class MaintenanceCommand extends BungeeCommand {
+public class MaintenanceCommand extends BungeeCommand implements Listener {
 
 	/*
 	 * Dev: Tristiisch74 Pemet de mettre le serveur en maintenance ./maintenance
@@ -26,13 +28,18 @@ public class MaintenanceCommand extends BungeeCommand {
 	 * le même msg sur le site
 	 */
 
-	private OlympaPermission permission;
+	static List<String> arg2 = new ArrayList<>();
+	static String command;
+	static OlympaPermission permission;
 
 	public MaintenanceCommand(Plugin plugin) {
 		super(plugin, "maintenance", OlympaCorePermissions.MAINTENANCE_COMMAND, "maint");
+		permission = this.getPerm();
+		command = this.getCommand();
 		this.minArg = 1;
-
-		this.usageString = "<add|remove|list|status|" + String.join("|", MaintenanceStatus.getNames()).toLowerCase() + "> [joueur]";
+		arg2.addAll(Arrays.asList("status", "add", "remove", "list"));
+		arg2.addAll(MaintenanceStatus.getNames());
+		this.usageString = "<" + String.join("|", MaintenanceCommand.arg2).toLowerCase() + "> [joueur]";
 	}
 
 	@Override
@@ -40,7 +47,7 @@ public class MaintenanceCommand extends BungeeCommand {
 		ProxyServer.getInstance().getScheduler().runAsync(OlympaBungee.getInstance(), () -> {
 			if (sender instanceof ProxiedPlayer) {
 				ProxiedPlayer player = (ProxiedPlayer) sender;
-				if (!this.permission.hasPermission(player.getUniqueId())) {
+				if (!MaintenanceCommand.permission.hasPermission(player.getUniqueId())) {
 					this.sendDoNotHavePermission();
 					return;
 				}
@@ -160,5 +167,4 @@ public class MaintenanceCommand extends BungeeCommand {
 		}
 		player.sendMessage(SpigotUtils.color("&6Le mode maintenance est désormais en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
 	}
-
 }

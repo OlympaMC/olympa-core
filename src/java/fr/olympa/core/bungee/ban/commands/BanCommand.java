@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import fr.olympa.api.objects.OlympaConsole;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
@@ -25,8 +26,11 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 public class BanCommand extends BungeeCommand {
 
+	public static OlympaPermission permToBandef;
+
 	public BanCommand(Plugin plugin) {
 		super(plugin, "ban", OlympaCorePermissions.BAN_BAN_COMMAND, "tempban");
+		permToBandef = OlympaCorePermissions.BAN_BANDEF_COMMAND;
 		this.minArg = 2;
 		this.usageString = "<joueur|uuid|ip> [temps] <motif>";
 	}
