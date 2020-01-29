@@ -7,7 +7,6 @@ import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
-import fr.olympa.api.task.TaskManager;
 
 public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCoreInterface, OlympaPluginInterface {
 
@@ -21,8 +20,6 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 	}
 
 	public void enable() {
-		this.task = new TaskManager(this);
-
 		this.config = new CustomConfig(this, "config");
 		if (this.config.hasResource() || this.config.getFile().exists()) {
 			this.config.load();
