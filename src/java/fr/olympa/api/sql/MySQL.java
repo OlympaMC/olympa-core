@@ -9,7 +9,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -19,33 +18,39 @@ import com.google.gson.Gson;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.Gender;
 import fr.olympa.api.objects.OlympaPlayer;
-import fr.olympa.api.provider.OlympaPlayerObject;
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.spigot.OlympaCore;
 
 public class MySQL {
 
 	static DbConnection dbConnection;
 	static String tableName = "olympa.users";
 
-	public static void createPlayer(OlympaPlayer olympaPlayer) throws SQLException {
-		String ps = "INSERT INTO " + tableName + " (`uuid-server`, uuid, pseudo, ip, `groups`, created, last_connection, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
-		int i = 1;
-		PreparedStatement pstate = dbConnection.getConnection().prepareStatement(ps);
-		pstate.setString(i++, olympaPlayer.getUniqueId().toString());
-		if (olympaPlayer.getPremiumUniqueId() != null) {
-			pstate.setString(i++, olympaPlayer.getPremiumUniqueId().toString());
-		} else {
-			pstate.setString(i++, null);
-		}
-		pstate.setString(i++, olympaPlayer.getName());
-		pstate.setString(i++, olympaPlayer.getIp());
-		pstate.setString(i++, olympaPlayer.getGroupsToString());
-		pstate.setDate(i++, new Date(olympaPlayer.getFirstConnection() * 1000L));
-		pstate.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
-		pstate.setString(i++, olympaPlayer.getPassword());
+	private static PreparedStatement insertPlayerStatement;
 
-		pstate.executeUpdate();
-		pstate.close();
+	public static long createPlayer(OlympaPlayer olympaPlayer) throws SQLException {
+		insertPlayerStatement = OlympaCore.getInstance().prepareStatementGeneratedKeys(insertPlayerStatement, "INSERT INTO " + tableName + " (`uuid-server`, uuid, pseudo, ip, `groups`, created, last_connection, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+		int i = 1;
+		insertPlayerStatement.setString(i++, olympaPlayer.getUniqueId().toString());
+		if (olympaPlayer.getPremiumUniqueId() != null) {
+			insertPlayerStatement.setString(i++, olympaPlayer.getPremiumUniqueId().toString());
+		} else {
+			insertPlayerStatement.setString(i++, null);
+		}
+		insertPlayerStatement.setString(i++, olympaPlayer.getName());
+		insertPlayerStatement.setString(i++, olympaPlayer.getIp());
+		insertPlayerStatement.setString(i++, olympaPlayer.getGroupsToString());
+		insertPlayerStatement.setDate(i++, new Date(olympaPlayer.getFirstConnection() * 1000L));
+		insertPlayerStatement.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
+		insertPlayerStatement.setString(i++, olympaPlayer.getPassword());
+
+		insertPlayerStatement.executeUpdate();
+		ResultSet resultSet = insertPlayerStatement.getGeneratedKeys();
+		resultSet.next();
+		long id = resultSet.getLong("id");
+		resultSet.close();
+		return id;
 	}
 
 	public static Set<String> getAllPlayersNames() {
@@ -83,21 +88,19 @@ public class MySQL {
 			if (uuidPremiumString != null) {
 				uuidPremium = UUID.fromString(uuidPremiumString);
 			}
-			return new OlympaPlayerObject(
+			OlympaPlayer player = AccountProvider.playerProvider.create(UUID.fromString(resultSet.getString("uuid-server")), resultSet.getString("pseudo"), resultSet.getString("ip"));
+			player.loadSavedDatas(
 					resultSet.getLong("id"),
-					UUID.fromString(resultSet.getString("uuid-server")),
 					uuidPremium,
-					resultSet.getString("pseudo"),
 					resultSet.getString("groups"),
-					resultSet.getString("ip"),
 					resultSet.getDate("created").getTime() / 1000L,
 					resultSet.getTimestamp("last_connection").getTime() / 1000L,
 					resultSet.getString("password"),
 					resultSet.getString("email"),
 					Gender.get(resultSet.getInt("gender")),
 					resultSet.getString("name_history"),
-					resultSet.getString("ip_history"),
-					resultSet.getString("data"));
+					resultSet.getString("ip_history"));
+			return player;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -360,12 +363,12 @@ public class MySQL {
 				pstate.setString(i++, null);
 			}
 			pstate.setInt(i++, olympaPlayer.getGender().getId());
-			Map<String, String> data = olympaPlayer.getData();
+			/*Map<String, String> data = olympaPlayer.getData();
 			if (!data.isEmpty()) {
 				pstate.setString(i++, new Gson().toJson(data));
 			} else {
 				pstate.setString(i++, null);
-			}
+			}*/
 			pstate.setLong(i++, olympaPlayer.getId());
 			pstate.executeUpdate();
 			pstate.close();

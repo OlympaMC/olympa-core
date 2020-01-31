@@ -1,7 +1,9 @@
 package fr.olympa.api.plugin;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.maintenance.MaintenanceStatus;
@@ -42,6 +44,16 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 	@Override
 	public Connection getDatabase() throws SQLException {
 		return this.database.getConnection();
+	}
+
+	public PreparedStatement prepareStatement(PreparedStatement previous, String statement) throws SQLException {
+		if (previous != null && !previous.isClosed()) return previous;
+		return getDatabase().prepareStatement(statement);
+	}
+
+	public PreparedStatement prepareStatementGeneratedKeys(PreparedStatement previous, String statement) throws SQLException {
+		if (previous != null && !previous.isClosed()) return previous;
+		return getDatabase().prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
 	}
 
 	@Override

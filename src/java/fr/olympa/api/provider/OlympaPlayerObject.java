@@ -47,14 +47,19 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	boolean afk;
 
-	@SuppressWarnings("unchecked")
-	public OlympaPlayerObject(long id, UUID uuid, UUID premiumUuid, String name, String groupsString, String ip, long firstConnection, long lastConnection, String password, String email, Gender gender, String histNameJson,
-			String histIpJson,
-			String data) {
-		this.id = id;
-		this.premiumUuid = premiumUuid;
+	public OlympaPlayerObject(UUID uuid, String name, String ip) {
 		this.uuid = uuid;
 		this.name = name;
+		this.ip = ip;
+		this.groups.put(OlympaGroup.PLAYER, 0l);
+		this.firstConnection = Utils.getCurrentTimeInSeconds();
+		this.lastConnection = Utils.getCurrentTimeInSeconds();
+	}
+
+	@Override
+	public void loadSavedDatas(long id, UUID premiumUuid, String groupsString, long firstConnection, long lastConnection, String password, String email, Gender gender, String histNameJson, String histIpJson) {
+		this.id = id;
+		this.premiumUuid = premiumUuid;
 		for (String groupInfos : groupsString.split(";")) {
 			String[] groupInfo = groupInfos.split(":");
 			OlympaGroup olympaGroup = OlympaGroup.getById(Integer.parseInt(groupInfo[0]));
@@ -66,7 +71,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			}
 			this.groups.put(olympaGroup, until);
 		}
-		this.ip = ip;
 		this.firstConnection = firstConnection;
 		this.lastConnection = lastConnection;
 		this.password = password;
@@ -80,16 +84,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			Map<Long, String> histIps = new Gson().fromJson(histIpJson, Map.class);
 			this.histIp.putAll(histIps);
 		}
-
-	}
-
-	public OlympaPlayerObject(UUID uuid, String name, String ip) {
-		this.uuid = uuid;
-		this.name = name;
-		this.ip = ip;
-		this.groups.put(OlympaGroup.PLAYER, 0l);
-		this.firstConnection = Utils.getCurrentTimeInSeconds();
-		this.lastConnection = Utils.getCurrentTimeInSeconds();
 	}
 
 	@Override
@@ -103,6 +97,13 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		if (this.groups.size() > 1 && this.groups.containsKey(OlympaGroup.PLAYER)) {
 			this.removeGroup(OlympaGroup.PLAYER);
 		}
+	}
+
+	@Override
+	public void addNewIp(String ip) {
+		this.histIp.put(Utils.getCurrentTimeInSeconds(), this.ip);
+		this.ip = ip;
+		//MySQL.savePlayer(this); TODO je sais pas si c'est nécessaire, il y a ça dans #addNewName
 	}
 
 	@Override
@@ -125,11 +126,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			e.printStackTrace();
 			return null;
 		}
-	}
-
-	@Override
-	public Map<String, String> getData() {
-		return this.data;
 	}
 
 	@Override
@@ -281,6 +277,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	@Override
 	public void setAfk(boolean afk) {
 		this.afk = afk;
 	}
@@ -299,11 +300,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	public void setGroup(OlympaGroup group, long time) {
 		this.groups.clear();
 		this.addGroup(group, time);
-	}
-
-	@Override
-	public void setId(long id) {
-		this.id = id;
 	}
 
 	@Override
@@ -337,11 +333,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public void setUniqueId(UUID uuid) {
-		this.uuid = uuid;
-	}
-
-	@Override
 	public void setVanish(boolean vanish) {
 		this.vanish = vanish;
 	}
@@ -360,4 +351,5 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			return false;
 		}
 	}
+
 }

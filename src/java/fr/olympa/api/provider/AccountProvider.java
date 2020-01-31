@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import com.google.gson.Gson;
 
 import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.objects.OlympaPlayerProvider;
 import fr.olympa.api.permission.OlympaAccount;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.spigot.OlympaCore;
@@ -19,9 +20,13 @@ import redis.clients.jedis.Jedis;
 public class AccountProvider implements OlympaAccount {
 
 	private static String REDIS_KEY = "player:";
+
 	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
 	private static Map<UUID, OlympaPlayer> cache = new HashMap<>();
+
 	public static Consumer<Runnable> asyncLaunch;
+
+	public static OlympaPlayerProvider playerProvider = OlympaPlayerObject::new;
 
 	private static OlympaPlayer fromDb(String name) throws SQLException {
 		return MySQL.getPlayerByName(name);
@@ -85,12 +90,12 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	public void createNew(OlympaPlayer olympaPlayer) throws SQLException {
-		MySQL.createPlayer(olympaPlayer);
+		olympaPlayer.setId(MySQL.createPlayer(olympaPlayer));
 	}
 
 	@Override
-	public OlympaPlayerObject createOlympaPlayer(String name, String ip) {
-		return new OlympaPlayerObject(this.uuid, name, ip);
+	public OlympaPlayer createOlympaPlayer(String name, String ip) {
+		return playerProvider.create(uuid, name, ip);
 	}
 
 	public OlympaPlayer fromDb() throws SQLException {
