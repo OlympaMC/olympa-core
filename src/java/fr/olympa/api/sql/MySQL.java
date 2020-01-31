@@ -9,7 +9,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -82,6 +85,8 @@ public class MySQL {
 	}
 
 	private static OlympaStatement getPlayerPluginDatas;
+	private static OlympaStatement updatePlayerPluginDatas;
+	private static int updatePlayerPluginDatasID;
 	public static OlympaPlayer getOlympaPlayer(ResultSet resultSet) {
 		try {
 			String uuidPremiumString = resultSet.getString("uuid");
@@ -121,13 +126,25 @@ public class MySQL {
 		}
 	}
 
-	public static void setDatasTable(String tableName, String[] columns) throws SQLException {
+	public static void setDatasTable(String tableName, Map<String, String> columns) throws SQLException {
+		StringJoiner creationJoiner = new StringJoiner(", ");
+		for (Entry<String, String> column : columns.entrySet()) {
+			creationJoiner.add("`" + column.getKey() + "` " + column.getValue());
+		}
 		OlympaCore.getInstance().getDatabase().createStatement().executeUpdate(
 				"CREATE TABLE IF NOT EXISTS `" + tableName + "` (" +
 						"  `player_id` BIGINT NOT NULL," +
-						String.join(", ", columns) +
+						creationJoiner.toString() +
 						"  PRIMARY KEY (`player_id`))");
-		getPlayerPluginDatas = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `player_id` = '?'");
+
+		StringJoiner updateJoiner = new StringJoiner(", ");
+		for (String columnName : columns.keySet()) {
+			creationJoiner.add("`" + columnName + "` = ?");
+		}
+		updatePlayerPluginDatas = new OlympaStatement("UPDATE " + tableName + " SET " + updateJoiner.toString() + " WHERE `player_id` = ?");
+		updatePlayerPluginDatasID = columns.size() + 1;
+
+		getPlayerPluginDatas = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `player_id` = ?");
 	}
 
 	/**
@@ -398,6 +415,13 @@ public class MySQL {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void savePlayerPluginDatas(OlympaPlayer olympaPlayer) throws SQLException {
+		PreparedStatement statement = updatePlayerPluginDatas.getStatement();
+		olympaPlayer.saveDatas(statement);
+		statement.setLong(updatePlayerPluginDatasID, olympaPlayer.getId());
+		statement.executeUpdate();
 	}
 
 	public static void savePlayerPassOrEmail(OlympaPlayer olympaPlayer) throws SQLException {

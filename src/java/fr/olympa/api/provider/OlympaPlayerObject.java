@@ -1,6 +1,8 @@
 package fr.olympa.api.provider;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -90,7 +92,12 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public void loadDatas(ResultSet resultSet) {
+	public void loadDatas(ResultSet resultSet) throws SQLException {
+		// has to be override
+	}
+
+	@Override
+	public void saveDatas(PreparedStatement statement) throws SQLException {
 		// has to be override
 	}
 

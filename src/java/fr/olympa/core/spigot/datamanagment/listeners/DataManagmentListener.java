@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.task.OlympaTask;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
@@ -107,6 +108,11 @@ public class DataManagmentListener implements Listener {
 					.replaceAll("%group", olympaPlayer.getGroup().getName())
 					.replaceAll("%prefix", olympaPlayer.getGroup().getPrefix())
 					.replaceAll("%name", player.getName())));
+			try {
+				MySQL.savePlayerPluginDatas(olympaPlayer);
+			}catch (SQLException e) {
+				e.printStackTrace();
+			}
 		} else {
 			event.setQuitMessage(null);
 		}
