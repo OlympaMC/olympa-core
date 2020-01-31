@@ -1,5 +1,6 @@
 package fr.olympa.api.provider;
 
+import java.sql.ResultSet;
 import java.util.Comparator;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -86,6 +87,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		/*if (dataJson != null && !dataJson.isEmpty()) {
 			this.data = new Gson().fromJson(dataJson, HashMap.class);
 		}*/
+	}
+
+	@Override
+	public void loadDatas(ResultSet resultSet) {
+		// has to be override
 	}
 
 	@Override

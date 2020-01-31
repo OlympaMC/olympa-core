@@ -27,6 +27,17 @@ public class AccountProvider implements OlympaAccount {
 	public static Consumer<Runnable> asyncLaunch;
 
 	public static OlympaPlayerProvider playerProvider = OlympaPlayerObject::new;
+	private static String providerTableName = null;
+
+	public static void setPlayerProvider(OlympaPlayerProvider supplier, String pluginName, String... columns) {
+		try {
+			providerTableName = pluginName.toLowerCase() + "_players";
+			MySQL.setDatasTable(providerTableName, columns);
+		}catch (SQLException e) {
+			e.printStackTrace();
+			providerTableName = null;
+		}
+	}
 
 	private static OlympaPlayer fromDb(String name) throws SQLException {
 		return MySQL.getPlayerByName(name);

@@ -27,26 +27,26 @@ public class MySQL {
 	static DbConnection dbConnection;
 	static String tableName = "olympa.users";
 
-	private static PreparedStatement insertPlayerStatement;
+	private static OlympaStatement insertPlayerStatement = new OlympaStatement("INSERT INTO " + tableName + " (`uuid-server`, uuid, pseudo, ip, `groups`, created, last_connection, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", true);
 
 	public static long createPlayer(OlympaPlayer olympaPlayer) throws SQLException {
-		insertPlayerStatement = OlympaCore.getInstance().prepareStatementGeneratedKeys(insertPlayerStatement, "INSERT INTO " + tableName + " (`uuid-server`, uuid, pseudo, ip, `groups`, created, last_connection, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+		PreparedStatement statement = insertPlayerStatement.getStatement();
 		int i = 1;
-		insertPlayerStatement.setString(i++, olympaPlayer.getUniqueId().toString());
+		statement.setString(i++, olympaPlayer.getUniqueId().toString());
 		if (olympaPlayer.getPremiumUniqueId() != null) {
-			insertPlayerStatement.setString(i++, olympaPlayer.getPremiumUniqueId().toString());
+			statement.setString(i++, olympaPlayer.getPremiumUniqueId().toString());
 		} else {
-			insertPlayerStatement.setString(i++, null);
+			statement.setString(i++, null);
 		}
-		insertPlayerStatement.setString(i++, olympaPlayer.getName());
-		insertPlayerStatement.setString(i++, olympaPlayer.getIp());
-		insertPlayerStatement.setString(i++, olympaPlayer.getGroupsToString());
-		insertPlayerStatement.setDate(i++, new Date(olympaPlayer.getFirstConnection() * 1000L));
-		insertPlayerStatement.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
-		insertPlayerStatement.setString(i++, olympaPlayer.getPassword());
+		statement.setString(i++, olympaPlayer.getName());
+		statement.setString(i++, olympaPlayer.getIp());
+		statement.setString(i++, olympaPlayer.getGroupsToString());
+		statement.setDate(i++, new Date(olympaPlayer.getFirstConnection() * 1000L));
+		statement.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
+		statement.setString(i++, olympaPlayer.getPassword());
 
-		insertPlayerStatement.executeUpdate();
-		ResultSet resultSet = insertPlayerStatement.getGeneratedKeys();
+		statement.executeUpdate();
+		ResultSet resultSet = statement.getGeneratedKeys();
 		resultSet.next();
 		long id = resultSet.getLong("id");
 		resultSet.close();
@@ -81,6 +81,7 @@ public class MySQL {
 		return null;
 	}
 
+	private static OlympaStatement getPlayerPluginDatas;
 	public static OlympaPlayer getOlympaPlayer(ResultSet resultSet) {
 		try {
 			String uuidPremiumString = resultSet.getString("uuid");
@@ -100,11 +101,33 @@ public class MySQL {
 					Gender.get(resultSet.getInt("gender")),
 					resultSet.getString("name_history"),
 					resultSet.getString("ip_history"));
+			if (getPlayerPluginDatas != null) {
+				OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> {
+					try {
+						PreparedStatement statement = getPlayerPluginDatas.getStatement();
+						statement.setLong(1, player.getId());
+						ResultSet pluginSet = statement.executeQuery();
+						if (pluginSet.next()) player.loadDatas(pluginSet);
+						pluginSet.close();
+					}catch (SQLException e) {
+						e.printStackTrace();
+					}
+				});
+			}
 			return player;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static void setDatasTable(String tableName, String[] columns) throws SQLException {
+		OlympaCore.getInstance().getDatabase().createStatement().executeUpdate(
+				"CREATE TABLE IF NOT EXISTS `" + tableName + "` (" +
+						"  `player_id` BIGINT NOT NULL," +
+						String.join(", ", columns) +
+						"  PRIMARY KEY (`player_id`))");
+		getPlayerPluginDatas = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `player_id` = '?'");
 	}
 
 	/**
