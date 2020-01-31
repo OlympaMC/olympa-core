@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.login;
+package fr.olympa.core.bungee.login.commands;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -7,6 +7,8 @@ import java.util.Set;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
+import fr.olympa.core.bungee.login.HandlerHideLogin;
+import fr.olympa.core.bungee.servers.ServersConnection;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -31,8 +33,8 @@ public class RegisterCommand extends BungeeCommand {
 			this.sendImpossibleWithOlympaPlayer();
 		}
 		String playerPasswordHash = this.olympaPlayer.getPassword();
-		if (playerPasswordHash != null && playerPasswordHash.isEmpty()) {
-			this.sendErreur("Tu as déjà un mot de passe. Pour le changer, fait &4/passwd <nouveau mot de passe>&c.");
+		if (playerPasswordHash != null) {
+			this.sendErreur("Tu as déjà un mot de passe. Pour le changer, fait &4/passwd <ancien mot de passe> <nouveau mot de passe>&c.");
 			return;
 		}
 
@@ -65,8 +67,17 @@ public class RegisterCommand extends BungeeCommand {
 		}
 
 		this.olympaPlayer.setPassword(password);
-		new AccountProvider(this.olympaPlayer.getUniqueId()).sendModifications(this.olympaPlayer);
-		this.sendMessage(Prefix.DEFAULT_GOOD, "Bravo ! Tu peux désormais utiliser ce mot de passe sur notre site.");
+		AccountProvider account = new AccountProvider(this.olympaPlayer.getUniqueId());
+		if (ServersConnection.isAuth(this.proxiedPlayer)) {
+			if (account.getFromCache() != null) {
+				account.saveToCache(this.olympaPlayer);
+			}
+			this.sendMessage(Prefix.DEFAULT_GOOD, "Yess, ce mot de passe est valable sur le site et sur minecraft.");
+
+		} else {
+			this.sendMessage(Prefix.DEFAULT_GOOD, "Bravo ! Tu peux désormais utiliser ce mot de passe sur notre site.");
+		}
+		account.saveToRedis(this.olympaPlayer);
 	}
 
 }

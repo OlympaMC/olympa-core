@@ -13,20 +13,24 @@
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</repository>
 		<repository>
+			<id>papermc-releases</id>
+			<url>https://papermc.io/repo/repository/maven-releases/</url>
+		</repository>
+		<repository>
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
 	<dependencies>
-			<!--<dependency>
-			<groupId>com.github.ProtocolSupport</groupId>
-			<artifactId>ProtocolSupport</artifactId>
-			<version>[279088df24,)</version>
-		</dependency>
-	 	<dependency>
-			<groupId>com.github.ProtocolSupport</groupId>
-			<artifactId>ProtocolSupportBungee</artifactId>
-			<version>[6718e7d,)</version>
+		<!--<dependency> <groupId>com.github.ProtocolSupport</groupId> <artifactId>ProtocolSupport</artifactId> 
+			<version>[279088df24,)</version> </dependency> <dependency> <groupId>com.github.ProtocolSupport</groupId> 
+			<artifactId>ProtocolSupportBungee</artifactId> <version>[6718e7d,)</version> 
+			</dependency>
+		<dependency>
+			<groupId>io.github.waterfallmc</groupId>
+			<artifactId>waterfall-api</artifactId>
+			<version>[1.15-SNAPSHOT,)</version>
+			<scope>provided</scope>
 		</dependency> -->
 		<dependency>
 			<groupId>net.md-5</groupId>
@@ -40,13 +44,6 @@
 			<artifactId>bungeecord-api</artifactId>
 			<version>[1.15-SNAPSHOT,)</version>
 			<type>javadoc</type>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.md-5</groupId>
-			<artifactId>bungeecord-api</artifactId>
-			<version>[1.15-SNAPSHOT,)</version>
-			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

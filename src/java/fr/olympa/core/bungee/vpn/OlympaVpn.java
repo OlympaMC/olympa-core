@@ -8,6 +8,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,12 +18,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import fr.olympa.api.objects.OlympaPlayer;
-import net.md_5.bungee.api.connection.PendingConnection;
+import net.md_5.bungee.api.connection.Connection;
 
 @SuppressWarnings("deprecation")
 public class OlympaVpn {
 
-	public static boolean isVPN(PendingConnection con) {
+	public static boolean isVPN(Connection con) {
 		String ip = con.getAddress().getAddress().getHostAddress();
 		try {
 			URL url = new URL("http://proxycheck.io/v2/" + ip + "?key=2i9y52-019793-1d7248-01e861&vpn=1&asn=1&node=1&time=1&inf=0&port=1&seen=1&days=7&tag=msg");
@@ -53,14 +54,15 @@ public class OlympaVpn {
 	long id;
 	String ip;
 	boolean isVpn;
-
-	List<Long> users;
+	List<Long> users = new ArrayList<>();
 
 	public OlympaVpn(long id, String ip, boolean isVpn, String usersString) {
 		this.id = id;
 		this.ip = ip;
 		this.isVpn = isVpn;
-		this.users = Arrays.stream(usersString.split(",")).map(s -> Long.parseLong(s)).collect(Collectors.toList());
+		if (usersString != null && !usersString.isEmpty()) {
+			this.users = Arrays.stream(usersString.split(",")).map(s -> Long.parseLong(s)).collect(Collectors.toList());
+		}
 	}
 
 	public OlympaVpn(String ip, boolean isVpn) {
@@ -82,6 +84,14 @@ public class OlympaVpn {
 
 	public List<Long> getUsers() {
 		return this.users;
+	}
+
+	public boolean hasUser(long id) {
+		return this.users.contains(id);
+	}
+
+	public boolean hasUser(OlympaPlayer olympaPlayer) {
+		return this.hasUser(olympaPlayer.getId());
 	}
 
 	public boolean isVpn() {
