@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.login;
+package fr.olympa.core.bungee.login.commands;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -8,10 +8,11 @@ import fr.olympa.api.provider.OlympaPlayerObject;
 import fr.olympa.api.utils.Passwords;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
+import fr.olympa.core.bungee.login.HandlerHideLogin;
+import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.event.ServerConnectEvent.Reason;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class LoginCommand extends BungeeCommand {
@@ -77,8 +78,11 @@ public class LoginCommand extends BungeeCommand {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Mot de passe incorrect, réessaye.");
 			return;
 		}
+		OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(this.olympaPlayer, this.proxiedPlayer));
+		if (olympaPlayerLoginEvent.cancelIfNeeded()) {
+			return;
+		}
 		this.sendMessage(Prefix.DEFAULT_GOOD, "Connexion effectuée, transfère en cours ...");
-		ServerInfo server = ServersConnection.getLobby();
-		this.proxiedPlayer.connect(server, Reason.COMMAND);
+		ServersConnection.tryConnectToLobby(this.proxiedPlayer);
 	}
 }

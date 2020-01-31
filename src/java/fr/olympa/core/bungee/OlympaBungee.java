@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.provider.RedisAccess;
-import fr.olympa.api.redis.RedisTestListener;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
@@ -23,10 +22,9 @@ import fr.olympa.core.bungee.ban.listeners.SanctionListener;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
 import fr.olympa.core.bungee.datamanagment.BasicSecurityListener;
 import fr.olympa.core.bungee.datamanagment.GetUUIDCommand;
-import fr.olympa.core.bungee.datamanagment.redislisteners.OlympaPlayerBungeeReceiveListener;
-import fr.olympa.core.bungee.login.HandlerHideLogin;
-import fr.olympa.core.bungee.login.LoginCommand;
-import fr.olympa.core.bungee.login.RegisterCommand;
+import fr.olympa.core.bungee.login.commands.LoginCommand;
+import fr.olympa.core.bungee.login.commands.RegisterCommand;
+import fr.olympa.core.bungee.login.listener.LoginRegisterListener;
 import fr.olympa.core.bungee.maintenance.ConnectionListener;
 import fr.olympa.core.bungee.maintenance.MaintenanceCommand;
 import fr.olympa.core.bungee.maintenance.MaintenanceListener;
@@ -38,9 +36,9 @@ import fr.olympa.core.bungee.privatemessage.ReplyCommand;
 import fr.olympa.core.bungee.servers.ListAllCommand;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersListener;
-import fr.olympa.core.bungee.task.BungeeTaskManager;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
+import fr.olympa.core.bungee.vpn.VpnListener;
 import fr.olympa.core.bungee.vpn.VpnSql;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -105,13 +103,14 @@ public class OlympaBungee extends Plugin {
 			this.sendMessage("&cConnexion à &4Redis&c impossible.");
 		}
 
-		BungeeTaskManager tasks = new BungeeTaskManager(this);
-		tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new RedisTestListener(), "test"));
-		tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new OlympaPlayerBungeeReceiveListener(), "OlympaPlayerReceive"));
+		//BungeeTaskManager tasks = new BungeeTaskManager(this);
+		//tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new RedisTestListener(), "test"));
+		//tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new OlympaPlayerBungeeReceiveListener(), "OlympaPlayerReceive"));
 
 		AccountProvider.asyncLaunch = (run) -> this.getTask().runAsync(this, run);
 
 		PluginManager pluginManager = this.getProxy().getPluginManager();
+		pluginManager.registerListener(this, new MaintenanceListener());
 		pluginManager.registerListener(this, new MotdListener());
 		pluginManager.registerListener(this, new ConnectionListener());
 		pluginManager.registerListener(this, new AuthListener());
@@ -120,8 +119,9 @@ public class OlympaBungee extends Plugin {
 		pluginManager.registerListener(this, new ServersListener());
 		pluginManager.registerListener(this, new TestListener());
 		pluginManager.registerListener(this, new PrivateMessageListener());
-		pluginManager.registerListener(this, new MaintenanceListener());
-
+		pluginManager.registerListener(this, new LoginRegisterListener());
+		pluginManager.registerListener(this, new VpnListener());
+ 
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();
 		new BanIpCommand(this).register();
@@ -142,8 +142,6 @@ public class OlympaBungee extends Plugin {
 		new RegisterCommand(this).register();
 
 		new MonitorServers(this);
-		this.getLogger().setFilter(new HandlerHideLogin());
-		ProxyServer.getInstance().getLogger().setFilter(new HandlerHideLogin());
 		this.sendMessage("§2" + this.getDescription().getName() + "§a (" + this.getDescription().getVersion() + ") is activated.");
 	}
 

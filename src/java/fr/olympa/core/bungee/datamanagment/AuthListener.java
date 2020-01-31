@@ -14,18 +14,17 @@ import com.google.common.cache.CacheBuilder;
 import com.google.gson.Gson;
 
 import fr.olympa.api.objects.OlympaPlayer;
-import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.provider.BungeeNewPlayerEvent;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import fr.olympa.core.bungee.vpn.OlympaVpn;
 import fr.olympa.core.bungee.vpn.VpnSql;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
@@ -51,6 +50,7 @@ public class AuthListener implements Listener {
 		}
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
+		String ip = connection.getAddress().getAddress().getHostAddress();
 		OlympaPlayer olympaPlayer;
 		UUID uuidCrack = null;
 
@@ -61,7 +61,7 @@ public class AuthListener implements Listener {
 		}
 		try {
 			olympaPlayer = AccountProvider.get(name);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#SQLBungeeLost"));
 			event.setCancelled(true);
@@ -108,6 +108,26 @@ public class AuthListener implements Listener {
 			OlympaBungee.getInstance().sendMessage("NEW JOUEUR  " + connection.getUniqueId() + " UUID CRACK: " + uuidCrack + " HAS PREMIUM ? " + uuidPremium + " HIS PREMIUM ? " + connection.isOnlineMode());
 		}
 
+		if (olympaPlayer == null) {
+			boolean isVpn = false;
+			try {
+				OlympaVpn olympaVpn = VpnSql.getIpInfo(ip);
+				if (olympaVpn == null) {
+					isVpn = OlympaVpn.isVPN(event.getConnection());
+					VpnSql.setIp(ip, isVpn);
+				} else {
+					isVpn = olympaVpn.isVpn();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			if (isVpn) {
+				event.setCancelReason(BungeeUtils.connectScreen("&cImpossible d'utiliser un VPN. \n\n&e&lSi tu pense qu'il y a une erreur, contacte un membre du staff."));
+				event.setCancelled(true);
+				return;
+			}
+		}
+
 		if (olympaPlayer != null) {
 			System.out.println("player info " + new Gson().toJson(olympaPlayer));
 			if (olympaPlayer.getPremiumUniqueId() == null) {
@@ -123,6 +143,7 @@ public class AuthListener implements Listener {
 				connection.setOnlineMode(true);
 			}
 			this.cachePlayer.put(name, olympaPlayer);
+			System.out.println("name" + name);
 		}
 	}
 
@@ -134,13 +155,14 @@ public class AuthListener implements Listener {
 		PendingConnection connection = event.getConnection();
 		System.out.println("LoginEvent onlinemode ? " + connection.isOnlineMode());
 		String name = connection.getName();
+		System.out.println("name2 " + name);
 		UUID uuidPremium = this.cachePremiumUUID.getIfPresent(name);
 		String ip = connection.getAddress().getAddress().getHostAddress();
 		OlympaPlayer olympaPlayer = this.cachePlayer.getIfPresent(name);
 		AccountProvider olympaAccount;
 		if (olympaPlayer != null) {
-			olympaAccount = new AccountProvider(olympaPlayer.getUniqueId());
 			this.cachePlayer.invalidate(name);
+			olympaAccount = new AccountProvider(olympaPlayer.getUniqueId());
 		} else {
 			try {
 				UUID uuidCrack = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes("UTF-8"));
@@ -181,21 +203,7 @@ public class AuthListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-
-		if (!olympaPlayer.hasPermission(OlympaCorePermissions.VPN_BYPASS)) {
-			OlympaVpn olympaVpn = VpnSql.getIpInfo(ip);
-			boolean isVpn;
-			if (olympaVpn == null) {
-				isVpn = OlympaVpn.isVPN(event.getConnection());
-				VpnSql.addIp(olympaPlayer, isVpn);
-			} else {
-				isVpn = olympaVpn.isVpn();
-			}
-			if (isVpn) {
-				event.setCancelReason(BungeeUtils.connectScreen("&cImpossible d'utiliser un VPN. \n\n&e&lSi tu pense qu'il y a une erreur, contacte un membre du staff."));
-				return;
-			}
-		}
+		olympaAccount.saveToCache(olympaPlayer);
 		olympaAccount.saveToRedis(olympaPlayer);
 	}
 
@@ -206,17 +214,15 @@ public class AuthListener implements Listener {
 		if (!player.getPendingConnection().isOnlineMode()) {
 			return;
 		}
-		ServerInfo lobby = ServersConnection.getLobby();
-		if (lobby != null) {
-			player.setReconnectServer(lobby);
-			//player.connect(target);
-			return;
-		}
+		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
+		OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, player));
+		olympaPlayerLoginEvent.cancelIfNeeded();
 	}
 
 	@EventHandler
 	public void on4Switch(ServerSwitchEvent event) {
 		ProxiedPlayer player = event.getPlayer();
+		this.cachePlayer.invalidate(player.getName());
 		if (ServersConnection.isAuth(player)) {
 			player.removeGroups(player.getGroups().toArray(new String[0]));
 			return;
@@ -233,7 +239,9 @@ public class AuthListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on5Disconnect(PlayerDisconnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
+		this.cachePlayer.invalidate(player.getName());
 		AccountProvider olympaAccount = new AccountProvider(player.getUniqueId());
+		olympaAccount.removeFromCache();
 		player.removeGroups(player.getGroups().toArray(new String[0]));
 		this.wait.add(player.getName());
 		ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> {

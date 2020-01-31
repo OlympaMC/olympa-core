@@ -7,8 +7,10 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import fr.olympa.api.objects.OlympaConsole;
+import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.PendingConnection;
@@ -101,6 +103,13 @@ public class BasicSecurityListener implements Listener {
 			event.setCancelReason(BungeeUtils.connectScreen("&cImpossible de se connecter avec ce pseudo."));
 			event.setCancelled(true);
 		}
+	}
+
+	@EventHandler(priority = EventPriority.LOW)
+	public void on3OlympaPlayerLogin(OlympaPlayerLoginEvent event) {
+		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
+		String ip = event.getIp();
+		olympaPlayer.addNewIp(ip);
 	}
 
 	//Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(size).build();

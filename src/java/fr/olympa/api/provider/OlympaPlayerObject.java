@@ -1,8 +1,6 @@
 package fr.olympa.api.provider;
 
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,9 +25,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	UUID premiumUuid;
 	Gender gender = Gender.MALE;
 	String password;
-
 	String email;
-
 	String name;
 	TreeMap<OlympaGroup, Long> groups = new TreeMap<>(Comparator.comparing(OlympaGroup::getPower).reversed());
 	String ip;
@@ -37,14 +33,10 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	long lastConnection;
 	TreeMap<Long, String> histName = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
 	TreeMap<Long, String> histIp = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
-	Map<String, String> data = new HashMap<>();
-
+	//Map<String, String> data = new HashMap<>();
 	double money;
-
 	boolean vanish;
-
 	boolean verifMode;
-
 	boolean afk;
 
 	public OlympaPlayerObject(UUID uuid, String name, String ip) {
@@ -76,14 +68,24 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		this.password = password;
 		this.email = email;
 		this.gender = gender;
-		if (histNameJson != null && !histNameJson.isEmpty()) {
-			Map<Long, String> histName2 = new Gson().fromJson(histNameJson, Map.class);
-			this.histName.putAll(histName2);
+
+		// java.lang.ClassCastException: class java.lang.String cannot be cast to class java.lang.Long (java.lang.String and java.lang.Long are in module java.base of loader 'bootstrap')
+		// fr.olympa.api.provider.OlympaPlayerObject.lambda$4(OlympaPlayerObject.java:75)
+		if (false) {
+			if (histNameJson != null && !histNameJson.isEmpty()) {
+				TreeMap<Long, String> histName2 = new Gson().fromJson(histNameJson, TreeMap.class);
+				// this line
+				histName2.entrySet().stream().forEach(entry -> this.histName.put(entry.getKey(), entry.getValue()));
+			}
+			if (histIpJson != null && !histIpJson.isEmpty()) {
+				TreeMap<Long, String> histIps = new Gson().fromJson(histIpJson, TreeMap.class);
+				// this line
+				histIps.entrySet().stream().forEach(entry -> this.histIp.put(entry.getKey(), entry.getValue()));
+			}
 		}
-		if (histIpJson != null && !histIpJson.isEmpty()) {
-			Map<Long, String> histIps = new Gson().fromJson(histIpJson, Map.class);
-			this.histIp.putAll(histIps);
-		}
+		/*if (dataJson != null && !dataJson.isEmpty()) {
+			this.data = new Gson().fromJson(dataJson, HashMap.class);
+		}*/
 	}
 
 	@Override
@@ -100,21 +102,21 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public void addNewIp(String ip) {
-		this.histIp.put(Utils.getCurrentTimeInSeconds(), this.ip);
-		this.ip = ip;
-		//MySQL.savePlayer(this); TODO je sais pas si c'est nécessaire, il y a ça dans #addNewName
+	public void addMoney(double money) {
+		this.money += money;
 	}
 
 	@Override
-	public void addMoney(double money) {
-		this.money += money;
+	public void addNewIp(String ip) {
+		this.histIp.put(Utils.getCurrentTimeInSeconds(), this.ip);
+		this.ip = ip;
 	}
 
 	@Override
 	public void addNewName(String name) {
 		this.histName.put(Utils.getCurrentTimeInSeconds(), this.name);
 		this.name = name;
+		// to prevent bug if other player use the old name
 		MySQL.savePlayer(this);
 	}
 
@@ -264,14 +266,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		return this.verifMode;
 	}
 
-	public void putData(String key, String value) {
-		this.data.put(key, value);
-	}
-
-	public void removeData(String key) {
-		this.data.remove(key);
-	}
-
 	private void removeGroup(OlympaGroup group) {
 		this.groups.remove(group);
 	}
@@ -350,6 +344,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public boolean isPremium() {
+		return premiumUuid != null;
 	}
 
 }

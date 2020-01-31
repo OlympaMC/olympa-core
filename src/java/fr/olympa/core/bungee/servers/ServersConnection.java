@@ -2,8 +2,13 @@ package fr.olympa.core.bungee.servers;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.utils.BungeeUtils;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -31,7 +36,7 @@ public class ServersConnection {
 	}
 
 	public static ServerInfo getLobby(ServerInfo noThis) {
-		Map<ServerInfo, Integer> lobbys = MonitorServers.getServers().entrySet().stream().filter(entry -> noThis != entry.getKey() && entry.getValue() != null && entry.getKey().getName().startsWith("auth")
+		Map<ServerInfo, Integer> lobbys = MonitorServers.getServers().entrySet().stream().filter(entry -> noThis != entry.getKey() && entry.getValue() != null && entry.getKey().getName().startsWith("lobby")
 				&& entry.getValue().getPlayers().getMax() / 2 - entry.getValue().getPlayers().getOnline() > 0)
 				.collect(Collectors.toMap((entry) -> entry.getKey(), (entry) -> entry.getValue().getPlayers().getMax() / 2 - entry.getValue().getPlayers().getOnline()));
 		// TODO add sort by name1 name2 name3
@@ -45,5 +50,16 @@ public class ServersConnection {
 
 	public static boolean isAuth(ProxiedPlayer player) {
 		return player.getServer().getInfo().getName().startsWith("auth");
+	}
+
+	public static void tryConnectToLobby(ProxiedPlayer player) {
+		ServerInfo lobby = ServersConnection.getLobby();
+		if (lobby != null) {
+			//player.setReconnectServer(lobby);
+			player.connect(lobby);
+			return;
+		}
+		player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("&cAucun lobby n'est actuellement disponible merci de patienter ..."));
+		ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectToLobby(player), 10, TimeUnit.SECONDS);
 	}
 }
