@@ -43,23 +43,23 @@ public class AccountProvider implements OlympaAccount {
 		return MySQL.getPlayerByName(name);
 	}
 
-	public static OlympaPlayer get(Player player) {
+	public static <T extends OlympaPlayer> T get(Player player) {
 		return get(player.getUniqueId());
 	}
 
-	public static OlympaPlayer get(String name) throws SQLException {
+	public static <T extends OlympaPlayer> T get(String name) throws SQLException {
 		OlympaPlayer olympaPlayer = AccountProvider.getFromCache(name);
 		if (olympaPlayer == null) {
 			olympaPlayer = AccountProvider.getFromRedis(name);
 			if (olympaPlayer == null) {
-				return AccountProvider.fromDb(name);
+				olympaPlayer = AccountProvider.fromDb(name);
 			}
 		}
-		return olympaPlayer;
+		return (T) olympaPlayer;
 	}
 
-	public static OlympaPlayer get(UUID uuid) {
-		return cache.get(uuid);
+	public static <T extends OlympaPlayer> T get(UUID uuid) {
+		return (T) cache.get(uuid);
 	}
 
 	private static OlympaPlayer getFromCache(String name) {

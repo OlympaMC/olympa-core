@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.Gender;
+import fr.olympa.api.objects.OlympaMoney;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.sql.MySQL;
@@ -37,7 +38,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	TreeMap<Long, String> histName = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
 	TreeMap<Long, String> histIp = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
 	//Map<String, String> data = new HashMap<>();
-	double money;
+	OlympaMoney storeMoney; // TODO
 	boolean vanish;
 	boolean verifMode;
 	boolean afk;
@@ -112,11 +113,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		if (this.groups.size() > 1 && this.groups.containsKey(OlympaGroup.PLAYER)) {
 			this.removeGroup(OlympaGroup.PLAYER);
 		}
-	}
-
-	@Override
-	public void addMoney(double money) {
-		this.money += money;
 	}
 
 	@Override
@@ -210,8 +206,8 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public double getMoney() {
-		return this.money;
+	public OlympaMoney getStoreMoney() {
+		return this.storeMoney;
 	}
 
 	@Override
@@ -239,18 +235,8 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		return this.uuid;
 	}
 
-	@Override
-	public void giveMoney(double money) {
-		this.money += money;
-	}
-
 	public String hashPassword(String password_toHash) {
 		return Passwords.getSHA512(password_toHash, "DYhG9guiRVoUubWwvn2G0Fg3b0qyJfIxfs2aC9mi".getBytes());
-	}
-
-	@Override
-	public boolean hasMoney(double money) {
-		return this.money >= money;
 	}
 
 	@Override
@@ -320,11 +306,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public void setMoney(double money) {
-		this.money = money;
-	}
-
-	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -347,16 +328,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void setVerifMode(boolean verifMode) {
 		this.verifMode = verifMode;
-	}
-
-	@Override
-	public boolean withdrawMoney(double money) {
-		if (this.money >= money) {
-			this.money -= money;
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.groups.OlympaGroup;
+import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.provider.AccountProvider;
 import net.md_5.bungee.api.ProxyServer;
@@ -22,7 +23,7 @@ public class OlympaBungeePermission extends OlympaPermission {
 	}
 
 	public void getPlayersBungee(Consumer<? super Set<ProxiedPlayer>> success) {
-		Set<ProxiedPlayer> players = ProxyServer.getInstance().getPlayers().stream().filter(player -> this.hasPermission(AccountProvider.get(player.getUniqueId()))).collect(Collectors.toSet());
+		Set<ProxiedPlayer> players = ProxyServer.getInstance().getPlayers().stream().filter(player -> this.hasPermission((OlympaPlayer) AccountProvider.get(player.getUniqueId()))).collect(Collectors.toSet());
 		if (!players.isEmpty()) {
 			success.accept(players);
 		}
