@@ -33,6 +33,7 @@ public class AccountProvider implements OlympaAccount {
 		try {
 			providerTableName = pluginName.toLowerCase() + "_players";
 			MySQL.setDatasTable(providerTableName, columns);
+			playerProvider = supplier;
 		}catch (SQLException e) {
 			e.printStackTrace();
 			providerTableName = null;
