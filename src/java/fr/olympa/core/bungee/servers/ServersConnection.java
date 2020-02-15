@@ -52,6 +52,7 @@ public class ServersConnection {
 		return player.getServer().getInfo().getName().startsWith("auth");
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void tryConnectToLobby(ProxiedPlayer player) {
 		ServerInfo lobby = ServersConnection.getLobby();
 		if (lobby != null) {

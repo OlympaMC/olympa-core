@@ -55,7 +55,7 @@ public class AuthListener implements Listener {
 		UUID uuidCrack = null;
 
 		if (this.wait.contains(name)) {
-			event.setCancelReason(BungeeUtils.connectScreen("&eMerci de patienter 2 secondes avant chaque reconnection."));
+			event.setCancelReason(BungeeUtils.connectScreen("&eMerci de patienter 3 secondes avant chaque reconnection."));
 			event.setCancelled(true);
 			return;
 		}
@@ -254,7 +254,7 @@ public class AuthListener implements Listener {
 			}
 			olympaPlayer.setLastConnection(Utils.getCurrentTimeInSeconds());
 			olympaAccount.saveToDb(olympaPlayer);
-		}, 2, TimeUnit.SECONDS);
+		}, 3, TimeUnit.SECONDS);
 	}
 
 }
