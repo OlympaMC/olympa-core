@@ -33,7 +33,7 @@ public class OlympaCore extends OlympaSpigot {
 	public void onDisable() {
 		// ScoreboardPrefix.deleteTeams();
 		RedisAccess.close();
-		this.disable();
+		super.onDisable();
 		this.sendMessage("§4" + this.getDescription().getName() + "§c (" + this.getDescription().getVersion() + ") est désativer.");
 	}
 
@@ -42,7 +42,7 @@ public class OlympaCore extends OlympaSpigot {
 		instance = this;
 		this.status = MaintenanceStatus.DEV;
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
-		this.enable();
+		super.onEnable();
 
 		AccountProvider.asyncLaunch = (run) -> this.getTask().runTaskAsynchronously(run);
 

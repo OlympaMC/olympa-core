@@ -3,28 +3,25 @@ package fr.olympa.api.plugin;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 
-public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCoreInterface, OlympaPluginInterface {
+public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCoreInterface {
 
 	protected DbConnection database = null;
 	protected MaintenanceStatus status;
 
-	public void disable() {
+	public void onDisable() {
+		super.onDisable();
 		if (this.database != null) {
 			this.database.close();
 		}
 	}
 
-	public void enable() {
-		this.config = new CustomConfig(this, "config");
-		if (this.config.hasResource() || this.config.getFile().exists()) {
-			this.config.load();
-			this.config.saveIfNotExists();
-
+	public void onEnable() {
+		super.onEnable();
+		if (config != null) {
 			String statusString = this.config.getString("status");
 			if (statusString != null && !statusString.isEmpty()) {
 				MaintenanceStatus status2 = MaintenanceStatus.get(statusString);
@@ -34,8 +31,6 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 			}
 
 			this.setupDatabase();
-		} else {
-			this.config = null;
 		}
 	}
 
