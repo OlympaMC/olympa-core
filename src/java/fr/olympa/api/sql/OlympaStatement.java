@@ -26,4 +26,8 @@ public class OlympaStatement {
 		return prepared;
 	}
 
+	public String getStatementCommand() {
+		return statement;
+	}
+
 }

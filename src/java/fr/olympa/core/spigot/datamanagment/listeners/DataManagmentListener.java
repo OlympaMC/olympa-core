@@ -71,6 +71,14 @@ public class DataManagmentListener implements Listener {
 
 		olympaAccount.saveToRedis(olympaPlayer);
 		event.setJoinMessage(null);
+
+		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> {
+			try {
+				MySQL.loadPlayerPluginDatas(olympaPlayer);
+			}catch (SQLException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@EventHandler

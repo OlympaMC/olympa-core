@@ -106,7 +106,7 @@ public class MySQL {
 					Gender.get(resultSet.getInt("gender")),
 					resultSet.getString("name_history"),
 					resultSet.getString("ip_history"));
-			if (getPlayerPluginDatas != null) {
+			/*if (getPlayerPluginDatas != null) {
 				OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> {
 					try {
 						PreparedStatement statement = getPlayerPluginDatas.getStatement();
@@ -118,7 +118,7 @@ public class MySQL {
 						e.printStackTrace();
 					}
 				});
-			}
+			}*/
 			return player;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -135,11 +135,11 @@ public class MySQL {
 		creationJoiner.add("PRIMARY KEY (`player_id`)");
 		OlympaCore.getInstance().getDatabase().createStatement().executeUpdate(creationJoiner.toString());
 
-		StringJoiner updateJoiner = new StringJoiner(", ");
+		StringJoiner updateJoiner = new StringJoiner(", ", "UPDATE " + tableName + " SET ", " WHERE `player_id` = ?");
 		for (String columnName : columns.keySet()) {
 			creationJoiner.add("`" + columnName + "` = ?");
 		}
-		updatePlayerPluginDatas = new OlympaStatement("UPDATE " + tableName + " SET " + updateJoiner.toString() + " WHERE `player_id` = ?");
+		updatePlayerPluginDatas = new OlympaStatement(updateJoiner.toString());
 		updatePlayerPluginDatasID = columns.size() + 1;
 
 		getPlayerPluginDatas = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `player_id` = ?");
@@ -375,7 +375,7 @@ public class MySQL {
 	public static void savePlayer(OlympaPlayer olympaPlayer) {
 		try {
 			PreparedStatement pstate = dbConnection.getConnection().prepareStatement("UPDATE " + tableName + " SET `pseudo` = ?, `uuid-server` = ?,"
-					+ " `uuid` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ?, `ip_history` = ?, `gender` = ?, `data` = ? WHERE `id` = ?");
+					+ " `uuid` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ?, `ip_history` = ?, `gender` = ? WHERE `id` = ?");
 			int i = 1;
 			pstate.setString(i++, olympaPlayer.getName());
 			pstate.setString(i++, olympaPlayer.getUniqueId().toString());
@@ -416,10 +416,24 @@ public class MySQL {
 	}
 
 	public static void savePlayerPluginDatas(OlympaPlayer olympaPlayer) throws SQLException {
+		System.out.println("MySQL.savePlayerPluginDatas()");
+		if (updatePlayerPluginDatas == null) return;
+		System.out.println(updatePlayerPluginDatas.getStatementCommand());
 		PreparedStatement statement = updatePlayerPluginDatas.getStatement();
 		olympaPlayer.saveDatas(statement);
 		statement.setLong(updatePlayerPluginDatasID, olympaPlayer.getId());
 		statement.executeUpdate();
+	}
+
+	public static void loadPlayerPluginDatas(OlympaPlayer olympaPlayer) throws SQLException {
+		System.out.println("MySQL.loadPlayerPluginDatas()");
+		if (getPlayerPluginDatas == null) return;
+		System.out.println(getPlayerPluginDatas.getStatementCommand());
+		PreparedStatement statement = getPlayerPluginDatas.getStatement();
+		statement.setLong(1, olympaPlayer.getId());
+		ResultSet pluginSet = statement.executeQuery();
+		if (pluginSet.next()) olympaPlayer.loadDatas(pluginSet);
+		pluginSet.close();
 	}
 
 	public static void savePlayerPassOrEmail(OlympaPlayer olympaPlayer) throws SQLException {

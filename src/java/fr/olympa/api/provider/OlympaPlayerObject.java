@@ -1,5 +1,6 @@
 package fr.olympa.api.provider;
 
+import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +13,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.Gender;
@@ -52,7 +58,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		this.lastConnection = Utils.getCurrentTimeInSeconds();
 	}
 
-	@Override
 	public void loadSavedDatas(long id, UUID premiumUuid, String groupsString, long firstConnection, long lastConnection, String password, String email, Gender gender, String histNameJson, String histIpJson) {
 		this.id = id;
 		this.premiumUuid = premiumUuid;
@@ -92,12 +97,10 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		}*/
 	}
 
-	@Override
 	public void loadDatas(ResultSet resultSet) throws SQLException {
 		// has to be override
 	}
 
-	@Override
 	public void saveDatas(PreparedStatement statement) throws SQLException {
 		// has to be override
 	}
@@ -333,6 +336,31 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public boolean isPremium() {
 		return premiumUuid != null;
+	}
+
+	public static class OlympaPlayerDeserializer implements JsonDeserializer<OlympaPlayer> {
+
+		@Override
+		public OlympaPlayerObject deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+			JsonObject object = json.getAsJsonObject();
+			OlympaPlayerObject player = (OlympaPlayerObject) AccountProvider.playerProvider.create(context.deserialize(object.get("uuid"), UUID.class), object.get("name").getAsString(), null);
+			if (object.has("afk")) player.afk = object.get("afk").getAsBoolean();
+			if (object.has("email")) player.email = object.get("email").getAsString();
+			if (object.has("firstConnection")) player.firstConnection = object.get("firstConnection").getAsLong();
+			if (object.has("gender")) player.gender = context.deserialize(object.get("gender"), Gender.class);
+			if (object.has("groups")) player.groups = context.deserialize(object.get("groups"), TreeMap.class); // TODO deserialize
+			if (object.has("histIp")) player.histIp = context.deserialize(object.get("histIp"), TreeMap.class);
+			if (object.has("histName")) player.histName = context.deserialize(object.get("histName"), TreeMap.class);
+			if (object.has("id")) player.id = object.get("id").getAsLong();
+			if (object.has("lastConnection")) player.lastConnection = object.get("lastConnection").getAsLong();
+			if (object.has("password")) player.password = object.get("password").getAsString();
+			if (object.has("premiumUuid")) player.premiumUuid = context.deserialize(object.get("premiumUuid"), UUID.class);
+			if (object.has("storeMoney")) player.storeMoney = context.deserialize(object.get("storeMoney"), OlympaMoney.class);
+			if (object.has("vanish")) player.vanish = object.get("vanish").getAsBoolean();
+			if (object.has("verifMode")) player.verifMode = object.get("verifMode").getAsBoolean();
+			return player;
+		}
+
 	}
 
 }
