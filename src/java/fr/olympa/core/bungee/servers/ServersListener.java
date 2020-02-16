@@ -16,7 +16,7 @@ import net.md_5.bungee.event.EventHandler;
 public class ServersListener implements Listener {
 
 	@EventHandler
-	public void ServerKickEvent(ServerKickEvent event) {
+	public void onServerKick(ServerKickEvent event) {
 		ServerInfo serverKicked = event.getKickedFrom();
 		String kickReason = ChatColor.stripColor(BaseComponent.toLegacyText(event.getKickReasonComponent()));
 		ProxiedPlayer player = event.getPlayer();

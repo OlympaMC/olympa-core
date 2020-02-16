@@ -46,7 +46,10 @@ public class LoginRegisterListener implements Listener {
 			OlympaPlayer olympaPlayer = event.getOlympaPlayer();
 			new AccountProvider(olympaPlayer.getUniqueId()).removeFromCache();
 		}, 1, TimeUnit.SECONDS);
-		ServersConnection.tryConnectToLobby(event.getPlayer());
+		ProxiedPlayer player = event.getPlayer();
+		if (ServersConnection.isAuth(player)) {
+			ServersConnection.tryConnectToLobby(event.getPlayer());
+		}
 	}
 
 	@SuppressWarnings("deprecation")
