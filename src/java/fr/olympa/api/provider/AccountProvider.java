@@ -8,21 +8,17 @@ import java.util.function.Consumer;
 
 import org.bukkit.entity.Player;
 
-import com.google.gson.GsonBuilder;
-
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.objects.OlympaPlayerProvider;
 import fr.olympa.api.permission.OlympaAccount;
-import fr.olympa.api.provider.OlympaPlayerObject.OlympaPlayerDeserializer;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
 
 public class AccountProvider implements OlympaAccount {
 
 	private static String REDIS_KEY = "player:";
-	private static GsonBuilder builder = new GsonBuilder().registerTypeHierarchyAdapter(OlympaPlayer.class, new OlympaPlayerDeserializer());
-
 	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
 	private static Map<UUID, OlympaPlayer> cache = new HashMap<>();
 
@@ -83,7 +79,7 @@ public class AccountProvider implements OlympaAccount {
 		OlympaPlayer olympaPlayer = null;
 
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			olympaPlayer = jedis.hgetAll(name).entrySet().stream().map(entry -> builder.create().fromJson(entry.getValue(), playerClass)).filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+			olympaPlayer = jedis.hgetAll(name).entrySet().stream().map(entry -> GsonCustomizedObjectTypeAdapter.GSON.fromJson(entry.getValue(), playerClass)).filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
 		}
 		RedisAccess.INSTANCE.closeResource();
 		return olympaPlayer;
@@ -148,7 +144,7 @@ public class AccountProvider implements OlympaAccount {
 		if (json == null || json.isEmpty()) {
 			return null;
 		}
-		return builder.create().fromJson(json, playerClass);
+		return GsonCustomizedObjectTypeAdapter.GSON.fromJson(json, playerClass);
 	}
 
 	private String getKey() {
@@ -172,7 +168,7 @@ public class AccountProvider implements OlympaAccount {
 	public void saveToRedis(OlympaPlayer olympaPlayer) {
 		asyncLaunch.accept(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
-				jedis.set(this.getKey(), builder.create().toJson(olympaPlayer));
+				jedis.set(this.getKey(), GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 			}
 			this.redisAccesss.closeResource();
 		});
@@ -181,7 +177,7 @@ public class AccountProvider implements OlympaAccount {
 	public void sendModifications(OlympaPlayer olympaPlayer) {
 		asyncLaunch.accept(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
-				jedis.publish("OlympaPlayer", builder.create().toJson(olympaPlayer));
+				jedis.publish("OlympaPlayer", GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 			}
 			this.redisAccesss.closeResource();
 		});

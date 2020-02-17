@@ -5,15 +5,14 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.google.gson.Gson;
-
+import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
 
 public class OlympaSanctionHistory {
 
 	public static OlympaSanctionHistory fromJson(String json) {
-		return new Gson().fromJson(json, OlympaSanctionHistory.class);
+		return GsonCustomizedObjectTypeAdapter.GSON.fromJson(json, OlympaSanctionHistory.class);
 	}
 
 	private UUID author;
@@ -66,7 +65,7 @@ public class OlympaSanctionHistory {
 	}
 
 	public String toJson() {
-		return new Gson().toJson(this);
+		return GsonCustomizedObjectTypeAdapter.GSON.toJson(this);
 	}
 
 }

@@ -2,12 +2,11 @@ package fr.olympa.core.spigot.datamanagment.redis;
 
 import org.bukkit.entity.Player;
 
-import com.google.gson.Gson;
-
 import fr.olympa.api.groups.AsyncOlympaPlayerChangeGroupEvent;
 import fr.olympa.api.groups.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.JedisPubSub;
 
@@ -15,7 +14,7 @@ public class OlympaPlayerSpigotListener extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
-		OlympaPlayer olympaPlayer = new Gson().fromJson(message, OlympaPlayer.class);
+		OlympaPlayer olympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(message, OlympaPlayer.class);
 
 		Player player = olympaPlayer.getPlayer();
 		if (player == null) {

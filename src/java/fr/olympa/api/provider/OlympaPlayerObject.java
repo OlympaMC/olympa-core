@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -12,7 +13,6 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -25,6 +25,7 @@ import fr.olympa.api.objects.OlympaMoney;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Passwords;
 import fr.olympa.api.utils.Utils;
 
@@ -43,7 +44,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	long lastConnection;
 	TreeMap<Long, String> histName = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
 	TreeMap<Long, String> histIp = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
-	//Map<String, String> data = new HashMap<>();
 	OlympaMoney storeMoney; // TODO
 	boolean vanish;
 	boolean verifMode;
@@ -78,23 +78,14 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		this.email = email;
 		this.gender = gender;
 
-		// java.lang.ClassCastException: class java.lang.String cannot be cast to class java.lang.Long (java.lang.String and java.lang.Long are in module java.base of loader 'bootstrap')
-		// fr.olympa.api.provider.OlympaPlayerObject.lambda$4(OlympaPlayerObject.java:75)
-		if (false) {
-			if (histNameJson != null && !histNameJson.isEmpty()) {
-				TreeMap<Long, String> histName2 = new Gson().fromJson(histNameJson, TreeMap.class);
-				// this line
-				histName2.entrySet().stream().forEach(entry -> this.histName.put(entry.getKey(), entry.getValue()));
-			}
-			if (histIpJson != null && !histIpJson.isEmpty()) {
-				TreeMap<Long, String> histIps = new Gson().fromJson(histIpJson, TreeMap.class);
-				// this line
-				histIps.entrySet().stream().forEach(entry -> this.histIp.put(entry.getKey(), entry.getValue()));
-			}
+		if (histNameJson != null && !histNameJson.isEmpty()) {
+			Map<Long, String> histName2 = GsonCustomizedObjectTypeAdapter.GSON.fromJson(histNameJson, Map.class);
+			histName2.entrySet().stream().forEach(entry -> this.histName.put(entry.getKey(), entry.getValue()));
 		}
-		/*if (dataJson != null && !dataJson.isEmpty()) {
-			this.data = new Gson().fromJson(dataJson, HashMap.class);
-		}*/
+		if (histIpJson != null && !histIpJson.isEmpty()) {
+			Map<Long, String> histIps = GsonCustomizedObjectTypeAdapter.GSON.fromJson(histIpJson, Map.class);
+			histIps.entrySet().stream().forEach(entry -> this.histIp.put(entry.getKey(), entry.getValue()));
+		}
 	}
 
 	public void loadDatas(ResultSet resultSet) throws SQLException {
@@ -348,7 +339,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			if (object.has("email")) player.email = object.get("email").getAsString();
 			if (object.has("firstConnection")) player.firstConnection = object.get("firstConnection").getAsLong();
 			if (object.has("gender")) player.gender = context.deserialize(object.get("gender"), Gender.class);
-			if (object.has("groups")) player.groups = context.deserialize(object.get("groups"), TreeMap.class); // TODO deserialize
+			if (object.has("groups")) ((Map<String, Long>) context.deserialize(object.get("groups"), Map.class)).forEach((name, time) -> player.groups.put(OlympaGroup.valueOf(name), time));
 			if (object.has("histIp")) player.histIp = context.deserialize(object.get("histIp"), TreeMap.class);
 			if (object.has("histName")) player.histName = context.deserialize(object.get("histName"), TreeMap.class);
 			if (object.has("id")) player.id = object.get("id").getAsLong();

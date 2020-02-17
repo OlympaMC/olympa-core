@@ -16,12 +16,11 @@ import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import com.google.gson.Gson;
-
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.Gender;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
 
@@ -137,7 +136,7 @@ public class MySQL {
 
 		StringJoiner updateJoiner = new StringJoiner(", ", "UPDATE " + tableName + " SET ", " WHERE `player_id` = ?");
 		for (String columnName : columns.keySet()) {
-			creationJoiner.add("`" + columnName + "` = ?");
+			updateJoiner.add("`" + columnName + "` = ?");
 		}
 		updatePlayerPluginDatas = new OlympaStatement(updateJoiner.toString());
 		updatePlayerPluginDatasID = columns.size() + 1;
@@ -390,13 +389,13 @@ public class MySQL {
 			pstate.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
 			TreeMap<Long, String> histName = olympaPlayer.getHistHame();
 			if (!histName.isEmpty()) {
-				pstate.setString(i++, new Gson().toJson(histName));
+				pstate.setString(i++, GsonCustomizedObjectTypeAdapter.GSON.toJson(histName));
 			} else {
 				pstate.setString(i++, null);
 			}
 			TreeMap<Long, String> histIp = olympaPlayer.getHistIp();
 			if (!histIp.isEmpty()) {
-				pstate.setString(i++, new Gson().toJson(histIp));
+				pstate.setString(i++, GsonCustomizedObjectTypeAdapter.GSON.toJson(histIp));
 			} else {
 				pstate.setString(i++, null);
 			}
@@ -416,19 +415,16 @@ public class MySQL {
 	}
 
 	public static void savePlayerPluginDatas(OlympaPlayer olympaPlayer) throws SQLException {
-		System.out.println("MySQL.savePlayerPluginDatas()");
 		if (updatePlayerPluginDatas == null) return;
-		System.out.println(updatePlayerPluginDatas.getStatementCommand());
 		PreparedStatement statement = updatePlayerPluginDatas.getStatement();
+		System.out.println("MySQL.savePlayerPluginDatas() " + updatePlayerPluginDatas.getStatementCommand());
 		olympaPlayer.saveDatas(statement);
 		statement.setLong(updatePlayerPluginDatasID, olympaPlayer.getId());
 		statement.executeUpdate();
 	}
 
 	public static void loadPlayerPluginDatas(OlympaPlayer olympaPlayer) throws SQLException {
-		System.out.println("MySQL.loadPlayerPluginDatas()");
 		if (getPlayerPluginDatas == null) return;
-		System.out.println(getPlayerPluginDatas.getStatementCommand());
 		PreparedStatement statement = getPlayerPluginDatas.getStatement();
 		statement.setLong(1, olympaPlayer.getId());
 		ResultSet pluginSet = statement.executeQuery();
