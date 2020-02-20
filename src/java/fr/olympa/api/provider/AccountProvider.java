@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 
 import org.bukkit.entity.Player;
 
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.objects.OlympaPlayerProvider;
 import fr.olympa.api.permission.OlympaAccount;
@@ -21,8 +22,6 @@ public class AccountProvider implements OlympaAccount {
 	private static String REDIS_KEY = "player:";
 	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
 	private static Map<UUID, OlympaPlayer> cache = new HashMap<>();
-
-	public static Consumer<Runnable> asyncLaunch;
 
 	public static Class<? extends OlympaPlayer> playerClass = OlympaPlayerObject.class;
 	public static OlympaPlayerProvider playerProvider = OlympaPlayerObject::new;
@@ -40,10 +39,6 @@ public class AccountProvider implements OlympaAccount {
 		}
 	}
 
-	private static OlympaPlayer fromDb(String name) throws SQLException {
-		return MySQL.getPlayerByName(name);
-	}
-
 	public static <T extends OlympaPlayer> T get(Player player) {
 		return get(player.getUniqueId());
 	}
@@ -53,7 +48,7 @@ public class AccountProvider implements OlympaAccount {
 		if (olympaPlayer == null) {
 			olympaPlayer = AccountProvider.getFromRedis(name);
 			if (olympaPlayer == null) {
-				olympaPlayer = AccountProvider.fromDb(name);
+				olympaPlayer = AccountProvider.getFromDatabase(name);
 			}
 		}
 		return (T) olympaPlayer;
@@ -161,12 +156,12 @@ public class AccountProvider implements OlympaAccount {
 
 	@Override
 	public void saveToDb(OlympaPlayer olympaPlayer) {
-		asyncLaunch.accept(() -> MySQL.savePlayer(olympaPlayer));
+		LinkSpigotBungee.Provider.link.launchAsync(() -> MySQL.savePlayer(olympaPlayer));
 	}
 
 	@Override
 	public void saveToRedis(OlympaPlayer olympaPlayer) {
-		asyncLaunch.accept(() -> {
+		LinkSpigotBungee.Provider.link.launchAsync(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
 				jedis.set(this.getKey(), GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 			}
@@ -175,7 +170,7 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	public void sendModifications(OlympaPlayer olympaPlayer) {
-		asyncLaunch.accept(() -> {
+		LinkSpigotBungee.Provider.link.launchAsync(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
 				jedis.publish("OlympaPlayer", GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 			}
@@ -200,7 +195,7 @@ public class AccountProvider implements OlympaAccount {
 	 * Only Spigot
 	 */
 	public void sendModificationsReceive() {
-		asyncLaunch.accept(() -> {
+		LinkSpigotBungee.Provider.link.launchAsync(() -> {
 			try (Jedis jedis = this.redisAccesss.connect()) {
 				jedis.publish("OlympaPlayerReceive", this.uuid.toString());
 			}

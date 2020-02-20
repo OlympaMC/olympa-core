@@ -4,7 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import fr.olympa.core.spigot.OlympaCore;
+import fr.olympa.api.LinkSpigotBungee;
 
 public class OlympaStatement {
 
@@ -12,7 +12,7 @@ public class OlympaStatement {
 	private boolean returnGeneratedKeys;
 
 	public OlympaStatement(String statement) {
-		this.statement = statement;
+		this(statement, false);
 	}
 
 	public OlympaStatement(String statement, boolean returnGeneratedKeys) {
@@ -22,7 +22,7 @@ public class OlympaStatement {
 
 	private PreparedStatement prepared;
 	public PreparedStatement getStatement() throws SQLException {
-		if (prepared == null || prepared.isClosed()) prepared = returnGeneratedKeys ? OlympaCore.getInstance().getDatabase().prepareStatement(statement, Statement.RETURN_GENERATED_KEYS) : OlympaCore.getInstance().getDatabase().prepareStatement(statement);
+		if (prepared == null || prepared.isClosed()) prepared = returnGeneratedKeys ? LinkSpigotBungee.Provider.link.getDatabase().prepareStatement(statement, Statement.RETURN_GENERATED_KEYS) : LinkSpigotBungee.Provider.link.getDatabase().prepareStatement(statement);
 		return prepared;
 	}
 

@@ -2,12 +2,12 @@ package fr.olympa.core.spigot;
 
 import org.bukkit.plugin.PluginManager;
 
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.gui.Inventories;
 import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.plugin.OlympaSpigot;
-import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.spigot.chat.ChatCommand;
@@ -21,12 +21,17 @@ import fr.olympa.core.spigot.status.SetStatusCommand;
 import fr.olympa.core.spigot.status.StatusMotdListener;
 import redis.clients.jedis.Jedis;
 
-public class OlympaCore extends OlympaSpigot {
+public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
 	private static OlympaCore instance = null;
 
 	public static OlympaCore getInstance() {
 		return instance;
+	}
+
+	@Override
+	public void launchAsync(Runnable run) {
+		getTask().runTaskAsynchronously(run);
 	}
 
 	@Override
@@ -40,11 +45,11 @@ public class OlympaCore extends OlympaSpigot {
 	@Override
 	public void onEnable() {
 		instance = this;
+		LinkSpigotBungee.Provider.link = this;
+
 		this.status = MaintenanceStatus.DEV;
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		super.onEnable();
-
-		AccountProvider.asyncLaunch = (run) -> this.getTask().runTaskAsynchronously(run);
 
 		new MySQL(this.database);
 		Jedis jedis = RedisAccess.init(this.getServer().getName()).connect();

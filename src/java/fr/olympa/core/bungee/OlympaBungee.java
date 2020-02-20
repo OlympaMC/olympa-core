@@ -3,7 +3,7 @@ package fr.olympa.core.bungee;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
@@ -47,7 +47,7 @@ import net.md_5.bungee.api.scheduler.TaskScheduler;
 import net.md_5.bungee.config.Configuration;
 import redis.clients.jedis.Jedis;
 
-public class OlympaBungee extends Plugin {
+public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 
 	private static OlympaBungee instance;
 
@@ -84,6 +84,11 @@ public class OlympaBungee extends Plugin {
 	}
 
 	@Override
+	public void launchAsync(Runnable run) {
+		getTask().runAsync(this, run);
+	}
+
+	@Override
 	public void onDisable() {
 		this.sendMessage("§4" + this.getDescription().getName() + "§c (" + this.getDescription().getVersion() + ") is disabled.");
 	}
@@ -91,6 +96,8 @@ public class OlympaBungee extends Plugin {
 	@Override
 	public void onEnable() {
 		instance = this;
+		LinkSpigotBungee.Provider.link = this;
+
 		BungeeConfigUtils.loadConfigs();
 		this.setupDatabase();
 		new MySQL(this.database);
@@ -106,8 +113,6 @@ public class OlympaBungee extends Plugin {
 		//BungeeTaskManager tasks = new BungeeTaskManager(this);
 		//tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new RedisTestListener(), "test"));
 		//tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new OlympaPlayerBungeeReceiveListener(), "OlympaPlayerReceive"));
-
-		AccountProvider.asyncLaunch = (run) -> this.getTask().runAsync(this, run);
 
 		PluginManager pluginManager = this.getProxy().getPluginManager();
 		pluginManager.registerListener(this, new MaintenanceListener());

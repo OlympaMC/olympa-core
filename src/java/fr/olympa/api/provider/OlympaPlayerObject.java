@@ -58,6 +58,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		this.lastConnection = Utils.getCurrentTimeInSeconds();
 	}
 
+	@Override
 	public void loadSavedDatas(long id, UUID premiumUuid, String groupsString, long firstConnection, long lastConnection, String password, String email, Gender gender, String histNameJson, String histIpJson) {
 		this.id = id;
 		this.premiumUuid = premiumUuid;
@@ -88,10 +89,12 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		}
 	}
 
+	@Override
 	public void loadDatas(ResultSet resultSet) throws SQLException {
 		// has to be override
 	}
 
+	@Override
 	public void saveDatas(PreparedStatement statement) throws SQLException {
 		// has to be override
 	}
@@ -334,7 +337,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		@Override
 		public OlympaPlayerObject deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 			JsonObject object = json.getAsJsonObject();
-			OlympaPlayerObject player = (OlympaPlayerObject) AccountProvider.playerProvider.create(context.deserialize(object.get("uuid"), UUID.class), object.get("name").getAsString(), null);
+			OlympaPlayerObject player = (OlympaPlayerObject) AccountProvider.playerProvider.create(context.deserialize(object.get("uuid"), UUID.class), object.get("name").getAsString(), object.get("ip").getAsString());
 			if (object.has("afk")) player.afk = object.get("afk").getAsBoolean();
 			if (object.has("email")) player.email = object.get("email").getAsString();
 			if (object.has("firstConnection")) player.firstConnection = object.get("firstConnection").getAsLong();

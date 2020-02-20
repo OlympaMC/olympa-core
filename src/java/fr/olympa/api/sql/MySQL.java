@@ -30,7 +30,6 @@ public class MySQL {
 	static String tableName = "olympa.users";
 
 	private static OlympaStatement insertPlayerStatement = new OlympaStatement("INSERT INTO " + tableName + " (`uuid-server`, `uuid`, `pseudo`, `ip`, `groups`, `created`, `last_connection`, `password`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", true);
-
 	public static long createPlayer(OlympaPlayer olympaPlayer) throws SQLException {
 		PreparedStatement statement = insertPlayerStatement.getStatement();
 		int i = 1;
@@ -55,15 +54,14 @@ public class MySQL {
 		return id;
 	}
 
+	public static OlympaStatement getPlayerNamesStatement = new OlympaStatement("SELECT `pseudo` FROM " + tableName);
 	public static Set<String> getAllPlayersNames() {
 		Set<String> names = new HashSet<>();
 		try {
-			Statement state = dbConnection.getConnection().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT `pseudo` FROM " + tableName);
+			ResultSet resultSet = getPlayerNamesStatement.getStatement().executeQuery();
 			while (resultSet.next()) {
 				names.add(resultSet.getString(1));
 			}
-			state.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -71,19 +69,22 @@ public class MySQL {
 		return names;
 	}
 
+	public static OlympaStatement getNameFromUUIDStatement = new OlympaStatement("SELECT `pseudo` FROM " + tableName + " WHERE `uuid-server` = ?");
 	/**
 	 * Récupère le nom exacte d'un joueur dans la base de données à l'aide de son
 	 * UUID
+	 * @throws SQLException 
 	 */
-	public static String getNameFromUuid(UUID uuid) {
-		List<Object> list = MySQL.selectTable("SELECT `pseudo` FROM " + tableName + " WHERE `uuid-server` = '" + uuid.toString() + "';");
-		if (!list.isEmpty()) {
-			return list.get(0).toString();
-		}
+	public static String getNameFromUuid(UUID uuid) throws SQLException {
+		PreparedStatement statement = getNameFromUUIDStatement.getStatement();
+		statement.setString(1, uuid.toString());
+		ResultSet resultSet = statement.executeQuery();
+		if (resultSet.first()) return resultSet.getString(1);
 		return null;
 	}
 
 	private static OlympaStatement getPlayerPluginDatas;
+	private static OlympaStatement insertPlayerPluginDatas;
 	private static OlympaStatement updatePlayerPluginDatas;
 	private static int updatePlayerPluginDatasID;
 	public static OlympaPlayer getOlympaPlayer(ResultSet resultSet) {
@@ -105,19 +106,6 @@ public class MySQL {
 					Gender.get(resultSet.getInt("gender")),
 					resultSet.getString("name_history"),
 					resultSet.getString("ip_history"));
-			/*if (getPlayerPluginDatas != null) {
-				OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> {
-					try {
-						PreparedStatement statement = getPlayerPluginDatas.getStatement();
-						statement.setLong(1, player.getId());
-						ResultSet pluginSet = statement.executeQuery();
-						if (pluginSet.next()) player.loadDatas(pluginSet);
-						pluginSet.close();
-					}catch (SQLException e) {
-						e.printStackTrace();
-					}
-				});
-			}*/
 			return player;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -135,52 +123,61 @@ public class MySQL {
 		OlympaCore.getInstance().getDatabase().createStatement().executeUpdate(creationJoiner.toString());
 
 		StringJoiner updateJoiner = new StringJoiner(", ", "UPDATE " + tableName + " SET ", " WHERE `player_id` = ?");
+		StringJoiner insertJoinerKeys = new StringJoiner(", ", "INSERT INTO " + tableName + " (", " )");
+		StringJoiner insertJoinerValues = new StringJoiner(", ", " VALUES (", " )");
 		for (String columnName : columns.keySet()) {
 			updateJoiner.add("`" + columnName + "` = ?");
+			insertJoinerKeys.add("`" + columnName + "`");
+			insertJoinerValues.add("?");
 		}
+		insertJoinerKeys.add("`player_id`");
+		insertJoinerValues.add("?");
 		updatePlayerPluginDatas = new OlympaStatement(updateJoiner.toString());
 		updatePlayerPluginDatasID = columns.size() + 1;
+		insertPlayerPluginDatas = new OlympaStatement(insertJoinerKeys.toString() + insertJoinerValues.toString());
 
 		getPlayerPluginDatas = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `player_id` = ?");
 	}
 
+	private static OlympaStatement getPlayerByIdStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `id` = ?");
 	/**
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son id
 	 */
 	public static OlympaPlayer getPlayer(int id) {
 		try {
-			Statement state = dbConnection.getConnection().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE id = '" + id + "'");
+			PreparedStatement statement = getPlayerByIdStatement.getStatement();
+			statement.setInt(1, id);
+			ResultSet resultSet = statement.executeQuery();
 			if (resultSet.next()) {
 				return getOlympaPlayer(resultSet);
 			}
-			state.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
+	private static OlympaStatement getPlayerByPseudoStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `pseudo` = ?");
 	/**
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son pseudo
 	 */
 	public static OlympaPlayer getPlayer(String playerName) {
 		try {
-			Statement state = dbConnection.getConnection().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `pseudo` = '" + playerName + "'");
+			PreparedStatement statement = getPlayerByPseudoStatement.getStatement();
+			statement.setString(1, playerName);
+			ResultSet resultSet = statement.executeQuery();
 			if (resultSet.next()) {
 				return getOlympaPlayer(resultSet);
 			}
-			state.close();
-		} catch (SQLException e) {
+		}catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return null;
 	}
 
+	private static OlympaStatement getPlayerByUUIDServerStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `uuid-server` = ?");
 	/**
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son uuid
@@ -189,42 +186,33 @@ public class MySQL {
 	 */
 	public static OlympaPlayer getPlayer(UUID playerUUID) throws SQLException {
 		OlympaPlayer olympaPlayer = null;
-		Statement state = dbConnection.getConnection().createStatement();
-		ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `uuid-server` = '" + playerUUID + "'");
+		PreparedStatement statement = getPlayerByUUIDServerStatement.getStatement();
+		statement.setString(1, playerUUID.toString());
+		ResultSet resultSet = statement.executeQuery();
 		if (resultSet.next()) {
 			olympaPlayer = getOlympaPlayer(resultSet);
 		}
-		state.close();
 		return olympaPlayer;
 	}
 
-	public static OlympaPlayer getPlayerByName(String name) throws SQLException {
-		OlympaPlayer olympaPlayer = null;
-		Statement state = dbConnection.getConnection().createStatement();
-		ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `pseudo` = '" + name + "'");
-		while (resultSet.next() && resultSet.getString(2).equalsIgnoreCase(name)) {
-			olympaPlayer = getOlympaPlayer(resultSet);
-		}
-		state.close();
-		return olympaPlayer;
-	}
-
+	private static OlympaStatement getPlayerByUUIDPremiumStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `uuid` = ?");
 	/**
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son uuid premium
 	 * @throws SQLException
 	 */
-	public static OlympaPlayer getPlayerByPremiumUuid(UUID premiumUuid) throws SQLException {
+	public static OlympaPlayer getPlayerByPremiumUuid(UUID premiumUUID) throws SQLException {
 		OlympaPlayer olympaPlayer = null;
-		Statement state = dbConnection.getConnection().createStatement();
-		ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `uuid` = '" + premiumUuid + "'");
+		PreparedStatement statement = getPlayerByUUIDPremiumStatement.getStatement();
+		statement.setString(1, premiumUUID.toString());
+		ResultSet resultSet = statement.executeQuery();
 		if (resultSet.next()) {
 			olympaPlayer = getOlympaPlayer(resultSet);
 		}
-		state.close();
 		return olympaPlayer;
 	}
 
+	private static OlympaStatement getPlayerByTS3Statement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `ts3_id` = ?");
 	/**
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son ts3databaseid
@@ -232,100 +220,106 @@ public class MySQL {
 	 */
 	public static OlympaPlayer getPlayerByTs3Id(int ts3databaseid) throws SQLException {
 		OlympaPlayer olympaPlayer = null;
-		Statement state = dbConnection.getConnection().createStatement();
-		ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `ts3_id` = '" + ts3databaseid + "'");
+		PreparedStatement statement = getPlayerByTS3Statement.getStatement();
+		statement.setInt(1, ts3databaseid);
+		ResultSet resultSet = statement.executeQuery();
 		if (resultSet.next()) {
 			olympaPlayer = getOlympaPlayer(resultSet);
 		}
-		state.close();
 		return olympaPlayer;
 	}
 
+	private static OlympaStatement getPlayersByIPStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `ip` = ?");
 	public static List<OlympaPlayer> getPlayersByIp(String ip) {
 		List<OlympaPlayer> olympaPlayers = new ArrayList<>();
 		try {
-			Statement state = dbConnection.getConnection().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `ip` = '" + ip + "'");
+			PreparedStatement statement = getPlayersByIPStatement.getStatement();
+			statement.setString(1, ip);
+			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
 				olympaPlayers.add(getOlympaPlayer(resultSet));
 			}
-			state.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return olympaPlayers;
 	}
 
+	private static OlympaStatement getPlayersByIPHistoryStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `ip_history` LIKE ?");
 	public static List<OlympaPlayer> getPlayersByIpHistory(String ipHistory) {
 		List<OlympaPlayer> olympaPlayers = new ArrayList<>();
 		try {
-			Statement state = dbConnection.getConnection().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `ip_history` LIKE '%" + ipHistory + "%'");
+			PreparedStatement statement = getPlayersByIPHistoryStatement.getStatement();
+			statement.setString(1, "%" + ipHistory + "%");
+			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
 				olympaPlayers.add(getOlympaPlayer(resultSet));
 			}
-			state.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return olympaPlayers;
 	}
 
+	private static OlympaStatement getPlayersByNameHistoryStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `name_history` LIKE ?");
 	public static List<OlympaPlayer> getPlayersByNameHistory(String nameHistory) {
 		List<OlympaPlayer> olympaPlayers = new ArrayList<>();
 		try {
-			Statement state = dbConnection.getConnection().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `name_history` LIKE '%" + nameHistory + "%'");
+			PreparedStatement statement = getPlayersByNameHistoryStatement.getStatement();
+			statement.setString(1, "%" + nameHistory + "%");
+			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
 				olympaPlayers.add(getOlympaPlayer(resultSet));
 			}
-			state.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return olympaPlayers;
 	}
 
+	private static OlympaStatement getPlayersByRegexStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `pseudo` REGEXP ?");
 	public static Set<OlympaPlayer> getPlayersByRegex(String regex) {
 		Set<OlympaPlayer> olympaPlayers = new HashSet<>();
 		try {
-			Statement state = dbConnection.getConnection().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `pseudo` REGEXP '" + regex);
+			PreparedStatement statement = getPlayersByRegexStatement.getStatement();
+			statement.setString(1, regex);
+			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
 				olympaPlayers.add(getOlympaPlayer(resultSet));
 			}
-			state.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return olympaPlayers;
 	}
 
+	private static OlympaStatement getPlayersBySimilarNameStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `pseudo` LIKE ?");
 	public static Set<OlympaPlayer> getPlayersBySimilarName(String name) {
 		Set<OlympaPlayer> olympaPlayers = new HashSet<>();
 		try {
-			Statement state = dbConnection.getConnection().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `pseudo` LIKE '" + name);
+			PreparedStatement statement = getPlayersBySimilarNameStatement.getStatement();
+			statement.setString(1, name);
+			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
 				olympaPlayers.add(getOlympaPlayer(resultSet));
 			}
-			state.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return olympaPlayers;
 	}
 
+	private static OlympaStatement getPlayersNamesByIPStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `pseudo` LIKE ?");
 	public static Set<String> getPlayersNamesBySimilarName(String name) {
 		name = Utils.insertChar(name, "%");
 		Set<String> names = new HashSet<>();
 		try {
-			Statement state = dbConnection.getConnection().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT `pseudo` FROM " + tableName + " WHERE `pseudo` LIKE '" + name);
+			PreparedStatement statement = getPlayersNamesByIPStatement.getStatement();
+			statement.setString(1, name);
+			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
 				names.add(resultSet.getString(1));
 			}
-			state.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -351,30 +345,27 @@ public class MySQL {
 		return -1;
 	}
 
-	public static boolean playerExist(UUID playerUuid) {
+	private static OlympaStatement playerExistStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `uuid-server` = ?");
+	public static boolean playerExist(UUID playerUUID) {
 		try {
-			Statement state = dbConnection.getConnection().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE `uuid-server` = '" + playerUuid);
-			if (resultSet.next()) {
-				state.close();
-				return true;
-			} else {
-				state.close();
-				return false;
-			}
+			PreparedStatement statement = playerExistStatement.getStatement();
+			statement.setString(1, playerUUID.toString());
+			ResultSet resultSet = statement.executeQuery();
+			return resultSet.next();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
 
+	private static OlympaStatement savePlayerStatement = new OlympaStatement("UPDATE " + tableName + " SET `pseudo` = ?, `uuid-server` = ?,"
+			+ " `uuid` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ?, `ip_history` = ?, `gender` = ? WHERE `id` = ?");
 	/**
 	 * Sauvegarde les infos du olympaPlayer
 	 */
 	public static void savePlayer(OlympaPlayer olympaPlayer) {
 		try {
-			PreparedStatement pstate = dbConnection.getConnection().prepareStatement("UPDATE " + tableName + " SET `pseudo` = ?, `uuid-server` = ?,"
-					+ " `uuid` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ?, `ip_history` = ?, `gender` = ? WHERE `id` = ?");
+			PreparedStatement pstate = savePlayerStatement.getStatement();
 			int i = 1;
 			pstate.setString(i++, olympaPlayer.getName());
 			pstate.setString(i++, olympaPlayer.getUniqueId().toString());
@@ -400,15 +391,8 @@ public class MySQL {
 				pstate.setString(i++, null);
 			}
 			pstate.setInt(i++, olympaPlayer.getGender().getId());
-			/*Map<String, String> data = olympaPlayer.getData();
-			if (!data.isEmpty()) {
-				pstate.setString(i++, new Gson().toJson(data));
-			} else {
-				pstate.setString(i++, null);
-			}*/
 			pstate.setLong(i++, olympaPlayer.getId());
 			pstate.executeUpdate();
-			pstate.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -417,7 +401,6 @@ public class MySQL {
 	public static void savePlayerPluginDatas(OlympaPlayer olympaPlayer) throws SQLException {
 		if (updatePlayerPluginDatas == null) return;
 		PreparedStatement statement = updatePlayerPluginDatas.getStatement();
-		System.out.println("MySQL.savePlayerPluginDatas() " + updatePlayerPluginDatas.getStatementCommand());
 		olympaPlayer.saveDatas(statement);
 		statement.setLong(updatePlayerPluginDatasID, olympaPlayer.getId());
 		statement.executeUpdate();
@@ -428,13 +411,21 @@ public class MySQL {
 		PreparedStatement statement = getPlayerPluginDatas.getStatement();
 		statement.setLong(1, olympaPlayer.getId());
 		ResultSet pluginSet = statement.executeQuery();
-		if (pluginSet.next()) olympaPlayer.loadDatas(pluginSet);
+		if (pluginSet.next()) {
+			olympaPlayer.loadDatas(pluginSet);
+		}else { // pas de données avant : insérer les données par défaut
+			statement = insertPlayerPluginDatas.getStatement();
+			olympaPlayer.saveDatas(statement);
+			statement.setLong(updatePlayerPluginDatasID, olympaPlayer.getId());
+			statement.executeUpdate();
+			System.out.println("Created plugin datas");
+		}
 		pluginSet.close();
 	}
 
+	private static OlympaStatement savePlayerPasswordEmail = new OlympaStatement("UPDATE " + tableName + " SET `email` = ?, `password` = ? WHERE `id` = ?");
 	public static void savePlayerPassOrEmail(OlympaPlayer olympaPlayer) throws SQLException {
-		PreparedStatement pstate = dbConnection.getConnection()
-				.prepareStatement("UPDATE " + tableName + " SET `email` = ?, `password` = ? WHERE `id` = ?");
+		PreparedStatement pstate = savePlayerPasswordEmail.getStatement();
 		int i = 1;
 		pstate.setString(i++, olympaPlayer.getEmail());
 		pstate.setString(i++, olympaPlayer.getPassword());
