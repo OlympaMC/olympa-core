@@ -13,11 +13,11 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class ServersConnection {
-
+	
 	public static ServerInfo getAuth() {
 		return getAuth(null);
 	}
-
+	
 	public static ServerInfo getAuth(ServerInfo noThis) {
 		Map<ServerInfo, Integer> auths = MonitorServers.getServers().entrySet().stream().filter(entry -> noThis != entry.getKey() && entry.getValue() != null && entry.getKey().getName().startsWith("auth")
 				&& entry.getValue().getPlayers().getMax() - entry.getValue().getPlayers().getOnline() > 0)
@@ -30,11 +30,11 @@ public class ServersConnection {
 		// TODO create new server
 		return null;
 	}
-
+	
 	public static ServerInfo getLobby() {
 		return getLobby(null);
 	}
-
+	
 	public static ServerInfo getLobby(ServerInfo noThis) {
 		Map<ServerInfo, Integer> lobbys = MonitorServers.getServers().entrySet().stream().filter(entry -> noThis != entry.getKey() && entry.getValue() != null && entry.getKey().getName().startsWith("lobby")
 				&& entry.getValue().getPlayers().getMax() / 2 - entry.getValue().getPlayers().getOnline() > 0)
@@ -47,11 +47,11 @@ public class ServersConnection {
 		// TODO create new server
 		return null;
 	}
-
+	
 	public static boolean isAuth(ProxiedPlayer player) {
-		return player.getServer().getInfo().getName().startsWith("auth");
+		return player.getServer() != null && player.getServer().getInfo().getName().startsWith("auth");
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	public static void tryConnectToLobby(ProxiedPlayer player) {
 		ServerInfo lobby = ServersConnection.getLobby();

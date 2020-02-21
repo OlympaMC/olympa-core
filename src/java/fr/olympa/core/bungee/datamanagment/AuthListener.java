@@ -19,6 +19,7 @@ import fr.olympa.api.provider.BungeeNewPlayerEvent;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.api.mojangapi.MojangAPI;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import fr.olympa.core.bungee.utils.BungeeUtils;
@@ -68,7 +69,7 @@ public class AuthListener implements Listener {
 			return;
 		}
 		if (olympaPlayer == null) {
-			UUID uuidPremium = AuthUtils.getUuid(connection);
+			UUID uuidPremium = MojangAPI.getUuid(connection);
 			try {
 				uuidCrack = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes("UTF-8"));
 			} catch (UnsupportedEncodingException e) {

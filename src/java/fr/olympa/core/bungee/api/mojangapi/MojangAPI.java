@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.datamanagment;
+package fr.olympa.core.bungee.api.mojangapi;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,11 +10,40 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
+import com.google.gson.Gson;
+
+import fr.olympa.core.bungee.api.mojangapi.objects.HistNameResponse;
+import fr.olympa.core.bungee.api.mojangapi.objects.UuidResponse;
 import net.md_5.bungee.api.connection.PendingConnection;
 
 @SuppressWarnings("deprecation")
-public class AuthUtils {
+public class MojangAPI extends RequestMojang {
+	
+	public static UuidResponse getFromName(PendingConnection con) throws IOException {
+		InetSocketAddress newInetSocketAddress = new InetSocketAddress(con.getAddress().getAddress().getHostAddress(), con.getAddress().getPort());
+		
+		StringBuilder sb = new StringBuilder(new Gson().toJson(con.getAddress()));
+		sb.append(" new:");
+		sb.append(new Gson().toJson(newInetSocketAddress));
+		System.out.println("Test: " + sb.toString());
+		
+		String response = send(newInetSocketAddress, "https://api.mojang.com/users/profiles/minecraft/" + con.getName());
+		if (response != null) {
+			return UuidResponse.get(response);
+		}
+		return null;
+	}
 
+	public static HistNameResponse getNameHistory(PendingConnection con) throws IOException {
+		InetSocketAddress newInetSocketAddress = new InetSocketAddress(con.getAddress().getAddress().getHostAddress(), con.getAddress().getPort());
+		String response = send(newInetSocketAddress, "https://api.mojang.com/user/profiles/" + con.getName() + "/names");
+		if (response != null) {
+			return HistNameResponse.get(response);
+		}
+		return null;
+	}
+	
+	@Deprecated
 	public static UUID getUuid(PendingConnection con) {
 		try {
 			URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + con.getName());
@@ -37,5 +66,5 @@ public class AuthUtils {
 			return null;
 		}
 	}
-
+	
 }
