@@ -19,7 +19,9 @@ import java.util.UUID;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.Gender;
 import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.objects.OlympaPlayerInformations;
 import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.provider.OlympaPlayerInformationsObject;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
@@ -137,6 +139,25 @@ public class MySQL {
 		insertPlayerPluginDatas = new OlympaStatement(insertJoinerKeys.toString() + insertJoinerValues.toString());
 
 		getPlayerPluginDatas = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `player_id` = ?");
+	}
+
+	private static OlympaStatement getPlayerInformationsByIdStatement = new OlympaStatement("SELECT `pseudo`, `uuid` FROM " + tableName + " WHERE `id` = ?");
+	/**
+	 * Permet de récupérer les informations d'un joueur dans la base de données grâce à
+	 * son id
+	 */
+	public static OlympaPlayerInformations getPlayerInformations(long id) {
+		try {
+			PreparedStatement statement = getPlayerInformationsByIdStatement.getStatement();
+			statement.setLong(1, id);
+			ResultSet resultSet = statement.executeQuery();
+			if (resultSet.next()) {
+				return new OlympaPlayerInformationsObject(id, resultSet.getString("pseudo"), UUID.fromString(resultSet.getString("uuid")));
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	private static OlympaStatement getPlayerByIdStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `id` = ?");

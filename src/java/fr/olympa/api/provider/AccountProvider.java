@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.objects.OlympaPlayerInformations;
 import fr.olympa.api.objects.OlympaPlayerProvider;
 import fr.olympa.api.permission.OlympaAccount;
 import fr.olympa.api.sql.MySQL;
@@ -22,6 +23,7 @@ public class AccountProvider implements OlympaAccount {
 	private static String REDIS_KEY = "player:";
 	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
 	private static Map<UUID, OlympaPlayer> cache = new HashMap<>();
+	public static Map<Long, OlympaPlayerInformations> cachedInformations = new HashMap<>();
 
 	public static Class<? extends OlympaPlayer> playerClass = OlympaPlayerObject.class;
 	public static OlympaPlayerProvider playerProvider = OlympaPlayerObject::new;
@@ -56,6 +58,24 @@ public class AccountProvider implements OlympaAccount {
 
 	public static <T extends OlympaPlayer> T get(UUID uuid) {
 		return (T) cache.get(uuid);
+	}
+
+	public synchronized static OlympaPlayerInformations getPlayerInformations(long id) {
+		OlympaPlayerInformations info = cachedInformations.get(id);
+		if (info == null) {
+			info = MySQL.getPlayerInformations(id);
+			cachedInformations.put(id, info);
+		}
+		return info;
+	}
+
+	public synchronized static OlympaPlayerInformations getPlayerInformations(OlympaPlayer player) {
+		OlympaPlayerInformations info = cachedInformations.get(player.getId());
+		if (info == null) {
+			info = new OlympaPlayerInformationsObject(player.getId(), player.getName(), player.getUniqueId());
+			cachedInformations.put(player.getId(), info);
+		}
+		return info;
 	}
 
 	private static OlympaPlayer getFromCache(String name) {

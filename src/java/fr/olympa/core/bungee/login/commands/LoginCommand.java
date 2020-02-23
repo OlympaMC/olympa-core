@@ -10,6 +10,7 @@ import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.login.HandlerHideLogin;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
+import fr.olympa.core.bungee.login.listener.LoginRegisterListener;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -83,6 +84,7 @@ public class LoginCommand extends BungeeCommand {
 			return;
 		}
 		this.sendMessage(Prefix.DEFAULT_GOOD, "Connexion effectuée, transfère en cours ...");
+		LoginRegisterListener.logged.add(proxiedPlayer);
 		ServersConnection.tryConnectToLobby(this.proxiedPlayer);
 	}
 }

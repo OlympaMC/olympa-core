@@ -1,5 +1,7 @@
 package fr.olympa.core.bungee.login.listener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import fr.olympa.api.objects.OlympaPlayer;
@@ -20,6 +22,8 @@ import net.md_5.bungee.event.EventHandler;
 
 public class LoginRegisterListener implements Listener {
 
+	public static List<ProxiedPlayer> logged = new ArrayList<>(); // temp
+
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onChat(ChatEvent event) {
@@ -29,7 +33,7 @@ public class LoginRegisterListener implements Listener {
 		String[] args = event.getMessage().split(" ");
 		String command = args[0].substring(1);
 		ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-		if (ServersConnection.isAuth(player) && (!event.getMessage().startsWith("/") || !HandlerHideLogin.command.contains(command))) {
+		if (!logged.contains(player) && ServersConnection.isAuth(player) && (!event.getMessage().startsWith("/") || !HandlerHideLogin.command.contains(command))) {
 			OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
 			if (olympaPlayer == null || olympaPlayer.getPassword() == null || olympaPlayer.getPassword().isEmpty()) {
 				player.sendMessage(Prefix.DEFAULT_BAD + SpigotUtils.color("Tu dois t'enregistrer. Fait &4/register <mdp>&c."));

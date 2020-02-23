@@ -23,6 +23,7 @@ import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.Gender;
 import fr.olympa.api.objects.OlympaMoney;
 import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.objects.OlympaPlayerInformations;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
@@ -220,6 +221,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public Player getPlayer() {
 		return Bukkit.getPlayer(this.uuid);
+	}
+
+	@Override
+	public OlympaPlayerInformations getInformation() {
+		return AccountProvider.getPlayerInformations(this);
 	}
 
 	@Override
