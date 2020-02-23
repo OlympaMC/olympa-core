@@ -18,6 +18,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.annotations.Expose;
 
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.Gender;
@@ -32,22 +33,39 @@ import fr.olympa.api.utils.Utils;
 
 public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
+	@Expose
 	long id;
+	@Expose
 	UUID uuid;
+	@Expose
 	UUID premiumUuid;
+	@Expose
 	Gender gender = Gender.MALE;
+	@Expose
 	String password;
+	@Expose
 	String email;
+	@Expose
 	String name;
+	@Expose
 	TreeMap<OlympaGroup, Long> groups = new TreeMap<>(Comparator.comparing(OlympaGroup::getPower).reversed());
+	@Expose
 	String ip;
+	@Expose
 	long firstConnection;
+	@Expose
 	long lastConnection;
+	@Expose
 	TreeMap<Long, String> histName = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
+	@Expose
 	TreeMap<Long, String> histIp = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
+	@Expose
 	OlympaMoney storeMoney; // TODO
+	@Expose
 	boolean vanish;
+	@Expose
 	boolean verifMode;
+	@Expose
 	boolean afk;
 
 	public OlympaPlayerObject(UUID uuid, String name, String ip) {

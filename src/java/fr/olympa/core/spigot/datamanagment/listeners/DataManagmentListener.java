@@ -69,12 +69,12 @@ public class DataManagmentListener implements Listener {
 			Bukkit.broadcastMessage(loginevent.getJoinMessage());
 		}
 
-		olympaAccount.saveToRedis(olympaPlayer);
 		event.setJoinMessage(null);
 
-		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> {
+		OlympaCore.getInstance().launchAsync(() -> {
 			try {
 				MySQL.loadPlayerPluginDatas(olympaPlayer);
+				olympaAccount.saveToRedis(olympaPlayer);
 			}catch (SQLException e) {
 				e.printStackTrace();
 			}

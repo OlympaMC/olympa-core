@@ -76,14 +76,14 @@ public class LoginCommand extends BungeeCommand {
 		System.out.println("newPasswordHash: " + newPasswordHash);
 		System.out.println("newPasswordHash2: " + this.get_SHA_512_SecurePassword(password, "DYhG9guiRVoUubWwvn2G0Fg3b0qyJfIxfs2aC9mi"));
 		if (!newPasswordHash.equals(playerPasswordHash)) {
-			this.sendMessage(Prefix.DEFAULT_BAD, "Mot de passe incorrect, réessaye.");
+			this.sendMessage(Prefix.DEFAULT_BAD, "Mot de passe incorrect, rééssaye.");
 			return;
 		}
 		OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(this.olympaPlayer, this.proxiedPlayer));
 		if (olympaPlayerLoginEvent.cancelIfNeeded()) {
 			return;
 		}
-		this.sendMessage(Prefix.DEFAULT_GOOD, "Connexion effectuée, transfère en cours ...");
+		this.sendMessage(Prefix.DEFAULT_GOOD, "Connexion effectuée, transfert en cours ...");
 		LoginRegisterListener.logged.add(proxiedPlayer);
 		ServersConnection.tryConnectToLobby(this.proxiedPlayer);
 	}

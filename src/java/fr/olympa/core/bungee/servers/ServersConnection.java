@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.login.listener.LoginRegisterListener;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -49,7 +50,7 @@ public class ServersConnection {
 	}
 	
 	public static boolean isAuth(ProxiedPlayer player) {
-		return player.getServer() != null && player.getServer().getInfo().getName().startsWith("auth");
+		return !LoginRegisterListener.logged.contains(player) && player.getServer() != null && player.getServer().getInfo().getName().startsWith("auth");
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -61,6 +62,6 @@ public class ServersConnection {
 			return;
 		}
 		player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("&cAucun lobby n'est actuellement disponible merci de patienter ..."));
-		ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectToLobby(player), 10, TimeUnit.SECONDS);
+		if (isAuth(player)) ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectToLobby(player), 10, TimeUnit.SECONDS);
 	}
 }

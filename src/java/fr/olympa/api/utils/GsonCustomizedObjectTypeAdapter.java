@@ -19,7 +19,7 @@ import fr.olympa.api.provider.OlympaPlayerObject.OlympaPlayerDeserializer;
 public class GsonCustomizedObjectTypeAdapter extends TypeAdapter<Object> {
 
 	private static final GsonCustomizedObjectTypeAdapter adapter = new GsonCustomizedObjectTypeAdapter();
-	public static final GsonBuilder GSON_BUILDER = new GsonBuilder().registerTypeHierarchyAdapter(OlympaPlayer.class, new OlympaPlayerDeserializer()).registerTypeAdapter(Map.class, adapter).registerTypeAdapter(List.class, adapter);
+	public static final GsonBuilder GSON_BUILDER = new GsonBuilder().registerTypeHierarchyAdapter(OlympaPlayer.class, new OlympaPlayerDeserializer()).registerTypeAdapter(Map.class, adapter).registerTypeAdapter(List.class, adapter).excludeFieldsWithoutExposeAnnotation();
 	public static final Gson GSON = GSON_BUILDER.create();
 
 	private final TypeAdapter<Object> delegate = new Gson().getAdapter(Object.class);
@@ -56,7 +56,11 @@ public class GsonCustomizedObjectTypeAdapter extends TypeAdapter<Object> {
 			return map;
 
 		case STRING:
-			return in.nextString();
+			Object obj = in.nextString();
+			try {
+				obj = Long.parseLong((String) obj);
+			}catch (NumberFormatException e) {}
+			return obj;
 
 		case NUMBER:
 			//return in.nextDouble();

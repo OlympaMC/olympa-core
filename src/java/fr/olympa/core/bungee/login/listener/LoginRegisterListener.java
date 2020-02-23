@@ -33,7 +33,7 @@ public class LoginRegisterListener implements Listener {
 		String[] args = event.getMessage().split(" ");
 		String command = args[0].substring(1);
 		ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-		if (!logged.contains(player) && ServersConnection.isAuth(player) && (!event.getMessage().startsWith("/") || !HandlerHideLogin.command.contains(command))) {
+		if (ServersConnection.isAuth(player) && (!event.getMessage().startsWith("/") || !HandlerHideLogin.command.contains(command))) {
 			OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
 			if (olympaPlayer == null || olympaPlayer.getPassword() == null || olympaPlayer.getPassword().isEmpty()) {
 				player.sendMessage(Prefix.DEFAULT_BAD + SpigotUtils.color("Tu dois t'enregistrer. Fait &4/register <mdp>&c."));

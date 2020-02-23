@@ -35,6 +35,7 @@ import fr.olympa.core.bungee.privatemessage.PrivateMessageToggleCommand;
 import fr.olympa.core.bungee.privatemessage.ReplyCommand;
 import fr.olympa.core.bungee.servers.ListAllCommand;
 import fr.olympa.core.bungee.servers.MonitorServers;
+import fr.olympa.core.bungee.servers.ServerSwitchCommand;
 import fr.olympa.core.bungee.servers.ServersListener;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
@@ -145,6 +146,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new MaintenanceCommand(this).register();
 		new LoginCommand(this).register();
 		new RegisterCommand(this).register();
+		new ServerSwitchCommand().register();
 
 		new MonitorServers(this);
 		this.sendMessage("§2" + this.getDescription().getName() + "§a (" + this.getDescription().getVersion() + ") is activated.");

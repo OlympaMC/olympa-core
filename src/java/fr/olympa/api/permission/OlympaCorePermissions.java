@@ -33,6 +33,8 @@ public class OlympaCorePermissions {
 	public static OlympaPermission BAN_SEEBANMSG = new OlympaBungeePermission(OlympaGroup.BUILDER);
 	public static OlympaPermission BAN_BYPASS_BAN = new OlympaBungeePermission(OlympaGroup.BUILDER);
 
+	public static OlympaPermission SERVER_SWITCH_COMMAND = new OlympaBungeePermission(OlympaGroup.BUILDER);
+
 	public static OlympaPermission SPAWN_SPAWN_COMMAND_SET = new OlympaPermission(OlympaGroup.RESP_TECH);
 
 	public static OlympaPermission CHAT_COLOR = new OlympaPermission(OlympaGroup.MODP);
