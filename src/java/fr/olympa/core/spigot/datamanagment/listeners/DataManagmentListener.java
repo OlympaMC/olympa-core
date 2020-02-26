@@ -32,13 +32,14 @@ public class DataManagmentListener implements Listener {
 				OlympaPlayer olympaPlayer;
 				try {
 					olympaPlayer = olympaAccountObject.get();
+					MySQL.loadPlayerPluginDatas(olympaPlayer);
 				} catch (SQLException e) {
 					player.kickPlayer("§cUne erreur est survenue. Merci de réessayer\n\n§e§lSi le problème persiste, signaler-le au staff.\n§eCode d'erreur: §l#SQLSpigotReload");
 					e.printStackTrace();
 					continue;
 				}
 				task.runTask(() -> {
-					OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer);
+					OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, false);
 					Bukkit.getPluginManager().callEvent(loginevent);
 					olympaAccountObject.saveToRedis(olympaPlayer);
 					olympaAccountObject.saveToCache(olympaPlayer);
@@ -61,19 +62,20 @@ public class DataManagmentListener implements Listener {
 		olympaPlayer.setIp(player.getAddress().getAddress().getHostAddress());
 		olympaPlayer.setLastConnection(Utils.getCurrentTimeInSeconds());
 
-		OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer);
-		loginevent.setJoinMessage("&7[&a+&7] %prefix%name");
-		Bukkit.getPluginManager().callEvent(loginevent);
-
-		if (loginevent.getJoinMessage() != null && !loginevent.getJoinMessage().isEmpty()) {
-			Bukkit.broadcastMessage(loginevent.getJoinMessage());
-		}
-
 		event.setJoinMessage(null);
 
 		OlympaCore.getInstance().launchAsync(() -> {
 			try {
 				MySQL.loadPlayerPluginDatas(olympaPlayer);
+
+				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
+				loginevent.setJoinMessage("&7[&a+&7] %prefix%name");
+				Bukkit.getPluginManager().callEvent(loginevent);
+
+				if (loginevent.getJoinMessage() != null && !loginevent.getJoinMessage().isEmpty()) {
+					Bukkit.broadcastMessage(loginevent.getJoinMessage());
+				}
+
 				olympaAccount.saveToRedis(olympaPlayer);
 			}catch (SQLException e) {
 				e.printStackTrace();

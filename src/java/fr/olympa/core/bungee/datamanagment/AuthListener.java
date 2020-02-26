@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.gson.Gson;
 
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.provider.BungeeNewPlayerEvent;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.mojangapi.MojangAPI;
@@ -130,7 +130,7 @@ public class AuthListener implements Listener {
 		}
 
 		if (olympaPlayer != null) {
-			System.out.println("player info " + new Gson().toJson(olympaPlayer));
+			System.out.println("player info " + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 			if (olympaPlayer.getPremiumUniqueId() == null) {
 				if (!name.equals(olympaPlayer.getName())) {
 					event.setCancelReason(BungeeUtils.connectScreen("&aTu as mal écrit ton pseudo, connecte toi avec &2" + olympaPlayer.getName() + "&a.\n&eLa tu utilise le pseudo " + name + "."));

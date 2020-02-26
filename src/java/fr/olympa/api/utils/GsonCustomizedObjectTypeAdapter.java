@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
-import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
@@ -19,7 +19,7 @@ import fr.olympa.api.provider.OlympaPlayerObject.OlympaPlayerDeserializer;
 public class GsonCustomizedObjectTypeAdapter extends TypeAdapter<Object> {
 
 	private static final GsonCustomizedObjectTypeAdapter adapter = new GsonCustomizedObjectTypeAdapter();
-	public static final GsonBuilder GSON_BUILDER = new GsonBuilder().registerTypeHierarchyAdapter(OlympaPlayer.class, new OlympaPlayerDeserializer()).registerTypeAdapter(Map.class, adapter).registerTypeAdapter(List.class, adapter).excludeFieldsWithoutExposeAnnotation();
+	public static final GsonBuilder GSON_BUILDER = new GsonBuilder().registerTypeHierarchyAdapter(OlympaPlayer.class, new OlympaPlayerDeserializer()).registerTypeHierarchyAdapter(Map.class, adapter).registerTypeHierarchyAdapter(List.class, adapter).excludeFieldsWithoutExposeAnnotation();
 	public static final Gson GSON = GSON_BUILDER.create();
 
 	private final TypeAdapter<Object> delegate = new Gson().getAdapter(Object.class);
@@ -43,7 +43,7 @@ public class GsonCustomizedObjectTypeAdapter extends TypeAdapter<Object> {
 			return list;
 
 		case BEGIN_OBJECT:
-			Map<Object, Object> map = new LinkedTreeMap<Object, Object>();
+			Map<Object, Object> map = new TreeMap<Object, Object>();
 			in.beginObject();
 			while (in.hasNext()) {
 				Object name = in.nextName();
@@ -56,11 +56,11 @@ public class GsonCustomizedObjectTypeAdapter extends TypeAdapter<Object> {
 			return map;
 
 		case STRING:
-			Object obj = in.nextString();
+			/*Object obj = in.nextString();
 			try {
 				obj = Long.parseLong((String) obj);
-			}catch (NumberFormatException e) {}
-			return obj;
+			}catch (NumberFormatException e) {}*/
+			return in.nextString();
 
 		case NUMBER:
 			//return in.nextDouble();

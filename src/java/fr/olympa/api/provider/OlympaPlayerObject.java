@@ -68,6 +68,8 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Expose
 	boolean afk;
 
+	private Object cachedPlayer = null;
+
 	public OlympaPlayerObject(UUID uuid, String name, String ip) {
 		this.uuid = uuid;
 		this.name = name;
@@ -238,7 +240,8 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public Player getPlayer() {
-		return Bukkit.getPlayer(this.uuid);
+		if (cachedPlayer == null) cachedPlayer = Bukkit.getPlayer(uuid);
+		return (Player) cachedPlayer;
 	}
 
 	@Override

@@ -23,7 +23,7 @@ public class AccountProvider implements OlympaAccount {
 	private static String REDIS_KEY = "player:";
 	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
 	private static Map<UUID, OlympaPlayer> cache = new HashMap<>();
-	public static Map<Long, OlympaPlayerInformations> cachedInformations = new HashMap<>();
+	private static Map<Long, OlympaPlayerInformations> cachedInformations = new HashMap<>();
 
 	public static Class<? extends OlympaPlayer> playerClass = OlympaPlayerObject.class;
 	public static OlympaPlayerProvider playerProvider = OlympaPlayerObject::new;
