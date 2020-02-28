@@ -129,8 +129,8 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 					break;
 
 				case "list":
-					whitelist = BungeeConfigUtils.getConfig("maintenance").getStringList("whitelist");
-					sender.sendMessage(BungeeConfigUtils.getString("messages.whitelist")
+					whitelist = config.getStringList("whitelist");
+					sender.sendMessage(BungeeConfigUtils.getString("maintenance.messages.whitelist")
 							.replace("%size%", String.valueOf(whitelist.size()))
 							.replace("%list%", String.join(BungeeConfigUtils.getString("maintenance.messages.whitelist_separator"), whitelist)));
 					break;
