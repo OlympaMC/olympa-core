@@ -10,6 +10,7 @@ import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.plugin.OlympaSpigot;
 import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
 import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
@@ -49,6 +50,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
 		this.status = MaintenanceStatus.DEV;
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
+		Utils.registerConfigurationSerializable();
 		super.onEnable();
 
 		new MySQL(this.database);
