@@ -7,9 +7,10 @@ import java.util.Set;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.login.HandlerHideLogin;
-import fr.olympa.core.bungee.servers.ServersConnection;
+import fr.olympa.core.bungee.login.HandlerLogin;
+import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class RegisterCommand extends BungeeCommand {
@@ -20,9 +21,9 @@ public class RegisterCommand extends BungeeCommand {
 		this.description = "Crée un mot de passe";
 		this.allowConsole = false;
 		this.bypassAuth = true;
-		HandlerHideLogin.command.add(this.command);
+		HandlerLogin.command.add(this.command);
 		for (String aliase : this.aliases) {
-			HandlerHideLogin.command.add(aliase);
+			HandlerLogin.command.add(aliase);
 		}
 	}
 
@@ -68,14 +69,19 @@ public class RegisterCommand extends BungeeCommand {
 
 		this.olympaPlayer.setPassword(password);
 		AccountProvider account = new AccountProvider(this.olympaPlayer.getUniqueId());
-		if (ServersConnection.isAuth(this.proxiedPlayer)) {
-			if (account.getFromCache() != null) {
-				account.saveToCache(this.olympaPlayer);
-			}
-			this.sendMessage(Prefix.DEFAULT_GOOD, "Yess, ce mot de passe est valable sur le site et sur minecraft.");
-
+		if (HandlerLogin.isLogged(this.proxiedPlayer)) {
+			this.sendMessage(Prefix.DEFAULT_GOOD, "Bravo ! Tu peux désormais utiliser ce mot de passe sur notre site et forum.");
 		} else {
-			this.sendMessage(Prefix.DEFAULT_GOOD, "Bravo ! Tu peux désormais utiliser ce mot de passe sur notre site.");
+			// aucune idée de pourquoi j'ai fais ça
+			/*if (account.getFromCache() != null) {
+				account.saveToCache(this.olympaPlayer);
+			}*/
+			OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(this.olympaPlayer, this.proxiedPlayer));
+			if (olympaPlayerLoginEvent.cancelIfNeeded()) {
+				return;
+			}
+			this.sendMessage(Prefix.DEFAULT_GOOD, "Yes, ton compte est crée.");
+
 		}
 		account.saveToRedis(this.olympaPlayer);
 	}

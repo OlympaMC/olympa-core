@@ -8,25 +8,24 @@ import fr.olympa.api.provider.OlympaPlayerObject;
 import fr.olympa.api.utils.Passwords;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.login.HandlerHideLogin;
+import fr.olympa.core.bungee.login.HandlerLogin;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
-import fr.olympa.core.bungee.login.listener.LoginRegisterListener;
-import fr.olympa.core.bungee.servers.ServersConnection;
+import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class LoginCommand extends BungeeCommand {
-
+	
 	public LoginCommand(Plugin plugin) {
 		super(plugin, "login", "log", "l");
 		this.usageString = "<mot de passe>";
 		this.description = "Permet de se connecter à son compte Olympa";
 		this.allowConsole = false;
 		this.bypassAuth = true;
-		HandlerHideLogin.command.add(this.command);
+		HandlerLogin.command.add(this.command);
 		for (String aliase : this.aliases) {
-			HandlerHideLogin.command.add(aliase);
+			HandlerLogin.command.add(aliase);
 		}
 	}
 
@@ -47,6 +46,7 @@ public class LoginCommand extends BungeeCommand {
 		return generatedPassword;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		if (!this.proxiedPlayer.getServer().getInfo().getName().startsWith("auth")) {
@@ -77,6 +77,15 @@ public class LoginCommand extends BungeeCommand {
 		System.out.println("newPasswordHash2: " + this.get_SHA_512_SecurePassword(password, "DYhG9guiRVoUubWwvn2G0Fg3b0qyJfIxfs2aC9mi"));
 		if (!newPasswordHash.equals(playerPasswordHash)) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Mot de passe incorrect, rééssaye.");
+			Integer timeFails = HandlerLogin.timesFails.get(this.proxiedPlayer);
+			if (timeFails == null) {
+				HandlerLogin.timesFails.put(this.proxiedPlayer, 1);
+			} else if (timeFails <= 3) {
+				HandlerLogin.timesFails.put(this.proxiedPlayer, ++timeFails);
+			} else {
+				this.proxiedPlayer.disconnect(BungeeUtils.connectScreen("Tu as échoué trop de fois ton mdp"));
+			}
+			
 			return;
 		}
 		OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(this.olympaPlayer, this.proxiedPlayer));
@@ -84,7 +93,5 @@ public class LoginCommand extends BungeeCommand {
 			return;
 		}
 		this.sendMessage(Prefix.DEFAULT_GOOD, "Connexion effectuée, transfert en cours ...");
-		LoginRegisterListener.logged.add(proxiedPlayer);
-		ServersConnection.tryConnectToLobby(this.proxiedPlayer);
 	}
 }

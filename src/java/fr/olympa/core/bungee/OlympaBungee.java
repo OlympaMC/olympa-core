@@ -22,9 +22,11 @@ import fr.olympa.core.bungee.ban.listeners.SanctionListener;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
 import fr.olympa.core.bungee.datamanagment.BasicSecurityListener;
 import fr.olympa.core.bungee.datamanagment.GetUUIDCommand;
+import fr.olympa.core.bungee.login.commands.EmailCommand;
 import fr.olympa.core.bungee.login.commands.LoginCommand;
 import fr.olympa.core.bungee.login.commands.RegisterCommand;
-import fr.olympa.core.bungee.login.listener.LoginRegisterListener;
+import fr.olympa.core.bungee.login.listener.FailsPasswordEvent;
+import fr.olympa.core.bungee.login.listener.LoginChatListener;
 import fr.olympa.core.bungee.maintenance.ConnectionListener;
 import fr.olympa.core.bungee.maintenance.MaintenanceCommand;
 import fr.olympa.core.bungee.maintenance.MaintenanceListener;
@@ -60,6 +62,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	protected long uptime = Utils.getCurrentTimeInSeconds();
 	protected Jedis jedis;
 
+	@Override
 	public Connection getDatabase() throws SQLException {
 		return this.database.getConnection();
 	}
@@ -86,7 +89,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 
 	@Override
 	public void launchAsync(Runnable run) {
-		getTask().runAsync(this, run);
+		this.getTask().runAsync(this, run);
 	}
 
 	@Override
@@ -125,9 +128,10 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		pluginManager.registerListener(this, new ServersListener());
 		pluginManager.registerListener(this, new TestListener());
 		pluginManager.registerListener(this, new PrivateMessageListener());
-		pluginManager.registerListener(this, new LoginRegisterListener());
+		pluginManager.registerListener(this, new LoginChatListener());
+		pluginManager.registerListener(this, new FailsPasswordEvent());
 		pluginManager.registerListener(this, new VpnListener());
- 
+
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();
 		new BanIpCommand(this).register();
@@ -146,6 +150,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new MaintenanceCommand(this).register();
 		new LoginCommand(this).register();
 		new RegisterCommand(this).register();
+		new EmailCommand(this).register();
 		new ServerSwitchCommand().register();
 
 		new MonitorServers(this);

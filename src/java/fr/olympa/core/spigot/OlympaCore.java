@@ -18,6 +18,7 @@ import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
 import fr.olympa.core.spigot.report.commands.ReportCommand;
 import fr.olympa.core.spigot.scoreboards.ScoreboardListener;
+import fr.olympa.core.spigot.security.AntiWD;
 import fr.olympa.core.spigot.status.SetStatusCommand;
 import fr.olympa.core.spigot.status.StatusMotdListener;
 import redis.clients.jedis.Jedis;
@@ -32,7 +33,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
 	@Override
 	public void launchAsync(Runnable run) {
-		getTask().runTaskAsynchronously(run);
+		this.getTask().runTaskAsynchronously(run);
 	}
 
 	@Override
@@ -76,6 +77,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		pluginManager.registerEvents(new TestListener(), this);
 		pluginManager.registerEvents(new Inventories(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
+		
+		new AntiWD(this);
 
 		this.sendMessage("§2" + this.getDescription().getName() + "§a (" + this.getDescription().getVersion() + ") est activé.");
 	}

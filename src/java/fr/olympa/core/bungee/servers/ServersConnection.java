@@ -7,18 +7,17 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.login.listener.LoginRegisterListener;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class ServersConnection {
-	
+
 	public static ServerInfo getAuth() {
 		return getAuth(null);
 	}
-	
+
 	public static ServerInfo getAuth(ServerInfo noThis) {
 		Map<ServerInfo, Integer> auths = MonitorServers.getServers().entrySet().stream().filter(entry -> noThis != entry.getKey() && entry.getValue() != null && entry.getKey().getName().startsWith("auth")
 				&& entry.getValue().getPlayers().getMax() - entry.getValue().getPlayers().getOnline() > 0)
@@ -31,11 +30,11 @@ public class ServersConnection {
 		// TODO create new server
 		return null;
 	}
-	
+
 	public static ServerInfo getLobby() {
 		return getLobby(null);
 	}
-	
+
 	public static ServerInfo getLobby(ServerInfo noThis) {
 		Map<ServerInfo, Integer> lobbys = MonitorServers.getServers().entrySet().stream().filter(entry -> noThis != entry.getKey() && entry.getValue() != null && entry.getKey().getName().startsWith("lobby")
 				&& entry.getValue().getPlayers().getMax() / 2 - entry.getValue().getPlayers().getOnline() > 0)
@@ -48,11 +47,11 @@ public class ServersConnection {
 		// TODO create new server
 		return null;
 	}
-	
+
 	public static boolean isAuth(ProxiedPlayer player) {
-		return !LoginRegisterListener.logged.contains(player) && player.getServer() != null && player.getServer().getInfo().getName().startsWith("auth");
+		return player.getServer() != null && player.getServer().getInfo().getName().startsWith("auth");
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public static void tryConnectToLobby(ProxiedPlayer player) {
 		ServerInfo lobby = ServersConnection.getLobby();
@@ -62,6 +61,6 @@ public class ServersConnection {
 			return;
 		}
 		player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("&cAucun lobby n'est actuellement disponible merci de patienter ..."));
-		if (isAuth(player)) ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectToLobby(player), 10, TimeUnit.SECONDS);
+		ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectToLobby(player), 10, TimeUnit.SECONDS);
 	}
 }
