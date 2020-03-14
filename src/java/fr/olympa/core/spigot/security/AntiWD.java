@@ -10,18 +10,18 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import fr.olympa.api.utils.SpigotUtils;
 
 public class AntiWD implements Listener, PluginMessageListener {
-
+	
 	public AntiWD(Plugin plugin) {
 		Server server = plugin.getServer();
 		Messenger messenger = server.getMessenger();
-		server.getPluginManager().registerEvents((Listener) this, (Plugin) this);
-		messenger.registerIncomingPluginChannel((Plugin) this, "WDL|INIT", (PluginMessageListener) this);
-		messenger.registerOutgoingPluginChannel((Plugin) this, "WDL|CONTROL");
+		server.getPluginManager().registerEvents(this, plugin);
+		messenger.registerIncomingPluginChannel(plugin, "WDL:INIT", this);
+		messenger.registerOutgoingPluginChannel(plugin, "WDL:CONTROL");
 	}
-	
+
 	@Override
 	public void onPluginMessageReceived(final String channel, final Player player, final byte[] data) {
-		if (channel.equals("WDL|INIT")) {
+		if (channel.equals("WDL:INIT")) {
 			player.kickPlayer(SpigotUtils.connectScreen("Les mods de téléchargement de maps sont interdits"));
 		}
 	}

@@ -9,6 +9,7 @@ import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -19,9 +20,11 @@ public class ServersConnection {
 	}
 
 	public static ServerInfo getAuth(ServerInfo noThis) {
-		Map<ServerInfo, Integer> auths = MonitorServers.getServers().entrySet().stream().filter(entry -> noThis != entry.getKey() && entry.getValue() != null && entry.getKey().getName().startsWith("auth")
-				&& entry.getValue().getPlayers().getMax() - entry.getValue().getPlayers().getOnline() > 0)
-				.collect(Collectors.toMap((entry) -> entry.getKey(), (entry) -> entry.getValue().getPlayers().getMax() - entry.getValue().getPlayers().getOnline()));
+		Map<ServerInfo, Integer> auths = MonitorServers.getServers().entrySet().stream().filter(entry -> {
+			ServerInfo si = entry.getKey();
+			ServerPing sp = entry.getValue().getServerPing();
+			return noThis != si && sp != null && si.getName().startsWith("auth") && sp.getPlayers().getMax() - sp.getPlayers().getOnline() > 0;
+		}).collect(Collectors.toMap((entry) -> entry.getKey(), (entry) -> entry.getValue().getServerPing().getPlayers().getMax() / 2 - entry.getValue().getServerPing().getPlayers().getOnline()));
 		// TODO add sort by name1 name2 name3
 		Entry<ServerInfo, Integer> auth = auths.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
 		if (auth != null) {
@@ -30,15 +33,17 @@ public class ServersConnection {
 		// TODO create new server
 		return null;
 	}
-
+	
 	public static ServerInfo getLobby() {
 		return getLobby(null);
 	}
 
 	public static ServerInfo getLobby(ServerInfo noThis) {
-		Map<ServerInfo, Integer> lobbys = MonitorServers.getServers().entrySet().stream().filter(entry -> noThis != entry.getKey() && entry.getValue() != null && entry.getKey().getName().startsWith("lobby")
-				&& entry.getValue().getPlayers().getMax() / 2 - entry.getValue().getPlayers().getOnline() > 0)
-				.collect(Collectors.toMap((entry) -> entry.getKey(), (entry) -> entry.getValue().getPlayers().getMax() / 2 - entry.getValue().getPlayers().getOnline()));
+		Map<ServerInfo, Integer> lobbys = MonitorServers.getServers().entrySet().stream().filter(entry -> {
+			ServerInfo si = entry.getKey();
+			ServerPing sp = entry.getValue().getServerPing();
+			return noThis != si && sp != null && si.getName().startsWith("lobby") && sp.getPlayers().getMax() / 2 - sp.getPlayers().getOnline() > 0;
+		}).collect(Collectors.toMap((entry) -> entry.getKey(), (entry) -> entry.getValue().getServerPing().getPlayers().getMax() / 2 - entry.getValue().getServerPing().getPlayers().getOnline()));
 		// TODO add sort by name1 name2 name3
 		Entry<ServerInfo, Integer> lobby = lobbys.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
 		if (lobby != null) {

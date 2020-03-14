@@ -10,6 +10,7 @@ import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.TPS;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
+import fr.olympa.core.bungee.servers.MonitorServers.Ping;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ServerPing;
@@ -21,31 +22,32 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class ListAllCommand extends BungeeCommand {
-
+	
 	public ListAllCommand(Plugin plugin) {
 		super(plugin, "listall");
 	}
-
+	
 	// TODO add restriction for seeing serveurs
 	// Clear un peu ce code degeux
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		Map<ServerInfo, ServerPing> servers = MonitorServers.getServers();
-
+		Map<ServerInfo, Ping> servers = MonitorServers.getServers();
+		
 		TextComponent text = new TextComponent("§6Liste des joueurs et serveurs:\n");
 		int size = servers.entrySet().size();
 		int i = 1;
-		for (Entry<ServerInfo, ServerPing> entry : servers.entrySet()) {
+		for (Entry<ServerInfo, Ping> entry : servers.entrySet()) {
 			ServerInfo info = entry.getKey();
-			ServerPing ping = entry.getValue();
+			Ping ping = entry.getValue();
+			ServerPing serverPing = ping.getServerPing();
 			String tps = "";
 			String players = "";
 			String hover = "";
 			MaintenanceStatus status = MaintenanceStatus.CLOSE;
-			if (ping != null) {
-				String[] motd = ping.getDescriptionComponent().toLegacyText().split(" ");
+			if (serverPing != null) {
+				String[] motd = serverPing.getDescriptionComponent().toLegacyText().split(" ");
 				MaintenanceStatus status2 = MaintenanceStatus.get(motd[0]);
-				System.out.println("Status " + info.getName() + ": " + status2 + " MOTD: " + motd[0]);
+				System.out.println("Status " + info.getName() + ": " + status2 + " MOTD: " + motd[0] + " PING: " + ping + " ns");
 				if (status2 != null) {
 					if (this.olympaPlayer != null && status2.getPermission().hasPermission(this.olympaPlayer)) {
 						continue;
@@ -60,9 +62,9 @@ public class ListAllCommand extends BungeeCommand {
 						tps = TPS.getColor(Double.parseDouble(motd[1]));
 					}
 				}
-				players = ping.getPlayers().getOnline() + " connecté" + Utils.withOrWithoutS(ping.getPlayers().getOnline()) + "";
-				if (ping.getPlayers().getSample() != null) {
-					hover = Arrays.stream(ping.getPlayers().getSample()).map(PlayerInfo::getName).collect(Collectors.joining(", "));
+				players = serverPing.getPlayers().getOnline() + " connecté" + Utils.withOrWithoutS(serverPing.getPlayers().getOnline()) + "";
+				if (serverPing.getPlayers().getSample() != null) {
+					hover = Arrays.stream(serverPing.getPlayers().getSample()).map(PlayerInfo::getName).collect(Collectors.joining(", "));
 				}
 			}
 			if (size > i) {
@@ -77,5 +79,5 @@ public class ListAllCommand extends BungeeCommand {
 		}
 		sender.sendMessage(text);
 	}
-
+	
 }
