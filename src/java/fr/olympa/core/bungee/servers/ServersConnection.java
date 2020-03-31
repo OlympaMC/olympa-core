@@ -12,6 +12,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.Server;
 
 public class ServersConnection {
 
@@ -33,7 +34,7 @@ public class ServersConnection {
 		// TODO create new server
 		return null;
 	}
-	
+
 	public static ServerInfo getLobby() {
 		return getLobby(null);
 	}
@@ -53,19 +54,25 @@ public class ServersConnection {
 		return null;
 	}
 
-	public static boolean isAuth(ProxiedPlayer player) {
-		return player.getServer() != null && player.getServer().getInfo().getName().startsWith("auth");
+	public static ServerInfo getServer(String name) {
+		return MonitorServers.getServers().entrySet().stream().filter(entry -> entry.getValue().getServerPing() != null && entry.getKey().getName().equalsIgnoreCase(name)).map(entry -> entry.getKey())
+				.findFirst().orElse(null);
 	}
 
 	@SuppressWarnings("deprecation")
-	public static void tryConnectToLobby(ProxiedPlayer player) {
+	public static void tryConnectToLobby(ProxiedPlayer player, Server server) {
+		Server playerServer = player.getServer();
+		if (playerServer != null && !playerServer.equals(server)) {
+			return;
+		}
+
 		ServerInfo lobby = ServersConnection.getLobby();
 		if (lobby != null) {
-			//player.setReconnectServer(lobby);
+			// player.setReconnectServer(lobby);
 			player.connect(lobby);
 			return;
 		}
 		player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("&cAucun lobby n'est actuellement disponible merci de patienter ..."));
-		ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectToLobby(player), 10, TimeUnit.SECONDS);
+		ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectToLobby(player, server), 10, TimeUnit.SECONDS);
 	}
 }

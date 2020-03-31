@@ -18,7 +18,7 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public abstract class BungeeCommand extends Command {
-	
+
 	protected String[] aliases;
 	public boolean allowConsole = true;
 	protected String command;
@@ -26,29 +26,29 @@ public abstract class BungeeCommand extends Command {
 	protected boolean bypassAuth = false;
 	public OlympaPlayer olympaPlayer;
 	protected OlympaPermission permission;
-	
+
 	/**
 	 * Don't foget to set {@link BungeeCommand#usageString}
 	 */
 	public Integer minArg = 0;
-	
+
 	protected Plugin plugin;
 	public ProxiedPlayer proxiedPlayer;
 	private CommandSender sender;
-	
+
 	/**
-	 * Format: Usage » %command% <%obligatory%|%obligatory%> [%optional%]
-	 * Variable name: 'joueur' ...
+	 * Format: Usage » %command% <%obligatory%|%obligatory%> [%optional%] Variable
+	 * name: 'joueur' ...
 	 *
 	 */
 	public String usageString;
-	
+
 	public BungeeCommand(Plugin plugin, String command) {
 		super(command);
 		this.plugin = plugin;
 		this.command = command;
 	}
-	
+
 	public BungeeCommand(Plugin plugin, String command, OlympaPermission permission, String... aliases) {
 		super(command, null, aliases);
 		this.plugin = plugin;
@@ -56,10 +56,10 @@ public abstract class BungeeCommand extends Command {
 		this.permission = permission;
 		this.aliases = aliases;
 	}
-	
+
 	public BungeeCommand(Plugin plugin, String command, OlympaPermission permission, String[] aliases, String description, String usageString, boolean allowConsole,
 			Integer minArg) {
-		
+
 		super(command, null, aliases);
 		this.plugin = plugin;
 		this.command = command;
@@ -69,138 +69,138 @@ public abstract class BungeeCommand extends Command {
 		this.usageString = usageString;
 		this.allowConsole = allowConsole;
 		this.minArg = minArg;
-		this.register();
+		register();
 	}
-	
+
 	public BungeeCommand(Plugin plugin, String command, String... aliases) {
 		super(command, null, aliases);
 		this.plugin = plugin;
 		this.command = command;
 		this.aliases = aliases;
 	}
-	
+
 	public String buildText(int min, String[] args) {
 		return String.join(" ", Arrays.copyOfRange(args, min, args.length));
 	}
-	
+
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		ProxyServer.getInstance().getScheduler().runAsync(this.plugin, () -> {
+		ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
 			this.sender = sender;
 			if (sender instanceof ProxiedPlayer) {
-				this.proxiedPlayer = (ProxiedPlayer) sender;
-				if (!this.bypassAuth && HandlerLogin.isLogged(this.proxiedPlayer)) {
-					this.sendErreur("Tu dois être connecté. Fait &4/login <mdp>&c.");
+				proxiedPlayer = (ProxiedPlayer) sender;
+				if (!bypassAuth && !HandlerLogin.isLogged(proxiedPlayer)) {
+					sendErreur("Tu dois être connecté. Fait &4/login <mdp>&c.");
 					return;
 				}
-				
-				if (this.permission != null) {
-					this.olympaPlayer = this.getOlympaPlayer();
-					if (this.olympaPlayer == null) {
-						this.sendImpossibleWithOlympaPlayer();
+
+				if (permission != null) {
+					olympaPlayer = getOlympaPlayer();
+					if (olympaPlayer == null) {
+						sendImpossibleWithOlympaPlayer();
 						return;
 					}
-					if (!this.olympaPlayer.hasPermission(this.permission)) {
-						this.sendDoNotHavePermission();
+					if (!olympaPlayer.hasPermission(permission)) {
+						sendDoNotHavePermission();
 						return;
 					}
 				}
-			} else if (!this.allowConsole) {
-				this.sendImpossibleWithConsole();
+			} else if (!allowConsole) {
+				sendImpossibleWithConsole();
 				return;
 			}
-			
-			if (args.length < this.minArg) {
-				this.sendUsage();
+
+			if (args.length < minArg) {
+				sendUsage();
 				return;
 			}
-			this.onCommand(sender, args);
-			
+			onCommand(sender, args);
+
 		});
-		
+
 	}
-	
+
 	public String getCommand() {
-		return this.command;
+		return command;
 	}
-	
+
 	public OlympaPlayer getEmeraldPlayer() {
-		return this.olympaPlayer;
+		return olympaPlayer;
 	}
-	
+
 	protected OlympaPlayer getOlympaPlayer() {
-		if (this.proxiedPlayer != null) {
+		if (proxiedPlayer != null) {
 			try {
-				return new AccountProvider(this.proxiedPlayer.getUniqueId()).get();
+				return new AccountProvider(proxiedPlayer.getUniqueId()).get();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
 		return null;
 	}
-	
+
 	public OlympaPermission getPerm() {
-		return this.permission;
+		return permission;
 	}
-	
+
 	public ProxiedPlayer getProxiedPlayer() {
-		return this.proxiedPlayer;
+		return proxiedPlayer;
 	}
-	
+
 	public abstract void onCommand(CommandSender sender, String[] args);
-	
+
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public void register() {
-		this.plugin.getProxy().getPluginManager().registerCommand(this.plugin, this);
+		plugin.getProxy().getPluginManager().registerCommand(plugin, this);
 	}
-	
+
 	public void sendDoNotHavePermission() {
-		this.sendErreur("Tu as pas la permission &l(◑_◑)");
+		sendErreur("Tu as pas la permission &l(◑_◑)");
 	}
-	
+
 	public void sendErreur(String message) {
 		this.sendMessage(Prefix.DEFAULT_BAD, message);
 	}
-	
+
 	public void sendImpossibleWithConsole() {
-		this.sendErreur("Impossible avec la console.");
+		sendErreur("Impossible avec la console.");
 	}
-	
+
 	public void sendImpossibleWithOlympaPlayer() {
-		this.sendErreur("Une erreur est survenu avec tes donnés.");
+		sendErreur("Une erreur est survenu avec tes donnés.");
 	}
-	
+
 	public void sendMessage(CommandSender sender, Prefix prefix, String text) {
 		this.sendMessage(sender, prefix + SpigotUtils.color(text));
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public void sendMessage(CommandSender sender, String text) {
 		sender.sendMessage(SpigotUtils.color(text));
 	}
-	
+
 	public void sendMessage(Prefix prefix, String text) {
-		this.sendMessage(this.sender, prefix, text);
+		this.sendMessage(sender, prefix, text);
 	}
-	
+
 	public void sendMessage(String text) {
-		this.sendMessage(this.sender, SpigotUtils.color(text));
+		this.sendMessage(sender, SpigotUtils.color(text));
 	}
-	
+
 	public void sendMessage(TextComponent text) {
-		this.proxiedPlayer.sendMessage(text);
+		proxiedPlayer.sendMessage(text);
 	}
-	
+
 	public void sendUnknownPlayer(String name) {
-		this.sendErreur("Le joueur &4" + name + "&c est introuvable.");
+		sendErreur("Le joueur &4" + name + "&c est introuvable.");
 		// TODO check historique player
 	}
-	
+
 	public void sendUsage() {
-		this.sendMessage(Prefix.USAGE, "/" + this.command + " " + this.usageString);
+		this.sendMessage(Prefix.USAGE, "/" + command + " " + usageString);
 	}
 }

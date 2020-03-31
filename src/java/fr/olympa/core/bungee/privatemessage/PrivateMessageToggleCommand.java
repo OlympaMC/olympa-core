@@ -26,10 +26,10 @@ public class PrivateMessageToggleCommand extends BungeeCommand {
 		ProxiedPlayer player = (ProxiedPlayer) sender;
 
 		if (players.contains(player.getUniqueId())) {
-			player.sendMessage(BungeeUtils.color("&eOlympa &7» &cVous messages privés sont désormais &2&lactivés"));
+			player.sendMessage(BungeeUtils.color("&eOlympa &7» &aTes messages privés sont désormais &2&lactivés"));
 			players.remove(player.getUniqueId());
 		} else {
-			player.sendMessage(BungeeUtils.color("&eOlympa &7» &cVous messages privés sont désormais &4&ldésactivés"));
+			player.sendMessage(BungeeUtils.color("&eOlympa &7» &cTes messages privés sont désormais &4&ldésactivés"));
 			players.add(player.getUniqueId());
 		}
 	}

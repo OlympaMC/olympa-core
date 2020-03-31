@@ -17,7 +17,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import fr.olympa.api.objects.OlympaPlayer;
 import net.md_5.bungee.api.connection.Connection;
 
 @SuppressWarnings("deprecation")
@@ -54,14 +53,14 @@ public class OlympaVpn {
 	long id;
 	String ip;
 	boolean isVpn;
-	List<Long> users = new ArrayList<>();
+	List<String> users = new ArrayList<>();
 
 	public OlympaVpn(long id, String ip, boolean isVpn, String usersString) {
 		this.id = id;
 		this.ip = ip;
 		this.isVpn = isVpn;
 		if (usersString != null && !usersString.isEmpty()) {
-			this.users = Arrays.stream(usersString.split(",")).map(s -> Long.parseLong(s)).collect(Collectors.toList());
+			users = Arrays.stream(usersString.split(",")).collect(Collectors.toList());
 		}
 	}
 
@@ -70,31 +69,27 @@ public class OlympaVpn {
 		this.isVpn = isVpn;
 	}
 
-	public void addUser(OlympaPlayer olympaPlayer) {
-		this.users.add(olympaPlayer.getId());
+	public void addUser(String username) {
+		users.add(username);
 	}
 
 	public long getId() {
-		return this.id;
+		return id;
 	}
 
 	public String getIp() {
-		return this.ip;
+		return ip;
 	}
 
-	public List<Long> getUsers() {
-		return this.users;
+	public List<String> getUsers() {
+		return users;
 	}
 
-	public boolean hasUser(long id) {
-		return this.users.contains(id);
-	}
-
-	public boolean hasUser(OlympaPlayer olympaPlayer) {
-		return this.hasUser(olympaPlayer.getId());
+	public boolean hasUser(String username) {
+		return users.contains(username);
 	}
 
 	public boolean isVpn() {
-		return this.isVpn;
+		return isVpn;
 	}
 }

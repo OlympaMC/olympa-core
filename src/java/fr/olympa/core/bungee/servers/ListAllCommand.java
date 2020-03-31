@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.utils.Matcher;
-import fr.olympa.api.utils.TPS;
+import fr.olympa.api.utils.TPSUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.servers.MonitorServers.Ping;
@@ -22,17 +22,17 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class ListAllCommand extends BungeeCommand {
-	
+
 	public ListAllCommand(Plugin plugin) {
 		super(plugin, "listall");
 	}
-	
+
 	// TODO add restriction for seeing serveurs
 	// Clear un peu ce code degeux
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		Map<ServerInfo, Ping> servers = MonitorServers.getServers();
-		
+
 		TextComponent text = new TextComponent("§6Liste des joueurs et serveurs:\n");
 		int size = servers.entrySet().size();
 		int i = 1;
@@ -47,9 +47,9 @@ public class ListAllCommand extends BungeeCommand {
 			if (serverPing != null) {
 				String[] motd = serverPing.getDescriptionComponent().toLegacyText().split(" ");
 				MaintenanceStatus status2 = MaintenanceStatus.get(motd[0]);
-				System.out.println("Status " + info.getName() + ": " + status2 + " MOTD: " + motd[0] + " PING: " + ping + " ns");
+				System.out.println("Status " + info.getName() + ": " + status2 + " MOTD: " + motd[0] + " PING: " + ping.getPing() + " ms");
 				if (status2 != null) {
-					if (this.olympaPlayer != null && status2.getPermission().hasPermission(this.olympaPlayer)) {
+					if (olympaPlayer != null && status2.getPermission().hasPermission(olympaPlayer)) {
 						continue;
 					}
 					status = status2;
@@ -59,7 +59,7 @@ public class ListAllCommand extends BungeeCommand {
 				if (motd.length >= 2) {
 					String tpsString = motd[1];
 					if (Matcher.isDouble(tpsString)) {
-						tps = TPS.getColor(Double.parseDouble(motd[1]));
+						tps = TPSUtils.getColor(Double.parseDouble(motd[1]));
 					}
 				}
 				players = serverPing.getPlayers().getOnline() + " connecté" + Utils.withOrWithoutS(serverPing.getPlayers().getOnline()) + "";
@@ -79,5 +79,5 @@ public class ListAllCommand extends BungeeCommand {
 		}
 		sender.sendMessage(text);
 	}
-	
+
 }

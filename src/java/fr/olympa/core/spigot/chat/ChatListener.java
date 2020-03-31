@@ -52,7 +52,7 @@ public class ChatListener implements Listener {
 			for (char s : swear.toCharArray()) {
 				swears += s + "+(\\W|\\d|_)*";
 			}
-			this.regex_swear.add(Pattern.compile("(?iu)" + b + "(" + swears + ")" + b));
+			regex_swear.add(Pattern.compile("(?iu)" + b + "(" + swears + ")" + b));
 		}
 	}
 
@@ -105,7 +105,7 @@ public class ChatListener implements Listener {
 		olympaTchat.setLastMsgTime(currentTime);
 
 		// Si le message contient des liens, cancel message
-		Matcher matcher = this.matchLink.matcher(msgNFD);
+		Matcher matcher = matchLink.matcher(msgNFD);
 		if (matcher.find()) {
 			String link = matcher.group();
 			Set<String> linkWhitelist = new HashSet<>(OlympaCore.getInstance().getConfig().getStringList("chat.linkwhitelist"));
@@ -118,7 +118,7 @@ public class ChatListener implements Listener {
 		}
 
 		// Si le message contient des ips, cancel message
-		matcher = this.matchIpv4.matcher(msgNFD);
+		matcher = matchIpv4.matcher(msgNFD);
 		if (matcher.find()) {
 			event.setCancelled(true);
 			player.sendMessage(SpigotUtils.color(Prefix.BAD + "Les adresses IPs sont interdites."));
@@ -126,20 +126,19 @@ public class ChatListener implements Listener {
 			return;
 		}
 
-		/**matcher = this.matchIpv6.matcher(msgNFD);
-		if (matcher.find()) {
-			event.setCancelled(true);
-			player.sendMessage(SpigotUtils.color(Prefix.BAD + "Les adresses IPv6 sont interdites."));
-			Chat.sendToStaff("IP", player, message);
-			return;
-		}**/
+		/**
+		 * matcher = this.matchIpv6.matcher(msgNFD); if (matcher.find()) {
+		 * event.setCancelled(true); player.sendMessage(SpigotUtils.color(Prefix.BAD +
+		 * "Les adresses IPv6 sont interdites.")); Chat.sendToStaff("IP", player,
+		 * message); return; }
+		 **/
 
 		// Si le message contient des insultes, cancel message
-		for (Pattern regex : this.regex_swear) {
+		for (Pattern regex : regex_swear) {
 			matcher = regex.matcher(msgNFD);
 			if (matcher.find() && Bukkit.getPlayer(matcher.group()) == null) {
 				event.setCancelled(true);
-				player.sendMessage(SpigotUtils.color(Prefix.BAD + "Merci de rester correct"));
+				player.sendMessage(SpigotUtils.color(Prefix.BAD + "Merci de rester correct."));
 				Chat.sendToStaff("Insulte", player, message);
 				return;
 			}
@@ -168,17 +167,29 @@ public class ChatListener implements Listener {
 		// Si le message contient trop du flood, les enlever [EN TEST]
 		// TODO check players names
 		try {
-			matcher = this.matchFlood.matcher(message);
+			matcher = matchFlood.matcher(message);
 
-			if (matcher.find() && Bukkit.getPlayer(matcher.group(0)) == null) {
+			int i = 0;
+			if (matcher.find()) {
 				do {
-					String isNotLetter = "";
-					if (!matcher.group(1).matches("[a-zA-Z0-9]")) {
-						isNotLetter = "\\";
+					String charsFlooded = matcher.group();
+					char charFlooded = matcher.group(1).charAt(0);
+
+					Matcher matcher2 = Pattern.compile("\\S*(" + charFlooded + ")\\1{2,}\\S*").matcher(message);
+					String wordFlooded = matcher2.group();
+					if (Bukkit.getPlayer(wordFlooded) != null || charFlooded == '.' && charsFlooded.length() <= 3) {
+						// TODO Gestion flood legit
+						player.sendMessage(SpigotUtils.color(Prefix.BAD + "Une erreur est survenu, nous travaillons sur ce problème. Signale aux dev stp."));
+						break;
 					}
-					message = message.replaceFirst("(" + isNotLetter + matcher.group(0) + ")\\1{2,}", "");
-					matcher = this.matchFlood.matcher(message);
-				} while (matcher.find() && Bukkit.getPlayer(matcher.group(1)) == null);
+					String word = wordFlooded.replace(charsFlooded.substring(1), "");
+					message = message.replace(wordFlooded, word);
+					if (++i > 100) {
+						Bukkit.getConsoleSender().sendMessage(SpigotUtils.color("§4ERROR §cBoucle infini dans la gestion de chat."));
+						break;
+					}
+					matcher = matchFlood.matcher(message);
+				} while (matcher.find());
 
 				event.setMessage(message);
 				player.sendMessage(SpigotUtils.color(Prefix.BAD + "Merci d'éviter le flood."));

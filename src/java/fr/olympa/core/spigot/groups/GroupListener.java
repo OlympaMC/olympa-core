@@ -47,7 +47,7 @@ public class GroupListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromCache();
@@ -59,10 +59,9 @@ public class GroupListener implements Listener {
 		OlympaGroup group = olympaPlayer.getGroup();
 		if (group != null) {
 			if (OlympaCorePermissions.CHAT_COLOR.hasPermission(olympaPlayer)) {
-				event.setFormat(group.getPrefix() + "%s " + group.getChatSufix() + SpigotUtils.color(" %s"));
-			} else {
-				event.setFormat(group.getPrefix() + "%s " + group.getChatSufix() + " %s");
+				event.setMessage(SpigotUtils.color(event.getMessage()));
 			}
+			event.setFormat(group.getPrefix() + "%s " + group.getChatSufix() + " %s");
 		} else {
 			event.setFormat(SpigotUtils.color("&cGRADE ERREUR &7") + "%s : %s");
 		}

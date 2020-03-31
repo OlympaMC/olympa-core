@@ -29,18 +29,6 @@ public class AccountProvider implements OlympaAccount {
 	public static OlympaPlayerProvider playerProvider = OlympaPlayerObject::new;
 	private static String providerTableName = null;
 
-	public static void setPlayerProvider(Class<? extends OlympaPlayerObject> playerClass, OlympaPlayerProvider supplier, String pluginName, Map<String, String> columns) {
-		try {
-			providerTableName = pluginName.toLowerCase() + "_players";
-			MySQL.setDatasTable(providerTableName, columns);
-			AccountProvider.playerClass = playerClass;
-			playerProvider = supplier;
-		}catch (SQLException e) {
-			e.printStackTrace();
-			providerTableName = null;
-		}
-	}
-
 	public static <T extends OlympaPlayer> T get(Player player) {
 		return get(player.getUniqueId());
 	}
@@ -58,24 +46,6 @@ public class AccountProvider implements OlympaAccount {
 
 	public static <T extends OlympaPlayer> T get(UUID uuid) {
 		return (T) cache.get(uuid);
-	}
-
-	public synchronized static OlympaPlayerInformations getPlayerInformations(long id) {
-		OlympaPlayerInformations info = cachedInformations.get(id);
-		if (info == null) {
-			info = MySQL.getPlayerInformations(id);
-			cachedInformations.put(id, info);
-		}
-		return info;
-	}
-
-	public synchronized static OlympaPlayerInformations getPlayerInformations(OlympaPlayer player) {
-		OlympaPlayerInformations info = cachedInformations.get(player.getId());
-		if (info == null) {
-			info = new OlympaPlayerInformationsObject(player.getId(), player.getName(), player.getUniqueId());
-			cachedInformations.put(player.getId(), info);
-		}
-		return info;
 	}
 
 	private static OlympaPlayer getFromCache(String name) {
@@ -100,20 +70,50 @@ public class AccountProvider implements OlympaAccount {
 		return olympaPlayer;
 	}
 
+	public synchronized static OlympaPlayerInformations getPlayerInformations(long id) {
+		OlympaPlayerInformations info = cachedInformations.get(id);
+		if (info == null) {
+			info = MySQL.getPlayerInformations(id);
+			cachedInformations.put(id, info);
+		}
+		return info;
+	}
+
+	public synchronized static OlympaPlayerInformations getPlayerInformations(OlympaPlayer player) {
+		OlympaPlayerInformations info = cachedInformations.get(player.getId());
+		if (info == null) {
+			info = new OlympaPlayerInformationsObject(player.getId(), player.getName(), player.getUniqueId());
+			cachedInformations.put(player.getId(), info);
+		}
+		return info;
+	}
+
+	public static void setPlayerProvider(Class<? extends OlympaPlayerObject> playerClass, OlympaPlayerProvider supplier, String pluginName, Map<String, String> columns) {
+		try {
+			providerTableName = pluginName.toLowerCase() + "_players";
+			MySQL.setDatasTable(providerTableName, columns);
+			AccountProvider.playerClass = playerClass;
+			playerProvider = supplier;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			providerTableName = null;
+		}
+	}
+
 	RedisAccess redisAccesss;
 
 	UUID uuid;
 
 	public AccountProvider(UUID uuid) {
 		this.uuid = uuid;
-		this.redisAccesss = RedisAccess.INSTANCE;
+		redisAccesss = RedisAccess.INSTANCE;
 	}
 
 	public void accountExpire() {
-		try (Jedis jedis = this.redisAccesss.connect()) {
-			jedis.expire(this.getKey(), 60);
+		try (Jedis jedis = redisAccesss.connect()) {
+			jedis.expire(getKey(), 30);
 		}
-		this.redisAccesss.closeResource();
+		redisAccesss.closeResource();
 	}
 
 	public void createNew(OlympaPlayer olympaPlayer) throws SQLException {
@@ -126,7 +126,7 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	public OlympaPlayer fromDb() throws SQLException {
-		return MySQL.getPlayer(this.uuid);
+		return MySQL.getPlayer(uuid);
 	}
 
 	@Override
@@ -135,26 +135,26 @@ public class AccountProvider implements OlympaAccount {
 		if (olympaPlayer == null) {
 			olympaPlayer = this.getFromRedis();
 			if (olympaPlayer == null) {
-				return this.fromDb();
+				return fromDb();
 			}
 		}
 		return olympaPlayer;
 	}
 
 	public OlympaPlayer getFromCache() {
-		return cache.get(this.uuid);
+		return cache.get(uuid);
 	}
 
 	public OlympaPlayer getFromRedis() {
 		String json = null;
 
-		try (Jedis jedis = this.redisAccesss.connect()) {
-			json = jedis.get(this.getKey());
+		try (Jedis jedis = redisAccesss.connect()) {
+			json = jedis.get(getKey());
 			if (json != null) {
-				jedis.persist(this.getKey());
+				jedis.persist(getKey());
 			}
 		}
-		this.redisAccesss.closeResource();
+		redisAccesss.closeResource();
 
 		if (json == null || json.isEmpty()) {
 			return null;
@@ -163,15 +163,22 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	private String getKey() {
-		return REDIS_KEY + this.uuid.toString();
+		return REDIS_KEY + uuid.toString();
 	}
 
 	public void removeFromCache() {
-		cache.remove(this.uuid);
+		cache.remove(uuid);
+	}
+
+	public void removeFromRedis() {
+		try (Jedis jedis = redisAccesss.connect()) {
+			jedis.del(getKey());
+		}
+		redisAccesss.closeResource();
 	}
 
 	public void saveToCache(OlympaPlayer olympaPlayer) {
-		cache.put(this.uuid, olympaPlayer);
+		cache.put(uuid, olympaPlayer);
 	}
 
 	@Override
@@ -182,19 +189,19 @@ public class AccountProvider implements OlympaAccount {
 	@Override
 	public void saveToRedis(OlympaPlayer olympaPlayer) {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
-			try (Jedis jedis = this.redisAccesss.connect()) {
-				jedis.set(this.getKey(), GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
+			try (Jedis jedis = redisAccesss.connect()) {
+				jedis.set(getKey(), GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 			}
-			this.redisAccesss.closeResource();
+			redisAccesss.closeResource();
 		});
 	}
 
 	public void sendModifications(OlympaPlayer olympaPlayer) {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
-			try (Jedis jedis = this.redisAccesss.connect()) {
+			try (Jedis jedis = redisAccesss.connect()) {
 				jedis.publish("OlympaPlayer", GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 			}
-			this.redisAccesss.closeResource();
+			redisAccesss.closeResource();
 		});
 	}
 
@@ -205,9 +212,9 @@ public class AccountProvider implements OlympaAccount {
 		this.sendModifications(olympaPlayer);
 		modificationReceive.put(olympaPlayer.getUniqueId(), done);
 		OlympaCore.getInstance().getTask().runTaskLater("waitModifications" + olympaPlayer.getUniqueId().toString(), () -> {
-			Consumer<? super Boolean> callable = modificationReceive.get(this.uuid);
+			Consumer<? super Boolean> callable = modificationReceive.get(uuid);
 			callable.accept(false);
-			modificationReceive.remove(this.uuid);
+			modificationReceive.remove(uuid);
 		}, 5 * 20);
 	}
 
@@ -216,10 +223,10 @@ public class AccountProvider implements OlympaAccount {
 	 */
 	public void sendModificationsReceive() {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
-			try (Jedis jedis = this.redisAccesss.connect()) {
-				jedis.publish("OlympaPlayerReceive", this.uuid.toString());
+			try (Jedis jedis = redisAccesss.connect()) {
+				jedis.publish("OlympaPlayerReceive", uuid.toString());
 			}
-			this.redisAccesss.closeResource();
+			redisAccesss.closeResource();
 		});
 	}
 

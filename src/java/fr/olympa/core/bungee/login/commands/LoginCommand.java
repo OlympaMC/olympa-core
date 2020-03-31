@@ -16,15 +16,15 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class LoginCommand extends BungeeCommand {
-	
+
 	public LoginCommand(Plugin plugin) {
 		super(plugin, "login", "log", "l");
-		this.usageString = "<mot de passe>";
-		this.description = "Permet de se connecter à son compte Olympa";
-		this.allowConsole = false;
-		this.bypassAuth = true;
-		HandlerLogin.command.add(this.command);
-		for (String aliase : this.aliases) {
+		usageString = "<mot de passe>";
+		description = "Permet de se connecter à son compte Olympa";
+		allowConsole = false;
+		bypassAuth = true;
+		HandlerLogin.command.add(command);
+		for (String aliase : aliases) {
 			HandlerLogin.command.add(aliase);
 		}
 	}
@@ -36,8 +36,8 @@ public class LoginCommand extends BungeeCommand {
 			md.update(salt.getBytes(StandardCharsets.UTF_8));
 			byte[] bytes = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
 			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < bytes.length; i++) {
-				sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+			for (byte b : bytes) {
+				sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
 			}
 			generatedPassword = sb.toString();
 		} catch (NoSuchAlgorithmException e) {
@@ -49,46 +49,46 @@ public class LoginCommand extends BungeeCommand {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		if (!this.proxiedPlayer.getServer().getInfo().getName().startsWith("auth")) {
+		if (HandlerLogin.isLogged(proxiedPlayer)) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Tu es déjà connecté.");
 			return;
 		}
-		this.olympaPlayer = this.getOlympaPlayer();
-		if (this.olympaPlayer == null) {
-			this.sendImpossibleWithOlympaPlayer();
+		olympaPlayer = getOlympaPlayer();
+		if (olympaPlayer == null) {
+			sendImpossibleWithOlympaPlayer();
 		}
-		String playerPasswordHash = this.olympaPlayer.getPassword();
+		String playerPasswordHash = olympaPlayer.getPassword();
 		if (playerPasswordHash == null || playerPasswordHash.isEmpty()) {
-			this.sendErreur("Tu n'a pas de mot de passe. Pour le créer, fait &4/register <mot de passe>&c.");
+			sendErreur("Tu n'a pas de mot de passe. Pour le créer, fait &4/register <mot de passe>&c.");
 			return;
 		}
 
 		if (args.length == 0 || args.length > 2) {
-			this.sendUsage();
+			sendUsage();
 			return;
 		}
 
 		String password = args[0];
-		String newPasswordHash = ((OlympaPlayerObject) this.olympaPlayer).hashPassword(password);
+		String newPasswordHash = ((OlympaPlayerObject) olympaPlayer).hashPassword(password);
 		Passwords.getSHA512(password, "DYhG9guiRVoUubWwvn2G0Fg3b0qyJfIxfs2aC9mi".getBytes());
 
 		System.out.println("playerPasswordHash: " + playerPasswordHash);
 		System.out.println("newPasswordHash: " + newPasswordHash);
-		System.out.println("newPasswordHash2: " + this.get_SHA_512_SecurePassword(password, "DYhG9guiRVoUubWwvn2G0Fg3b0qyJfIxfs2aC9mi"));
+		System.out.println("newPasswordHash2: " + get_SHA_512_SecurePassword(password, "DYhG9guiRVoUubWwvn2G0Fg3b0qyJfIxfs2aC9mi"));
 		if (!newPasswordHash.equals(playerPasswordHash)) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Mot de passe incorrect, rééssaye.");
-			Integer timeFails = HandlerLogin.timesFails.get(this.proxiedPlayer);
+			Integer timeFails = HandlerLogin.timesFails.get(proxiedPlayer);
 			if (timeFails == null) {
-				HandlerLogin.timesFails.put(this.proxiedPlayer, 1);
+				HandlerLogin.timesFails.put(proxiedPlayer, 1);
 			} else if (timeFails <= 3) {
-				HandlerLogin.timesFails.put(this.proxiedPlayer, ++timeFails);
+				HandlerLogin.timesFails.put(proxiedPlayer, ++timeFails);
 			} else {
-				this.proxiedPlayer.disconnect(BungeeUtils.connectScreen("Tu as échoué trop de fois ton mdp"));
+				proxiedPlayer.disconnect(BungeeUtils.connectScreen("Tu as échoué trop de fois ton mdp"));
 			}
-			
+
 			return;
 		}
-		OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(this.olympaPlayer, this.proxiedPlayer));
+		OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, proxiedPlayer));
 		if (olympaPlayerLoginEvent.cancelIfNeeded()) {
 			return;
 		}

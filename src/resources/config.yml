@@ -191,6 +191,7 @@ chat:
    - msk
    - miskine
    linkwhitelist:
+   - olympa.fr
    - olympa.net
    - youtube
    - discord

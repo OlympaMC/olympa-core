@@ -33,14 +33,14 @@ public class MotdListener implements Listener {
 
 	@EventHandler
 	public void onPing(ProxyPingEvent event) {
-		//String playerName = event.getConnection().getName();
+		// String playerName = event.getConnection().getName();
 		InetSocketAddress virtualHost = event.getConnection().getVirtualHost();
 		ServerPing ping = event.getResponse();
 		ServerPing.Protocol ver = ping.getVersion();
 		ServerPing.Players players = ping.getPlayers();
 
-		ver.setName(this.version + " §7" + players.getOnline() + "§8/§7" + players.getMax());
-		//ping.setVersion(ver);
+		ver.setName(version + " §7" + players.getOnline() + "§8/§7" + players.getMax());
+		// ping.setVersion(ver);
 		String statusString = BungeeConfigUtils.getConfig("maintenance").getString("settings.status");
 		MaintenanceStatus status = MaintenanceStatus.get(statusString);
 		if (status == null) {
@@ -48,17 +48,18 @@ public class MotdListener implements Listener {
 		}
 		if (virtualHost != null) {
 			String connectIp = virtualHost.getHostName();
-			System.out.println("ping to " + connectIp + " ping " + new Gson().toJson(ping.getVersion()));
+			// System.out.println("ping to " + connectIp + " ping " + new
+			// Gson().toJson(ping.getVersion()));
 			if (!connectIp.equals("localhost")) {
 				String connectDomain = Utils.getAfterFirst(connectIp, ".");
 				// Vérifie si l'adresse est correct
 				if (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net")) {
-					ping.setDescriptionComponent(new TextComponent(this.motd_base + "§4§l⚠ §cUtilise la bonne IP: §4§nplay.olympa.fr"));
+					ping.setDescriptionComponent(new TextComponent(motd_base + "§4§l⚠ §cUtilise la bonne IP: §4§nplay.olympa.fr"));
 					return;
 				}
 				String connectSubDomain = connectIp.split("\\.")[0];
 				if (connectSubDomain.equalsIgnoreCase("buildeur")) {
-					ping.setDescriptionComponent(new TextComponent(this.motd_base + "§aServeur §2Buildeur"));
+					ping.setDescriptionComponent(new TextComponent(motd_base + "§aServeur §2Buildeur"));
 					return;
 				}
 			}
@@ -67,21 +68,22 @@ public class MotdListener implements Listener {
 		}
 		if (status == MaintenanceStatus.OPEN) {
 			players.setSample(new ServerPing.PlayerInfo[] {
-					new ServerPing.PlayerInfo(this.prefix, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					//new ServerPing.PlayerInfo(this.welcome.replace("%player", playerName) + " " + this.separator2 + " " + this.version, UUID.randomUUID()),
+					// new ServerPing.PlayerInfo(this.welcome.replace("%player", playerName) + " " +
+					// this.separator2 + " " + this.version, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.games, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(games, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.teamspeak, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.twitter, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.discord, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.site, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.suffix, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()),
 			});
 			if (new Random().nextInt(2) == 0) {
-				ping.setDescriptionComponent(new TextComponent(this.motd_base + this.games));
+				ping.setDescriptionComponent(new TextComponent(motd_base + games));
 			} else {
 				StringBuilder sb = new StringBuilder();
 				int before = -1;
@@ -92,76 +94,76 @@ public class MotdListener implements Listener {
 					} while (before == random);
 					switch (random) {
 					case 0:
-						sb.append(this.teamspeak);
+						sb.append(teamspeak);
 						break;
 					case 1:
-						sb.append(this.site);
+						sb.append(site);
 						break;
 					case 2:
-						sb.append(this.twitter);
+						sb.append(twitter);
 						break;
 					case 3:
-						sb.append(this.discord);
+						sb.append(discord);
 						break;
 					}
 					if (i == 0) {
-						sb.append(this.separator);
+						sb.append(separator);
 					}
 					before = random;
 				}
-				ping.setDescriptionComponent(new TextComponent(this.motd_base + sb.toString()));
+				ping.setDescriptionComponent(new TextComponent(motd_base + sb.toString()));
 			}
 		} else if (status == MaintenanceStatus.MAINTENANCE) {
 			String maintenanceMessage = SpigotUtils.color(BungeeConfigUtils.getConfig("maintenance").getString("settings.message"));
 			players.setSample(new ServerPing.PlayerInfo[] {
-					new ServerPing.PlayerInfo(this.prefix, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.reason, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(reason, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(maintenanceMessage, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.teamspeak, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.twitter, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.discord, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.site, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.suffix, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()),
 			});
 			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
-			ping.setDescriptionComponent(new TextComponent(this.motd_base + "§4§l⚠ §cSERVEUR EN MAINTENANCE §4§l⚠"));
+			ping.setDescriptionComponent(new TextComponent(motd_base + "§4§l⚠ §cSERVEUR EN MAINTENANCE §4§l⚠"));
 		} else if (status == MaintenanceStatus.DEV) {
 			players.setSample(new ServerPing.PlayerInfo[] {
-					new ServerPing.PlayerInfo(this.prefix, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§2Serveur en développement depuis", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§2le 18 octobre 2019", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.teamspeak, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.twitter, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.discord, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.site, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.suffix, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()),
 			});
 			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
-			ping.setDescriptionComponent(new TextComponent(this.motd_base + "§cServeur en développement"));
+			ping.setDescriptionComponent(new TextComponent(motd_base + "§cServeur en développement"));
 		} else if (status == MaintenanceStatus.SOON) {
 			players.setSample(new ServerPing.PlayerInfo[] {
-					new ServerPing.PlayerInfo(this.prefix, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§cOuverture très prochainement, suivez-nous", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§csur les réseaux pour plus d'infos.", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.teamspeak, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.twitter, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.discord, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.site, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.suffix, UUID.randomUUID()), });
+					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()), });
 			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
-			ping.setDescriptionComponent(new TextComponent(this.motd_base + "§bOn ouvre bientôt t'inquiète."));
+			ping.setDescriptionComponent(new TextComponent(motd_base + "§bOn ouvre bientôt t'inquiète."));
 		} else if (status == MaintenanceStatus.BETA) {
 			players.setSample(new ServerPing.PlayerInfo[] {
-					new ServerPing.PlayerInfo(this.prefix, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§6Serveur Ouvert en Beta", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
@@ -169,13 +171,13 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo("§eêtre pententiellement selectionner", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§eà rejoindre la beta fermer.", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.teamspeak, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.twitter, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.discord, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.site, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(this.suffix, UUID.randomUUID()), });
-			ping.setDescriptionComponent(new TextComponent(this.motd_base + "§c[§6Beta&c] &e-> &binscrit-toi sur www.olympa.fr"));
+					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()), });
+			ping.setDescriptionComponent(new TextComponent(motd_base + "§c[§6Beta&c] &e-> &binscrit-toi sur www.olympa.fr"));
 		}
 	}
 }

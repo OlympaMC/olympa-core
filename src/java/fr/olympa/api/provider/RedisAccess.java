@@ -1,5 +1,6 @@
 package fr.olympa.api.provider;
 
+import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -26,32 +27,37 @@ public class RedisAccess {
 		this.redisCredentials = redisCredentials;
 	}
 
+	public void addListenerSpigot(OlympaCore core, Jedis jedis) {
+		// core.getTask().runTask(() -> jedis.subscribe(new
+		// ReportRedisReceiveListener(), "ReportRedisReceive"));
+	}
+
 	public void closeResource() {
-		if (this.pool != null) {
-			this.pool.close();
+		if (pool != null) {
+			pool.close();
 		}
 	}
 
 	public Jedis connect() {
-		Jedis jedis = this.getJedisPool().getResource();
-		jedis.auth(this.redisCredentials.getPassword());
-		jedis.clientSetname(this.redisCredentials.getClientName());
+		Jedis jedis = getJedisPool().getResource();
+		jedis.auth(redisCredentials.getPassword());
+		jedis.clientSetname(redisCredentials.getClientName());
 		jedis.select(1);
 
 		return jedis;
 	}
 
 	public JedisPool getJedisPool() {
-		if (this.pool == null || this.pool.isClosed()) {
-			this.initJedis();
+		if (pool == null || pool.isClosed()) {
+			initJedis();
 		}
-		return this.pool;
+		return pool;
 	}
 
 	public void initJedis() {
 		ClassLoader previous = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(Jedis.class.getClassLoader());
-		this.pool = new JedisPool(this.redisCredentials.getIp(), this.redisCredentials.getPort());
+		pool = new JedisPool(redisCredentials.getIp(), redisCredentials.getPort());
 		Thread.currentThread().setContextClassLoader(previous);
 	}
 }

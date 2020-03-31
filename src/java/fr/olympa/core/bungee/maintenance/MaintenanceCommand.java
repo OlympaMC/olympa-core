@@ -34,12 +34,13 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 
 	public MaintenanceCommand(Plugin plugin) {
 		super(plugin, "maintenance", OlympaCorePermissions.MAINTENANCE_COMMAND, "maint");
-		permission = this.getPerm();
-		command = this.getCommand();
-		this.minArg = 1;
+		permission = getPerm();
+		command = getCommand();
+		minArg = 1;
 		arg2.addAll(Arrays.asList("status", "add", "remove", "list"));
 		arg2.addAll(MaintenanceStatus.getNames());
-		this.usageString = "<" + String.join("|", MaintenanceCommand.arg2).toLowerCase() + "> [joueur]";
+		// this.usageString = "<" + String.join("|",
+		// MaintenanceCommand.arg2).toLowerCase() + "> [joueur]";
 	}
 
 	@Override
@@ -48,7 +49,7 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 			if (sender instanceof ProxiedPlayer) {
 				ProxiedPlayer player = (ProxiedPlayer) sender;
 				if (!MaintenanceCommand.permission.hasPermission(player.getUniqueId())) {
-					this.sendDoNotHavePermission();
+					sendDoNotHavePermission();
 					return;
 				}
 			}
@@ -57,7 +58,7 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 				switch (maintenanceStatus) {
 
 				case OPEN:
-					this.setMaintenance(maintenanceStatus, null, sender);
+					setMaintenance(maintenanceStatus, null, sender);
 					break;
 
 				case MAINTENANCE:
@@ -71,22 +72,22 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 								i1 = 0;
 							}
 						}
-						this.setMaintenance(maintenanceStatus, "&c" + String.join(" ", reason), sender);
+						setMaintenance(maintenanceStatus, "&c" + String.join(" ", reason), sender);
 					} else {
-						this.setMaintenance(maintenanceStatus, "", sender);
+						setMaintenance(maintenanceStatus, "", sender);
 					}
 					break;
 
 				case DEV:
-					this.setMaintenance(maintenanceStatus, null, sender);
+					setMaintenance(maintenanceStatus, null, sender);
 					break;
 
 				case SOON:
-					this.setMaintenance(maintenanceStatus, null, sender);
+					setMaintenance(maintenanceStatus, null, sender);
 					break;
 
 				case BETA:
-					this.setMaintenance(maintenanceStatus, null, sender);
+					setMaintenance(maintenanceStatus, null, sender);
 					break;
 				default:
 					break;
@@ -96,7 +97,7 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 				switch (args[0].toLowerCase()) {
 				case "add":
 					if (args.length < 2) {
-						this.sendUsage();
+						sendUsage();
 						return;
 					}
 
@@ -114,7 +115,7 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 
 				case "remove":
 					if (args.length < 2) {
-						this.sendUsage();
+						sendUsage();
 						return;
 					}
 					whitelist = config.getStringList("whitelist");
@@ -148,7 +149,7 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 					break;
 
 				default:
-					this.sendUsage();
+					sendUsage();
 					break;
 				}
 			}

@@ -1,6 +1,7 @@
 package fr.olympa.core.spigot.report.gui;
 
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
@@ -8,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import fr.olympa.api.gui.OlympaGUI;
 import fr.olympa.api.item.OlympaItemBuild;
+import fr.olympa.core.spigot.report.ReportHandler;
 import fr.olympa.core.spigot.report.items.ReportReason;
 
 public class ReportGuiConfirm extends OlympaGUI {
@@ -17,22 +19,25 @@ public class ReportGuiConfirm extends OlympaGUI {
 
 	static OlympaItemBuild ITEM_CONFIRM_NO = new OlympaItemBuild(Material.GREEN_STAINED_GLASS, "&cAnnuler");
 
-	public static void open(Player player, Player target, ReportReason reason) {
-		ReportGuiConfirm gui = new ReportGuiConfirm("&6Signaler &e" + target.getName() + "&6 pour &e" + reason.getReason(), 3, target, reason);
+	public static void open(Player player, OfflinePlayer target, ReportReason reason) {
+		String signalName = "&6Signaler &e" + target.getName();
+		String signalReason = "&6pour &e" + reason.getReason();
+		ReportGuiConfirm gui = new ReportGuiConfirm(signalName + " " + signalReason, 3, target, reason);
 		Inventory guiIventory = gui.getInventory();
 		int slot = guiIventory.getSize() / 2 - 1;
 		gui.yes = ITEM_CONFIRM_YES.setLore(1, "&cRaison: &4" + reason.getReason()).build();
 		guiIventory.setItem(slot, gui.yes);
 		guiIventory.setItem(slot + 2, ITEM_CONFIRM_NO.build());
+		guiIventory.setItem(slot - 7, new OlympaItemBuild(signalName).lore("", signalReason).skullowner(target).build());
 
 		gui.create(player);
 	}
 
-	Player target;
+	OfflinePlayer target;
 	ReportReason reason;
 	ItemStack yes;
 
-	public ReportGuiConfirm(String name, int rows, Player target, ReportReason reason) {
+	public ReportGuiConfirm(String name, int rows, OfflinePlayer target, ReportReason reason) {
 		super(name, rows);
 		this.target = target;
 		this.reason = reason;
@@ -43,13 +48,11 @@ public class ReportGuiConfirm extends OlympaGUI {
 		if (current == null) {
 			return false;
 		}
-
 		if (this.yes.equals(current)) {
-			ReportGui.report(player, this.target, this.reason);
-		} else if (ITEM_CONFIRM_NO.build().equals(current)) {
+			ReportHandler.report(player, this.target, this.reason);
+		} else if (current != null) {
 			player.closeInventory();
 		}
-
 		return false;
 	}
 }

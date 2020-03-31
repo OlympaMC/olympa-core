@@ -4,20 +4,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import fr.olympa.api.gui.OlympaGUI;
 import fr.olympa.api.item.OlympaItemBuild;
-import fr.olympa.core.spigot.OlympaCore;
-import fr.olympa.core.spigot.report.OlympaReport;
 import fr.olympa.core.spigot.report.items.ReportReason;
 
 public class ReportGui extends OlympaGUI {
 
-	public static void open(Player player, Player target) {
-		ReportGui gui = new ReportGui("&6Report &e" + target.getName(), 3 * 9, target);
+	public static void open(Player player, OfflinePlayer target2) {
+		ReportGui gui = new ReportGui("&6Report &e" + target2.getName(), 3 * 9, target2);
 
 		List<OlympaItemBuild> items = Arrays.stream(ReportReason.values()).map(ReportReason::getItem).collect(Collectors.toList());
 		int slot = gui.inv.getSize() / 2 - items.size() / 2;
@@ -27,18 +26,9 @@ public class ReportGui extends OlympaGUI {
 		gui.create(player);
 	}
 
-	public static void report(Player player, Player target, ReportReason reason) {
-		OlympaReport report = new OlympaReport(target.getUniqueId(), player.getUniqueId(), reason, OlympaCore.getInstance().getServer().getName());
+	OfflinePlayer target;
 
-		if (target.isOnline()) {
-
-		}
-		// TODO
-	}
-
-	Player target;
-
-	public ReportGui(String name, int rows, Player target) {
+	public ReportGui(String name, int rows, OfflinePlayer target) {
 		super(name, rows);
 		this.target = target;
 	}

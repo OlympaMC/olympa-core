@@ -7,6 +7,7 @@ import fr.olympa.core.spigot.report.items.ReportReason;
 
 public class OlympaReport {
 
+	long id = 0;
 	UUID target;
 	UUID author;
 	ReportReason reason;
@@ -39,5 +40,13 @@ public class OlympaReport {
 
 	public long getTime() {
 		return this.time;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public long getId() {
+		return id;
 	}
 }

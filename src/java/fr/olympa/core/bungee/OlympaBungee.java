@@ -20,13 +20,13 @@ import fr.olympa.core.bungee.ban.commands.UnbanCommand;
 import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
-import fr.olympa.core.bungee.datamanagment.BasicSecurityListener;
 import fr.olympa.core.bungee.datamanagment.GetUUIDCommand;
 import fr.olympa.core.bungee.login.commands.EmailCommand;
 import fr.olympa.core.bungee.login.commands.LoginCommand;
 import fr.olympa.core.bungee.login.commands.RegisterCommand;
 import fr.olympa.core.bungee.login.listener.FailsPasswordEvent;
 import fr.olympa.core.bungee.login.listener.LoginChatListener;
+import fr.olympa.core.bungee.login.listener.OlympaLoginListener;
 import fr.olympa.core.bungee.maintenance.ConnectionListener;
 import fr.olympa.core.bungee.maintenance.MaintenanceCommand;
 import fr.olympa.core.bungee.maintenance.MaintenanceListener;
@@ -35,6 +35,7 @@ import fr.olympa.core.bungee.privatemessage.PrivateMessageCommand;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageListener;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageToggleCommand;
 import fr.olympa.core.bungee.privatemessage.ReplyCommand;
+import fr.olympa.core.bungee.security.BasicSecurityListener;
 import fr.olympa.core.bungee.servers.ListAllCommand;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServerSwitchCommand;
@@ -64,15 +65,15 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 
 	@Override
 	public Connection getDatabase() throws SQLException {
-		return this.database.getConnection();
+		return database.getConnection();
 	}
 
 	public Jedis getJedis() {
-		return this.jedis;
+		return jedis;
 	}
 
 	private String getPrefixConsole() {
-		return "&f[&6" + this.getDescription().getName() + "&f] &e";
+		return "&f[&6" + getDescription().getName() + "&f] &e";
 	}
 
 	public TaskScheduler getTask() {
@@ -80,21 +81,21 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	}
 
 	public String getUptime() {
-		return Utils.timestampToDuration(this.uptime);
+		return Utils.timestampToDuration(uptime);
 	}
 
 	public long getUptimeLong() {
-		return this.uptime;
+		return uptime;
 	}
 
 	@Override
 	public void launchAsync(Runnable run) {
-		this.getTask().runAsync(this, run);
+		getTask().runAsync(this, run);
 	}
 
 	@Override
 	public void onDisable() {
-		this.sendMessage("§4" + this.getDescription().getName() + "§c (" + this.getDescription().getVersion() + ") is disabled.");
+		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") is disabled.");
 	}
 
 	@Override
@@ -103,22 +104,24 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		LinkSpigotBungee.Provider.link = this;
 
 		BungeeConfigUtils.loadConfigs();
-		this.setupDatabase();
-		new MySQL(this.database);
-		new VpnSql(this.database);
+		setupDatabase();
+		new MySQL(database);
+		new VpnSql(database);
 		RedisAccess redisAcces = RedisAccess.init("bungee");
-		this.jedis = redisAcces.connect();
-		if (this.jedis.isConnected()) {
-			this.sendMessage("&aConnexion à &2Redis&a établie.");
+		jedis = redisAcces.connect();
+		if (jedis.isConnected()) {
+			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
-			this.sendMessage("&cConnexion à &4Redis&c impossible.");
+			sendMessage("&cConnexion à &4Redis&c impossible.");
 		}
 
-		//BungeeTaskManager tasks = new BungeeTaskManager(this);
-		//tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new RedisTestListener(), "test"));
-		//tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new OlympaPlayerBungeeReceiveListener(), "OlympaPlayerReceive"));
+		// BungeeTaskManager tasks = new BungeeTaskManager(this);
+		// tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new
+		// RedisTestListener(), "test"));
+		// tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new
+		// OlympaPlayerBungeeReceiveListener(), "OlympaPlayerReceive"));
 
-		PluginManager pluginManager = this.getProxy().getPluginManager();
+		PluginManager pluginManager = getProxy().getPluginManager();
 		pluginManager.registerListener(this, new MaintenanceListener());
 		pluginManager.registerListener(this, new MotdListener());
 		pluginManager.registerListener(this, new ConnectionListener());
@@ -126,11 +129,12 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		pluginManager.registerListener(this, new BasicSecurityListener());
 		pluginManager.registerListener(this, new SanctionListener());
 		pluginManager.registerListener(this, new ServersListener());
-		pluginManager.registerListener(this, new TestListener());
+		// pluginManager.registerListener(this, new TestListener());
 		pluginManager.registerListener(this, new PrivateMessageListener());
 		pluginManager.registerListener(this, new LoginChatListener());
 		pluginManager.registerListener(this, new FailsPasswordEvent());
 		pluginManager.registerListener(this, new VpnListener());
+		pluginManager.registerListener(this, new OlympaLoginListener());
 
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();
@@ -154,12 +158,12 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new ServerSwitchCommand().register();
 
 		new MonitorServers(this);
-		this.sendMessage("§2" + this.getDescription().getName() + "§a (" + this.getDescription().getVersion() + ") is activated.");
+		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") is activated.");
 	}
 
 	@SuppressWarnings("deprecation")
-	public void sendMessage(final String message) {
-		this.getProxy().getConsole().sendMessage(BungeeUtils.color(this.getPrefixConsole() + message));
+	public void sendMessage(String message) {
+		getProxy().getConsole().sendMessage(BungeeUtils.color(getPrefixConsole() + message));
 	}
 
 	private void setupDatabase() {
@@ -174,11 +178,11 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 			port = 3306;
 		}
 		DbCredentials dbcredentials = new DbCredentials(host, user, password, databaseName, port);
-		this.database = new DbConnection(dbcredentials);
-		if (this.database.connect()) {
-			this.sendMessage("&aConnexion à la base de donnée &2" + dbcredentials.getDatabase() + "&a établie.");
+		database = new DbConnection(dbcredentials);
+		if (database.connect()) {
+			sendMessage("&aConnexion à la base de donnée &2" + dbcredentials.getDatabase() + "&a établie.");
 		} else {
-			this.sendMessage("&cConnexion à la base de donnée &4" + dbcredentials.getDatabase() + "&c impossible.");
+			sendMessage("&cConnexion à la base de donnée &4" + dbcredentials.getDatabase() + "&c impossible.");
 		}
 	}
 }

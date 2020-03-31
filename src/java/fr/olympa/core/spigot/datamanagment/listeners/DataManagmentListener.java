@@ -34,7 +34,7 @@ public class DataManagmentListener implements Listener {
 					olympaPlayer = olympaAccountObject.get();
 					MySQL.loadPlayerPluginDatas(olympaPlayer);
 				} catch (SQLException e) {
-					player.kickPlayer("§cUne erreur est survenue. Merci de réessayer\n\n§e§lSi le problème persiste, signaler-le au staff.\n§eCode d'erreur: §l#SQLSpigotReload");
+					player.kickPlayer("§cUne erreur est survenue. Merci de réessayer\n\n§e§lSi le problème persiste, signale-le au staff.\n§eCode d'erreur: §l#SQLSpigotReload");
 					e.printStackTrace();
 					continue;
 				}
@@ -55,7 +55,7 @@ public class DataManagmentListener implements Listener {
 		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
 
 		if (olympaPlayer == null) {
-			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur est impossible, contactez-vite le staff. \n§eCode d'erreur: §l#Nucléaire"));
+			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur est impossible, contacte-vite le staff. \n§eCode d'erreur: §l#Nucléaire"));
 			return;
 		}
 
@@ -75,9 +75,9 @@ public class DataManagmentListener implements Listener {
 				if (loginevent.getJoinMessage() != null && !loginevent.getJoinMessage().isEmpty()) {
 					Bukkit.broadcastMessage(loginevent.getJoinMessage());
 				}
-
-				olympaAccount.saveToRedis(olympaPlayer);
-			}catch (SQLException e) {
+				// pas utile si ?
+				// olympaAccount.saveToRedis(olympaPlayer);
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		});
@@ -103,14 +103,28 @@ public class DataManagmentListener implements Listener {
 		olympaAccount.saveToCache(olympaPlayer);
 	}
 
-	/*@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerQuitHighest(PlayerQuitEvent event) {
-		Player player = event.getPlayer();
-		new AccountProvider(player.getUniqueId()).accountExpire();
-	}*/
+	/*
+	 * @EventHandler(priority = EventPriority.HIGHEST) public void
+	 * onPlayerQuitHighest(PlayerQuitEvent event) { Player player =
+	 * event.getPlayer(); new AccountProvider(player.getUniqueId()).accountExpire();
+	 * }
+	 */
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerQuitHigh(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+		OlympaPlayer olympaPlayer = AccountProvider.get(player);
+		if (olympaPlayer != null) {
+			try {
+				MySQL.savePlayerPluginDatas(olympaPlayer);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOW)
+	public void onPlayerQuitLow(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = AccountProvider.get(player);
 		if (olympaPlayer != null) {
@@ -118,11 +132,6 @@ public class DataManagmentListener implements Listener {
 					.replaceAll("%group", olympaPlayer.getGroup().getName())
 					.replaceAll("%prefix", olympaPlayer.getGroup().getPrefix())
 					.replaceAll("%name", player.getName())));
-			try {
-				MySQL.savePlayerPluginDatas(olympaPlayer);
-			}catch (SQLException e) {
-				e.printStackTrace();
-			}
 		} else {
 			event.setQuitMessage(null);
 		}

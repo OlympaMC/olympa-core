@@ -39,6 +39,8 @@ public class OlympaCorePermissions {
 
 	public static OlympaPermission CHAT_COLOR = new OlympaPermission(OlympaGroup.MODP);
 
+	public static OlympaPermission REPORT_SEEREPORT = new OlympaPermission(OlympaGroup.MOD);
+
 	public static OlympaPermission STAFF = new OlympaPermission(OlympaGroup.GRAPHISTE);
 	public static OlympaPermission PRIVATEMESSAGE_TOGGLE = new OlympaPermission(OlympaGroup.MINI_YOUTUBER);
 	public static OlympaPermission SETSTATUS_COMMAND = new OlympaPermission(OlympaGroup.MODP);

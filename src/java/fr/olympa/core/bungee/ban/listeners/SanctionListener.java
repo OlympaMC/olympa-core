@@ -32,8 +32,8 @@ public class SanctionListener implements Listener {
 	private List<String> commandDisableWhenMuted = new ArrayList<>();
 
 	public SanctionListener() {
-		this.commandDisableWhenMuted.addAll(PrivateMessage.privateMessageCommand);
-		this.commandDisableWhenMuted.addAll(PrivateMessage.replyCommand);
+		commandDisableWhenMuted.addAll(PrivateMessage.privateMessageCommand);
+		commandDisableWhenMuted.addAll(PrivateMessage.replyCommand);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -93,7 +93,6 @@ public class SanctionListener implements Listener {
 
 	@EventHandler
 	public void onBungeeNewPlayerEvent(BungeeNewPlayerEvent event) {
-		PendingConnection connection = event.getConnection();
 
 	}
 
@@ -107,7 +106,7 @@ public class SanctionListener implements Listener {
 			return;
 		}
 		String command = event.getMessage().substring(1);
-		if (event.getMessage().startsWith("/") && !this.commandDisableWhenMuted.contains(command)) {
+		if (event.getMessage().startsWith("/") && !commandDisableWhenMuted.contains(command)) {
 			return;
 		}
 		ProxiedPlayer player = (ProxiedPlayer) event.getSender();

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,7 +26,7 @@ public class ReportCommand extends OlympaCommand {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		Player player = this.player;
 		String targetString = args[0];
-		Player target = Bukkit.getPlayer(targetString);
+		OfflinePlayer target = Bukkit.getPlayer(targetString);
 
 		if (target == null) {
 			this.sendUnknownPlayer(targetString);

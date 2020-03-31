@@ -17,10 +17,14 @@ import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
 import fr.olympa.core.spigot.report.commands.ReportCommand;
+import fr.olympa.core.spigot.report.connections.ReportMySQL;
 import fr.olympa.core.spigot.scoreboards.ScoreboardListener;
 import fr.olympa.core.spigot.security.AntiWD;
+import fr.olympa.core.spigot.security.HelpCommand;
+import fr.olympa.core.spigot.security.PluginCommand;
 import fr.olympa.core.spigot.status.SetStatusCommand;
 import fr.olympa.core.spigot.status.StatusMotdListener;
+import fr.olympa.core.spigot.tps.TpsCommand;
 import redis.clients.jedis.Jedis;
 
 public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
@@ -33,7 +37,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
 	@Override
 	public void launchAsync(Runnable run) {
-		this.getTask().runTaskAsynchronously(run);
+		getTask().runTaskAsynchronously(run);
 	}
 
 	@Override
@@ -41,7 +45,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		// ScoreboardPrefix.deleteTeams();
 		RedisAccess.close();
 		super.onDisable();
-		this.sendMessage("§4" + this.getDescription().getName() + "§c (" + this.getDescription().getVersion() + ") est désativer.");
+		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactiver.");
 	}
 
 	@Override
@@ -49,27 +53,37 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		instance = this;
 		LinkSpigotBungee.Provider.link = this;
 
-		this.status = MaintenanceStatus.DEV;
+		status = MaintenanceStatus.DEV;
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		Utils.registerConfigurationSerializable();
 		super.onEnable();
 
-		new MySQL(this.database);
-		Jedis jedis = RedisAccess.init(this.getServer().getName()).connect();
+		new MySQL(database);
+		new ReportMySQL(database);
+		RedisAccess redis = RedisAccess.init(getServer().getName());
+		Jedis jedis = redis.connect();
+		redis.addListenerSpigot(this, redis.connect());
+
 		if (jedis.isConnected()) {
-			this.sendMessage("&aConnexion à &2Redis&a établie.");
+			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
-			this.sendMessage("&cConnexion à &4Redis&c impossible.");
+			sendMessage("&cConnexion à &4Redis&c impossible.");
 		}
-		//this.getTask().runTaskAsynchronously("redis1", () -> jedis.subscribe(new OlympaPlayerSpigotListener(), "OlympaPlayer"));
-		//this.getTask().runTaskAsynchronously("redis2", () -> jedis.subscribe(new OlympaPlayerReceiveListener(), "OlympaPlayerReceive"));
+		// this.getTask().runTaskAsynchronously("redis1", () -> jedis.subscribe(new
+		// OlympaPlayerSpigotListener(), "OlympaPlayer"));
+		// this.getTask().runTaskAsynchronously("redis2", () -> jedis.subscribe(new
+		// OlympaPlayerReceiveListener(), "OlympaPlayerReceive"));
 
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();
 		new ReportCommand(this).register();
 		new SetStatusCommand(this).register();
+		new PluginCommand(this).register();
+		new HelpCommand(this).register();
+		new TpsCommand(this).register();
+		// new PasswdCommand(this).register();
 
-		PluginManager pluginManager = this.getServer().getPluginManager();
+		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(new DataManagmentListener(), this);
 		pluginManager.registerEvents(new GroupListener(), this);
 		pluginManager.registerEvents(new ChatListener(), this);
@@ -77,10 +91,10 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		pluginManager.registerEvents(new TestListener(), this);
 		pluginManager.registerEvents(new Inventories(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
-		
+
 		new AntiWD(this);
 
-		this.sendMessage("§2" + this.getDescription().getName() + "§a (" + this.getDescription().getVersion() + ") est activé.");
+		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 	}
 
 }

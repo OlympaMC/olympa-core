@@ -3,16 +3,14 @@ package fr.olympa.core.bungee.servers;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.login.HandlerLogin;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;
 
 public class ServerSwitchCommand extends BungeeCommand {
 
 	public ServerSwitchCommand() {
-		super(OlympaBungee.getInstance(), "serverswitch", OlympaCorePermissions.SERVER_SWITCH_COMMAND, "switch");
-		this.allowConsole = false;
-		HandlerLogin.command.add(this.command); // TODO rmeove
+		super(OlympaBungee.getInstance(), "serverswitch", OlympaCorePermissions.SERVER_SWITCH_COMMAND, "switch", "server");
+		allowConsole = false;
 	}
 
 	@Override
