@@ -173,7 +173,7 @@ public class ChatListener implements Listener {
 			if (matcher.find()) {
 				do {
 					String charsFlooded = matcher.group();
-					char charFlooded = matcher.group(1).charAt(0);
+					char charFlooded = charsFlooded.charAt(0);
 
 					Matcher matcher2 = Pattern.compile("\\S*(" + charFlooded + ")\\1{2,}\\S*").matcher(message);
 					String wordFlooded = matcher2.group();

@@ -32,11 +32,11 @@ public class GroupCommand extends OlympaCommand {
 
 	public GroupCommand(Plugin plugin) {
 		super(plugin, "group", "Permet la gestion des groupes de Olympa.", OlympaCorePermissions.GROUP_COMMAND, "groupe", "rank");
-		this.addArgs(true, "joueur");
-		this.addArgs(false, "group");
-		this.addArgs(false, "until");
-		this.addArgs(false, "add", "remove");
-		this.isAsynchronous = true;
+		addArgs(true, "joueur");
+		addArgs(false, "group");
+		addArgs(false, "until");
+		addArgs(false, "add", "remove");
+		isAsynchronous = true;
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class GroupCommand extends OlympaCommand {
 		OlympaPlayer olympaTarget;
 		AccountProvider olympaAccount = null;
 		if (args.length == 0) {
-			target = this.player;
+			target = player;
 			olympaTarget = this.getOlympaPlayer();
 		} else if (args.length <= 3) {
 			target = Bukkit.getPlayer(args[0]);
@@ -79,7 +79,7 @@ public class GroupCommand extends OlympaCommand {
 					.replaceFirst("%player", targetNamePrefix)
 					.replaceAll("%s", groups.size() > 1 ? "s" : "")
 					.replaceFirst("%group", Prefix.INFO.getColor2() + groupString + Prefix.INFO.getColor()));
-		} else if (args.length <= 3) {
+		} else if (args.length >= 3) {
 			OlympaGroup newGroup = OlympaGroup.getByName(args[1]);
 			if (newGroup == null) {
 				Collection<String> pentialsGroup = UtilsCore.similarWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toSet()));
@@ -99,11 +99,11 @@ public class GroupCommand extends OlympaCommand {
 			}
 
 			long timestamp = 0;
-			if (args.length == 3) {
+			if (args.length >= 3) {
 				if (Matcher.isInt(args[2])) {
 					timestamp = Long.parseLong(args[2]);
 				} else {
-					this.sendMessage(Prefix.DEFAULT_BAD + "&4%arg3&c doit être un timestamp tel que &41587356400&c.".replaceFirst("%arg3", args[3]));
+					this.sendMessage(Prefix.DEFAULT_BAD + "&4%arg3&c doit être un timestamp tel que &41587356400&c.".replaceFirst("%arg3", args[2]));
 					return true;
 				}
 			}
@@ -113,8 +113,23 @@ public class GroupCommand extends OlympaCommand {
 				timestampString = "pendant &2" + Utils.timestampToDuration(timestamp) + "&a";
 			}
 
+			String msg = "&aTu es désormais dans le groupe &2%group&a%time.";
+			if (args.length >= 4) {
+				if (args[3].equalsIgnoreCase("add")) {
+					olympaTarget.addGroup(newGroup, timestamp);
+					msg = "&aTu es désormais dans le groupe &2%group&a%time.";
+				} else if (args[3].equalsIgnoreCase("remove")) {
+					msg = null;
+					olympaTarget.removeGroup(newGroup);
+				} else {
+					sendUsage(label);
+					return true;
+				}
+			}
+
+			olympaTarget.addGroup(newGroup, timestamp);
+			olympaTarget.setGroup(newGroup, timestamp);
 			if (target == null) {
-				olympaTarget.setGroup(newGroup, timestamp);
 				olympaAccount.saveToDb(olympaTarget);
 
 				Consumer<? super Boolean> done = b -> {
@@ -131,14 +146,20 @@ public class GroupCommand extends OlympaCommand {
 				OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, ChangeType.ADD, olympaTarget, newGroup));
 				olympaAccount.saveToRedis(olympaTarget);
 				olympaAccount.saveToDb(olympaTarget);
-				this.sendMessage(target, "&aVous êtes désormais dans le groupe &2%group&a%time.".replaceFirst("%group", newGroup.getName()).replaceFirst("%time", timestampString));
+				this.sendMessage(target, msg.replaceFirst("%group", newGroup.getName()).replaceFirst("%time", timestampString));
 			}
 
-			if (this.player == null || target == null || !SpigotUtils.isSamePlayer(this.player, target)) {
-				this.sendMessage("&aLe joueur &2%player&a est désormais dans le groupe &2%group&a%time."
-						.replaceFirst("%player", olympaTarget.getName())
-						.replaceFirst("%group", newGroup.getName())
-						.replaceFirst("%time", timestampString));
+			if (player == null || target == null || !SpigotUtils.isSamePlayer(player, target)) {
+				if (msg == null) {
+					this.sendMessage("&cLe joueur &4%player&a n'est plus dans le groupe &4%group&c."
+							.replaceFirst("%player", olympaTarget.getName())
+							.replaceFirst("%group", newGroup.getName()));
+				} else {
+					this.sendMessage("&aLe joueur &2%player&a est désormais dans le groupe &2%group&a%time."
+							.replaceFirst("%player", olympaTarget.getName())
+							.replaceFirst("%group", newGroup.getName())
+							.replaceFirst("%time", timestampString));
+				}
 			}
 		}
 		return true;

@@ -4,7 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import fr.olympa.api.sql.DbConnection;
 
@@ -43,9 +44,9 @@ public class VpnSql {
 				.prepareStatement("UPDATE " + tableName + " SET `is_vpn` = ?, `users` = ? WHERE `id` = ?;");
 		int i = 1;
 		pstate.setInt(i++, olympaVpn.isVpn() ? 1 : 0);
-		List<String> strings = olympaVpn.getUsers();
+		Map<String, Boolean> strings = olympaVpn.getUsers();
 		if (!strings.isEmpty()) {
-			pstate.setString(i++, String.join(",", strings));
+			pstate.setString(i++, strings.entrySet().stream().map(entry -> entry.getKey() + (entry.getValue() == true ? ":1" : "")).collect(Collectors.joining("")));
 		} else {
 			pstate.setString(i++, null);
 		}

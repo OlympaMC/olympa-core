@@ -8,9 +8,9 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.gson.JsonElement;
@@ -53,14 +53,20 @@ public class OlympaVpn {
 	long id;
 	String ip;
 	boolean isVpn;
-	List<String> users = new ArrayList<>();
+	Map<String, Boolean> users = new HashMap<>();
 
 	public OlympaVpn(long id, String ip, boolean isVpn, String usersString) {
 		this.id = id;
 		this.ip = ip;
 		this.isVpn = isVpn;
 		if (usersString != null && !usersString.isEmpty()) {
-			users = Arrays.stream(usersString.split(",")).collect(Collectors.toList());
+			users = Arrays.stream(usersString.split(",")).collect(Collectors.toMap(entry -> entry.split(":")[0], entry -> {
+				String[] split = entry.split(":");
+				if (split.length > 1) {
+					return entry.split(":")[1].equals("1");
+				}
+				return false;
+			}));
 		}
 	}
 
@@ -69,8 +75,8 @@ public class OlympaVpn {
 		this.isVpn = isVpn;
 	}
 
-	public void addUser(String username) {
-		users.add(username);
+	public void addUser(String username, boolean onlineMode) {
+		users.put(username, onlineMode);
 	}
 
 	public long getId() {
@@ -81,12 +87,12 @@ public class OlympaVpn {
 		return ip;
 	}
 
-	public List<String> getUsers() {
+	public Map<String, Boolean> getUsers() {
 		return users;
 	}
 
-	public boolean hasUser(String username) {
-		return users.contains(username);
+	public boolean hasUser(String username, boolean onlineMode) {
+		return users.entrySet().stream().filter(entry -> entry.getKey().equalsIgnoreCase(username) && entry.getValue() == onlineMode).findFirst().isPresent();
 	}
 
 	public boolean isVpn() {

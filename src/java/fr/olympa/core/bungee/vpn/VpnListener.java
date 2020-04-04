@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.connection.PendingConnection;
-import net.md_5.bungee.api.event.PreLoginEvent;
+import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
@@ -47,8 +47,8 @@ public class VpnListener implements Listener {
 //	}
 
 	@SuppressWarnings("deprecation")
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPreLogin(PreLoginEvent event) {
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPreLogin(LoginEvent event) {
 		PendingConnection connection = event.getConnection();
 		String username = connection.getName();
 		String ip = connection.getAddress().getAddress().getHostAddress();
@@ -60,8 +60,8 @@ public class VpnListener implements Listener {
 				VpnSql.setIp(username, ip, isVpn);
 			} else {
 				isVpn = olympaVpn.isVpn();
-				if (!olympaVpn.hasUser(username)) {
-					olympaVpn.addUser(username);
+				if (!olympaVpn.hasUser(username, connection.isOnlineMode())) {
+					olympaVpn.addUser(username, connection.isOnlineMode());
 					VpnSql.saveIp(olympaVpn);
 				}
 			}

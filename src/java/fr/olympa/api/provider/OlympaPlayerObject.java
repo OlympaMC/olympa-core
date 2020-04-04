@@ -127,9 +127,9 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		this.uuid = uuid;
 		this.name = name;
 		this.ip = ip;
-		this.groups.put(OlympaGroup.PLAYER, 0l);
-		this.firstConnection = Utils.getCurrentTimeInSeconds();
-		this.lastConnection = Utils.getCurrentTimeInSeconds();
+		groups.put(OlympaGroup.PLAYER, 0l);
+		firstConnection = Utils.getCurrentTimeInSeconds();
+		lastConnection = Utils.getCurrentTimeInSeconds();
 	}
 
 	@Override
@@ -139,21 +139,21 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public void addGroup(OlympaGroup group, long time) {
-		this.groups.put(group, time);
-		if (this.groups.size() > 1 && this.groups.containsKey(OlympaGroup.PLAYER)) {
-			this.removeGroup(OlympaGroup.PLAYER);
+		groups.put(group, time);
+		if (groups.size() > 1 && groups.containsKey(OlympaGroup.PLAYER)) {
+			removeGroup(OlympaGroup.PLAYER);
 		}
 	}
 
 	@Override
 	public void addNewIp(String ip) {
-		this.histIp.put(Utils.getCurrentTimeInSeconds(), this.ip);
+		histIp.put(Utils.getCurrentTimeInSeconds(), this.ip);
 		this.ip = ip;
 	}
 
 	@Override
 	public void addNewName(String name) {
-		this.histName.put(Utils.getCurrentTimeInSeconds(), this.name);
+		histName.put(Utils.getCurrentTimeInSeconds(), this.name);
 		this.name = name;
 		// to prevent bug if other player use the old name
 		MySQL.savePlayer(this);
@@ -171,32 +171,32 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public String getEmail() {
-		return this.email;
+		return email;
 	}
 
 	@Override
 	public long getFirstConnection() {
-		return this.firstConnection;
+		return firstConnection;
 	}
 
 	@Override
 	public Gender getGender() {
-		return this.gender;
+		return gender;
 	}
 
 	@Override
 	public OlympaGroup getGroup() {
-		return this.groups.firstKey();
+		return groups.firstKey();
 	}
 
 	@Override
 	public TreeMap<OlympaGroup, Long> getGroups() {
-		return this.groups;
+		return groups;
 	}
 
 	@Override
 	public String getGroupsToHumainString() {
-		return this.groups.entrySet().stream().map(entry -> {
+		return groups.entrySet().stream().map(entry -> {
 			String time = new String();
 			if (entry.getValue() != 0) {
 				time = " (" + Utils.timestampToDateAndHour(entry.getValue()) + ")";
@@ -207,22 +207,22 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public String getGroupsToString() {
-		return this.groups.entrySet().stream().map(entry -> entry.getKey().getId() + (entry.getValue() != 0 ? ":" + entry.getValue() : "")).collect(Collectors.joining(";"));
+		return groups.entrySet().stream().map(entry -> entry.getKey().getId() + (entry.getValue() != 0 ? ":" + entry.getValue() : "")).collect(Collectors.joining(";"));
 	}
 
 	@Override
 	public TreeMap<Long, String> getHistHame() {
-		return this.histName;
+		return histName;
 	}
 
 	@Override
 	public TreeMap<Long, String> getHistIp() {
-		return this.histIp;
+		return histIp;
 	}
 
 	@Override
 	public long getId() {
-		return this.id;
+		return id;
 	}
 
 	@Override
@@ -232,45 +232,45 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public String getIp() {
-		return this.ip;
+		return ip;
 	}
 
 	@Override
 	public long getLastConnection() {
-		return this.lastConnection;
+		return lastConnection;
 	}
 
 	@Override
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	@Override
 	public String getPassword() {
-		return this.password;
+		return password;
 	}
 
 	@Override
 	public Player getPlayer() {
-		if (this.cachedPlayer == null) {
-			this.cachedPlayer = Bukkit.getPlayer(this.uuid);
+		if (cachedPlayer == null) {
+			cachedPlayer = Bukkit.getPlayer(uuid);
 		}
-		return (Player) this.cachedPlayer;
+		return (Player) cachedPlayer;
 	}
 
 	@Override
 	public UUID getPremiumUniqueId() {
-		return this.premiumUuid;
+		return premiumUuid;
 	}
 
 	@Override
 	public OlympaMoney getStoreMoney() {
-		return this.storeMoney;
+		return storeMoney;
 	}
 
 	@Override
 	public UUID getUniqueId() {
-		return this.uuid;
+		return uuid;
 	}
 
 	public String hashPassword(String password_toHash) {
@@ -279,33 +279,33 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public boolean hasPermission(OlympaPermission permission) {
-		return this.groups.keySet().stream().filter(group -> group.getPower() >= permission.getGroup().getPower()).findFirst().isPresent();
+		return groups.keySet().stream().filter(group -> group.getPower() >= permission.getGroup().getPower()).findFirst().isPresent();
 	}
 
 	@Override
 	public boolean isAfk() {
-		return this.afk;
+		return afk;
 	}
 
 	@Override
 	public boolean isPremium() {
-		return this.premiumUuid != null;
+		return premiumUuid != null;
 	}
 
 	@Override
 	public boolean isSamePassword(String password) {
-		password = this.hashPassword(password);
+		password = hashPassword(password);
 		return this.password.equals(password);
 	}
 
 	@Override
 	public boolean isVanish() {
-		return this.vanish;
+		return vanish;
 	}
 
 	@Override
 	public boolean isVerifMode() {
-		return this.verifMode;
+		return verifMode;
 	}
 
 	@Override
@@ -326,7 +326,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			} else {
 				until = 0l;
 			}
-			this.groups.put(olympaGroup, until);
+			groups.put(olympaGroup, until);
 		}
 		this.firstConnection = firstConnection;
 		this.lastConnection = lastConnection;
@@ -336,16 +336,17 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 		if (histNameJson != null && !histNameJson.isEmpty()) {
 			Map<Long, String> histName2 = GsonCustomizedObjectTypeAdapter.GSON.fromJson(histNameJson, Map.class);
-			histName2.entrySet().stream().forEach(entry -> this.histName.put(entry.getKey(), entry.getValue()));
+			histName2.entrySet().stream().forEach(entry -> histName.put(entry.getKey(), entry.getValue()));
 		}
 		if (histIpJson != null && !histIpJson.isEmpty()) {
 			Map<Long, String> histIps = GsonCustomizedObjectTypeAdapter.GSON.fromJson(histIpJson, Map.class);
-			histIps.entrySet().stream().forEach(entry -> this.histIp.put(entry.getKey(), entry.getValue()));
+			histIps.entrySet().stream().forEach(entry -> histIp.put(entry.getKey(), entry.getValue()));
 		}
 	}
 
-	private void removeGroup(OlympaGroup group) {
-		this.groups.remove(group);
+	@Override
+	public void removeGroup(OlympaGroup group) {
+		groups.remove(group);
 	}
 
 	@Override
@@ -375,7 +376,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public void setGroup(OlympaGroup group, long time) {
-		this.groups.clear();
+		groups.clear();
 		this.addGroup(group, time);
 	}
 
@@ -401,12 +402,12 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public void setPassword(String password) {
-		this.password = this.hashPassword(password);
+		this.password = hashPassword(password);
 	}
 
 	@Override
 	public void setPremiumUniqueId(UUID premium_uuid) {
-		this.premiumUuid = premium_uuid;
+		premiumUuid = premium_uuid;
 	}
 
 	@Override

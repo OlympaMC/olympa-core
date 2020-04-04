@@ -29,15 +29,16 @@ import fr.olympa.core.spigot.OlympaCore;
 public class MySQL {
 
 	static DbConnection dbConnection;
-	static String tableName = "olympa.users";
+	static String tableName = "commun.players";
 
-	private static OlympaStatement insertPlayerStatement = new OlympaStatement("INSERT INTO " + tableName + " (`uuid-server`, `uuid`, `pseudo`, `ip`, `groups`, `created`, `last_connection`, `password`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", true);
+	private static OlympaStatement insertPlayerStatement = new OlympaStatement("INSERT INTO " + tableName + " (`uuid_server`, `premium_uuid`, `pseudo`, `ip`, `groups`, `created`, `last_connection`, `password`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", true);
 	public static long createPlayer(OlympaPlayer olympaPlayer) throws SQLException {
 		PreparedStatement statement = insertPlayerStatement.getStatement();
 		int i = 1;
-		statement.setString(i++, olympaPlayer.getUniqueId().toString());
-		if (olympaPlayer.getPremiumUniqueId() != null) {
-			statement.setString(i++, olympaPlayer.getPremiumUniqueId().toString());
+		statement.setString(i++, Utils.getUUIDString(olympaPlayer.getUniqueId()));
+		UUID premiumUuid = olympaPlayer.getPremiumUniqueId();
+		if (premiumUuid != null) {
+			statement.setString(i++, Utils.getUUIDString(premiumUuid));
 		} else {
 			statement.setString(i++, null);
 		}
@@ -71,7 +72,7 @@ public class MySQL {
 		return names;
 	}
 
-	public static OlympaStatement getNameFromUUIDStatement = new OlympaStatement("SELECT `pseudo` FROM " + tableName + " WHERE `uuid-server` = ?");
+	public static OlympaStatement getNameFromUUIDStatement = new OlympaStatement("SELECT `pseudo` FROM " + tableName + " WHERE `uuid_server` = ?");
 	/**
 	 * Récupère le nom exacte d'un joueur dans la base de données à l'aide de son
 	 * UUID
@@ -91,12 +92,12 @@ public class MySQL {
 	private static int updatePlayerPluginDatasID;
 	public static OlympaPlayer getOlympaPlayer(ResultSet resultSet) {
 		try {
-			String uuidPremiumString = resultSet.getString("uuid");
+			String uuidPremiumString = resultSet.getString("uuid_premium");
 			UUID uuidPremium = null;
 			if (uuidPremiumString != null) {
-				uuidPremium = UUID.fromString(uuidPremiumString);
+				uuidPremium = Utils.getUUID(uuidPremiumString);
 			}
-			OlympaPlayer player = AccountProvider.playerProvider.create(UUID.fromString(resultSet.getString("uuid-server")), resultSet.getString("pseudo"), resultSet.getString("ip"));
+			OlympaPlayer player = AccountProvider.playerProvider.create(Utils.getUUID(resultSet.getString("uuid_server")), resultSet.getString("pseudo"), resultSet.getString("ip"));
 			player.loadSavedDatas(
 					resultSet.getLong("id"),
 					uuidPremium,
@@ -141,7 +142,7 @@ public class MySQL {
 		getPlayerPluginDatas = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `player_id` = ?");
 	}
 
-	private static OlympaStatement getPlayerInformationsByIdStatement = new OlympaStatement("SELECT `pseudo`, `uuid` FROM " + tableName + " WHERE `id` = ?");
+	private static OlympaStatement getPlayerInformationsByIdStatement = new OlympaStatement("SELECT `pseudo`, `uuid_server` FROM " + tableName + " WHERE `id` = ?");
 	/**
 	 * Permet de récupérer les informations d'un joueur dans la base de données grâce à
 	 * son id
@@ -152,7 +153,7 @@ public class MySQL {
 			statement.setLong(1, id);
 			ResultSet resultSet = statement.executeQuery();
 			if (resultSet.next()) {
-				return new OlympaPlayerInformationsObject(id, resultSet.getString("pseudo"), UUID.fromString(resultSet.getString("uuid")));
+				return new OlympaPlayerInformationsObject(id, resultSet.getString("pseudo"), UUID.fromString(resultSet.getString("uuid_server")));
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -198,7 +199,7 @@ public class MySQL {
 		return null;
 	}
 
-	private static OlympaStatement getPlayerByUUIDServerStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `uuid-server` = ?");
+	private static OlympaStatement getPlayerByUUIDServerStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `uuid_server` = ?");
 	/**
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son uuid
@@ -216,7 +217,7 @@ public class MySQL {
 		return olympaPlayer;
 	}
 
-	private static OlympaStatement getPlayerByUUIDPremiumStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `uuid` = ?");
+	private static OlympaStatement getPlayerByUUIDPremiumStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `premium_uuid` = ?");
 	/**
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son uuid premium
@@ -351,7 +352,7 @@ public class MySQL {
 	 * Récupère l'uuid d'un joueur dans la base de données à l'aide de son pseudo
 	 */
 	public static UUID getPlayerUniqueId(String playerName) {
-		List<?> list = MySQL.selectTable("SELECT `uuid-server` FROM " + tableName + " WHERE `pseudo` = " + playerName);
+		List<?> list = MySQL.selectTable("SELECT `uuid_server` FROM " + tableName + " WHERE `pseudo` = " + playerName);
 		if (!list.isEmpty()) {
 			return (UUID) list.get(0);
 		}
@@ -366,7 +367,7 @@ public class MySQL {
 		return -1;
 	}
 
-	private static OlympaStatement playerExistStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `uuid-server` = ?");
+	private static OlympaStatement playerExistStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `uuid_server` = ?");
 	public static boolean playerExist(UUID playerUUID) {
 		try {
 			PreparedStatement statement = playerExistStatement.getStatement();
@@ -379,8 +380,8 @@ public class MySQL {
 		return false;
 	}
 
-	private static OlympaStatement savePlayerStatement = new OlympaStatement("UPDATE " + tableName + " SET `pseudo` = ?, `uuid-server` = ?,"
-			+ " `uuid` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ?, `ip_history` = ?, `gender` = ? WHERE `id` = ?");
+	private static OlympaStatement savePlayerStatement = new OlympaStatement("UPDATE " + tableName + " SET `pseudo` = ?, `uuid_server` = ?,"
+			+ " `premium_uuid` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ?, `ip_history` = ?, `gender` = ? WHERE `id` = ?");
 	/**
 	 * Sauvegarde les infos du olympaPlayer
 	 */
@@ -389,10 +390,10 @@ public class MySQL {
 			PreparedStatement pstate = savePlayerStatement.getStatement();
 			int i = 1;
 			pstate.setString(i++, olympaPlayer.getName());
-			pstate.setString(i++, olympaPlayer.getUniqueId().toString());
+			pstate.setString(i++, Utils.getUUIDString(olympaPlayer.getUniqueId()));
 			UUID premiumUuid = olympaPlayer.getPremiumUniqueId();
 			if (premiumUuid != null) {
-				pstate.setString(i++, premiumUuid.toString());
+				pstate.setString(i++, Utils.getUUIDString(premiumUuid));
 			} else {
 				pstate.setString(i++, null);
 			}

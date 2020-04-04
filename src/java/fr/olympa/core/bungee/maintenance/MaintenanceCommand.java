@@ -7,6 +7,7 @@ import java.util.List;
 import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
@@ -48,7 +49,8 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 		ProxyServer.getInstance().getScheduler().runAsync(OlympaBungee.getInstance(), () -> {
 			if (sender instanceof ProxiedPlayer) {
 				ProxiedPlayer player = (ProxiedPlayer) sender;
-				if (!MaintenanceCommand.permission.hasPermission(player.getUniqueId())) {
+				olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
+				if (!MaintenanceCommand.permission.hasPermission(olympaPlayer)) {
 					sendDoNotHavePermission();
 					return;
 				}

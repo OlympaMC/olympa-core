@@ -31,13 +31,21 @@ public class MotdListener implements Listener {
 	String separator = "§7|";
 	String suffix = "§e---------------------------------";
 
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPing(ProxyPingEvent event) {
 		// String playerName = event.getConnection().getName();
+		String ip = event.getConnection().getAddress().getAddress().getHostAddress();
 		InetSocketAddress virtualHost = event.getConnection().getVirtualHost();
 		ServerPing ping = event.getResponse();
 		ServerPing.Protocol ver = ping.getVersion();
 		ServerPing.Players players = ping.getPlayers();
+
+		// Petit troll pour ceux qui récup des stats
+//		if (ip.equals("54.38.31.134")) {
+//			players.setOnline(new Random().nextInt(players.getMax()));
+//			return;
+//		}
 
 		ver.setName(version + " §7" + players.getOnline() + "§8/§7" + players.getMax());
 		// ping.setVersion(ver);

@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.datamanagment;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
@@ -19,6 +20,7 @@ import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.mojangapi.MojangAPI;
+import fr.olympa.core.bungee.api.mojangapi.objects.UuidResponse;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
@@ -53,7 +55,7 @@ public class AuthListener implements Listener {
 		UUID uuidCrack = null;
 
 		if (wait.contains(name)) {
-			event.setCancelReason(BungeeUtils.connectScreen("&eMerci de patienter 3 secondes avant chaque reconnection."));
+			event.setCancelReason(BungeeUtils.connectScreen("&eMerci de patienter avant chaque reconnection."));
 			event.setCancelled(true);
 			return;
 		}
@@ -66,7 +68,24 @@ public class AuthListener implements Listener {
 			return;
 		}
 		if (olympaPlayer == null) {
-			UUID uuidPremium = MojangAPI.getUuid(connection);
+			UuidResponse response;
+			try {
+				response = MojangAPI.getFromName(connection);
+			} catch (IOException e) {
+				e.printStackTrace();
+				event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenu avec les serveurs d'authentifications de Mojang."));
+				event.setCancelled(true);
+				return;
+			}
+			UUID uuidPremium = null;
+			if (response != null) {
+				if (!response.getName().equals(name)) {
+					event.setCancelReason(BungeeUtils.connectScreen("&cLe pseudo &4" + response.getName() + "&c est un compte premium.\nTu ne peux pas l'utiliser."));
+					event.setCancelled(true);
+					return;
+				}
+				uuidPremium = response.getUuid();
+			}
 			try {
 				uuidCrack = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes("UTF-8"));
 			} catch (UnsupportedEncodingException e) {
@@ -77,8 +96,7 @@ public class AuthListener implements Listener {
 				event.setCancelled(true);
 				connection.setOnlineMode(false);
 				connection.setUniqueId(uuidCrack);
-				System.out.println("null offlinemode");
-				return;
+				System.out.println("Crack with no data " + name);
 			} else {
 				cachePremiumUUID.put(name, uuidPremium);
 				connection.setOnlineMode(true);
@@ -95,15 +113,17 @@ public class AuthListener implements Listener {
 				if (olympaPlayer != null) {
 					// Changement de nom + reconnection < 2 secs
 					if (wait.contains(olympaPlayer.getName())) {
-						event.setCancelReason(BungeeUtils.connectScreen("&eMerci de patienter 3 secondes avant chaque reconnection."));
+						event.setCancelReason(BungeeUtils.connectScreen("&eMerci de patienter secondes avant chaque reconnection."));
 						event.setCancelled(true);
 						return;
 					}
-					olympaPlayer.addNewName(name);
+					if (!olympaPlayer.getName().equals(name)) {
+						olympaPlayer.addNewName(name);
+					}
 				}
-				System.out.println("null onlinemode");
+				System.out.println("Premium no data" + name);
+				OlympaBungee.getInstance().sendMessage("NEW JOUEUR  " + connection.getUniqueId() + " UUID CRACK: " + uuidCrack + " HAS PREMIUM ? " + uuidPremium + " HIS PREMIUM ? " + connection.isOnlineMode());
 			}
-			OlympaBungee.getInstance().sendMessage("NEW JOUEUR  " + connection.getUniqueId() + " UUID CRACK: " + uuidCrack + " HAS PREMIUM ? " + uuidPremium + " HIS PREMIUM ? " + connection.isOnlineMode());
 		}
 
 		// code déplacer dans VpnListener
@@ -119,7 +139,7 @@ public class AuthListener implements Listener {
 
 		if (olympaPlayer != null) {
 			System.out.println("player info " + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
-			if (olympaPlayer.getPremiumUniqueId() == null) {
+			if (olympaPlayer.getPremiumUniqueId() == null && !connection.isOnlineMode()) {
 				if (!name.equals(olympaPlayer.getName())) {
 					event.setCancelReason(BungeeUtils.connectScreen("&aTu as mal écrit ton pseudo, connecte toi avec &2" + olympaPlayer.getName() + "&a.\n&eLa tu utilise le pseudo " + name + "."));
 					event.setCancelled(true);
@@ -142,7 +162,7 @@ public class AuthListener implements Listener {
 			return;
 		}
 		PendingConnection connection = event.getConnection();
-		System.out.println("LoginEvent onlinemode ? " + connection.isOnlineMode());
+		System.out.println("LoginEvent onlinemode ? " + connection.isOnlineMode() + " " + connection.getName());
 		String name = connection.getName();
 		UUID uuidPremium = cachePremiumUUID.getIfPresent(name);
 		String ip = connection.getAddress().getAddress().getHostAddress();
@@ -228,7 +248,7 @@ public class AuthListener implements Listener {
 			olympaAccount.accountExpire();
 			olympaPlayer.setLastConnection(Utils.getCurrentTimeInSeconds());
 			olympaAccount.saveToDb(olympaPlayer);
-		}, 3, TimeUnit.SECONDS);
+		}, 1, TimeUnit.SECONDS);
 	}
 
 }

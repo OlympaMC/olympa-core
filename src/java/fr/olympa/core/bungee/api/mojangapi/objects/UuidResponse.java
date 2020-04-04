@@ -4,37 +4,41 @@ import java.util.UUID;
 
 import com.google.gson.Gson;
 
+import fr.olympa.api.utils.Utils;
+
 public class UuidResponse {
-	
+
 	public static UuidResponse get(String json) {
 		return new Gson().fromJson(json, UuidResponse.class);
 	}
-	
-	final UUID id;
-	final String name;
-	final Boolean demo;
-	final Boolean legacy;
 
-	public UuidResponse(UUID id, String name, boolean demo, boolean legacy) {
-		this.id = id;
-		this.name = name;
-		this.demo = demo;
-		this.legacy = legacy;
-	}
+	String id;
+	UUID uuid;
+	String name;
 
-	public UUID getId() {
-		return this.id;
+	Boolean demo;
+	Boolean legacy;
+
+	public String getId() {
+		return id;
 	}
 
 	public String getName() {
-		return this.name;
+		return name;
 	}
-	
+
+	public UUID getUuid() {
+		if (uuid == null) {
+			uuid = Utils.getUUID(name);
+		}
+		return uuid;
+	}
+
 	public boolean isDemo() {
-		return this.demo != null && this.demo;
+		return demo != null && demo;
 	}
 
 	public boolean isLegacy() {
-		return this.legacy != null && this.legacy;
+		return legacy != null && legacy;
 	}
 }

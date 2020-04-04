@@ -5,7 +5,7 @@ import fr.olympa.core.bungee.api.permission.OlympaBungeePermission;
 
 public class OlympaCorePermissions {
 
-	public static OlympaPermission DEV = new OlympaPermission(OlympaGroup.ADMIN_SYS, OlympaGroup.RESP_TECH);
+	public static OlympaPermission DEV = new OlympaPermission(OlympaGroup.RESP_TECH);
 	// TODO change to OlympaGroup.ADMIN
 	public static OlympaPermission MAINTENANCE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 	public static OlympaPermission GROUP_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
