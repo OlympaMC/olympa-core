@@ -64,6 +64,8 @@ public class DataManagmentListener implements Listener {
 
 		event.setJoinMessage(null);
 
+		player.resetMaxHealth();
+
 		OlympaCore.getInstance().launchAsync(() -> {
 			try {
 				MySQL.loadPlayerPluginDatas(olympaPlayer);
