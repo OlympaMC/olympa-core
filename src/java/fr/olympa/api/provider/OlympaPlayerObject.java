@@ -122,6 +122,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	boolean afk;
 
 	private Object cachedPlayer = null;
+	private OlympaPlayerInformations cachedInformations = null;
 
 	public OlympaPlayerObject(UUID uuid, String name, String ip) {
 		this.uuid = uuid;
@@ -227,7 +228,8 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public OlympaPlayerInformations getInformation() {
-		return AccountProvider.getPlayerInformations(this);
+		if (cachedInformations == null) cachedInformations = AccountProvider.getPlayerInformations(this);
+		return cachedInformations;
 	}
 
 	@Override

@@ -31,4 +31,12 @@ public class OlympaPlayerInformationsObject implements OlympaPlayerInformations 
 		return uuid;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof OlympaPlayerInformationsObject) {
+			return id == ((OlympaPlayerInformationsObject) obj).id;
+		}
+		return false;
+	}
+	
 }
