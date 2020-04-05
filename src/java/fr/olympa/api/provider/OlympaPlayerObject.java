@@ -120,8 +120,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	boolean verifMode;
 	@Expose
 	boolean afk;
+	@Expose
+	Boolean connected;
 
 	private Object cachedPlayer = null;
+
 	private OlympaPlayerInformations cachedInformations = null;
 
 	public OlympaPlayerObject(UUID uuid, String name, String ip) {
@@ -228,7 +231,9 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public OlympaPlayerInformations getInformation() {
-		if (cachedInformations == null) cachedInformations = AccountProvider.getPlayerInformations(this);
+		if (cachedInformations == null) {
+			cachedInformations = AccountProvider.getPlayerInformations(this);
+		}
 		return cachedInformations;
 	}
 
@@ -287,6 +292,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public boolean isAfk() {
 		return afk;
+	}
+
+	@Override
+	public boolean isConnected() {
+		return connected != null ? connected : false;
 	}
 
 	@Override
@@ -359,6 +369,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void setAfk(boolean afk) {
 		this.afk = afk;
+	}
+
+	@Override
+	public void setConnected(boolean connected) {
+		this.connected = connected;
 	}
 
 	@Override

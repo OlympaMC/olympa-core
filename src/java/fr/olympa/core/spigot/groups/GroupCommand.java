@@ -102,8 +102,12 @@ public class GroupCommand extends OlympaCommand {
 			if (args.length >= 3) {
 				if (Matcher.isInt(args[2])) {
 					timestamp = Long.parseLong(args[2]);
+					if (timestamp < Utils.getCurrentTimeInSeconds()) {
+						this.sendMessage(Prefix.DEFAULT_BAD + "&4%arg3&c est plus petit que le timestamp actuel: &4" + Utils.getCurrentTimeInSeconds() + "&c.".replaceFirst("%arg3", args[2]));
+						return true;
+					}
 				} else {
-					this.sendMessage(Prefix.DEFAULT_BAD + "&4%arg3&c doit être un timestamp tel que &41587356400&c.".replaceFirst("%arg3", args[2]));
+					this.sendMessage(Prefix.DEFAULT_BAD + "&4%arg3&c doit être un timestamp tel que &4" + Utils.getCurrentTimeInSeconds() + "&c.".replaceFirst("%arg3", args[2]));
 					return true;
 				}
 			}
@@ -168,11 +172,13 @@ public class GroupCommand extends OlympaCommand {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		if (args.length == 1) {
-			List<String> postentielNames = Utils.startWords(args[0], Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
-			return postentielNames;
+			return Utils.startWords(args[0], Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
 		} else if (args.length == 2) {
-			List<String> postentielGroups = Utils.startWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toList()));
-			return postentielGroups;
+			return Utils.startWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toList()));
+		} else if (args.length == 2) {
+			return Utils.startWords(args[2], Arrays.asList(String.valueOf(Utils.getCurrentTimeInSeconds() + 2628000), "0"));
+		} else if (args.length == 3) {
+			return Utils.startWords(args[3], Arrays.asList("add", "remove"));
 		}
 		return null;
 	}

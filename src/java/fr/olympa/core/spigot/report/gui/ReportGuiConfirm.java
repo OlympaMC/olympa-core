@@ -19,13 +19,17 @@ public class ReportGuiConfirm extends OlympaGUI {
 
 	static OlympaItemBuild ITEM_CONFIRM_NO = new OlympaItemBuild(Material.GREEN_STAINED_GLASS, "&cAnnuler");
 
-	public static void open(Player player, OfflinePlayer target, ReportReason reason) {
+	public static void open(Player player, OfflinePlayer target, ReportReason reason, String note) {
 		String signalName = "&6Signaler &e" + target.getName();
 		String signalReason = "&6pour &e" + reason.getReason();
-		ReportGuiConfirm gui = new ReportGuiConfirm(signalName + " " + signalReason, 3, target, reason);
+		ReportGuiConfirm gui = new ReportGuiConfirm(signalName + " " + signalReason, 3, target, reason, note);
 		Inventory guiIventory = gui.getInventory();
 		int slot = guiIventory.getSize() / 2 - 1;
-		gui.yes = ITEM_CONFIRM_YES.setLore(1, "&cRaison: &4" + reason.getReason()).build();
+		OlympaItemBuild yesBuild = ITEM_CONFIRM_YES.lore("&cRaison: &4" + reason.getReason());
+		if (note != null) {
+			yesBuild = yesBuild.addlore("&cNote: &4" + note);
+		}
+		gui.yes = yesBuild.build();
 		guiIventory.setItem(slot, gui.yes);
 		guiIventory.setItem(slot + 2, ITEM_CONFIRM_NO.build());
 		guiIventory.setItem(slot - 7, new OlympaItemBuild(signalName).lore("", signalReason).skullowner(target).build());
@@ -35,12 +39,14 @@ public class ReportGuiConfirm extends OlympaGUI {
 
 	OfflinePlayer target;
 	ReportReason reason;
+	String note;
 	ItemStack yes;
 
-	public ReportGuiConfirm(String name, int rows, OfflinePlayer target, ReportReason reason) {
+	public ReportGuiConfirm(String name, int rows, OfflinePlayer target, ReportReason reason, String note) {
 		super(name, rows);
 		this.target = target;
 		this.reason = reason;
+		this.note = note;
 	}
 
 	@Override
@@ -48,9 +54,9 @@ public class ReportGuiConfirm extends OlympaGUI {
 		if (current == null) {
 			return false;
 		}
-		if (this.yes.equals(current)) {
-			ReportHandler.report(player, this.target, this.reason);
-		} else if (current != null) {
+		if (yes.equals(current)) {
+			ReportHandler.report(player, target, reason, note);
+		} else if (ITEM_CONFIRM_NO.build().equals(current)) {
 			player.closeInventory();
 		}
 		return false;

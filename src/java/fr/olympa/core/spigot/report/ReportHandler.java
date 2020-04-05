@@ -6,7 +6,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.objects.OlympaPlayerInformations;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.core.spigot.OlympaCore;
@@ -21,23 +25,41 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class ReportHandler {
 
-	public static void report(Player author, OfflinePlayer target, ReportReason reason) {
-		OlympaReport report = new OlympaReport(target.getUniqueId(), author.getUniqueId(), reason, OlympaCore.getInstance().getServer().getName());
+	public static void report(Player author, OfflinePlayer target, ReportReason reason, String note) {
+		OlympaPlayer authorOlympaPlayer = AccountProvider.get(author);
+		OlympaPlayer targetOlympaPlayer;
+		try {
+			targetOlympaPlayer = new AccountProvider(target.getUniqueId()).get();
+		} catch (SQLException e) {
+			author.sendMessage(SpigotUtils.color(Prefix.DEFAULT_BAD + "Une erreur est survenu, ton report n'a pas été enregistrer ..."));
+			OlympaCore.getInstance().sendMessage("&4REPORT &cImpossible de récupérer l'id olympaPlayer de " + target.getName());
+			e.printStackTrace();
+			return;
+		}
+		OlympaReport report = new OlympaReport(targetOlympaPlayer.getId(), authorOlympaPlayer.getId(), reason, OlympaCore.getInstance().getServer().getName(), note);
 		try {
 			long id = ReportMySQL.createReport(report);
 			report.setId(id);
-			author.sendMessage(SpigotUtils.color(Prefix.DEFAULT + "Tu as signaler &e" + target.getName() + "&6 pour &e" + reason.getReason() + "&6."));
+			author.sendMessage(SpigotUtils.color(Prefix.DEFAULT_GOOD + "Tu as signaler &2" + target.getName() + "&a pour &2" + reason.getReason() + "&a."));
 		} catch (SQLException e) {
 			e.printStackTrace();
-			author.sendMessage(SpigotUtils.color(Prefix.DEFAULT + "Une erreur est survenu, ton report n'a pas été sauvegarder mais le staff connecté est au courant."));
+			author.sendMessage(SpigotUtils.color(Prefix.DEFAULT_BAD + "Une erreur est survenu, ton report n'a pas été sauvegardé mais le staff connecté est au courant."));
 		}
 		Bukkit.getPluginManager().callEvent(new OlympaReportAddEvent(author, target, report));
 		sendAlert(report);
 	}
 
 	public static void sendAlert(OlympaReport report) {
-		OfflinePlayer author = Bukkit.getOfflinePlayer(report.getAuthor());
-		OfflinePlayer target = Bukkit.getOfflinePlayer(report.getTarget());
+		OlympaPlayerInformations author = AccountProvider.getPlayerInformations(report.getAuthorId());
+		OlympaPlayer target1 = MySQL.getPlayer(report.getTargetId());
+		OlympaPlayer targetRefresh = AccountProvider.get(target1.getUniqueId());
+		if (targetRefresh == null) {
+			targetRefresh = new AccountProvider(target1.getUniqueId()).getFromRedis();
+		}
+		if (targetRefresh != null) {
+			target1 = targetRefresh;
+		}
+		OlympaPlayer target = target1;
 		OlympaCorePermissions.REPORT_SEEREPORT.getPlayers(players -> {
 			TextComponent out = new TextComponent();
 
@@ -46,7 +68,7 @@ public class ReportHandler {
 			out.addExtra(tc);
 
 			tc = new TextComponent(target.getName() + " ");
-			if (target.isOnline()) {
+			if (target.isConnected()) {
 				tc.setColor(ChatColor.LIGHT_PURPLE);
 				tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Joueur encore connecté").color(ChatColor.GREEN).create()));
 			} else {

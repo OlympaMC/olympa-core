@@ -15,8 +15,8 @@ import fr.olympa.core.spigot.report.items.ReportReason;
 
 public class ReportGui extends OlympaGUI {
 
-	public static void open(Player player, OfflinePlayer target2) {
-		ReportGui gui = new ReportGui("&6Report &e" + target2.getName(), 3 * 9, target2);
+	public static void open(Player player, OfflinePlayer target2, String note) {
+		ReportGui gui = new ReportGui("&6Report &e" + target2.getName(), 3 * 9, target2, note);
 
 		List<OlympaItemBuild> items = Arrays.stream(ReportReason.values()).map(ReportReason::getItem).collect(Collectors.toList());
 		int slot = gui.inv.getSize() / 2 - items.size() / 2;
@@ -27,10 +27,12 @@ public class ReportGui extends OlympaGUI {
 	}
 
 	OfflinePlayer target;
+	String note;
 
-	public ReportGui(String name, int rows, OfflinePlayer target) {
+	public ReportGui(String name, int rows, OfflinePlayer target, String note) {
 		super(name, rows);
 		this.target = target;
+		this.note = note;
 	}
 
 	@Override
@@ -40,7 +42,7 @@ public class ReportGui extends OlympaGUI {
 		}
 
 		ReportReason reason = ReportReason.get(current);
-		ReportGuiConfirm.open(player, this.target, reason);
+		ReportGuiConfirm.open(player, target, reason, note);
 		return false;
 	}
 }

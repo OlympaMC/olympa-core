@@ -166,10 +166,10 @@ public class MySQL {
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son id
 	 */
-	public static OlympaPlayer getPlayer(int id) {
+	public static OlympaPlayer getPlayer(long id) {
 		try {
 			PreparedStatement statement = getPlayerByIdStatement.getStatement();
-			statement.setInt(1, id);
+			statement.setLong(1, id);
 			ResultSet resultSet = statement.executeQuery();
 			if (resultSet.next()) {
 				return getOlympaPlayer(resultSet);

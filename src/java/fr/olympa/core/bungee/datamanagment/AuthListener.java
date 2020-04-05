@@ -73,14 +73,14 @@ public class AuthListener implements Listener {
 				response = MojangAPI.getFromName(connection);
 			} catch (IOException e) {
 				e.printStackTrace();
-				event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenu avec les serveurs d'authentifications de Mojang."));
+				event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenu avec les serveurs d'authentifications de Mojang.\n&eCode d'erreur: &l#BungeeMojangNewPlayer"));
 				event.setCancelled(true);
 				return;
 			}
 			UUID uuidPremium = null;
 			if (response != null) {
 				if (!response.getName().equals(name)) {
-					event.setCancelReason(BungeeUtils.connectScreen("&cLe pseudo &4" + response.getName() + "&c est un compte premium.\nTu ne peux pas l'utiliser."));
+					event.setCancelReason(BungeeUtils.connectScreen("&cLe pseudo &4" + response.getName() + "&c est un compte premium.\nTu ne peux pas l'utiliser.\n&eCode d'erreur: &l#BungeeNoPremium"));
 					event.setCancelled(true);
 					return;
 				}
@@ -207,6 +207,7 @@ public class AuthListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+		olympaPlayer.setConnected(true);
 		olympaAccount.saveToCache(olympaPlayer);
 		olympaAccount.saveToRedis(olympaPlayer);
 	}
@@ -245,8 +246,8 @@ public class AuthListener implements Listener {
 				System.out.println("ATTENTION le joueur " + player.getUniqueId() + " n'avait pas de donnés dans redis.");
 				return;
 			}
-			olympaAccount.accountExpire();
 			olympaPlayer.setLastConnection(Utils.getCurrentTimeInSeconds());
+			olympaPlayer.setConnected(false);
 			olympaAccount.saveToDb(olympaPlayer);
 		}, 1, TimeUnit.SECONDS);
 	}

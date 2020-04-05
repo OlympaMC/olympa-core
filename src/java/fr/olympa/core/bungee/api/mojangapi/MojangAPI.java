@@ -10,23 +10,15 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
-import com.google.gson.Gson;
-
 import fr.olympa.core.bungee.api.mojangapi.objects.HistNameResponse;
 import fr.olympa.core.bungee.api.mojangapi.objects.UuidResponse;
 import net.md_5.bungee.api.connection.PendingConnection;
 
 @SuppressWarnings("deprecation")
 public class MojangAPI extends RequestMojang {
-	
+
 	public static UuidResponse getFromName(PendingConnection con) throws IOException {
 		InetSocketAddress newInetSocketAddress = new InetSocketAddress(con.getAddress().getAddress().getHostAddress(), con.getAddress().getPort());
-		
-		StringBuilder sb = new StringBuilder(new Gson().toJson(con.getAddress()));
-		sb.append(" new:");
-		sb.append(new Gson().toJson(newInetSocketAddress));
-		System.out.println("Test: " + sb.toString());
-		
 		String response = send(newInetSocketAddress, "https://api.mojang.com/users/profiles/minecraft/" + con.getName());
 		if (response != null) {
 			return UuidResponse.get(response);
@@ -42,7 +34,7 @@ public class MojangAPI extends RequestMojang {
 		}
 		return null;
 	}
-	
+
 	@Deprecated
 	public static UUID getUuid(PendingConnection con) {
 		try {
@@ -66,5 +58,5 @@ public class MojangAPI extends RequestMojang {
 			return null;
 		}
 	}
-	
+
 }

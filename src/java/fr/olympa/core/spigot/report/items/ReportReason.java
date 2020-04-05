@@ -15,6 +15,10 @@ public enum ReportReason {
 	CHEAT_FLY(4, "Cheat Fly", new OlympaItemBuild(Material.FEATHER, "&7Fly")),
 	OTHER(5, "Autre", new OlympaItemBuild(Material.CAULDRON, "&7Autre"));
 
+	public static ReportReason get(int id) {
+		return Arrays.stream(ReportReason.values()).filter(itemGui -> itemGui.getId() == id).findFirst().orElse(null);
+	}
+
 	public static ReportReason get(ItemStack itemStack) {
 		return Arrays.stream(ReportReason.values()).filter(itemGui -> itemGui.getItem().build().isSimilar(itemStack)).findFirst().orElse(null);
 	}
@@ -27,6 +31,8 @@ public enum ReportReason {
 	String reason;
 	OlympaItemBuild item;
 
+	String note;
+
 	private ReportReason(int id, String reason, OlympaItemBuild item) {
 		this.id = id;
 		this.reason = reason;
@@ -34,14 +40,14 @@ public enum ReportReason {
 	}
 
 	public int getId() {
-		return this.id;
+		return id;
 	}
 
 	public OlympaItemBuild getItem() {
-		return this.item;
+		return item;
 	}
 
 	public String getReason() {
-		return this.reason;
+		return reason;
 	}
 }

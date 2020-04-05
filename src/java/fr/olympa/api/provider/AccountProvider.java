@@ -21,6 +21,7 @@ import redis.clients.jedis.Jedis;
 public class AccountProvider implements OlympaAccount {
 
 	private static String REDIS_KEY = "player:";
+	private static int cachePlayer = 60;
 	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
 	private static Map<UUID, OlympaPlayer> cache = new HashMap<>();
 	private static Map<Long, OlympaPlayerInformations> cachedInformations = new HashMap<>();
@@ -61,10 +62,17 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	public static OlympaPlayer getFromRedis(String name) {
+		return getFromRedis(name, false);
+	}
+
+	public static OlympaPlayer getFromRedis(String name, boolean cachePersist) {
 		OlympaPlayer olympaPlayer = null;
 
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 			olympaPlayer = jedis.hgetAll(name).entrySet().stream().map(entry -> GsonCustomizedObjectTypeAdapter.GSON.fromJson(entry.getValue(), playerClass)).filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+			if (cachePersist) {
+				jedis.persist(REDIS_KEY + olympaPlayer.getUniqueId());
+			}
 		}
 		RedisAccess.INSTANCE.closeResource();
 		return olympaPlayer;
@@ -111,7 +119,7 @@ public class AccountProvider implements OlympaAccount {
 
 	public void accountExpire() {
 		try (Jedis jedis = redisAccesss.connect()) {
-			jedis.expire(getKey(), 30);
+			jedis.expire(getKey(), cachePlayer);
 		}
 		redisAccesss.closeResource();
 	}
@@ -133,7 +141,7 @@ public class AccountProvider implements OlympaAccount {
 	public OlympaPlayer get() throws SQLException {
 		OlympaPlayer olympaPlayer = this.getFromCache();
 		if (olympaPlayer == null) {
-			olympaPlayer = this.getFromRedis();
+			olympaPlayer = this.getFromRedis(false);
 			if (olympaPlayer == null) {
 				return fromDb();
 			}
@@ -146,12 +154,20 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	public OlympaPlayer getFromRedis() {
+		return getFromRedis(false);
+	}
+
+	public OlympaPlayer getFromRedis(boolean cachePersist) {
 		String json = null;
 
 		try (Jedis jedis = redisAccesss.connect()) {
 			json = jedis.get(getKey());
 			if (json != null) {
-				jedis.persist(getKey());
+				if (cachePersist) {
+					jedis.persist(getKey());
+				} else {
+					jedis.expire(getKey(), cachePlayer);
+				}
 			}
 		}
 		redisAccesss.closeResource();
