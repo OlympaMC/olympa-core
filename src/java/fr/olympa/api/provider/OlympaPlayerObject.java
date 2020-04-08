@@ -81,6 +81,12 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			if (object.has("verifMode")) {
 				player.verifMode = object.get("verifMode").getAsBoolean();
 			}
+			if (object.has("discordId")) {
+				player.discordId = object.get("discordId").getAsLong();
+			}
+			if (object.has("teamspeakId")) {
+				player.teamspeakId = object.get("teamspeakId").getAsLong();
+			}
 			return player;
 		}
 
@@ -122,6 +128,10 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	boolean afk;
 	@Expose
 	Boolean connected;
+	@Expose
+	private long discordId;
+	@Expose
+	private long teamspeakId;
 
 	private Object cachedPlayer = null;
 
@@ -171,6 +181,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public long getDiscordId() {
+		return discordId;
 	}
 
 	@Override
@@ -276,6 +291,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
+	public long getTeamspeakId() {
+		return teamspeakId;
+	}
+
+	@Override
 	public UUID getUniqueId() {
 		return uuid;
 	}
@@ -377,6 +397,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
+	public void setDiscordId(long discordId) {
+		this.discordId = discordId;
+	}
+
+	@Override
 	public void setEmail(String email) {
 		this.email = email;
 	}
@@ -425,6 +450,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void setPremiumUniqueId(UUID premium_uuid) {
 		premiumUuid = premium_uuid;
+	}
+
+	@Override
+	public void setTeamspeakId(long teamspeakId) {
+		this.teamspeakId = teamspeakId;
 	}
 
 	@Override

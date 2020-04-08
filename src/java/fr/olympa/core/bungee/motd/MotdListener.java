@@ -31,11 +31,10 @@ public class MotdListener implements Listener {
 	String separator = "§7|";
 	String suffix = "§e---------------------------------";
 
-	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPing(ProxyPingEvent event) {
 		// String playerName = event.getConnection().getName();
-		String ip = event.getConnection().getAddress().getAddress().getHostAddress();
+		// String ip = event.getConnection().getAddress().getAddress().getHostAddress();
 		InetSocketAddress virtualHost = event.getConnection().getVirtualHost();
 		ServerPing ping = event.getResponse();
 		ServerPing.Protocol ver = ping.getVersion();
@@ -74,7 +73,8 @@ public class MotdListener implements Listener {
 		} else {
 			System.out.println("Unknow VirtualHost -> what ip the player trie to connect. " + new Gson().toJson(ping.getVersion()));
 		}
-		if (status == MaintenanceStatus.OPEN) {
+		switch (status) {
+		case OPEN:
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
@@ -121,7 +121,8 @@ public class MotdListener implements Listener {
 				}
 				ping.setDescriptionComponent(new TextComponent(motd_base + sb.toString()));
 			}
-		} else if (status == MaintenanceStatus.MAINTENANCE) {
+			break;
+		case MAINTENANCE:
 			String maintenanceMessage = SpigotUtils.color(BungeeConfigUtils.getConfig("maintenance").getString("settings.message"));
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
@@ -138,7 +139,8 @@ public class MotdListener implements Listener {
 			});
 			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
 			ping.setDescriptionComponent(new TextComponent(motd_base + "§4§l⚠ §cSERVEUR EN MAINTENANCE §4§l⚠"));
-		} else if (status == MaintenanceStatus.DEV) {
+			break;
+		case DEV:
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
@@ -154,7 +156,8 @@ public class MotdListener implements Listener {
 			});
 			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
 			ping.setDescriptionComponent(new TextComponent(motd_base + "§cServeur en développement"));
-		} else if (status == MaintenanceStatus.SOON) {
+			break;
+		case SOON:
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
@@ -169,7 +172,8 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()), });
 			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
 			ping.setDescriptionComponent(new TextComponent(motd_base + "§bOn ouvre bientôt t'inquiète."));
-		} else if (status == MaintenanceStatus.BETA) {
+			break;
+		case BETA:
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
@@ -186,6 +190,9 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()), });
 			ping.setDescriptionComponent(new TextComponent(motd_base + "§c[§6Beta&c] &e-> &binscrit-toi sur www.olympa.fr"));
+			break;
+		default:
+			break;
 		}
 	}
 }

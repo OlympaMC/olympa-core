@@ -79,7 +79,7 @@ public class GroupCommand extends OlympaCommand {
 					.replaceFirst("%player", targetNamePrefix)
 					.replaceAll("%s", groups.size() > 1 ? "s" : "")
 					.replaceFirst("%group", Prefix.INFO.getColor2() + groupString + Prefix.INFO.getColor()));
-		} else if (args.length >= 3) {
+		} else {
 			OlympaGroup newGroup = OlympaGroup.getByName(args[1]);
 			if (newGroup == null) {
 				Collection<String> pentialsGroup = UtilsCore.similarWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toSet()));
@@ -102,12 +102,12 @@ public class GroupCommand extends OlympaCommand {
 			if (args.length >= 3) {
 				if (Matcher.isInt(args[2])) {
 					timestamp = Long.parseLong(args[2]);
-					if (timestamp < Utils.getCurrentTimeInSeconds()) {
-						this.sendMessage(Prefix.DEFAULT_BAD + "&4%arg3&c est plus petit que le timestamp actuel: &4" + Utils.getCurrentTimeInSeconds() + "&c.".replaceFirst("%arg3", args[2]));
+					if (timestamp != 0 && timestamp < Utils.getCurrentTimeInSeconds()) {
+						this.sendMessage(Prefix.DEFAULT_BAD + ("&4%arg3&c est plus petit que le timestamp actuel: &4" + Utils.getCurrentTimeInSeconds() + "&c.").replaceFirst("%arg3", args[2]));
 						return true;
 					}
 				} else {
-					this.sendMessage(Prefix.DEFAULT_BAD + "&4%arg3&c doit être un timestamp tel que &4" + Utils.getCurrentTimeInSeconds() + "&c.".replaceFirst("%arg3", args[2]));
+					this.sendMessage(Prefix.DEFAULT_BAD + ("&4%arg3&c doit être un timestamp tel que &4" + Utils.getCurrentTimeInSeconds() + "&c.").replaceFirst("%arg3", args[2]));
 					return true;
 				}
 			}

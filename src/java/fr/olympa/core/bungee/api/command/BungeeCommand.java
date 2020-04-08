@@ -124,10 +124,6 @@ public abstract class BungeeCommand extends Command {
 		return command;
 	}
 
-	public OlympaPlayer getEmeraldPlayer() {
-		return olympaPlayer;
-	}
-
 	protected OlympaPlayer getOlympaPlayer() {
 		if (proxiedPlayer != null) {
 			try {

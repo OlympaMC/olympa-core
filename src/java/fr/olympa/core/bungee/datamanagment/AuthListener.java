@@ -186,15 +186,15 @@ public class AuthListener implements Listener {
 					olympaPlayer.setPremiumUniqueId(uuidPremium);
 				}
 				cachePremiumUUID.invalidate(name);
-				olympaAccount.createNew(olympaPlayer);
-				olympaPlayer = MySQL.getPlayer(olympaPlayer.getUniqueId());
+				olympaPlayer = olympaAccount.createNew(olympaPlayer);
 			} catch (SQLException | UnsupportedEncodingException e) {
 				e.printStackTrace();
 				event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#UTF8BungeeCantCreateNew"));
 				event.setCancelled(true);
 				return;
 			}
-			OlympaBungee.getInstance().sendMessage("Nouveau joueur: " + olympaPlayer.getId() + " " + olympaPlayer.getName());
+			// OlympaBungee.getInstance().sendMessage("Nouveau joueur: " +
+			// olympaPlayer.getId() + " " + olympaPlayer.getName());
 		}
 		try {
 			Class<?> initialHandlerClass = connection.getClass();
@@ -210,6 +210,7 @@ public class AuthListener implements Listener {
 		olympaPlayer.setConnected(true);
 		olympaAccount.saveToCache(olympaPlayer);
 		olympaAccount.saveToRedis(olympaPlayer);
+		olympaAccount.accountPersist();
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
@@ -248,8 +249,9 @@ public class AuthListener implements Listener {
 			}
 			olympaPlayer.setLastConnection(Utils.getCurrentTimeInSeconds());
 			olympaPlayer.setConnected(false);
+			olympaAccount.accountExpire();
 			olympaAccount.saveToDb(olympaPlayer);
-		}, 1, TimeUnit.SECONDS);
+		}, 3, TimeUnit.SECONDS);
 	}
 
 }

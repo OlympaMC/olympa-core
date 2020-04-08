@@ -59,7 +59,7 @@ public class OlympaLoginListener implements Listener {
 		if (subdomain != null) {
 			System.out.println("Subdomain " + subdomain);
 			if (subdomain.equalsIgnoreCase("play")) {
-				ServersConnection.tryConnectToLobby(player, null);
+				ServersConnection.tryConnectToLobby(player, player.getServer());
 			} else {
 				ServerInfo server = ServersConnection.getServer(subdomain);
 				if (server == null) {

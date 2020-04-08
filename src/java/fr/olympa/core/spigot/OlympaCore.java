@@ -13,6 +13,7 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
+import fr.olympa.core.spigot.chat.SwearHandler;
 import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
@@ -35,6 +36,12 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		return instance;
 	}
 
+	private SwearHandler swearHandler;
+
+	public SwearHandler getSwearHandler() {
+		return swearHandler;
+	}
+
 	@Override
 	public void launchAsync(Runnable run) {
 		getTask().runTaskAsynchronously(run);
@@ -45,7 +52,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		// ScoreboardPrefix.deleteTeams();
 		RedisAccess.close();
 		super.onDisable();
-		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactiver.");
+		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
 	}
 
 	@Override
@@ -58,6 +65,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		Utils.registerConfigurationSerializable();
 		super.onEnable();
 
+		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 		new MySQL(database);
 		new ReportMySQL(database);
 		RedisAccess redis = RedisAccess.init(getServer().getName());

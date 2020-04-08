@@ -2,9 +2,7 @@ package fr.olympa.core.spigot.chat;
 
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,34 +25,11 @@ import fr.olympa.core.spigot.chat.Chat.OlympaChat;
 
 public class ChatListener implements Listener {
 
-	/*
-	 * Dev: Tristiisch74 Permet d'enlever les IP, les liens, les insultes, le flood,
-	 * les full maj, les doubles messages...
-	 */
-	private List<Pattern> regex_swear = new ArrayList<>();
 	// private Pattern matchIpv6 = Pattern.compile(
 	// "^(?>(?>([a-f0-9]{1,4})(?>:(?1)){7}|(?!(?:.*[a-f0-9](?>:|$)){8,})((?1)(?>:(?1)){0,6})?::(?2)?)|(?>(?>(?1)(?>:(?1)){5}:|(?!(?:.*[a-f0-9]:){6,})(?3)?::(?>((?1)(?>:(?1)){0,4}):)?)?(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(?>.(?4)){3}))$");
 	private Pattern matchIpv4 = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
 	private Pattern matchLink = Pattern.compile("[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)");
 	private Pattern matchFlood = Pattern.compile("(.)\\1{2,}");
-
-	public ChatListener() {
-
-		// Récupère la config et convertie String => Regex
-		List<String> swear_list = OlympaCore.getInstance().getConfig().getStringList("chat.insult");
-		for (String swear : swear_list) {
-			String swears = "";
-			String b = "\\b";
-			if (swear.startsWith("|")) {
-				b = "";
-				swear = swear.substring(1);
-			}
-			for (char s : swear.toCharArray()) {
-				swears += s + "+(\\W|\\d|_)*";
-			}
-			regex_swear.add(Pattern.compile("(?iu)" + b + "(" + swears + ")" + b));
-		}
-	}
 
 	@EventHandler
 	public void onPlayerChatEvent(AsyncPlayerChatEvent event) {
@@ -134,7 +109,7 @@ public class ChatListener implements Listener {
 		 **/
 
 		// Si le message contient des insultes, cancel message
-		for (Pattern regex : regex_swear) {
+		for (Pattern regex : OlympaCore.getInstance().getSwearHandler().getRegexSwear()) {
 			matcher = regex.matcher(msgNFD);
 			if (matcher.find() && Bukkit.getPlayer(matcher.group()) == null) {
 				event.setCancelled(true);

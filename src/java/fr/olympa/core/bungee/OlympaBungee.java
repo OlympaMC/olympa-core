@@ -44,6 +44,7 @@ import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import fr.olympa.core.bungee.vpn.VpnListener;
 import fr.olympa.core.bungee.vpn.VpnSql;
+import fr.olympa.core.spigot.chat.SwearHandler;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
@@ -62,6 +63,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	protected DbConnection database = null;
 	protected long uptime = Utils.getCurrentTimeInSeconds();
 	protected Jedis jedis;
+	private SwearHandler swearHandler;
 
 	@Override
 	public Connection getDatabase() throws SQLException {
@@ -74,6 +76,10 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 
 	private String getPrefixConsole() {
 		return "&f[&6" + getDescription().getName() + "&f] &e";
+	}
+
+	public SwearHandler getSwearHandler() {
+		return swearHandler;
 	}
 
 	public TaskScheduler getTask() {
@@ -104,6 +110,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		LinkSpigotBungee.Provider.link = this;
 
 		BungeeConfigUtils.loadConfigs();
+		swearHandler = new SwearHandler(BungeeConfigUtils.getDefaultConfig().getStringList("chat.insult"));
 		setupDatabase();
 		new MySQL(database);
 		new VpnSql(database);

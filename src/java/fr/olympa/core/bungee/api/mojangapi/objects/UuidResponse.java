@@ -29,7 +29,7 @@ public class UuidResponse {
 
 	public UUID getUuid() {
 		if (uuid == null) {
-			uuid = Utils.getUUID(name);
+			uuid = Utils.getUUID(id);
 		}
 		return uuid;
 	}

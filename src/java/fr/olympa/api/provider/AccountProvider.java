@@ -37,10 +37,10 @@ public class AccountProvider implements OlympaAccount {
 	public static <T extends OlympaPlayer> T get(String name) throws SQLException {
 		OlympaPlayer olympaPlayer = AccountProvider.getFromCache(name);
 		if (olympaPlayer == null) {
-			olympaPlayer = AccountProvider.getFromRedis(name);
-			if (olympaPlayer == null) {
-				olympaPlayer = AccountProvider.getFromDatabase(name);
-			}
+			// olympaPlayer = AccountProvider.getFromRedis(name);
+			// if (olympaPlayer == null) {
+			olympaPlayer = AccountProvider.getFromDatabase(name);
+			// }
 		}
 		return (T) olympaPlayer;
 	}
@@ -61,22 +61,21 @@ public class AccountProvider implements OlympaAccount {
 		return MySQL.getPlayer(uuid);
 	}
 
-	public static OlympaPlayer getFromRedis(String name) {
-		return getFromRedis(name, false);
-	}
-
-	public static OlympaPlayer getFromRedis(String name, boolean cachePersist) {
-		OlympaPlayer olympaPlayer = null;
-
-		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			olympaPlayer = jedis.hgetAll(name).entrySet().stream().map(entry -> GsonCustomizedObjectTypeAdapter.GSON.fromJson(entry.getValue(), playerClass)).filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
-			if (cachePersist) {
-				jedis.persist(REDIS_KEY + olympaPlayer.getUniqueId());
-			}
-		}
-		RedisAccess.INSTANCE.closeResource();
-		return olympaPlayer;
-	}
+	/*
+	 * public static OlympaPlayer getFromRedis(String name) { return
+	 * getFromRedis(name, false); }
+	 *
+	 * public static OlympaPlayer getFromRedis(String name, boolean cachePersist) {
+	 * OlympaPlayer olympaPlayer = null;
+	 *
+	 * try (Jedis jedis = RedisAccess.INSTANCE.connect()) { olympaPlayer =
+	 * jedis.hgetAll(name).entrySet().stream().map(entry ->
+	 * GsonCustomizedObjectTypeAdapter.GSON.fromJson(entry.getValue(),
+	 * playerClass)).filter(p ->
+	 * p.getName().equalsIgnoreCase(name)).findFirst().orElse(null); if
+	 * (cachePersist) { jedis.persist(REDIS_KEY + olympaPlayer.getUniqueId()); } }
+	 * RedisAccess.INSTANCE.closeResource(); return olympaPlayer; }
+	 */
 
 	public synchronized static OlympaPlayerInformations getPlayerInformations(long id) {
 		OlympaPlayerInformations info = cachedInformations.get(id);
@@ -124,8 +123,16 @@ public class AccountProvider implements OlympaAccount {
 		redisAccesss.closeResource();
 	}
 
-	public void createNew(OlympaPlayer olympaPlayer) throws SQLException {
+	public void accountPersist() {
+		try (Jedis jedis = redisAccesss.connect()) {
+			jedis.persist(getKey());
+		}
+		redisAccesss.closeResource();
+	}
+
+	public OlympaPlayer createNew(OlympaPlayer olympaPlayer) throws SQLException {
 		olympaPlayer.setId(MySQL.createPlayer(olympaPlayer));
+		return olympaPlayer;
 	}
 
 	@Override
@@ -141,7 +148,7 @@ public class AccountProvider implements OlympaAccount {
 	public OlympaPlayer get() throws SQLException {
 		OlympaPlayer olympaPlayer = this.getFromCache();
 		if (olympaPlayer == null) {
-			olympaPlayer = this.getFromRedis(false);
+			olympaPlayer = getFromRedis();
 			if (olympaPlayer == null) {
 				return fromDb();
 			}
@@ -154,21 +161,9 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	public OlympaPlayer getFromRedis() {
-		return getFromRedis(false);
-	}
-
-	public OlympaPlayer getFromRedis(boolean cachePersist) {
 		String json = null;
-
 		try (Jedis jedis = redisAccesss.connect()) {
 			json = jedis.get(getKey());
-			if (json != null) {
-				if (cachePersist) {
-					jedis.persist(getKey());
-				} else {
-					jedis.expire(getKey(), cachePlayer);
-				}
-			}
 		}
 		redisAccesss.closeResource();
 

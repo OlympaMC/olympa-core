@@ -52,24 +52,38 @@ public class VpnListener implements Listener {
 		PendingConnection connection = event.getConnection();
 		String username = connection.getName();
 		String ip = connection.getAddress().getAddress().getHostAddress();
-		boolean isVpn = false;
+		OlympaVpn olympaVpn = null;
 		try {
-			OlympaVpn olympaVpn = VpnSql.getIpInfo(ip);
+			olympaVpn = VpnSql.getIpInfo(ip);
+
 			if (olympaVpn == null) {
-				isVpn = OlympaVpn.isVPN(event.getConnection());
-				VpnSql.setIp(username, ip, isVpn);
-			} else {
-				isVpn = olympaVpn.isVpn();
-				if (!olympaVpn.hasUser(username, connection.isOnlineMode())) {
-					olympaVpn.addUser(username, connection.isOnlineMode());
-					VpnSql.saveIp(olympaVpn);
+				olympaVpn = VpnHandler.getInfo(event.getConnection());
+				if (!olympaVpn.isOk()) {
+					return;
 				}
+				olympaVpn.addUser(username, connection.isOnlineMode());
+				VpnSql.addIp(olympaVpn);
+			} else if (olympaVpn.getOrg() == null) {
+				OlympaVpn newOlympaVpn = VpnHandler.getInfo(event.getConnection());
+				if (!newOlympaVpn.isOk()) {
+					return;
+				}
+				newOlympaVpn.setUsers(olympaVpn.getUsers());
+				if (!newOlympaVpn.hasUser(username, connection.isOnlineMode())) {
+					newOlympaVpn.addUser(username, connection.isOnlineMode());
+				}
+				VpnSql.saveIp(newOlympaVpn);
+
+			} else if (!olympaVpn.hasUser(username, connection.isOnlineMode())) {
+				olympaVpn.addUser(username, connection.isOnlineMode());
+				VpnSql.saveIp(olympaVpn);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return;
 		}
-		if (isVpn) {
-			event.setCancelReason(BungeeUtils.connectScreen("&cImpossible d'utiliser un VPN. \n\n&e&lSi tu pense qu'il y a une erreur, contacte un membre du staff."));
+		if (olympaVpn != null && olympaVpn.isVpn()) {
+			event.setCancelReason(BungeeUtils.connectScreen("&cImpossible d'utiliser un VPN.\n\n&e&lSi tu pense qu'il y a une erreur, contacte un membre du staff."));
 			event.setCancelled(true);
 			return;
 		}

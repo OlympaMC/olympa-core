@@ -13,8 +13,32 @@ public class VpnSql {
 	private static String tableName = "vpn";
 	private static DbConnection dbConnection;
 
-	private static OlympaVpn getInfo(ResultSet resultSet) throws SQLException {
-		return new OlympaVpn(resultSet.getLong(1), resultSet.getString(2), resultSet.getInt(3) == 1 ? true : false, resultSet.getString(4));
+	public static boolean addIp(OlympaVpn olympaVpn) throws SQLException {
+		try {
+			String ps = "INSERT INTO " + tableName + " (`ip`, `is_vpn`, `is_mobile`, `is_host`, `users`, `country`, `city`, `org`, `as`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+			int i = 1;
+			PreparedStatement pstate = dbConnection.getConnection().prepareStatement(ps);
+			pstate.setString(i++, olympaVpn.getIp());
+			pstate.setInt(i++, olympaVpn.isProxy() ? 1 : 0);
+			pstate.setInt(i++, olympaVpn.isMobile() ? 1 : 0);
+			pstate.setInt(i++, olympaVpn.isHosting() ? 1 : 0);
+			Map<String, Boolean> users = olympaVpn.getUsers();
+			if (users.isEmpty()) {
+				pstate.setString(i++, null);
+			} else {
+				pstate.setString(i++, users.entrySet().stream().map(entry -> entry.getKey() + (entry.getValue() == true ? ":1" : "")).collect(Collectors.joining("")));
+			}
+			pstate.setString(i++, olympaVpn.getCountry());
+			pstate.setString(i++, olympaVpn.getCity());
+			pstate.setString(i++, olympaVpn.getOrg());
+			pstate.setString(i++, olympaVpn.getAs());
+			pstate.executeUpdate();
+			pstate.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 	/*
@@ -28,6 +52,20 @@ public class VpnSql {
 	 * } } state.close(); return info; }
 	 */
 
+	private static OlympaVpn getInfo(ResultSet resultSet) throws SQLException {
+		int i = 1;
+		return new OlympaVpn(resultSet.getLong(i++),
+				resultSet.getString(i++),
+				resultSet.getInt(i++) == 1 ? true : false,
+				resultSet.getInt(i++) == 1 ? true : false,
+				resultSet.getInt(i++) == 1 ? true : false,
+				resultSet.getString(i++),
+				resultSet.getString(i++),
+				resultSet.getString(i++),
+				resultSet.getString(i++),
+				resultSet.getString(i++));
+	}
+
 	public static OlympaVpn getIpInfo(String ip) throws SQLException {
 		OlympaVpn info = null;
 		Statement state = dbConnection.getConnection().createStatement();
@@ -40,37 +78,25 @@ public class VpnSql {
 	}
 
 	public static void saveIp(OlympaVpn olympaVpn) throws SQLException {
-		PreparedStatement pstate = dbConnection.getConnection()
-				.prepareStatement("UPDATE " + tableName + " SET `is_vpn` = ?, `users` = ? WHERE `id` = ?;");
 		int i = 1;
-		pstate.setInt(i++, olympaVpn.isVpn() ? 1 : 0);
-		Map<String, Boolean> strings = olympaVpn.getUsers();
-		if (!strings.isEmpty()) {
-			pstate.setString(i++, strings.entrySet().stream().map(entry -> entry.getKey() + (entry.getValue() == true ? ":1" : "")).collect(Collectors.joining("")));
-		} else {
+		PreparedStatement pstate = dbConnection.getConnection()
+				.prepareStatement("UPDATE " + tableName + " SET `is_vpn` = ?, `is_mobile` = ?, `is_host` = ?, `users` = ?, `country` = ?, `city` = ?, `org` = ?, `as` = ? WHERE `ip` = ?;");
+		pstate.setInt(i++, olympaVpn.isProxy() ? 1 : 0);
+		pstate.setInt(i++, olympaVpn.isMobile() ? 1 : 0);
+		pstate.setInt(i++, olympaVpn.isHosting() ? 1 : 0);
+		Map<String, Boolean> users = olympaVpn.getUsers();
+		if (users.isEmpty()) {
 			pstate.setString(i++, null);
+		} else {
+			pstate.setString(i++, users.entrySet().stream().map(entry -> entry.getKey() + (entry.getValue() == true ? ":1" : "")).collect(Collectors.joining("")));
 		}
-		pstate.setLong(i++, olympaVpn.getId());
+		pstate.setString(i++, olympaVpn.getCountry());
+		pstate.setString(i++, olympaVpn.getCity());
+		pstate.setString(i++, olympaVpn.getOrg());
+		pstate.setString(i++, olympaVpn.getAs());
+		pstate.setString(i++, olympaVpn.getIp());
 		pstate.executeUpdate();
 		pstate.close();
-	}
-
-	public static boolean setIp(String username, String ip, boolean isVpn) throws SQLException {
-		try {
-			String ps = "INSERT INTO " + tableName + " (`ip`, is_vpn, users) VALUES (?, ?, ?);";
-			int i = 1;
-			PreparedStatement pstate = dbConnection.getConnection().prepareStatement(ps);
-			pstate.setString(i++, ip);
-			pstate.setInt(i++, isVpn ? 1 : 0);
-			pstate.setString(i++, username);
-
-			pstate.executeUpdate();
-			pstate.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
 	}
 
 	/*
