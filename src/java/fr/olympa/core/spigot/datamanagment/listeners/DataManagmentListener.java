@@ -115,7 +115,7 @@ public class DataManagmentListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerQuitHigh(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player);
+		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
 		if (olympaPlayer != null) {
 			try {
 				MySQL.savePlayerPluginDatas(olympaPlayer);
@@ -128,7 +128,7 @@ public class DataManagmentListener implements Listener {
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerQuitLow(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player);
+		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
 		if (olympaPlayer != null) {
 			event.setQuitMessage(SpigotUtils.color("&7[&c-&7] %prefix%name"
 					.replaceAll("%group", olympaPlayer.getGroup().getName())

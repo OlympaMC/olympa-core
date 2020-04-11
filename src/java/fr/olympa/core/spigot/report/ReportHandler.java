@@ -26,7 +26,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class ReportHandler {
 
 	public static void report(Player author, OfflinePlayer target, ReportReason reason, String note) {
-		OlympaPlayer authorOlympaPlayer = AccountProvider.get(author);
+		OlympaPlayer authorOlympaPlayer = AccountProvider.get(author.getUniqueId());
 		OlympaPlayer targetOlympaPlayer;
 		try {
 			targetOlympaPlayer = new AccountProvider(target.getUniqueId()).get();
