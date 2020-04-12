@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import org.bukkit.entity.Player;
-
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.objects.OlympaPlayerInformations;
@@ -29,10 +27,6 @@ public class AccountProvider implements OlympaAccount {
 	public static Class<? extends OlympaPlayer> playerClass = OlympaPlayerObject.class;
 	public static OlympaPlayerProvider playerProvider = OlympaPlayerObject::new;
 	private static String providerTableName = null;
-
-	public static <T extends OlympaPlayer> T get(Player player) {
-		return get(player.getUniqueId());
-	}
 
 	public static <T extends OlympaPlayer> T get(String name) throws SQLException {
 		OlympaPlayer olympaPlayer = AccountProvider.getFromCache(name);
