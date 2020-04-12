@@ -15,11 +15,11 @@ public class ReplyCommand extends BungeeCommand {
 
 	public ReplyCommand(Plugin plugin) {
 		super(plugin, "r", "reply");
-		PrivateMessage.replyCommand.add(this.command);
-		PrivateMessage.replyCommand.addAll(Arrays.asList(this.aliases));
-		this.allowConsole = false;
-		this.minArg = 1;
-		this.usageString = "<message>";
+		PrivateMessage.replyCommand.add(command);
+		PrivateMessage.replyCommand.addAll(Arrays.asList(aliases));
+		allowConsole = false;
+		minArg = 1;
+		usageString = "<message>";
 	}
 
 	@Override

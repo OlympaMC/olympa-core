@@ -1,21 +1,21 @@
 package fr.olympa.core.bungee.servers;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class ServerSwitchCommand extends BungeeCommand {
+public class ServerSwitchCommand extends BungeeCommand implements TabExecutor {
 
-	public ServerSwitchCommand() {
-		super(OlympaBungee.getInstance(), "serverswitch", OlympaCorePermissions.SERVER_SWITCH_COMMAND, "switch", "server");
+	public ServerSwitchCommand(Plugin plugin) {
+		super(plugin, "serverswitch", OlympaCorePermissions.SERVER_SWITCH_COMMAND, "switch", "server");
 		allowConsole = false;
 	}
 
@@ -36,8 +36,8 @@ public class ServerSwitchCommand extends BungeeCommand {
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		List<String> servers = MonitorServers.getServers().keySet().stream().map(ServerInfo::getName).collect(Collectors.toList());
+	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+		Set<String> servers = MonitorServers.getServers().keySet().stream().map(ServerInfo::getName).collect(Collectors.toSet());
 		if (args.length == 0) {
 			return servers;
 		} else if (args.length == 1) {

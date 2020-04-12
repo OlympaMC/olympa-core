@@ -117,25 +117,18 @@ public class DataManagmentListener implements Listener {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = AccountProvider.get(player);
 		if (olympaPlayer != null) {
+			event.setQuitMessage(SpigotUtils.color("&7[&c-&7] %prefix%name"
+					.replaceAll("%group", olympaPlayer.getGroup().getName())
+					.replaceAll("%prefix", olympaPlayer.getGroup().getPrefix())
+					.replaceAll("%name", player.getName())));
 			try {
 				MySQL.savePlayerPluginDatas(olympaPlayer);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		}
-	}
-
-	@EventHandler(priority = EventPriority.LOW)
-	public void onPlayerQuitLow(PlayerQuitEvent event) {
-		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player);
-		if (olympaPlayer != null) {
-			event.setQuitMessage(SpigotUtils.color("&7[&c-&7] %prefix%name"
-					.replaceAll("%group", olympaPlayer.getGroup().getName())
-					.replaceAll("%prefix", olympaPlayer.getGroup().getPrefix())
-					.replaceAll("%name", player.getName())));
 		} else {
 			event.setQuitMessage(null);
 		}
 	}
+
 }

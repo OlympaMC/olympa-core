@@ -1,12 +1,11 @@
 package fr.olympa.core.bungee.ban.commands;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import org.bukkit.entity.Player;
 
 import fr.olympa.api.objects.OlympaConsole;
 import fr.olympa.api.objects.OlympaPlayer;
@@ -22,10 +21,10 @@ import fr.olympa.core.bungee.ban.commands.methods.BanPlayer;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class BanCommand extends BungeeCommand {
+public class BanCommand extends BungeeCommand implements TabExecutor {
 
 	public static OlympaPermission permToBandef;
 
@@ -40,8 +39,8 @@ public class BanCommand extends BungeeCommand {
 	public void onCommand(CommandSender sender, String[] args) {
 		UUID author;
 		OlympaPlayer olympaPlayer = getOlympaPlayer();
-		if (sender instanceof Player) {
-			author = ((Player) sender).getUniqueId();
+		if (sender instanceof ProxiedPlayer) {
+			author = ((ProxiedPlayer) sender).getUniqueId();
 		} else {
 			author = OlympaConsole.getUniqueId();
 		}
@@ -77,12 +76,12 @@ public class BanCommand extends BungeeCommand {
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		if (args.length == 1) {
-			List<String> postentielNames = Utils.startWords(args[0], OlympaBungee.getInstance().getProxy().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toList()));
+			List<String> postentielNames = Utils.startWords(args[0], OlympaBungee.getInstance().getProxy().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toSet()));
 			return postentielNames;
 		} else if (args.length == 2) {
-			List<String> units = new ArrayList<>();
+			Set<String> units = new HashSet<>();
 			for (List<String> unit : BanUtils.units) {
 				units.addAll(unit);
 			}

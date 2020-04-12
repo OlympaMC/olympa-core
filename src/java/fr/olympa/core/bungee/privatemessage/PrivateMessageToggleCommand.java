@@ -18,7 +18,7 @@ public class PrivateMessageToggleCommand extends BungeeCommand {
 
 	public PrivateMessageToggleCommand(Plugin plugin) {
 		super(plugin, "msgtoggle", OlympaCorePermissions.PRIVATEMESSAGE_TOGGLE, "msgt");
-		this.allowConsole = false;
+		allowConsole = false;
 	}
 
 	@Override

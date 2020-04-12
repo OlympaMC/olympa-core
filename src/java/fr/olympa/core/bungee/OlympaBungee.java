@@ -162,7 +162,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new LoginCommand(this).register();
 		new RegisterCommand(this).register();
 		new EmailCommand(this).register();
-		new ServerSwitchCommand().register();
+		new ServerSwitchCommand(this).register();
+		new InfoCommand(this).register();
 
 		new MonitorServers(this);
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") is activated.");

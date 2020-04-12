@@ -2,7 +2,6 @@ package fr.olympa.core.bungee.api.command;
 
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.List;
 
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaPermission;
@@ -144,11 +143,6 @@ public abstract class BungeeCommand extends Command {
 	}
 
 	public abstract void onCommand(CommandSender sender, String[] args);
-
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	public void register() {
 		plugin.getProxy().getPluginManager().registerCommand(plugin, this);

@@ -45,7 +45,7 @@ public class PrivateMessage {
 		OlympaPlayer emeraldTarget;
 		try {
 			if (sender instanceof ProxiedPlayer) {
-				emeraldPlayer = new AccountProvider(((OlympaPlayer) sender).getUniqueId()).get();
+				emeraldPlayer = new AccountProvider(((ProxiedPlayer) sender).getUniqueId()).get();
 			} else if (OlympaConsole.getDevConnected() != null) {
 				emeraldPlayer = OlympaConsole.getDevConnected();
 			}

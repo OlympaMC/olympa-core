@@ -5,28 +5,29 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import fr.olympa.api.objects.OlympaConsole;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.commands.methods.UnbanIp;
 import fr.olympa.core.bungee.ban.commands.methods.UnbanPlayer;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
 @SuppressWarnings("deprecation")
-public class UnbanCommand extends BungeeCommand {
+public class UnbanCommand extends BungeeCommand implements TabExecutor {
 
 	public UnbanCommand(Plugin plugin) {
 		super(plugin, "unban", OlympaCorePermissions.BAN_UNBAN_COMMAND, "pardon");
-		this.minArg = 2;
-		this.usageString = "<joueur|uuid|ip> <motif>";
+		minArg = 2;
+		usageString = "<joueur|uuid|ip> <motif>";
 	}
 
 	@Override
@@ -67,10 +68,10 @@ public class UnbanCommand extends BungeeCommand {
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		if (args.length == 1) {
 			// -> usless code, change to banned players
-			List<String> postentielNames = Utils.startWords(args[0], Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
+			List<String> postentielNames = Utils.startWords(args[0], OlympaBungee.getInstance().getProxy().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toSet()));
 			return postentielNames;
 		} else if (args.length == 2) {
 			List<String> reasons = Arrays.asList("Demande de déban", "Erreur", "Tromper de Joueur", "Augmentation de peine", "Réduction de peine");

@@ -2,31 +2,60 @@ package fr.olympa.core.spigot.chat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class SwearHandler {
 
 	private List<Pattern> regexSwear;
 
-	public SwearHandler(List<String> swearList) {
+	public SwearHandler(List<String> swears) {
 		regexSwear = new ArrayList<>();
-		for (String swear : swearList) {
-			String swears = "";
-			String b = "\\b";
+		for (String swear : swears) {
+			StringBuilder sb = new StringBuilder();
+			String start = new String();
+			String end = new String();
 			if (swear.startsWith("|")) {
-				b = "";
+				start = "\\b";
 				swear = swear.substring(1);
 			}
-			for (char s : swear.toCharArray()) {
-				swears += s + "+(\\W|\\d|_)*";
+			if (swear.endsWith("|")) {
+				end = "\\b";
+				swear = swear.substring(0, swear.length() - 2);
 			}
-			regexSwear.add(Pattern.compile("(?iu)" + b + "(" + swears + ")" + b));
+			for (char s : swear.toCharArray()) {
+				String out;
+				switch (s) {
+				case 'o':
+					out = "(0|au|eau|" + s + ")";
+					break;
+				case 'f':
+					out = "(ph|" + s + ")";
+					break;
+				case 'k':
+				case 'q':
+					out = "(qu|q|k)";
+					break;
+				default:
+					out = String.valueOf(s);
+					break;
+				}
+				sb.append(out + "+[^a-zA-Z]*");
+			}
+			regexSwear.add(Pattern.compile("(?iu)" + start + "(" + sb.toString() + end + ")"));
 		}
-		System.out.println("swearList " + String.join(", ", regexSwear.stream().map(r -> r.pattern()).collect(Collectors.toSet())));
 	}
 
 	public List<Pattern> getRegexSwear() {
 		return regexSwear;
+	}
+
+	public void test(String msg) {
+		for (Pattern pattern : regexSwear) {
+			Matcher matcher = pattern.matcher(msg);
+			if (matcher.find()) {
+				System.out.println("[M] " + matcher.group() + " 1: " + matcher.group(1) + " '" + msg + "'");
+			}
+		}
 	}
 }

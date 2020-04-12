@@ -126,71 +126,54 @@ ban:
       - a
 chat:
    insult:
-   - ez
-   - fdp
-   - pd
-   - tg
-   - ptn
-   - niq
-   - niqu
-   - nique
-   - niques
-   - nik
-   - nike
-   - nikes
-   - ftg
-   - con
-   - c0n
-   - fdp
-   - ntm
-   - tepu
-   - anal
-   - fuck
-   - bite
-   - suce
-   - suces
-   - suceur
-   - suceurs
-   - suck
-   - noob
-   - pt1
-   - put1
-   - putain
-   - merde
-   - '|kiko'
-   - '|batar'
-   - '|fiot'
-   - zbeub
-   - salo
-   - salau
-   - salaud
-   - salaut
-   - salopar
-   - salopard
-   - salopart
-   - '|connar'
-   - chatteself
-   - chate
-   - enculer
-   - foutre
-   - pedale
-   - couille
-   - couile
-   - '|encule'
-   - '|bougnoul'
-   - '|baltring'
-   - leuleu
-   - levrette
-   - '|sodomi'
-   - '|abruti'
-   - '|branle'
-   - '|emmerde'
-   - '|gogol'
-   - put
-   - pute
-   - putes
-   - msk
-   - miskine
+   - "|ez"
+   - "|fdp"
+   - "|pd"
+   - "|tg"
+   - "|ptn"
+   - "|nik"
+   - "|ftg"
+   - "|con"
+   - "|fdp"
+   - "|ntm"
+   - "|tepu"
+   - "|anal"
+   - "|fuck"
+   - "|bite"
+   - "|suce"
+   - "|suck"
+   - "|noob"
+   - "|pute"
+   - "|pt1"
+   - "|put1"
+   - "|putain"
+   - "|gueule"
+   - "|geule"
+   - "|merde"
+   - "|kiko"
+   - "|batar"
+   - "|fiot"
+   - "|zbeub"
+   - "|salo|"
+   - "|salope|"
+   - "|salopar"
+   - "|connar"
+   - "|chate"
+   - "|encule"
+   - "|foutre"
+   - "|pedal"
+   - "|couil"
+   - "|bougnoul"
+   - "|baltring"
+   - "|leuleu"
+   - "|levrette"
+   - "|sodomi"
+   - "|abruti"
+   - "|branle"
+   - "|emerde"
+   - "|gogol"
+   - "|msk"
+   - "|miskine"
    linkwhitelist:
    - olympa.fr
    - olympa.net
@@ -204,7 +187,7 @@ database:
       password: password
       database: server
 default:
-   noperm: '&6Olympa &7» &cVous n''avez pas la permission &l(◑_◑)'
+   noperm: '&6Olympa &7» &cTu n''as pas la permission &l(◑_◑)'
    homeamade: '&6Olympa &7» &aTous nos plugins sont développés par nos soins. &2&lᕙ(＾▿＾)ᕗ'
    cantconsole: '&6Olympa &7» &cImpossible avec la console'
    unknownusername: '&6Olympa &7» &4%player%&c n''est pas connecté.'

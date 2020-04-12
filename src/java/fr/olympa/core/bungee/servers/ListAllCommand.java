@@ -46,8 +46,11 @@ public class ListAllCommand extends BungeeCommand {
 			MaintenanceStatus status = MaintenanceStatus.CLOSE;
 			if (serverPing != null) {
 				String[] motd = serverPing.getDescriptionComponent().toLegacyText().split(" ");
-				MaintenanceStatus status2 = MaintenanceStatus.get(motd[0]);
-				System.out.println("Status " + info.getName() + ": " + status2 + " MOTD: " + motd[0] + " PING: " + ping.getPing() + " ms");
+				String motdStatus = motd[0];
+				if (motdStatus.startsWith("§")) {
+					motdStatus = motdStatus.substring(2);
+				}
+				MaintenanceStatus status2 = MaintenanceStatus.get(motdStatus);
 				if (status2 != null) {
 					if (olympaPlayer != null && status2.getPermission().hasPermission(olympaPlayer)) {
 						continue;

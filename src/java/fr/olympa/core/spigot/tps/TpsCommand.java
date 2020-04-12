@@ -14,7 +14,7 @@ import fr.olympa.core.spigot.OlympaCore;
 public class TpsCommand extends OlympaCommand {
 
 	public TpsCommand(Plugin plugin) {
-		super(plugin, "tps");
+		super(plugin, "tps", "tps+");
 	}
 
 	@Override

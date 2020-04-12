@@ -19,7 +19,6 @@ public class RedisAccess {
 	}
 
 	private RedisCredentials redisCredentials;
-
 	private JedisPool pool;
 
 	public RedisAccess(RedisCredentials redisCredentials) {

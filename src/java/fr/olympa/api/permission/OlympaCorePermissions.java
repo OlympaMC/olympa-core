@@ -46,5 +46,7 @@ public class OlympaCorePermissions {
 	public static OlympaPermission PRIVATEMESSAGE_TOGGLE = new OlympaPermission(OlympaGroup.MINI_YOUTUBER);
 	public static OlympaPermission SETSTATUS_COMMAND = new OlympaPermission(OlympaGroup.MODP);
 	public static OlympaPermission VPN_BYPASS = new OlympaPermission(OlympaGroup.FONDA);
+	public static OlympaPermission INFO_COMMAND = new OlympaPermission(OlympaGroup.ASSISTANT);
+	public static OlympaPermission INFO_COMMAND_EXTRA = new OlympaPermission(OlympaGroup.MODP);
 
 }

@@ -209,6 +209,16 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
+	public String getGroupName() {
+		return getGroup().getName(gender);
+	}
+
+	@Override
+	public String getGroupPrefix() {
+		return getGroup().getPrefix(gender);
+	}
+
+	@Override
 	public TreeMap<OlympaGroup, Long> getGroups() {
 		return groups;
 	}

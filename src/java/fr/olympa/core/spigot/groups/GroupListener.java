@@ -31,23 +31,25 @@ public class GroupListener implements Listener {
 		if (oldGroups.isEmpty()) {
 			return;
 		}
-		oldGroups.forEach(oldGroup -> groups.remove(oldGroup));
+		oldGroups.forEach(oldGroup -> olympaPlayer.removeGroup(oldGroup));
 
 		if (groups.isEmpty()) {
 			olympaPlayer.addGroup(OlympaGroup.PLAYER);
 		}
 
 		Player player = event.getPlayer();
-
+		AccountProvider account = new AccountProvider(player.getUniqueId());
+		account.saveToRedis(olympaPlayer);
+		account.saveToCache(olympaPlayer);
 		if (oldGroups.size() == 1) {
-			player.sendMessage(SpigotUtils.color(Prefix.INFO + "Ton grade &6" + oldGroups.get(0).getName() + "&e a expiré, tu êtes désormais &6" + olympaPlayer.getGroupsToHumainString() + "&e."));
+			player.sendMessage(SpigotUtils.color(Prefix.INFO + "Ton grade &6" + oldGroups.get(0).getName() + "&e a expiré, tu es désormais &6" + olympaPlayer.getGroupsToHumainString() + "&e."));
 		} else {
 			player.sendMessage(SpigotUtils
 					.color(Prefix.INFO + "Tes grades &6" + oldGroups.stream().map(OlympaGroup::getName).collect(Collectors.joining(", ")) + "&e ont expiré, tu es désormais &6" + olympaPlayer.getGroupsToHumainString() + "&e."));
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromCache();

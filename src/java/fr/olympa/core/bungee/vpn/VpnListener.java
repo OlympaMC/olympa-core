@@ -63,7 +63,8 @@ public class VpnListener implements Listener {
 				}
 				olympaVpn.addUser(username, connection.isOnlineMode());
 				VpnSql.addIp(olympaVpn);
-			} else if (olympaVpn.getOrg() == null) {
+
+			} else if (olympaVpn.getAs() == null) {
 				OlympaVpn newOlympaVpn = VpnHandler.getInfo(event.getConnection());
 				if (!newOlympaVpn.isOk()) {
 					return;
@@ -82,7 +83,7 @@ public class VpnListener implements Listener {
 			e.printStackTrace();
 			return;
 		}
-		if (olympaVpn != null && olympaVpn.isVpn()) {
+		if (olympaVpn != null && (olympaVpn.isProxy() || olympaVpn.isHosting())) {
 			event.setCancelReason(BungeeUtils.connectScreen("&cImpossible d'utiliser un VPN.\n\n&e&lSi tu pense qu'il y a une erreur, contacte un membre du staff."));
 			event.setCancelled(true);
 			return;

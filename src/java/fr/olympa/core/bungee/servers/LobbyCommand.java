@@ -11,15 +11,16 @@ public class LobbyCommand extends BungeeCommand {
 
 	public LobbyCommand(Plugin plugin) {
 		super(plugin, "lobby", "hub");
-		this.allowConsole = false;
+		allowConsole = false;
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		if (this.proxiedPlayer.getServer().getInfo().getName().startsWith("auth")) {
+		String serverName = proxiedPlayer.getServer().getInfo().getName();
+		if (serverName.startsWith("auth")) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Impossible ici.");
 			return;
-		} else if (this.proxiedPlayer.getServer().getInfo().getName().startsWith("lobby")) {
+		} else if (serverName.startsWith("lobby")) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Tu es déjà au lobby.");
 			return;
 		}
@@ -29,7 +30,7 @@ public class LobbyCommand extends BungeeCommand {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Aucun serveur lobby n'est actuellement disponible.");
 			return;
 		}
-		this.proxiedPlayer.connect(lobby, Reason.COMMAND);
+		proxiedPlayer.connect(lobby, Reason.COMMAND);
 		this.sendMessage(Prefix.DEFAULT_GOOD, "Tu es maintenant au &2" + lobby.getName() + "&a.");
 	}
 }
