@@ -9,8 +9,8 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.plugin.OlympaSpigot;
 import fr.olympa.api.provider.RedisAccess;
+import fr.olympa.api.region.RegionManager;
 import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
 import fr.olympa.core.spigot.chat.SwearHandler;
@@ -62,7 +62,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
 		status = MaintenanceStatus.DEV;
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
-		Utils.registerConfigurationSerializable();
 		super.onEnable();
 
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
@@ -99,6 +98,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		pluginManager.registerEvents(new TestListener(), this);
 		pluginManager.registerEvents(new Inventories(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
+		pluginManager.registerEvents(new RegionManager(), this);
 
 		new AntiWD(this);
 
