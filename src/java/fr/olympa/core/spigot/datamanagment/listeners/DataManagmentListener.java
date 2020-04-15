@@ -18,6 +18,7 @@ import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.task.OlympaTask;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
@@ -117,7 +118,7 @@ public class DataManagmentListener implements Listener {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
 		if (olympaPlayer != null) {
-			event.setQuitMessage(SpigotUtils.color("&7[&c-&7] %prefix%name"
+			event.setQuitMessage(ColorUtils.color("&7[&c-&7] %prefix%name"
 					.replaceAll("%group", olympaPlayer.getGroup().getName())
 					.replaceAll("%prefix", olympaPlayer.getGroup().getPrefix())
 					.replaceAll("%name", player.getName())));

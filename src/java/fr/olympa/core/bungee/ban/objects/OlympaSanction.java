@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
@@ -165,19 +166,19 @@ public class OlympaSanction {
 	// ###########################################################################################################################################################
 
 	public BaseComponent[] toBaseComplement() {
-		return new ComponentBuilder(SpigotUtils.color("&6Infomation sanction n°&e" + this.getId() + "\n\n"))
+		return new ComponentBuilder(ColorUtils.color("&6Infomation sanction n°&e" + this.getId() + "\n\n"))
 
-				.append(SpigotUtils.color((Matcher.isUUID(this.getPlayerIp()) ? "&6Joueur: &e" + SpigotUtils.getName(this.getPlayerUniqueId()) : "&6IP de: &e" + this.getPlayersName()) + "\n"))
-				.append(SpigotUtils.color("&6Auteur: &e" + SpigotUtils.getName(this.getAuthor()) + "\n"))
-				.append(SpigotUtils.color("&6Type: &e" + this.getType().getName() + "\n"))
-				.append(SpigotUtils.color("&6Raison: &e" + this.getReason() + "\n"))
-				.append(SpigotUtils.color("&6Crée: &e" + Utils.timestampToDateAndHour(this.getCreated()) + "\n"))
-				.append(SpigotUtils.color("&6Expire: &e" + (this.getExpires() != 0 ? Utils.timestampToDateAndHour(this.getExpires()) + "\n&6Durée de base: &e" + Utils
+				.append(ColorUtils.color((Matcher.isUUID(this.getPlayerIp()) ? "&6Joueur: &e" + SpigotUtils.getName(this.getPlayerUniqueId()) : "&6IP de: &e" + this.getPlayersName()) + "\n"))
+				.append(ColorUtils.color("&6Auteur: &e" + SpigotUtils.getName(this.getAuthor()) + "\n"))
+				.append(ColorUtils.color("&6Type: &e" + this.getType().getName() + "\n"))
+				.append(ColorUtils.color("&6Raison: &e" + this.getReason() + "\n"))
+				.append(ColorUtils.color("&6Crée: &e" + Utils.timestampToDateAndHour(this.getCreated()) + "\n"))
+				.append(ColorUtils.color("&6Expire: &e" + (this.getExpires() != 0 ? Utils.timestampToDateAndHour(this.getExpires()) + "\n&6Durée de base: &e" + Utils
 						.timestampToDuration(Utils.getCurrentTimeInSeconds() + this.getBanTime())
 						+ (this.getExpires() >= Utils.getCurrentTimeInSeconds() ? "\n&6Durée restante: &e" + Utils
 								.timestampToDuration(this.getExpires()) : "")
 						: "permanant") + "\n"))
-				.append(SpigotUtils.color("&6Status: &e" + this.getStatus().getColor() + this.getStatus().getName()))
+				.append(ColorUtils.color("&6Status: &e" + this.getStatus().getColor() + this.getStatus().getName()))
 				.create();
 	}
 }

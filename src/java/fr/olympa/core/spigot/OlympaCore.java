@@ -37,9 +37,14 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	}
 
 	private SwearHandler swearHandler;
+	private RegionManager regionManager = new RegionManager();
 
 	public SwearHandler getSwearHandler() {
 		return swearHandler;
+	}
+
+	public RegionManager getRegionManager() {
+		return regionManager;
 	}
 
 	@Override
@@ -98,7 +103,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		pluginManager.registerEvents(new TestListener(), this);
 		pluginManager.registerEvents(new Inventories(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
-		pluginManager.registerEvents(new RegionManager(), this);
+		pluginManager.registerEvents(regionManager, this);
 
 		new AntiWD(this);
 

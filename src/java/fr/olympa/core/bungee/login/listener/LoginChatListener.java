@@ -2,8 +2,8 @@ package fr.olympa.core.bungee.login.listener;
 
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.core.bungee.login.HandlerLogin;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -33,10 +33,10 @@ public class LoginChatListener implements Listener {
 			OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
 			if (olympaPlayer == null || olympaPlayer.getPassword() == null || olympaPlayer.getPassword().isEmpty()) {
 				player.sendMessage(
-						Prefix.DEFAULT_BAD + SpigotUtils.color("Tu dois t'enregistrer. Fait &4/register <mdp>&c."));
+						Prefix.DEFAULT_BAD + ColorUtils.color("Tu dois t'enregistrer. Fait &4/register <mdp>&c."));
 			} else {
 				player.sendMessage(
-						Prefix.DEFAULT_BAD + SpigotUtils.color("Tu dois être connecté. Fait &4/login <mdp>&c."));
+						Prefix.DEFAULT_BAD + ColorUtils.color("Tu dois être connecté. Fait &4/login <mdp>&c."));
 			}
 			event.setCancelled(true);
 		}

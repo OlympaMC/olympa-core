@@ -7,7 +7,7 @@ import java.util.UUID;
 import com.google.gson.Gson;
 
 import fr.olympa.api.maintenance.MaintenanceStatus;
-import fr.olympa.api.utils.SpigotUtils;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import net.md_5.bungee.api.ServerPing;
@@ -123,7 +123,7 @@ public class MotdListener implements Listener {
 			}
 			break;
 		case MAINTENANCE:
-			String maintenanceMessage = SpigotUtils.color(BungeeConfigUtils.getConfig("maintenance").getString("settings.message"));
+			String maintenanceMessage = ColorUtils.color(BungeeConfigUtils.getConfig("maintenance").getString("settings.message"));
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),

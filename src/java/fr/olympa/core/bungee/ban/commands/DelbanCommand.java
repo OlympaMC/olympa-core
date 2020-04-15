@@ -4,9 +4,9 @@ import java.util.UUID;
 
 import fr.olympa.api.objects.OlympaConsole;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
@@ -55,10 +55,10 @@ public class DelbanCommand extends BungeeCommand {
 					OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
 					ProxyServer.getInstance().getConsole().sendMessage(msg);
 				} else {
-					sender.sendMessage(SpigotUtils.color(Prefix.DEFAULT_BAD + "Une erreur avec la base de donnés est survenu."));
+					sender.sendMessage(ColorUtils.color(Prefix.DEFAULT_BAD + "Une erreur avec la base de donnés est survenu."));
 				}
 			} else {
-				sender.sendMessage(SpigotUtils.color(Prefix.DEFAULT_BAD + "Le ban n°" + args[0] + " n'existe pas"));
+				sender.sendMessage(ColorUtils.color(Prefix.DEFAULT_BAD + "Le ban n°" + args[0] + " n'existe pas"));
 			}
 
 		} else {

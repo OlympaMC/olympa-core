@@ -1,7 +1,7 @@
 package fr.olympa.core.bungee.servers;
 
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ChatColor;
@@ -35,7 +35,7 @@ public class ServersListener implements Listener {
 				return;
 			}
 			event.setCancelServer(serverInfolobby);
-			player.sendMessage(SpigotUtils.color(Prefix.DEFAULT + "&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e s'est redémarré, tu es désormais au " + Utils.capitalize(serverInfolobby.getName()) + "."));
+			player.sendMessage(ColorUtils.color(Prefix.DEFAULT + "&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e s'est redémarré, tu es désormais au " + Utils.capitalize(serverInfolobby.getName()) + "."));
 			return;
 		}
 

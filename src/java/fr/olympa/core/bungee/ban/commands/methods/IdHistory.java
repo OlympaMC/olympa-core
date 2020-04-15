@@ -3,8 +3,8 @@ package fr.olympa.core.bungee.ban.commands.methods;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
@@ -21,7 +21,7 @@ public class IdHistory {
 	public static void histban(CommandSender sender, int id) {
 		OlympaSanction ban = BanMySQL.getSanction(id);
 		if (ban == null) {
-			sender.sendMessage(SpigotUtils.color(Prefix.DEFAULT_BAD + "L'id de ban n°&4" + id + "&c n'existe pas."));
+			sender.sendMessage(ColorUtils.color(Prefix.DEFAULT_BAD + "L'id de ban n°&4" + id + "&c n'existe pas."));
 			return;
 		}
 
@@ -30,7 +30,7 @@ public class IdHistory {
 			msg.addExtra(s);
 		}
 
-		msg.addExtra(new TextComponent(SpigotUtils.color("\n&6Historique: ")));
+		msg.addExtra(new TextComponent(ColorUtils.color("\n&6Historique: ")));
 
 		int i = ban.getHistorys().size();
 		if (i > 0) {
@@ -39,9 +39,9 @@ public class IdHistory {
 			for (OlympaSanctionHistory banhist : ban.getHistorys()) {
 				TextComponent msg3 = new TextComponent(banhist.getStatus().getColor() + banhist.getAuthorName());
 
-				BaseComponent[] showMsg = new ComponentBuilder(SpigotUtils.color("&6Auteur: &e" + banhist.getAuthorName() + "\n"))
-						.append(SpigotUtils.color("&6Status: &e" + banhist.getStatus().getNameColored() + " (" + banhist.getReason() + ")\n"))
-						.append(SpigotUtils.color("&6Date: &e" + Utils.timestampToDateAndHour(banhist.getTime())))
+				BaseComponent[] showMsg = new ComponentBuilder(ColorUtils.color("&6Auteur: &e" + banhist.getAuthorName() + "\n"))
+						.append(ColorUtils.color("&6Status: &e" + banhist.getStatus().getNameColored() + " (" + banhist.getReason() + ")\n"))
+						.append(ColorUtils.color("&6Date: &e" + Utils.timestampToDateAndHour(banhist.getTime())))
 						.create();
 				msg3.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, showMsg));
 				msglist.add(msg3);

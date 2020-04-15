@@ -10,7 +10,7 @@ import java.util.logging.Level;
 
 import com.google.common.io.ByteStreams;
 
-import fr.olympa.api.utils.SpigotUtils;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
@@ -43,7 +43,7 @@ public class BungeeConfigUtils {
 	}
 
 	public static String getString(String path) {
-		return SpigotUtils.color(getDefaultConfig().getString(path));
+		return ColorUtils.color(getDefaultConfig().getString(path));
 	}
 
 	public static String getString2(String path) {
