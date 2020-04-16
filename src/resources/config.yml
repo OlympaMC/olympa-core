@@ -3,7 +3,7 @@ status: 'Développement'
 maintenance:
    messages:
       usage: '&cUsage &7» &c/maintenance [on|off|dev|add|remove|list|status] <raison|joueur>'
-      whitelist: '&6Olympa &7» &aWhitelist (%size%): %list%.'
+      whitelist: '&aWhitelist (%size%): %list%.'
       whitelist_separator: ', '
       added: '&a%player% a été ajouté à la whitelist.'
       alreadyadded: '&c%player% est déjà dans la whitelist.'
@@ -82,7 +82,6 @@ ban:
    cantkicktaffmembers: '&cVous ne devez pas kick un membre du staff. En cas de problèmes, merci de contacter un &4Responsable
       &cou un &4Admin&c.'
    idinvalid: '&4%id%&c n''est pas un Id de ban valide.'
-   ipinvalid: '&4%ip%&c n''est pas une IP valide.'
    typeunknown: '&4%type% &cn''est ni un uuid, ni un joueur, ni une IP.'
    units:
       second:
@@ -187,14 +186,14 @@ database:
       password: password
       database: server
 default:
-   noperm: '&6Olympa &7» &cTu n''as pas la permission &l(◑_◑)'
-   homeamade: '&6Olympa &7» &aTous nos plugins sont développés par nos soins. &2&lᕙ(＾▿＾)ᕗ'
-   cantconsole: '&6Olympa &7» &cImpossible avec la console'
-   unknownusername: '&6Olympa &7» &4%player%&c n''est pas connecté.'
-   iuidinvalid: '&6Olympa &7» &4%uuid%&c n''est pas un UUId valide.'
-   ipinvalid: '&6Olympa &7» &4%ip%&c n''est pas une IP valide.'
-   typeunknown: '&6Olympa &7» &4%type% &cn''est ni un uuid, ni un joueur, ni une ip.'
-   playerneverjoin: '&6Olympa &7» &cLe joueur &4%player% &cn''a jamais rejoinds le serveur.'
+   noperm: '&cTu n''as pas la permission &l(◑_◑)'
+   homeamade: '&aTous nos plugins sont développés par nos soins. &2&lᕙ(＾▿＾)ᕗ'
+   cantconsole: '&cImpossible avec la console'
+   unknownusername: '&4%player%&c n''est pas connecté.'
+   iuidinvalid: '&4%uuid%&c n''est pas un UUId valide.'
+   ipinvalid: '&4%ip%&c n''est pas une IP valide.'
+   typeunknown: '&4%type% &cn''est ni un uuid, ni un joueur, ni une ip.'
+   playerneverjoin: '&cLe joueur &4%player% &cn''a jamais rejoinds le serveur.'
    connectscreenprefix: |3+
 
       &b&m-------------------------------------------

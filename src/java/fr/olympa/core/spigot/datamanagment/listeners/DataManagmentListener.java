@@ -115,7 +115,8 @@ public class DataManagmentListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerQuitHigh(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
+		AccountProvider account = new AccountProvider(player.getUniqueId());
+		OlympaPlayer olympaPlayer = account.getFromCache();
 		if (olympaPlayer != null) {
 			event.setQuitMessage(SpigotUtils.color("&7[&c-&7] %prefix%name"
 					.replaceAll("%group", olympaPlayer.getGroup().getName())
@@ -123,6 +124,8 @@ public class DataManagmentListener implements Listener {
 					.replaceAll("%name", player.getName())));
 			try {
 				MySQL.savePlayerPluginDatas(olympaPlayer);
+				account.saveToRedis(olympaPlayer);
+				account.removeFromCache();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

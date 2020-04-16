@@ -14,7 +14,7 @@ import fr.olympa.core.spigot.OlympaCore;
 public class TpsCommand extends OlympaCommand {
 
 	public TpsCommand(Plugin plugin) {
-		super(plugin, "tps", "tps+");
+		super(plugin, "tps+", "tps");
 	}
 
 	@Override
@@ -26,8 +26,8 @@ public class TpsCommand extends OlympaCommand {
 		StringBuilder sb = new StringBuilder();
 		sb.append("&aTPS: &2" + tps[0] + "&a.\n");
 		sb.append("&aMoyenne: &2" + average + "&a\n");
-		sb.append("&aRAM: &2" + ram.getMemUsed() + "/" + ram.getMemTotal() + "&a.\n");
-		sb.append("&aServeur &2" + core.getDescription().getName() + "&a est allumé depuis &2" + core.getUptime() + "&a.\n");
+		sb.append("&aRAM: &2" + ram.getMemUsed() + "/" + ram.getMemTotal() + "&a Mo.\n");
+		sb.append("&aServeur &2" + core.getServer().getName() + "&a est allumé depuis &2" + core.getUptime() + "&a.\n");
 		sendMessage(Prefix.DEFAULT, sb.toString());
 		return false;
 	}

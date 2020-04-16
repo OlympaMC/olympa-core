@@ -1,9 +1,8 @@
 package fr.olympa.core.bungee.ban.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -12,6 +11,7 @@ import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.utils.Matcher;
+import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
@@ -55,7 +55,7 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 			if (Matcher.isIP(arg)) {
 				BanIp.addBanIP(author, sender, arg, args, olympaPlayer);
 			} else {
-				this.sendMessage(BungeeConfigUtils.getString("ban.ipinvalid").replace("%ip%", arg));
+				this.sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.ipinvalid").replace("%ip%", arg));
 				return;
 			}
 
@@ -64,12 +64,12 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 			if (Matcher.isUUID(arg)) {
 				BanPlayer.addBanPlayer(author, sender, null, UUID.fromString(arg), args, olympaPlayer);
 			} else {
-				this.sendMessage(BungeeConfigUtils.getString("ban.uuidinvalid").replace("%uuid%", arg));
+				this.sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.uuidinvalid").replace("%uuid%", arg));
 				return;
 			}
 
 		} else {
-			this.sendMessage(BungeeConfigUtils.getString("ban.typeunknown").replace("%type%", arg));
+			this.sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.typeunknown").replace("%type%", arg));
 			return;
 		}
 		return;
@@ -81,15 +81,24 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 			List<String> postentielNames = Utils.startWords(args[0], OlympaBungee.getInstance().getProxy().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toSet()));
 			return postentielNames;
 		} else if (args.length == 2) {
-			Set<String> units = new HashSet<>();
+			/*
+			 * String i = new String(); java.util.regex.Matcher matcher =
+			 * Pattern.compile("[0-9]+").matcher(args[1]); if (matcher.find()) { i =
+			 * matcher.group(); }
+			 */
+			List<String> units = new ArrayList<>();
 			for (List<String> unit : BanUtils.units) {
+				/*
+				 * for (String u : unit) { units.add( i + u); }
+				 */
 				units.addAll(unit);
 			}
+			System.out.println("Unit: " + String.join(", ", units));
 			return Utils.startWords(args[1], units);
 		} else if (args.length == 3) {
 			List<String> reasons = Arrays.asList("Cheat", "Insulte", "Provocation", "Spam", "Harcèlement");
-			return Utils.startWords(args[1], reasons);
+			return Utils.startWords(args[2], reasons);
 		}
-		return null;
+		return new ArrayList<>();
 	}
 }

@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
-
 import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
@@ -19,6 +17,7 @@ import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.spigot.OlympaCore;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -52,7 +51,7 @@ public class UnbanIp {
 		msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + ban.getId()));
 
 		OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
-		Bukkit.getConsoleSender().sendMessage(msg.toPlainText());
+		ProxyServer.getInstance().getConsole().sendMessage(msg);
 	}
 
 }

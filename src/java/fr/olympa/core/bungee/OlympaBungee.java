@@ -40,6 +40,8 @@ import fr.olympa.core.bungee.servers.ListAllCommand;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServerSwitchCommand;
 import fr.olympa.core.bungee.servers.ServersListener;
+import fr.olympa.core.bungee.staffchat.StaffChatCommand;
+import fr.olympa.core.bungee.staffchat.StaffChatListener;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import fr.olympa.core.bungee.vpn.VpnListener;
@@ -101,7 +103,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 
 	@Override
 	public void onDisable() {
-		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") is disabled.");
+		sendMessage("&4" + getDescription().getName() + "&c (" + getDescription().getVersion() + ") est désactivé.");
 	}
 
 	@Override
@@ -142,6 +144,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		pluginManager.registerListener(this, new FailsPasswordEvent());
 		pluginManager.registerListener(this, new VpnListener());
 		pluginManager.registerListener(this, new OlympaLoginListener());
+		pluginManager.registerListener(this, new StaffChatListener());
 
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();
@@ -164,9 +167,10 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new EmailCommand(this).register();
 		new ServerSwitchCommand(this).register();
 		new InfoCommand(this).register();
+		new StaffChatCommand(this).register();
 
 		new MonitorServers(this);
-		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") is activated.");
+		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
 	}
 
 	@SuppressWarnings("deprecation")

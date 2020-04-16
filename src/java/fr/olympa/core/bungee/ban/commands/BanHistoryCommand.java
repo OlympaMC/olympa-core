@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Matcher;
+import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.commands.methods.IdHistory;
 import fr.olympa.core.bungee.ban.commands.methods.IpHistory;
@@ -16,8 +17,8 @@ public class BanHistoryCommand extends BungeeCommand {
 
 	public BanHistoryCommand(Plugin plugin) {
 		super(plugin, "banhistory", OlympaCorePermissions.BAN_HISTORY_COMMAND, "banhist", "mutehist", "kickhist", "hist", "histban");
-		this.minArg = 1;
-		this.usageString = BungeeConfigUtils.getString("bungee.ban.messages.usagehistban");
+		minArg = 1;
+		usageString = BungeeConfigUtils.getString("ban.messages.usagehistban");
 	}
 
 	@Override
@@ -31,7 +32,7 @@ public class BanHistoryCommand extends BungeeCommand {
 			if (Matcher.isIP(args[0])) {
 				IpHistory.histBan(sender, args[0]);
 			} else {
-				this.sendMessage(BungeeConfigUtils.getString("default.messages.ipinvalid").replaceAll("%ip%", args[0]));
+				this.sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.ipinvalid").replaceAll("%ip%", args[0]));
 				return;
 			}
 
@@ -40,14 +41,14 @@ public class BanHistoryCommand extends BungeeCommand {
 			if (Matcher.isUUID(args[0])) {
 				PlayerHistory.histBan(sender, null, UUID.fromString(args[0]));
 			} else {
-				this.sendMessage(BungeeConfigUtils.getString("default.messages.uuidinvalid").replaceAll("%uuid%", args[0]));
+				this.sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.uuidinvalid").replaceAll("%uuid%", args[0]));
 				return;
 			}
 		} else if (Matcher.isUsername(args[0])) {
 			PlayerHistory.histBan(sender, args[0], null);
 
 		} else {
-			this.sendMessage(BungeeConfigUtils.getString("default.messages.typeunknown").replaceAll("%type%", args[0]));
+			this.sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.typeunknown").replaceAll("%type%", args[0]));
 			return;
 		}
 

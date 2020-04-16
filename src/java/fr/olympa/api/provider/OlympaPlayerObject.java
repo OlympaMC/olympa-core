@@ -214,6 +214,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
+	public String getGroupNameColored() {
+		return getGroup().getColor() + getGroupName();
+	}
+
+	@Override
 	public String getGroupPrefix() {
 		return getGroup().getPrefix(gender);
 	}

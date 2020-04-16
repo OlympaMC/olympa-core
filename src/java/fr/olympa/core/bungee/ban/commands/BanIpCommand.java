@@ -9,6 +9,7 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Matcher;
+import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.commands.methods.BanIp;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
@@ -17,7 +18,6 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
-@SuppressWarnings("deprecation")
 public class BanIpCommand extends BungeeCommand {
 
 	public static OlympaPermission permToBandef;
@@ -25,15 +25,15 @@ public class BanIpCommand extends BungeeCommand {
 	public BanIpCommand(Plugin plugin) {
 		super(plugin, "banip", OlympaCorePermissions.BAN_BANIP_COMMAND, "tempbanip");
 		permToBandef = OlympaCorePermissions.BAN_BANIPDEF_COMMAND;
-		this.minArg = 2;
-		this.usageString = BungeeConfigUtils.getString("ban.messages.usageban");
+		minArg = 2;
+		usageString = BungeeConfigUtils.getString("ban.messages.usageban");
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		UUID author;
 		if (sender instanceof ProxiedPlayer) {
-			author = this.proxiedPlayer.getUniqueId();
+			author = proxiedPlayer.getUniqueId();
 		} else {
 			author = OlympaConsole.getUniqueId();
 		}
@@ -49,16 +49,16 @@ public class BanIpCommand extends BungeeCommand {
 					olympaTarget = AccountProvider.getFromDatabase(args[0]);
 				}
 				if (olympaTarget != null) {
-					BanIp.addBanIP(author, sender, olympaTarget.getIp(), args, this.olympaPlayer);
+					BanIp.addBanIP(author, sender, olympaTarget.getIp(), args, olympaPlayer);
 				}
 
 			} else if (Matcher.isFakeIP(args[0])) {
 
 				if (Matcher.isIP(args[0])) {
-					BanIp.addBanIP(author, sender, args[0], args, this.olympaPlayer);
+					BanIp.addBanIP(author, sender, args[0], args, olympaPlayer);
 
 				} else {
-					sender.sendMessage(BungeeConfigUtils.getString("default.messages.ipinvalid").replaceAll("%ip%", args[0]));
+					sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.ipinvalid").replaceAll("%ip%", args[0]));
 					return;
 				}
 
@@ -67,22 +67,22 @@ public class BanIpCommand extends BungeeCommand {
 				if (Matcher.isUUID(args[0])) {
 					OlympaPlayer olympaTarget = new AccountProvider(UUID.fromString(args[0])).get();
 					if (olympaTarget != null) {
-						BanIp.addBanIP(author, sender, olympaTarget.getIp(), args, this.olympaPlayer);
+						BanIp.addBanIP(author, sender, olympaTarget.getIp(), args, olympaPlayer);
 					}
 
 				} else {
-					sender.sendMessage(BungeeConfigUtils.getString("default.messages.uuidinvalid").replaceAll("%uuid%", args[0]));
+					sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.uuidinvalid").replaceAll("%uuid%", args[0]));
 					return;
 				}
 
 			} else {
-				sender.sendMessage(BungeeConfigUtils.getString("default.messages.typeunknown").replaceAll("%type%", args[0]));
+				sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.typeunknown").replaceAll("%type%", args[0]));
 				return;
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			sender.sendMessage(BungeeConfigUtils.getString("ban.errordb"));
+			sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("ban.errordb"));
 			return;
 		}
 	}

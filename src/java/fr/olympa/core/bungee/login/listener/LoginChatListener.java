@@ -4,6 +4,7 @@ import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.SpigotUtils;
+import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.HandlerLogin;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -45,7 +46,7 @@ public class LoginChatListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPostLogin(PostLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
+		OlympaPlayer olympaPlayer = DataHandler.get(player.getName()).getOlympaPlayer();
 		TextComponent textComponent = new TextComponent();
 		TextComponent textComponent2 = new TextComponent("----------------");
 		TextComponent textComponent3;

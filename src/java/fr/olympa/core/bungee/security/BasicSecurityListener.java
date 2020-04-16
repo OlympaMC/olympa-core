@@ -98,7 +98,7 @@ public class BasicSecurityListener implements Listener {
 		 */
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void on2Login(LoginEvent event) {
 		if (event.isCancelled()) {
 			return;

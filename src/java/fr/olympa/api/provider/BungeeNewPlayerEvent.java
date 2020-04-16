@@ -9,27 +9,36 @@ public class BungeeNewPlayerEvent extends Event {
 	boolean cancelled;
 	PendingConnection connection;
 	OlympaPlayer olympaPlayer;
+	String cancelReason;
 
 	public BungeeNewPlayerEvent(PendingConnection connection, OlympaPlayer olympaPlayer) {
 		this.connection = connection;
 		this.olympaPlayer = olympaPlayer;
-		this.cancelled = false;
+		cancelled = false;
+	}
+
+	public String getCancelReason() {
+		return cancelReason;
 	}
 
 	public PendingConnection getConnection() {
-		return this.connection;
+		return connection;
 	}
 
 	public OlympaPlayer getOlympaPlayer() {
-		return this.olympaPlayer;
+		return olympaPlayer;
 	}
 
 	public boolean isCancelled() {
-		return this.cancelled;
+		return cancelled;
 	}
 
 	public void setCancelled(boolean eventCancelled) {
-		this.cancelled = eventCancelled;
+		cancelled = eventCancelled;
+	}
+
+	public void setCancelReason(String cancelReason) {
+		this.cancelReason = cancelReason;
 	}
 
 }

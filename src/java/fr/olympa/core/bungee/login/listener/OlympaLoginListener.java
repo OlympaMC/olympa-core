@@ -5,13 +5,14 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.objects.OlympaServer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.core.bungee.datamanagment.AuthListener;
+import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.datamanagment.CachePlayer;
+import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.HandlerLogin;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.servers.ServersConnection;
-import fr.olympa.core.bungee.utils.BungeeUtils;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
@@ -26,15 +27,28 @@ public class OlympaLoginListener implements Listener {
 	public void onOlympaPlayerLogin(OlympaPlayerLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
-		HandlerLogin.unlogged.remove(player);
 		Set<String> groupsNames = olympaPlayer.getGroups().keySet().stream().map(OlympaGroup::getName).collect(Collectors.toSet());
 		if (!groupsNames.isEmpty()) {
 			player.addGroups(groupsNames.toArray(new String[0]));
 		}
-
-		if (player.getServer() != null) {
-			ServersConnection.tryConnectToLobby(player, player.getServer());
-		}
+		OlympaBungee.getInstance().getTask().runAsync(OlympaBungee.getInstance(), () -> {
+			CachePlayer cache = DataHandler.get(player.getName());
+			if (cache != null) {
+				String subdomain = cache.getSubDomain();
+				DataHandler.removePlayer(player.getName());
+				if (subdomain != null) {
+					cache.setSubDomain((String) null);
+					if (subdomain.equalsIgnoreCase("buildeur")) {
+						ServersConnection.tryConnect(player, OlympaServer.BUILDEUR);
+						return;
+					} else if (subdomain.equalsIgnoreCase("dev")) {
+						ServersConnection.tryConnect(player, OlympaServer.DEV);
+						return;
+					}
+				}
+			}
+			ServersConnection.tryConnect(player, OlympaServer.LOBBY);
+		});
 	}
 
 	@EventHandler
@@ -47,28 +61,6 @@ public class OlympaLoginListener implements Listener {
 	public void onPostLogin(PostLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		HandlerLogin.unlogged.add(player);
-	}
-
-	@SuppressWarnings("deprecation")
-	@EventHandler
-	public void onServerConnect(ServerConnectedEvent event) {
-		ProxiedPlayer player = event.getPlayer();
-
-		String subdomain = AuthListener.cacheServer.asMap().get(player.getName());
-		AuthListener.cacheServer.invalidate(player.getName());
-		if (subdomain != null) {
-			System.out.println("Subdomain " + subdomain);
-			if (subdomain.equalsIgnoreCase("play")) {
-				ServersConnection.tryConnectToLobby(player, player.getServer());
-			} else {
-				ServerInfo server = ServersConnection.getServer(subdomain);
-				if (server == null) {
-					player.disconnect(BungeeUtils.connectScreen("&cLe serveur &4" + subdomain + "&c n'est pas disponible."));
-					return;
-				}
-				player.connect(server);
-			}
-		}
 	}
 
 	@EventHandler

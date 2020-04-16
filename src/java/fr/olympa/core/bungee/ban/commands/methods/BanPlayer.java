@@ -7,7 +7,6 @@ import java.util.regex.Matcher;
 
 import org.bukkit.Bukkit;
 
-import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.provider.AccountProvider;
@@ -20,21 +19,21 @@ import fr.olympa.core.bungee.ban.commands.BanIpCommand;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
-import fr.olympa.core.spigot.OlympaCore;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.config.Configuration;
 
 public class BanPlayer {
 
 	/**
-	 * Ajoute un ban
-	 * targetUUID ou targetname ne doit pas être null.
+	 * Ajoute un ban targetUUID ou targetname ne doit pas être null.
 	 *
-	 * @param author is a UUID of author of ban or String (If the author is Console, author = "Console")
+	 * @param author     is a UUID of author of ban or String (If the author is
+	 *                   Console, author = "Console")
 	 * @param targetname Name of player to ban. case insensitive
 	 */
 	@SuppressWarnings("deprecation")
@@ -44,7 +43,7 @@ public class BanPlayer {
 		// args[1] = time + unit
 		// args[2] & + = reason
 
-		CustomConfig config = OlympaCore.getInstance().getConfig();
+		Configuration config = BungeeConfigUtils.getDefaultConfig();
 		long currentTime = Utils.getCurrentTimeInSeconds();
 		ProxiedPlayer player = null;
 		if (sender instanceof ProxiedPlayer) {
@@ -134,7 +133,7 @@ public class BanPlayer {
 						.replace("%id%", String.valueOf(ban.getId())));
 
 				// Envoyer un message à tous les joueurs du même serveur spigot
-				Bukkit.broadcastMessage(config.getString("ban.tempbanannounce")
+				ProxyServer.getInstance().broadcast(config.getString("ban.tempbanannounce")
 						.replace("%player%", olympaTarget.getName())
 						.replace("%time%", expireString)
 						.replace("%reason%", reason));
@@ -150,7 +149,7 @@ public class BanPlayer {
 			msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + ban.getId()));
 
 			OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
-			Bukkit.getConsoleSender().sendMessage(msg.toPlainText());
+			ProxyServer.getInstance().getConsole().sendMessage(msg.toPlainText());
 
 			// Sinon: ban def
 		} else {

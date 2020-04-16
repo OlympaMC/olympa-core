@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import fr.olympa.core.spigot.OlympaCore;
+import fr.olympa.core.bungee.utils.BungeeConfigUtils;
+import net.md_5.bungee.config.Configuration;
 
 public class BanUtils {
 
@@ -15,10 +16,10 @@ public class BanUtils {
 	public static List<List<String>> units = new ArrayList<>();
 
 	static {
-
-		List<String> unit = OlympaCore.getInstance().getConfig().getStringList("ban.units");
-		for (String Sunit : unit) {
-			units.add(OlympaCore.getInstance().getConfig().getStringList("ban.units." + Sunit));
+		Configuration config = BungeeConfigUtils.getDefaultConfig();
+		Configuration unit = config.getSection("ban.units");
+		for (String Sunit : unit.getKeys()) {
+			units.add(config.getStringList("ban.units." + Sunit));
 		}
 
 		List<String> units2 = new ArrayList<>();
