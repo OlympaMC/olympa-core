@@ -6,9 +6,9 @@ import java.util.Arrays;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.login.HandlerLogin;
+import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -165,12 +165,12 @@ public abstract class BungeeCommand extends Command {
 	}
 
 	public void sendMessage(CommandSender sender, Prefix prefix, String text) {
-		this.sendMessage(sender, prefix + ColorUtils.color(text));
+		this.sendMessage(sender, prefix + BungeeUtils.color(text));
 	}
 
 	@SuppressWarnings("deprecation")
 	public void sendMessage(CommandSender sender, String text) {
-		sender.sendMessage(ColorUtils.color(text));
+		sender.sendMessage(BungeeUtils.color(text));
 	}
 
 	public void sendMessage(Prefix prefix, String text) {
@@ -178,7 +178,7 @@ public abstract class BungeeCommand extends Command {
 	}
 
 	public void sendMessage(String text) {
-		this.sendMessage(sender, ColorUtils.color(text));
+		this.sendMessage(sender, BungeeUtils.color(text));
 	}
 
 	public void sendMessage(TextComponent text) {

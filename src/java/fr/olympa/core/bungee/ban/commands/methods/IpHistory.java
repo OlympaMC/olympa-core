@@ -5,13 +5,13 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
+import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -34,23 +34,23 @@ public class IpHistory {
 		}
 
 		if (bans.size() == 0) {
-			sender.sendMessage(ColorUtils.color(Prefix.DEFAULT_BAD + "&cL'ip de &4%ip%&c n'a jamais été sanctionné.").replaceAll("%ip%", playersShow));
+			sender.sendMessage(BungeeUtils.color(Prefix.DEFAULT_BAD + "&cL'ip de &4%ip%&c n'a jamais été sanctionné.").replaceAll("%ip%", playersShow));
 			return;
 		}
 
-		TextComponent msg = new TextComponent(ColorUtils.color("&6Historique des sanctions de l'ip de &e" + playersShow + "&6:\n"));
-		msg.addExtra(ColorUtils.color("&6Bans: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.BAN).count() + " "));
-		msg.addExtra(ColorUtils.color("&6Mute: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.MUTE).count() + " "));
-		msg.addExtra(ColorUtils.color("&6Kick: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.KICK).count() + "\n"));
+		TextComponent msg = new TextComponent(BungeeUtils.color("&6Historique des sanctions de l'ip de &e" + playersShow + "&6:\n"));
+		msg.addExtra(BungeeUtils.color("&6Bans: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.BAN).count() + " "));
+		msg.addExtra(BungeeUtils.color("&6Mute: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.MUTE).count() + " "));
+		msg.addExtra(BungeeUtils.color("&6Kick: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.KICK).count() + "\n"));
 
 		String sanctions = bans.stream().filter(b -> b.getStatus() == OlympaSanctionStatus.ACTIVE).map(b -> "&c" + b.getType().getName()).collect(Collectors.joining("&7, "));
-		msg.addExtra(ColorUtils.color("&6Sanction Active: " + (sanctions.isEmpty() ? "&aAucune" : sanctions) + "\n"));
+		msg.addExtra(BungeeUtils.color("&6Sanction Active: " + (sanctions.isEmpty() ? "&aAucune" : sanctions) + "\n"));
 
-		msg.addExtra(ColorUtils.color("&6Historique: "));
+		msg.addExtra(BungeeUtils.color("&6Historique: "));
 
 		bans.stream().forEach(b -> {
 			BaseComponent[] comp = new ComponentBuilder(
-					ColorUtils.color(b.getStatus().getColor() + b.getType().getName().toUpperCase() + " " + b.getStatus().getName().toUpperCase() + " " + b.getReason()))
+					BungeeUtils.color(b.getStatus().getColor() + b.getType().getName().toUpperCase() + " " + b.getStatus().getName().toUpperCase() + " " + b.getReason()))
 							.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, b.toBaseComplement()))
 							.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + b.getId()))
 							.create();

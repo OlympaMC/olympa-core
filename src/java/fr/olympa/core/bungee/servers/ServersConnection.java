@@ -96,7 +96,7 @@ public class ServersConnection {
 			removeTryToConnect(player);
 			return;
 		} else {
-			player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Aucun " + olympaServer.getNameCaps() + " n'est actuellement disponible merci de patienter ..."));
+			player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Aucun serveur " + olympaServer.getNameCaps() + " n'est actuellement disponible merci de patienter ..."));
 		}
 	}
 }

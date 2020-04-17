@@ -7,10 +7,10 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 
@@ -35,10 +35,10 @@ public class OlympaSanction {
 	private boolean permanant;
 
 	/**
-	 * @param id ID du ban
-	 * @param player UUID du joueur qui doit être ban
-	 * @param author UUID de l'auteur du ban
-	 * @param reason Raison du ban
+	 * @param id      ID du ban
+	 * @param player  UUID du joueur qui doit être ban
+	 * @param author  UUID de l'auteur du ban
+	 * @param reason  Raison du ban
 	 * @param created Timestamp de la creation du ban
 	 * @param expires Timestamp du temps de ban, 0 = permanant
 	 */
@@ -50,21 +50,21 @@ public class OlympaSanction {
 		this.author = author;
 		this.created = created;
 		this.expires = expires;
-		this.status = OlympaSanctionStatus.ACTIVE;
-		this.history = new ArrayList<>();
-		this.permanant = this.expires == 0 ? true : false;
+		status = OlympaSanctionStatus.ACTIVE;
+		history = new ArrayList<>();
+		permanant = this.expires == 0 ? true : false;
 	}
 
 	// ###########################################################################################################################################################
 
 	/**
-	 * @param id ID du ban
-	 * @param player UUID du joueur qui doit être ban
-	 * @param author UUID de l'auteur du ban
-	 * @param reason Raison du ban
+	 * @param id      ID du ban
+	 * @param player  UUID du joueur qui doit être ban
+	 * @param author  UUID de l'auteur du ban
+	 * @param reason  Raison du ban
 	 * @param created Timestamp de la creation du ban
 	 * @param expires Timestamp du temps de ban, 0 = permanant
-	 * @param status Status du ban
+	 * @param status  Status du ban
 	 */
 	public OlympaSanction(int id, OlympaSanctionType type, Object player, UUID author, String reason, long created, long expires, OlympaSanctionStatus status) {
 		this.id = id;
@@ -75,8 +75,8 @@ public class OlympaSanction {
 		this.created = created;
 		this.expires = expires;
 		this.status = status;
-		this.history = new ArrayList<>();
-		this.permanant = this.expires == 0 ? true : false;
+		history = new ArrayList<>();
+		permanant = this.expires == 0 ? true : false;
 	}
 
 	public void addHistory(OlympaSanctionHistory history) {
@@ -84,67 +84,67 @@ public class OlympaSanction {
 	}
 
 	public UUID getAuthor() {
-		return this.author;
+		return author;
 	}
 
 	public long getBanTime() {
-		return this.expires - this.created;
+		return expires - created;
 	}
 
 	public long getCreated() {
-		return this.created;
+		return created;
 	}
 
 	public long getExpires() {
-		return this.expires;
+		return expires;
 	}
 
 	public OlympaSanctionHistory getHistory() {
-		return this.history.get(0);
+		return history.get(0);
 	}
 
 	public List<OlympaSanctionHistory> getHistorys() {
-		return this.history;
+		return history;
 	}
 
 	public int getId() {
-		return this.id;
+		return id;
 	}
 
 	public Object getPlayer() {
-		return this.player;
+		return player;
 	}
 
 	public String getPlayerIp() {
-		return String.valueOf(this.getPlayer());
+		return String.valueOf(getPlayer());
 	}
 
 	public List<OlympaPlayer> getPlayers() {
-		return MySQL.getPlayersByIp(this.getPlayerIp());
+		return MySQL.getPlayersByIp(getPlayerIp());
 	}
 
 	public String getPlayersName() {
-		return this.getPlayers().stream().map(OlympaPlayer::getName).collect(Collectors.joining(", "));
+		return getPlayers().stream().map(OlympaPlayer::getName).collect(Collectors.joining(", "));
 	}
 
 	public UUID getPlayerUniqueId() {
-		return UUID.fromString(String.valueOf(this.getPlayer()));
+		return UUID.fromString(String.valueOf(getPlayer()));
 	}
 
 	public String getReason() {
-		return this.reason;
+		return reason;
 	}
 
 	public OlympaSanctionStatus getStatus() {
-		return this.status;
+		return status;
 	}
 
 	public OlympaSanctionType getType() {
-		return this.type;
+		return type;
 	}
 
 	public Boolean isPermanent() {
-		return this.permanant;
+		return permanant;
 	}
 
 	public void removeHistory(OlympaSanctionHistory history) {
@@ -166,19 +166,19 @@ public class OlympaSanction {
 	// ###########################################################################################################################################################
 
 	public BaseComponent[] toBaseComplement() {
-		return new ComponentBuilder(ColorUtils.color("&6Infomation sanction n°&e" + this.getId() + "\n\n"))
+		return new ComponentBuilder(BungeeUtils.color("&6Infomation sanction n°&e" + getId() + "\n\n"))
 
-				.append(ColorUtils.color((Matcher.isUUID(this.getPlayerIp()) ? "&6Joueur: &e" + SpigotUtils.getName(this.getPlayerUniqueId()) : "&6IP de: &e" + this.getPlayersName()) + "\n"))
-				.append(ColorUtils.color("&6Auteur: &e" + SpigotUtils.getName(this.getAuthor()) + "\n"))
-				.append(ColorUtils.color("&6Type: &e" + this.getType().getName() + "\n"))
-				.append(ColorUtils.color("&6Raison: &e" + this.getReason() + "\n"))
-				.append(ColorUtils.color("&6Crée: &e" + Utils.timestampToDateAndHour(this.getCreated()) + "\n"))
-				.append(ColorUtils.color("&6Expire: &e" + (this.getExpires() != 0 ? Utils.timestampToDateAndHour(this.getExpires()) + "\n&6Durée de base: &e" + Utils
-						.timestampToDuration(Utils.getCurrentTimeInSeconds() + this.getBanTime())
-						+ (this.getExpires() >= Utils.getCurrentTimeInSeconds() ? "\n&6Durée restante: &e" + Utils
-								.timestampToDuration(this.getExpires()) : "")
+				.append(BungeeUtils.color((Matcher.isUUID(getPlayerIp()) ? "&6Joueur: &e" + SpigotUtils.getName(getPlayerUniqueId()) : "&6IP de: &e" + getPlayersName()) + "\n"))
+				.append(BungeeUtils.color("&6Auteur: &e" + SpigotUtils.getName(getAuthor()) + "\n"))
+				.append(BungeeUtils.color("&6Type: &e" + getType().getName() + "\n"))
+				.append(BungeeUtils.color("&6Raison: &e" + getReason() + "\n"))
+				.append(BungeeUtils.color("&6Crée: &e" + Utils.timestampToDateAndHour(getCreated()) + "\n"))
+				.append(BungeeUtils.color("&6Expire: &e" + (getExpires() != 0 ? Utils.timestampToDateAndHour(getExpires()) + "\n&6Durée de base: &e" + Utils
+						.timestampToDuration(Utils.getCurrentTimeInSeconds() + getBanTime())
+						+ (getExpires() >= Utils.getCurrentTimeInSeconds() ? "\n&6Durée restante: &e" + Utils
+								.timestampToDuration(getExpires()) : "")
 						: "permanant") + "\n"))
-				.append(ColorUtils.color("&6Status: &e" + this.getStatus().getColor() + this.getStatus().getName()))
+				.append(BungeeUtils.color("&6Status: &e" + getStatus().getColor() + getStatus().getName()))
 				.create();
 	}
 }

@@ -8,10 +8,10 @@ import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
+import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -147,7 +147,7 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 					if (message != "") {
 						statusmsg = "(" + message.replaceAll("\n", "") + ")";
 					}
-					sender.sendMessage(ColorUtils.color("&6Le mode maintenance est en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
+					sender.sendMessage(BungeeUtils.color("&6Le mode maintenance est en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
 					break;
 
 				default:
@@ -168,6 +168,6 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 		if (message != null && !message.isEmpty()) {
 			statusmsg = "(" + message.replace("\n", "") + ")";
 		}
-		player.sendMessage(ColorUtils.color("&6Le mode maintenance est désormais en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
+		player.sendMessage(BungeeUtils.color("&6Le mode maintenance est désormais en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
 	}
 }

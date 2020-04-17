@@ -28,15 +28,15 @@ public class Chat {
 		}
 
 		public String getLastMsg() {
-			return this.lastMsg;
+			return lastMsg;
 		}
 
 		public long getLastMsgTime() {
-			return this.lastMsgTime;
+			return lastMsgTime;
 		}
 
 		public boolean isLastMsg(String msg) {
-			return this.lastMsg != null && this.lastMsg.equalsIgnoreCase(msg);
+			return lastMsg != null && lastMsg.equalsIgnoreCase(msg);
 		}
 
 		public void setLastMsg(String lastMsg) {

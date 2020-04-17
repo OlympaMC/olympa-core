@@ -34,15 +34,16 @@ public class ServersListener implements Listener {
 		}
 		if (kickReason.contains("restarting") || kickReason.contains("closed")) {
 
-			ServerInfo serverInfolobby = ServersConnection.getLobby(serverKicked);
-			if (serverInfolobby == null) {
-				serverInfolobby = ServersConnection.getAuth(serverKicked);
+			ServerInfo server = ServersConnection.getLobby(serverKicked);
+			if (server == null) {
+				server = ServersConnection.getAuth(serverKicked);
 			}
-			if (serverInfolobby == null) {
+			if (server == null) {
 				event.setKickReasonComponent(TextComponent.fromLegacyText(BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e s'est redémarré, merci de te reconnecter dans quelques secondes...")));
 				return;
 			}
-			event.setCancelServer(serverInfolobby);
+			event.setCancelled(true);
+			event.setCancelServer(server);
 			return;
 		}
 
@@ -51,6 +52,7 @@ public class ServersListener implements Listener {
 			if (serverInfolobby == null) {
 				return;
 			}
+			event.setCancelled(true);
 			event.setCancelServer(serverInfolobby);
 		}
 	}

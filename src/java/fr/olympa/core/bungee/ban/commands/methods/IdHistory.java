@@ -3,12 +3,12 @@ package fr.olympa.core.bungee.ban.commands.methods;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionHistory;
+import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -21,7 +21,7 @@ public class IdHistory {
 	public static void histban(CommandSender sender, int id) {
 		OlympaSanction ban = BanMySQL.getSanction(id);
 		if (ban == null) {
-			sender.sendMessage(ColorUtils.color(Prefix.DEFAULT_BAD + "L'id de ban n°&4" + id + "&c n'existe pas."));
+			sender.sendMessage(BungeeUtils.color(Prefix.DEFAULT_BAD + "L'id de ban n°&4" + id + "&c n'existe pas."));
 			return;
 		}
 
@@ -30,7 +30,7 @@ public class IdHistory {
 			msg.addExtra(s);
 		}
 
-		msg.addExtra(new TextComponent(ColorUtils.color("\n&6Historique: ")));
+		msg.addExtra(new TextComponent(BungeeUtils.color("\n&6Historique: ")));
 
 		int i = ban.getHistorys().size();
 		if (i > 0) {
@@ -39,9 +39,9 @@ public class IdHistory {
 			for (OlympaSanctionHistory banhist : ban.getHistorys()) {
 				TextComponent msg3 = new TextComponent(banhist.getStatus().getColor() + banhist.getAuthorName());
 
-				BaseComponent[] showMsg = new ComponentBuilder(ColorUtils.color("&6Auteur: &e" + banhist.getAuthorName() + "\n"))
-						.append(ColorUtils.color("&6Status: &e" + banhist.getStatus().getNameColored() + " (" + banhist.getReason() + ")\n"))
-						.append(ColorUtils.color("&6Date: &e" + Utils.timestampToDateAndHour(banhist.getTime())))
+				BaseComponent[] showMsg = new ComponentBuilder(BungeeUtils.color("&6Auteur: &e" + banhist.getAuthorName() + "\n"))
+						.append(BungeeUtils.color("&6Status: &e" + banhist.getStatus().getNameColored() + " (" + banhist.getReason() + ")\n"))
+						.append(BungeeUtils.color("&6Date: &e" + Utils.timestampToDateAndHour(banhist.getTime())))
 						.create();
 				msg3.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, showMsg));
 				msglist.add(msg3);
