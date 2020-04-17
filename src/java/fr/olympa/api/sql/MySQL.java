@@ -153,7 +153,7 @@ public class MySQL {
 			statement.setLong(1, id);
 			ResultSet resultSet = statement.executeQuery();
 			if (resultSet.next()) {
-				return new OlympaPlayerInformationsObject(id, resultSet.getString("pseudo"), UUID.fromString(resultSet.getString("uuid_server")));
+				return new OlympaPlayerInformationsObject(id, resultSet.getString("pseudo"), Utils.getUUID(resultSet.getString("uuid_server")));
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();

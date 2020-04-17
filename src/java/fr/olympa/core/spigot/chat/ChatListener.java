@@ -17,8 +17,8 @@ import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.objects.OlympaServerSettings;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.chat.Chat.OlympaChat;
@@ -47,10 +47,10 @@ public class ChatListener implements Listener {
 		// Si le chat est mute, cancel message
 		if (serverSettings.isChatMute()) {
 			if (OlympaCorePermissions.CHAT_MUTEDBYPASS.hasPermission(olympaPlayer)) {
-				player.sendMessage(SpigotUtils.color(Prefix.INFO + "Le chat est désactivé pour les autres joueurs."));
+				player.sendMessage(ColorUtils.color(Prefix.INFO + "Le chat est désactivé pour les autres joueurs."));
 				return;
 			}
-			player.sendMessage(SpigotUtils.color(Prefix.BAD + "Le chat est désactivé."));
+			player.sendMessage(ColorUtils.color(Prefix.BAD + "Le chat est désactivé."));
 			event.setCancelled(true);
 			return;
 		}
@@ -65,14 +65,14 @@ public class ChatListener implements Listener {
 		long time = currentTime - olympaTchat.getLastMsgTime();
 		if (olympaTchat.isLastMsg(msgNFD) && time < 10) {
 			event.setCancelled(true);
-			player.sendMessage(SpigotUtils.color(Prefix.BAD + "Merci de ne pas répéter le même message."));
+			player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci de ne pas répéter le même message."));
 			return;
 		}
 
 		// Si le chat est slow, met un cooldown entre chaque message
 		if (time < serverSettings.getTimeCooldown() && serverSettings.isChatSlow()) {
 			event.setCancelled(true);
-			player.sendMessage(SpigotUtils.color(Prefix.BAD + "Merci de patienter %second secondes entre chaque messages."
+			player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci de patienter %second secondes entre chaque messages."
 					.replaceFirst("%second", String.valueOf(serverSettings.getTimeCooldown()))));
 			olympaTchat.setLastMsgTime(currentTime);
 			return;
@@ -86,7 +86,7 @@ public class ChatListener implements Listener {
 			Set<String> linkWhitelist = new HashSet<>(OlympaCore.getInstance().getConfig().getStringList("chat.linkwhitelist"));
 			if (!linkWhitelist.stream().filter(l -> link.contains(l)).findFirst().isPresent()) {
 				event.setCancelled(true);
-				player.sendMessage(SpigotUtils.color(Prefix.BAD + "Les liens sont interdits."));
+				player.sendMessage(ColorUtils.color(Prefix.BAD + "Les liens sont interdits."));
 				Chat.sendToStaff("Lien", player, message);
 				return;
 			}
@@ -96,14 +96,14 @@ public class ChatListener implements Listener {
 		matcher = matchIpv4.matcher(msgNFD);
 		if (matcher.find()) {
 			event.setCancelled(true);
-			player.sendMessage(SpigotUtils.color(Prefix.BAD + "Les adresses IPs sont interdites."));
+			player.sendMessage(ColorUtils.color(Prefix.BAD + "Les adresses IPs sont interdites."));
 			Chat.sendToStaff("IP", player, message);
 			return;
 		}
 
 		/**
 		 * matcher = this.matchIpv6.matcher(msgNFD); if (matcher.find()) {
-		 * event.setCancelled(true); player.sendMessage(SpigotUtils.color(Prefix.BAD +
+		 * event.setCancelled(true); player.sendMessage(ColorUtils.color(Prefix.BAD +
 		 * "Les adresses IPv6 sont interdites.")); Chat.sendToStaff("IP", player,
 		 * message); return; }
 		 **/
@@ -113,7 +113,7 @@ public class ChatListener implements Listener {
 			matcher = regex.matcher(msgNFD);
 			if (matcher.find() && Bukkit.getPlayer(matcher.group()) == null) {
 				event.setCancelled(true);
-				player.sendMessage(SpigotUtils.color(Prefix.BAD + "Merci de rester correct."));
+				player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci de rester correct."));
 				Chat.sendToStaff("Insulte", player, message);
 				return;
 			}
@@ -135,7 +135,7 @@ public class ChatListener implements Listener {
 
 			if (Math.round(uppers * 1.0 / (msgNFD.length() * 1.0) * 100.0) > serverSettings.getMaxCaps()) {
 				event.setMessage(message.toLowerCase().replaceFirst(".", String.valueOf(message.toLowerCase().charAt(0)).toUpperCase()));
-				player.sendMessage(SpigotUtils.color(Prefix.BAD + "Merci d'éviter de mettre trop de majuscules."));
+				player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci d'éviter de mettre trop de majuscules."));
 			}
 		}
 
@@ -154,20 +154,20 @@ public class ChatListener implements Listener {
 					String wordFlooded = matcher2.group();
 					if (Bukkit.getPlayer(wordFlooded) != null || charFlooded == '.' && charsFlooded.length() <= 3) {
 						// TODO Gestion flood legit
-						player.sendMessage(SpigotUtils.color(Prefix.BAD + "Une erreur est survenu, nous travaillons sur ce problème. Signale aux dev stp."));
+						player.sendMessage(ColorUtils.color(Prefix.BAD + "Une erreur est survenu, nous travaillons sur ce problème. Signale aux dev stp."));
 						break;
 					}
 					String word = wordFlooded.replace(charsFlooded.substring(1), "");
 					message = message.replace(wordFlooded, word);
 					if (++i > 100) {
-						Bukkit.getConsoleSender().sendMessage(SpigotUtils.color("§4ERROR §cBoucle infini dans la gestion de chat."));
+						Bukkit.getConsoleSender().sendMessage(ColorUtils.color("§4ERROR §cBoucle infini dans la gestion de chat."));
 						break;
 					}
 					matcher = matchFlood.matcher(message);
 				} while (matcher.find());
 
 				event.setMessage(message);
-				player.sendMessage(SpigotUtils.color(Prefix.BAD + "Merci d'éviter le flood."));
+				player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci d'éviter le flood."));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

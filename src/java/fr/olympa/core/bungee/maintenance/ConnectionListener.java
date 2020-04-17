@@ -3,7 +3,7 @@ package fr.olympa.core.bungee.maintenance;
 import java.util.logging.Level;
 
 import fr.olympa.api.maintenance.MaintenanceStatus;
-import fr.olympa.api.utils.SpigotUtils;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
@@ -33,18 +33,18 @@ public class ConnectionListener implements Listener {
 			if (maintenanceStatus == MaintenanceStatus.DEV) {
 				event.setCancelReason(BungeeUtils.connectScreen("&6Le serveur est actuellement en développement.\n\n&3Plus d'infos sur le &btwitter &n@Olympa_fr"));
 				event.setCancelled(true);
-				ProxyServer.getInstance().getLogger().log(Level.INFO, SpigotUtils.color("&d" + playername + " ne peux pas se connecter (serveur en dev)"));
+				ProxyServer.getInstance().getLogger().log(Level.INFO, ColorUtils.color("&d" + playername + " ne peux pas se connecter (serveur en dev)"));
 			} else if (maintenanceStatus == MaintenanceStatus.SOON) {
 				event.setCancelReason(BungeeUtils.connectScreen("&cNous ouvrons bientôt !.\n\n&3Plus d'infos sur le &btwitter &n@Olympa_fr"));
 				event.setCancelled(true);
-				ProxyServer.getInstance().getLogger().log(Level.INFO, SpigotUtils.color("&d" + playername + " ne peux pas se connecter (serveur en dev, open soon)"));
+				ProxyServer.getInstance().getLogger().log(Level.INFO, ColorUtils.color("&d" + playername + " ne peux pas se connecter (serveur en dev, open soon)"));
 			} else if (maintenanceStatus == null || maintenanceStatus != MaintenanceStatus.OPEN || maintenanceStatus == MaintenanceStatus.DEV) {
 				if (message != null && !message.isEmpty()) {
 					message = "\n\n&c&nRaison:&c " + message;
 				}
 				event.setCancelReason(BungeeUtils.connectScreen("&cLe serveur est actuellement en maintenance." + message));
 				event.setCancelled(true);
-				ProxyServer.getInstance().getLogger().log(Level.INFO, SpigotUtils.color("&d" + playername + " ne peux pas se connecter (serveur en maintenance)"));
+				ProxyServer.getInstance().getLogger().log(Level.INFO, ColorUtils.color("&d" + playername + " ne peux pas se connecter (serveur en maintenance)"));
 			}
 		}
 	}

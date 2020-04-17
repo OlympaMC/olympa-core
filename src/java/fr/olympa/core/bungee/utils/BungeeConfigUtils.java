@@ -10,7 +10,6 @@ import java.util.logging.Level;
 
 import com.google.common.io.ByteStreams;
 
-import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
@@ -27,6 +26,7 @@ public class BungeeConfigUtils {
 
 	/**
 	 * Récupère donnés de la config
+	 *
 	 * @name = NomDeLaConfig.yml
 	 */
 	public static Configuration getConfig(String name) {
@@ -43,7 +43,7 @@ public class BungeeConfigUtils {
 	}
 
 	public static String getString(String path) {
-		return SpigotUtils.color(getDefaultConfig().getString(path));
+		return BungeeUtils.color(getDefaultConfig().getString(path));
 	}
 
 	public static String getString2(String path) {
@@ -56,6 +56,7 @@ public class BungeeConfigUtils {
 
 	/**
 	 * Charge la config & met la met à jour si besoin
+	 *
 	 * @name = NomDeLaConfig.yml
 	 */
 	private static void loadConfig(String name) {
@@ -109,6 +110,7 @@ public class BungeeConfigUtils {
 
 	/**
 	 * Sauvegarde la config
+	 *
 	 * @name = NomDeLaConfig.yml
 	 */
 	public static void saveConfig(String name) {

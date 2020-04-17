@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.privatemessage;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -8,7 +9,6 @@ import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -30,7 +30,7 @@ public class PrivateMessageCommand extends BungeeCommand implements TabExecutor 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		if (!(sender instanceof ProxiedPlayer)) {
-			sender.sendMessage(Prefix.DEFAULT + BungeeConfigUtils.getString("default.messages.cantconsole"));
+			sendImpossibleWithConsole();
 			return;
 		}
 		ProxiedPlayer proxiedPlayer = (ProxiedPlayer) sender;
@@ -65,6 +65,6 @@ public class PrivateMessageCommand extends BungeeCommand implements TabExecutor 
 		} else if (args.length == 1) {
 			return Utils.startWords(args[0], players);
 		}
-		return null;
+		return new ArrayList<>();
 	}
 }

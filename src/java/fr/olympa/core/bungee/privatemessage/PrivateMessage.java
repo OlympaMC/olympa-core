@@ -56,19 +56,19 @@ public class PrivateMessage {
 			return;
 		}
 
-		TextComponent msgPlayer = new TextComponent(TextComponent.fromLegacyText("&6Message &c\u2B06 " + emeraldTarget.getGroup().getPrefix() + target.getName() + " &9 : "));
+		TextComponent msgPlayer = new TextComponent(TextComponent.fromLegacyText(BungeeUtils.color("&6Message &c\u2B06 " + emeraldTarget.getGroup().getPrefix() + target.getName() + " &9 : ")));
 		msgPlayer.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(BungeeUtils.color("&aRépondre à " + emeraldTarget.getGroup().getPrefix() + target.getName())).create()));
 		msgPlayer.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + target.getName() + " "));
-		msgPlayer.addExtra(new TextComponent(TextComponent.fromLegacyText("&9" + message)));
+		msgPlayer.addExtra(new TextComponent(TextComponent.fromLegacyText(BungeeUtils.color("&9") + message)));
 
 		String groupPrefix = "";
 		if (emeraldPlayer != null) {
 			groupPrefix = emeraldPlayer.getGroup().getPrefix();
 		}
-		TextComponent msgTarget = new TextComponent(TextComponent.fromLegacyText("&6Message &a\u2B07 " + groupPrefix + sender.getName() + " &9 : "));
+		TextComponent msgTarget = new TextComponent(TextComponent.fromLegacyText(BungeeUtils.color("&6Message &a\u2B07 " + groupPrefix + sender.getName() + " &9 : ")));
 		msgTarget.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(BungeeUtils.color("&aRépondre à " + groupPrefix + sender.getName())).create()));
 		msgTarget.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + sender.getName() + " "));
-		msgPlayer.addExtra(new TextComponent(TextComponent.fromLegacyText("&9" + message)));
+		msgPlayer.addExtra(new TextComponent(TextComponent.fromLegacyText(BungeeUtils.color("&9") + message)));
 
 		sender.sendMessage(msgPlayer);
 

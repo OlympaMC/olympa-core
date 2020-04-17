@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
@@ -24,12 +25,11 @@ public class PrivateMessageToggleCommand extends BungeeCommand {
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		ProxiedPlayer player = (ProxiedPlayer) sender;
-
 		if (players.contains(player.getUniqueId())) {
-			player.sendMessage(BungeeUtils.color("&eOlympa &7» &aTes messages privés sont désormais &2&lactivés"));
+			player.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("Tes messages privés sont désormais &2&lactivés&2."));
 			players.remove(player.getUniqueId());
 		} else {
-			player.sendMessage(BungeeUtils.color("&eOlympa &7» &cTes messages privés sont désormais &4&ldésactivés"));
+			player.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("Tes messages privés sont désormais &2&ldésactivés&2."));
 			players.add(player.getUniqueId());
 		}
 	}

@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.utils.SpigotUtils;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.login.HandlerLogin;
 import net.md_5.bungee.api.ChatColor;
@@ -16,7 +16,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 public class BungeeUtils {
 	
 	public static List<String> color(List<String> l) {
-		return l.stream().map(s -> SpigotUtils.color(s)).collect(Collectors.toList());
+		return l.stream().map(s -> ColorUtils.color(s)).collect(Collectors.toList());
 	}
 
 	public static String color(String s) {
@@ -24,12 +24,12 @@ public class BungeeUtils {
 	}
 	
 	public static String connectScreen(String s) {
-		return SpigotUtils.color(BungeeConfigUtils.getString("default.connectscreenprefix") + s + BungeeConfigUtils.getString("default.connectscreensuffix"));
+		return ColorUtils.color(BungeeConfigUtils.getString("default.connectscreenprefix") + s + BungeeConfigUtils.getString("default.connectscreensuffix"));
 	}
 	
 	public static TextComponent formatStringToJSON(String s) {
 		TextComponent textcomponent = new TextComponent();
-		BaseComponent[] msgs = TextComponent.fromLegacyText(SpigotUtils.color(s));
+		BaseComponent[] msgs = TextComponent.fromLegacyText(ColorUtils.color(s));
 		for (final BaseComponent msg : msgs) {
 			textcomponent.addExtra(msg);
 		}

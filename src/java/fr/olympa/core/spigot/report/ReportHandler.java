@@ -11,8 +11,8 @@ import fr.olympa.api.objects.OlympaPlayerInformations;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
 import fr.olympa.core.spigot.report.customevent.OlympaReportAddEvent;
@@ -31,7 +31,7 @@ public class ReportHandler {
 		try {
 			targetOlympaPlayer = new AccountProvider(target.getUniqueId()).get();
 		} catch (SQLException e) {
-			author.sendMessage(SpigotUtils.color(Prefix.DEFAULT_BAD + "Une erreur est survenu, ton report n'a pas été enregistrer ..."));
+			author.sendMessage(ColorUtils.color(Prefix.DEFAULT_BAD + "Une erreur est survenu, ton report n'a pas été enregistrer ..."));
 			OlympaCore.getInstance().sendMessage("&4REPORT &cImpossible de récupérer l'id olympaPlayer de " + target.getName());
 			e.printStackTrace();
 			return;
@@ -40,10 +40,10 @@ public class ReportHandler {
 		try {
 			long id = ReportMySQL.createReport(report);
 			report.setId(id);
-			author.sendMessage(SpigotUtils.color(Prefix.DEFAULT_GOOD + "Tu as signaler &2" + target.getName() + "&a pour &2" + reason.getReason() + "&a."));
+			author.sendMessage(ColorUtils.color(Prefix.DEFAULT_GOOD + "Tu as signaler &2" + target.getName() + "&a pour &2" + reason.getReason() + "&a."));
 		} catch (SQLException e) {
 			e.printStackTrace();
-			author.sendMessage(SpigotUtils.color(Prefix.DEFAULT_BAD + "Une erreur est survenu, ton report n'a pas été sauvegardé mais le staff connecté est au courant."));
+			author.sendMessage(ColorUtils.color(Prefix.DEFAULT_BAD + "Une erreur est survenu, ton report n'a pas été sauvegardé mais le staff connecté est au courant."));
 		}
 		Bukkit.getPluginManager().callEvent(new OlympaReportAddEvent(author, target, report));
 		sendAlert(report);

@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.utils.SpigotUtils;
+import fr.olympa.api.utils.ColorUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -66,7 +66,7 @@ public class Chat {
 		for (BaseComponent s : new ComponentBuilder(msg).color(ChatColor.LIGHT_PURPLE).create()) {
 			text.addExtra(s);
 		}
-		text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(SpigotUtils.color("&cCliquez pour mute " + player.getName())).create()));
+		text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ColorUtils.color("&cCliquez pour mute " + player.getName())).create()));
 		text.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/mute " + player.getName()));
 
 		OlympaCorePermissions.CHAT_SEEINSULTS.sendMessage(text);
