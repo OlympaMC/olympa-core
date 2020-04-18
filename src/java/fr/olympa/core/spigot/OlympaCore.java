@@ -1,5 +1,7 @@
 package fr.olympa.core.spigot;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 
 import fr.olympa.api.LinkSpigotBungee;
@@ -54,9 +56,13 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
 	@Override
 	public void onDisable() {
-		// ScoreboardPrefix.deleteTeams();
 		RedisAccess.close();
 		super.onDisable();
+
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			p.kickPlayer("§cLe serveur s'arrête."); // déconnecte les joueurs pour appeler les PlayerQuitEvent et sauvegarder les datas
+		}
+
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
 	}
 
