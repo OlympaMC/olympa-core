@@ -22,7 +22,7 @@ public class OlympaStatement {
 
 	private PreparedStatement prepared;
 	public PreparedStatement getStatement() throws SQLException {
-		if (prepared == null || prepared.isClosed() || prepared.getConnection().isClosed()) prepared = returnGeneratedKeys ? LinkSpigotBungee.Provider.link.getDatabase().prepareStatement(statement, Statement.RETURN_GENERATED_KEYS) : LinkSpigotBungee.Provider.link.getDatabase().prepareStatement(statement);
+		if (prepared == null || prepared.isClosed() || !prepared.getConnection().isValid(0)) prepared = returnGeneratedKeys ? LinkSpigotBungee.Provider.link.getDatabase().prepareStatement(statement, Statement.RETURN_GENERATED_KEYS) : LinkSpigotBungee.Provider.link.getDatabase().prepareStatement(statement);
 		return prepared;
 	}
 
