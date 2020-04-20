@@ -1,6 +1,7 @@
 package fr.olympa.core.bungee.login.listener;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.groups.OlympaGroup;
@@ -31,7 +32,7 @@ public class OlympaLoginListener implements Listener {
 		if (!groupsNames.isEmpty()) {
 			player.addGroups(groupsNames.toArray(new String[0]));
 		}
-		OlympaBungee.getInstance().getTask().runAsync(OlympaBungee.getInstance(), () -> {
+		OlympaBungee.getInstance().getTask().schedule(OlympaBungee.getInstance(), () -> {
 			CachePlayer cache = DataHandler.get(player.getName());
 			if (cache != null) {
 				String subdomain = cache.getSubDomain();
@@ -48,7 +49,7 @@ public class OlympaLoginListener implements Listener {
 				}
 			}
 			ServersConnection.tryConnect(player, OlympaServer.LOBBY);
-		});
+		}, 1, TimeUnit.SECONDS);
 	}
 
 	@EventHandler

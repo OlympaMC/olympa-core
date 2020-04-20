@@ -24,11 +24,11 @@ public class OlympaVpn {
 	Boolean hosting;
 	Map<String, Boolean> users = new HashMap<>();
 
-	public OlympaVpn(long id, String query, boolean mobile, boolean proxy, boolean hosting, String usersString, String country, String city, String org, String as) {
+	public OlympaVpn(long id, String query, boolean proxy, boolean mobile, boolean hosting, String usersString, String country, String city, String org, String as) {
 		this.id = id;
 		this.query = query;
-		this.proxy = proxy;
 		this.mobile = mobile;
+		this.proxy = proxy;
 		this.hosting = hosting;
 		this.country = country;
 		this.city = city;

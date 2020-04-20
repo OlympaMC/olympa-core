@@ -62,7 +62,6 @@ public class AuthListener implements Listener {
 		}
 		try {
 			olympaPlayer = AccountProvider.get(name);
-			cache.setOlympaPlayer(olympaPlayer);
 		} catch (Exception e) {
 			e.printStackTrace();
 			event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#SQLBungeeLost"));
@@ -106,7 +105,6 @@ public class AuthListener implements Listener {
 				}
 				// Si le joueur a changé de nom
 				if (olympaPlayer != null) {
-					cache.setOlympaPlayer(olympaPlayer);
 					// Changement de nom + reconnection < 2 secs
 					if (wait.contains(olympaPlayer.getName())) {
 						event.setCancelReason(BungeeUtils.connectScreen("&eMerci de patienter secondes avant chaque reconnection."));
@@ -133,6 +131,7 @@ public class AuthListener implements Listener {
 
 		// Si le joueur s'est déjà connecté
 		if (olympaPlayer != null) {
+			cache.setOlympaPlayer(olympaPlayer);
 			System.out.println("player info " + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 			if (olympaPlayer.getPremiumUniqueId() == null) {
 				if (connection.isOnlineMode()) {
