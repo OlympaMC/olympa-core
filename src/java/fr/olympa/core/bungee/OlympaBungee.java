@@ -98,7 +98,6 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		return "&f[&6" + getDescription().getName() + "&f] &e";
 	}
 
-	@Override
 	public String getServerName() {
 		return "bungee";
 	}

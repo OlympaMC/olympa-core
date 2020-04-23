@@ -132,9 +132,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	private long discordId;
 	@Expose
 	private long teamspeakId;
-
 	private Object cachedPlayer = null;
-
 	private OlympaPlayerInformations cachedInformations = null;
 
 	public OlympaPlayerObject(UUID uuid, String name, String ip) {
@@ -325,7 +323,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public boolean hasPermission(OlympaPermission permission) {
-		return groups.keySet().stream().filter(group -> group.getPower() >= permission.getGroup().getPower()).findFirst().isPresent();
+		return groups != null && groups.keySet().stream().filter(group -> group.getPower() >= permission.getGroup().getPower()).findFirst().isPresent();
 	}
 
 	@Override

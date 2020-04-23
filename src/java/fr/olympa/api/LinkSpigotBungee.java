@@ -11,8 +11,6 @@ public interface LinkSpigotBungee {
 
 	Connection getDatabase() throws SQLException;
 
-	String getServerName();
-
 	void launchAsync(Runnable run);
 
 }

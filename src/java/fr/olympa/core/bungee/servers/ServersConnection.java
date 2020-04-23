@@ -25,7 +25,7 @@ public class ServersConnection {
 
 	public static ServerInfo getAuth(ServerInfo noThis) {
 		Map<ServerInfo, Integer> auths = MonitorServers.getLastServerInfo().stream().filter(si -> {
-			return si.getError() != null && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("auth") && si.getMaxPlayers() - si.getOnlinePlayer() > 0;
+			return si.getError() == null && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("auth") && si.getMaxPlayers() - si.getOnlinePlayer() > 0;
 		}).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayer()));
 		// TODO add sort by name1 name2 name3
 		Entry<ServerInfo, Integer> auth = auths.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
@@ -42,7 +42,7 @@ public class ServersConnection {
 
 	public static ServerInfo getLobby(ServerInfo noThis) {
 		Map<ServerInfo, Integer> lobbys = MonitorServers.getLastServerInfo().stream().filter(si -> {
-			return si.getError() != null && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("lobby") && si.getMaxPlayers() / 2 - si.getOnlinePlayer() > 0;
+			return si.getError() == null && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("lobby") && si.getMaxPlayers() / 2 - si.getOnlinePlayer() > 0;
 		}).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() / 2 - si.getOnlinePlayer()));
 		// TODO add sort by name1 name2 name3
 		Entry<ServerInfo, Integer> lobby = lobbys.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);

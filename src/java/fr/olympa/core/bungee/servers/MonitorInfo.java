@@ -40,7 +40,7 @@ public class MonitorInfo {
 			// 1, motd.length);
 		} else {
 			status = MaintenanceStatus.CLOSE;
-			this.error = error.getCause().getMessage();
+			this.error = error.getMessage();
 		}
 	}
 

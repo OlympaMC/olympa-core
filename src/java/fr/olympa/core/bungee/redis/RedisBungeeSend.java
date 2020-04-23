@@ -12,11 +12,11 @@ public class RedisBungeeSend {
 	@SuppressWarnings("deprecation")
 	public static void sendServerName(ServerInfo serverInfo) {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
-			try (Jedis jedis = RedisAccess.INSTANCE.getConnection()) {
+			try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 				InetSocketAddress adress = serverInfo.getAddress();
 				jedis.publish("sendServerName", adress.getAddress().getHostName() + ":" + adress.getPort() + ":" + serverInfo.getName());
 			}
-			RedisAccess.INSTANCE.closeResource();
+			RedisAccess.INSTANCE.disconnect();
 		});
 	}
 }

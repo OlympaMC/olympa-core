@@ -1,6 +1,5 @@
 package fr.olympa.core.bungee.api.command;
 
-import java.sql.SQLException;
 import java.util.Arrays;
 
 import fr.olympa.api.objects.OlympaPlayer;
@@ -56,9 +55,7 @@ public abstract class BungeeCommand extends Command {
 		this.aliases = aliases;
 	}
 
-	public BungeeCommand(Plugin plugin, String command, OlympaPermission permission, String[] aliases, String description, String usageString, boolean allowConsole,
-			Integer minArg) {
-
+	public BungeeCommand(Plugin plugin, String command, OlympaPermission permission, String[] aliases, String description, String usageString, boolean allowConsole, Integer minArg) {
 		super(command, null, aliases);
 		this.plugin = plugin;
 		this.command = command;
@@ -124,11 +121,7 @@ public abstract class BungeeCommand extends Command {
 
 	protected OlympaPlayer getOlympaPlayer() {
 		if (proxiedPlayer != null) {
-			try {
-				return new AccountProvider(proxiedPlayer.getUniqueId()).get();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			return new AccountProvider(proxiedPlayer.getUniqueId()).getFromRedis();
 		}
 		return null;
 	}

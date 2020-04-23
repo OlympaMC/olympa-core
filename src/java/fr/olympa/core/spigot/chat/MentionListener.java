@@ -1,5 +1,9 @@
 package fr.olympa.core.spigot.chat;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -22,20 +26,31 @@ public class MentionListener implements Listener {
 		Player player = event.getPlayer();
 		String message = event.getMessage();
 
+		Map<Player, String> mentionned = new HashMap<>();
 		for (String arg : message.split(" ")) {
 			if (!Matcher.isUsername(arg)) {
 				continue;
+			}
+			if (arg.startsWith("@")) {
+				arg = arg.substring(1);
 			}
 			Player target = Bukkit.getPlayer(arg);
 			if (target == null) {
 				continue;
 			}
-			event.getRecipients().remove(target);
+			mentionned.put(target, arg);
+		}
+		for (Entry<Player, String> entry : mentionned.entrySet()) {
+			Player target = entry.getKey();
+			String arg = entry.getValue();
 			String messageToTarget = new String(message);
 			String format = event.getFormat();
-			messageToTarget = messageToTarget.replace(arg, "§6@" + target.getName() + getChatColor(format));
-			target.playSound(target.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 3.0F, 0.533F);
+			do {
+				messageToTarget = messageToTarget.replace(arg, "§6@" + target.getName() + getChatColor(format));
+			} while (messageToTarget.contains(" " + arg));
+			target.playSound(target.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 3.0F, 0.533F);
 			new FakeMsg(format, player.getDisplayName(), messageToTarget).send(target);
+			event.getRecipients().remove(target);
 		}
 	}
 }

@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 
 import fr.olympa.api.LinkSpigotBungee;
+import fr.olympa.api.command.CommandListener;
 import fr.olympa.api.gui.Inventories;
 import fr.olympa.api.hook.ProtocolAction;
 import fr.olympa.api.maintenance.MaintenanceStatus;
@@ -66,13 +67,11 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	@Override
 	public void onDisable() {
 		RedisAccess.close();
+		status = MaintenanceStatus.CLOSE;
 		super.onDisable();
-
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			p.kickPlayer("§cLe serveur s'arrête."); // déconnecte les joueurs pour appeler les PlayerQuitEvent et sauvegarder les
-													// datas
+			p.kickPlayer("Server closed");
 		}
-
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
 	}
 
@@ -88,10 +87,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 		new MySQL(database);
 		new ReportMySQL(database);
-		// this.getTask().runTaskAsynchronously("redis1", () -> jedis.subscribe(new
-		// OlympaPlayerSpigotListener(), "OlympaPlayer"));
-		// this.getTask().runTaskAsynchronously("redis2", () -> jedis.subscribe(new
-		// OlympaPlayerReceiveListener(), "OlympaPlayerReceive"));
 
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();
@@ -99,7 +94,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new SetStatusCommand(this).register();
 		new PluginCommand(this).register();
 		new HelpCommand(this).register();
-		new TpsCommand(this).register();
+		new TpsCommand(this).registerPreProcess();
 		// new PasswdCommand(this).register();
 
 		PluginManager pluginManager = getServer().getPluginManager();
@@ -112,6 +107,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		pluginManager.registerEvents(new StatusMotdListener(), this);
 		pluginManager.registerEvents(new MentionListener(), this);
 		pluginManager.registerEvents(regionManager, this);
+		pluginManager.registerEvents(new CommandListener(), this);
+		pluginManager.registerEvents(new StatusMotdListener(), this);
 
 		new AntiWD(this);
 		protocolSupportHook = new ProtocolSupportHook(this);

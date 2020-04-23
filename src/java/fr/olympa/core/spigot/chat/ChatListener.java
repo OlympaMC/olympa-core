@@ -30,7 +30,7 @@ public class ChatListener implements Listener {
 	private Pattern matchIpv4 = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
 	private Pattern matchLink = Pattern.compile("(https?:\\/\\/(www\\.)?)?([-\\w]+(\\.|\\W|[0-9]))+(fr|org|net|com|xxx|name|xyr|gg|ly|be|lu|cach)");
 	private Pattern matchFlood = Pattern.compile("\\S*((.)\\2{3,})\\S*");
-	private Pattern matchNoWord = Pattern.compile("[^\\w\\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ\\-+÷²!@#%^&*(),.?\"':{}|[\\]<>~€$£\\\\\\/]+");
+	private Pattern matchNoWord = Pattern.compile("[^\\w\\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ\\-=+÷²!@#%^&*(),.?\\\"':{}|\\[\\]<>~\\\\€$£\\/°]+");
 
 	@EventHandler
 	public void onPlayerChatEvent(AsyncPlayerChatEvent event) {
@@ -157,7 +157,7 @@ public class ChatListener implements Listener {
 
 					if (Bukkit.getPlayer(wordFlooded) != null) {
 						String wordWithoutFlood = wordFlooded.replace(charsFlooded, charFlooded);
-						message.replace(wordFlooded, wordWithoutFlood);
+						message = message.replace(wordFlooded, wordWithoutFlood);
 						find = true;
 					}
 					if (++i > 50) {
@@ -180,7 +180,7 @@ public class ChatListener implements Listener {
 				do {
 					String chars = matcher.group();
 					message = message.replace(chars, "");
-					if (++i > 50) {
+					if (++i > 100) {
 						Bukkit.getConsoleSender().sendMessage(ColorUtils.color("&4ERROR &cBoucle infini dans la gestion de chat pour les symboles interdits."));
 						break;
 					}

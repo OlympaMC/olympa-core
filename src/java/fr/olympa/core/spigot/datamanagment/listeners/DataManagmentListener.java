@@ -49,7 +49,27 @@ public class DataManagmentListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerLogin(PlayerJoinEvent event) {
+	public void on1PlayerPreLogin(AsyncPlayerPreLoginEvent event) {
+		UUID uuid = event.getUniqueId();
+
+		AccountProvider olympaAccount = new AccountProvider(uuid);
+		OlympaPlayer olympaPlayer;
+		try {
+			olympaPlayer = olympaAccount.get();
+		} catch (Exception e) {
+			event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotPreLogin"));
+			e.printStackTrace();
+			return;
+		}
+		if (olympaPlayer == null) {
+			event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotNoData"));
+			return;
+		}
+		olympaAccount.saveToCache(olympaPlayer);
+	}
+
+	@EventHandler
+	public void on2PlayerLogin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		AccountProvider olympaAccount = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
@@ -76,26 +96,6 @@ public class DataManagmentListener implements Listener {
 				e.printStackTrace();
 			}
 		});
-	}
-
-	@EventHandler
-	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
-		UUID uuid = event.getUniqueId();
-
-		AccountProvider olympaAccount = new AccountProvider(uuid);
-		OlympaPlayer olympaPlayer;
-		try {
-			olympaPlayer = olympaAccount.get();
-		} catch (Exception e) {
-			event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotPreLogin"));
-			e.printStackTrace();
-			return;
-		}
-		if (olympaPlayer == null) {
-			event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotNoData"));
-			return;
-		}
-		olympaAccount.saveToCache(olympaPlayer);
 	}
 
 	/*

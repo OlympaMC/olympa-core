@@ -29,10 +29,6 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		return serverName;
 	}
 
-	public String getServerVersion() {
-		return getServer().getClass().getPackage().getName().split("\\.")[3].substring(1).replace("_", ".");
-	}
-
 	@Override
 	public MaintenanceStatus getStatus() {
 		return status;

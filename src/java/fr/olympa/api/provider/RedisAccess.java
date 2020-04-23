@@ -28,9 +28,7 @@ public class RedisAccess {
 
 	public void closeResource() {
 		if (isPoolOpen()) {
-			if (isConnected()) {
-				jedis.disconnect();
-			}
+			disconnect();
 			pool.close();
 		}
 	}
@@ -38,6 +36,12 @@ public class RedisAccess {
 	public Jedis connect() {
 		jedis = newConnection();
 		return jedis;
+	}
+
+	public void disconnect() {
+		if (isConnected()) {
+			jedis.disconnect();
+		}
 	}
 
 	public Jedis getConnection() {

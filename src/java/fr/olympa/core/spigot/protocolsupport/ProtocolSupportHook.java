@@ -16,7 +16,7 @@ public class ProtocolSupportHook implements ProtocolAction {
 
 	public ProtocolSupportHook(Plugin plugin) {
 		protocolSupport = (ProtocolSupport) plugin.getServer().getPluginManager().getPlugin("ProtocolSupport");
-		disable1_6();
+		disable1_7();
 	}
 
 	public void disable(ProtocolVersion minProtocol) {
@@ -64,13 +64,13 @@ public class ProtocolSupportHook implements ProtocolAction {
 		ProtocolVersion last = proto.iterator().next();
 		String nameLast = last.getName();
 		if (nameLast.length() >= 5) {
-			nameLast = nameLast.substring(0, nameLast.length() - 2);
+			nameLast = nameLast.substring(0, nameLast.length() - 3);
 		}
 		String lastName = nameLast;
 		return proto.stream().map(p -> {
 			String name = new String(p.getName());
 			if (name.length() >= 5) {
-				name = name.substring(0, name.length() - 2);
+				name = name.substring(0, name.length() - 3);
 				if (!lastName.equals(name)) {
 					return name;
 				}

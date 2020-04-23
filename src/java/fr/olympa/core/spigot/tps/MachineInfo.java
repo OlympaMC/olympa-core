@@ -6,22 +6,23 @@ import java.lang.management.ThreadMXBean;
 
 public class MachineInfo {
 
-	private long memFree, memUsed, memTotal;
+	private long memFree, memUsed, memeTotal;
 	private double cpuUsage, memUsage;
-	private int cores;
+	private int cores, threads;
 
 	public MachineInfo() {
 		Runtime r = Runtime.getRuntime();
-		memUsage = (r.totalMemory() - r.freeMemory()) / r.totalMemory() * 100;
-		memUsed = (r.totalMemory() - r.freeMemory()) / 1048576;
-		memFree = r.freeMemory() / 1048576;
-		memTotal = r.totalMemory() / 1048576;
+		memUsed = r.totalMemory() / 1048576L;
+		memFree = r.freeMemory() / 1048576L;
+		memeTotal = r.maxMemory() / 1048576L;
+		memUsage = memUsed / memeTotal * 100d;
 
 		OperatingSystemMXBean osMXBean = ManagementFactory.getOperatingSystemMXBean();
 		cpuUsage = osMXBean.getSystemLoadAverage();
 		cores = osMXBean.getAvailableProcessors();
 
 		ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+		threads = threadMXBean.getThreadCount();
 
 	}
 
@@ -29,8 +30,8 @@ public class MachineInfo {
 		return cores;
 	}
 
-	public double getCPUUsage() {
-		return cpuUsage;
+	public String getCPUUsage() {
+		return Math.round(cpuUsage) + "%";
 	}
 
 	public long getMemFree() {
@@ -38,15 +39,23 @@ public class MachineInfo {
 	}
 
 	public long getMemTotal() {
-		return memTotal;
+		return memeTotal;
 	}
 
-	public double getMemUsage() {
-		return memUsage;
+	public String getMemUsage() {
+		return Math.round(memUsage) + "%";
+	}
+
+	public String getMemUse() {
+		return memUsed + "/" + memeTotal + "Mo";
 	}
 
 	public long getMemUsed() {
 		return memUsed;
+	}
+
+	public int getThreads() {
+		return threads;
 	}
 
 }

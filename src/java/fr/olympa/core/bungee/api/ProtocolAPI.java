@@ -1,11 +1,11 @@
 package fr.olympa.core.bungee.api;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import fr.olympa.core.spigot.OlympaCore;
+import org.bukkit.Bukkit;
 
 public enum ProtocolAPI {
 
@@ -74,17 +74,20 @@ public enum ProtocolAPI {
 		return Arrays.stream(ProtocolAPI.values()).filter(p -> p.isAllow()).findFirst().orElse(null);
 	}
 
-	public static Set<ProtocolAPI> gets(int protocolNumber) {
-		return Arrays.stream(ProtocolAPI.values()).filter(p -> p.getProtocolNumber() == protocolNumber).collect(Collectors.toSet());
+	public static List<ProtocolAPI> gets(int protocolNumber) {
+		return Arrays.stream(ProtocolAPI.values()).filter(p -> p.getProtocolNumber() == protocolNumber).collect(Collectors.toList());
 	}
 
-	public static Set<String> getVersionSupported() {
-		String version = OlympaCore.getInstance().getServerVersion();
+	/*
+	 * Only Spigot
+	 */
+	public static List<String> getVersionSupported() {
+		String version = Bukkit.getBukkitVersion();
 		ProtocolAPI versionProto = Arrays.stream(ProtocolAPI.values()).filter(p -> p.getName().equals(version)).findFirst().orElse(null);
 		if (versionProto != null) {
-			return gets(versionProto.getProtocolNumber()).stream().map(ProtocolAPI::getName).collect(Collectors.toSet());
+			return gets(versionProto.getProtocolNumber()).stream().map(ProtocolAPI::getName).collect(Collectors.toList());
 		}
-		return new HashSet<>();
+		return new ArrayList<>();
 	}
 
 	final private int protocolNumber;

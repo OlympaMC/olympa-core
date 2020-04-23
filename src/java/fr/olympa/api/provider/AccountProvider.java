@@ -62,7 +62,7 @@ public class AccountProvider implements OlympaAccount {
 	 * public static OlympaPlayer getFromRedis(String name, boolean cachePersist) {
 	 * OlympaPlayer olympaPlayer = null;
 	 *
-	 * try (Jedis jedis = RedisAccess.INSTANCE.getConnection()) { olympaPlayer =
+	 * try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) { olympaPlayer =
 	 * jedis.hgetAll(name).entrySet().stream().map(entry ->
 	 * GsonCustomizedObjectTypeAdapter.GSON.fromJson(entry.getValue(),
 	 * playerClass)).filter(p ->
@@ -111,17 +111,17 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	public void accountExpire() {
-		try (Jedis jedis = redisAccesss.getConnection()) {
+		try (Jedis jedis = redisAccesss.newConnection()) {
 			jedis.expire(getKey(), cachePlayer);
 		}
 		redisAccesss.closeResource();
 	}
 
 	public void accountPersist() {
-		try (Jedis jedis = redisAccesss.getConnection()) {
+		try (Jedis jedis = redisAccesss.newConnection()) {
 			jedis.persist(getKey());
 		}
-		redisAccesss.closeResource();
+		redisAccesss.disconnect();
 	}
 
 	public OlympaPlayer createNew(OlympaPlayer olympaPlayer) throws SQLException {
@@ -156,7 +156,7 @@ public class AccountProvider implements OlympaAccount {
 
 	public OlympaPlayer getFromRedis() {
 		String json = null;
-		try (Jedis jedis = redisAccesss.getConnection()) {
+		try (Jedis jedis = redisAccesss.newConnection()) {
 			json = jedis.get(getKey());
 		}
 		redisAccesss.closeResource();
@@ -176,7 +176,7 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	public void removeFromRedis() {
-		try (Jedis jedis = redisAccesss.getConnection()) {
+		try (Jedis jedis = redisAccesss.newConnection()) {
 			jedis.del(getKey());
 		}
 		redisAccesss.closeResource();
@@ -194,7 +194,7 @@ public class AccountProvider implements OlympaAccount {
 	@Override
 	public void saveToRedis(OlympaPlayer olympaPlayer) {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
-			try (Jedis jedis = redisAccesss.getConnection()) {
+			try (Jedis jedis = redisAccesss.newConnection()) {
 				jedis.set(getKey(), GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 			}
 			redisAccesss.closeResource();
@@ -203,7 +203,7 @@ public class AccountProvider implements OlympaAccount {
 
 	public void sendModifications(OlympaPlayer olympaPlayer) {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
-			try (Jedis jedis = redisAccesss.getConnection()) {
+			try (Jedis jedis = redisAccesss.newConnection()) {
 				jedis.publish("OlympaPlayer", GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 			}
 			redisAccesss.closeResource();
@@ -228,7 +228,7 @@ public class AccountProvider implements OlympaAccount {
 	 */
 	public void sendModificationsReceive() {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
-			try (Jedis jedis = redisAccesss.getConnection()) {
+			try (Jedis jedis = redisAccesss.newConnection()) {
 				jedis.publish("OlympaPlayerReceive", uuid.toString());
 			}
 			redisAccesss.closeResource();
