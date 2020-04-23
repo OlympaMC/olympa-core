@@ -30,14 +30,14 @@ public class TpsCommand extends OlympaCommand {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		double[] tps = TPS.getDoubleTPS();
 		float average = TPS.getAverage(tps);
-		float[] tpsFloat = TPS.round(tps);
+		//float[] tpsFloat = TPS.round(tps);
 		MachineInfo machine = new MachineInfo();
 		OlympaCore core = OlympaCore.getInstance();
 		StringJoiner sb = new StringJoiner("\n");
 		sb.add("&6Serveur <servername>");
 		sb.add("&6Ouvert depuis &c" + core.getUptime() + "&6.");
 		sb.add("&6Status: " + core.getStatus().getNameColored() + "&6.");
-		sb.add("&6TPS: &c1m " + TPSUtils.getColor(tpsFloat[0]) + "&c 5m " + TPSUtils.getColor(tpsFloat[1]) + "&c 15m " + TPSUtils.getColor(tpsFloat[2]) + "&6.");
+		sb.add("&6TPS: &c1m " + TPSUtils.getColor(tps[0]) + "&c 5m " + TPSUtils.getColor(tps[1]) + "&c 15m " + TPSUtils.getColor(tps[2]) + "&6.");
 		sb.add("&6Moyenne: &c" + String.valueOf(average).replace(".0", "") + "&6.");
 		sb.add("&6RAM: &c" + machine.getMemUsage() + "&6 (" + machine.getMemUse() + ").");
 		sb.add("&6CPU: &c" + machine.getCPUUsage() + "&6 (" + machine.getCores() + " cores).");

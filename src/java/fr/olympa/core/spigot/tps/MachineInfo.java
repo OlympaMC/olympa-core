@@ -15,7 +15,7 @@ public class MachineInfo {
 		memUsed = r.totalMemory() / 1048576L;
 		memFree = r.freeMemory() / 1048576L;
 		memeTotal = r.maxMemory() / 1048576L;
-		memUsage = memUsed / memeTotal * 100d;
+		memUsage = ((double) memUsed) / ((double) memeTotal) * 100.0;
 
 		OperatingSystemMXBean osMXBean = ManagementFactory.getOperatingSystemMXBean();
 		cpuUsage = osMXBean.getSystemLoadAverage();

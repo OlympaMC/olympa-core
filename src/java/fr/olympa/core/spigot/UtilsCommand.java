@@ -63,7 +63,7 @@ public class UtilsCommand extends ComplexCommand {
 
 		Set<TrackedRegion> playerRegions = regionManager.getCachedPlayerRegions(cmd.player);
 		StringJoiner joiner = new StringJoiner(", ", "Vous êtes actuellement dans les régions : [", "]");
-		playerRegions.forEach(x -> joiner.add(x.getID()));
+		if (playerRegions != null) playerRegions.forEach(x -> joiner.add(x.getID()));
 		sendInfo(joiner.toString());
 
 		Set<TrackedRegion> applicable = trackedRegions.stream().filter(x -> x.getRegion().isIn(cmd.player)).collect(Collectors.toSet());

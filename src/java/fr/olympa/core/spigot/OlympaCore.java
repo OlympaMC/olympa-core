@@ -112,7 +112,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		pluginManager.registerEvents(new StatusMotdListener(), this);
 
 		new AntiWD(this);
-		protocolSupportHook = new ProtocolSupportHook(this);
+		if (getServer().getPluginManager().isPluginEnabled("ProtocolSupport")) protocolSupportHook = new ProtocolSupportHook(this);
 
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 	}
