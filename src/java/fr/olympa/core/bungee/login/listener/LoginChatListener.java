@@ -30,7 +30,7 @@ public class LoginChatListener implements Listener {
 		String[] args = event.getMessage().split(" ");
 		String command = args[0].substring(1);
 		ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-		if (!HandlerLogin.isLogged(player) && (!event.isCommand() || !HandlerLogin.command.contains(command))) {
+		if (DataHandler.isUnlogged(player) && (!event.isCommand() || !HandlerLogin.command.contains(command))) {
 			OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
 			if (olympaPlayer == null || olympaPlayer.getPassword() == null || olympaPlayer.getPassword().isEmpty()) {
 				player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu dois t'enregistrer. Fait &4/register <mdp>&c."));

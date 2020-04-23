@@ -6,11 +6,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.login.HandlerLogin;
+import fr.olympa.core.bungee.datamanagment.DataHandler;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.config.Configuration;
 
 public class BungeeUtils {
 
@@ -23,7 +24,8 @@ public class BungeeUtils {
 	}
 
 	public static String connectScreen(String s) {
-		return BungeeUtils.color(BungeeConfigUtils.getString("default.connectscreenprefix") + s + BungeeConfigUtils.getString("default.connectscreensuffix"));
+		Configuration config = OlympaBungee.getInstance().getConfig();
+		return BungeeUtils.color(config.getString("default.connectscreenprefix") + s + config.getString("default.connectscreensuffix"));
 	}
 
 	public static TextComponent formatStringToJSON(String s) {
@@ -40,7 +42,7 @@ public class BungeeUtils {
 	}
 
 	public static Set<ProxiedPlayer> getPlayers(List<String> l) {
-		return OlympaBungee.getInstance().getProxy().getPlayers().stream().filter(p -> HandlerLogin.isLogged(p)).collect(Collectors.toSet());
+		return OlympaBungee.getInstance().getProxy().getPlayers().stream().filter(p -> !DataHandler.isUnlogged(p)).collect(Collectors.toSet());
 	}
 
 	public static String getPlayersNamesByIp(String ip) {

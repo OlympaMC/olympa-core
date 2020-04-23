@@ -15,7 +15,6 @@ import fr.olympa.core.bungee.ban.MuteUtils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.bungee.privatemessage.PrivateMessage;
-import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -23,6 +22,7 @@ import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
@@ -61,14 +61,15 @@ public class SanctionListener implements Listener {
 		List<OlympaSanction> bans = sanctions.stream().filter(sanction -> sanction.getType() == OlympaSanctionType.BAN || sanction.getType() == OlympaSanctionType.BANIP).collect(Collectors.toList());
 		if (!bans.isEmpty()) {
 			OlympaSanction permanant = bans.stream().filter(ban -> ban.isPermanent()).findFirst().orElse(null);
+			Configuration config = OlympaBungee.getInstance().getConfig();
 			if (permanant != null) {
-				event.setCancelReason(SpigotUtils.connectScreen(BungeeConfigUtils.getString("ban.bandisconnect")
+				event.setCancelReason(SpigotUtils.connectScreen(config.getString("ban.bandisconnect")
 						.replaceAll("%reason%", permanant.getReason())
 						.replaceAll("%id%", String.valueOf(permanant.getId()))));
 			}
 			OlympaSanction temp = bans.stream().filter(ban -> !ban.isPermanent()).findFirst().orElse(null);
 			if (temp != null) {
-				event.setCancelReason(SpigotUtils.connectScreen(BungeeConfigUtils.getString("ban.tempbandisconnect")
+				event.setCancelReason(SpigotUtils.connectScreen(config.getString("ban.tempbandisconnect")
 						.replaceAll("%reason%", temp.getReason())
 						.replaceAll("%time%", Utils.timestampToDuration(temp.getExpires()))
 						.replaceAll("%id%", String.valueOf(temp.getId()))));
@@ -114,8 +115,9 @@ public class SanctionListener implements Listener {
 		OlympaSanction mute = MuteUtils.getMute(player.getUniqueId());
 		if (mute != null) {
 			if (!MuteUtils.chechExpireBan(mute)) {
+				Configuration config = OlympaBungee.getInstance().getConfig();
 				player.sendMessage(
-						BungeeConfigUtils.getString("ban.youaremuted").replace("%reason%", mute.getReason()).replace("%expire%", Utils.timestampToDuration(mute.getExpires())));
+						config.getString("ban.youaremuted").replace("%reason%", mute.getReason()).replace("%expire%", Utils.timestampToDuration(mute.getExpires())));
 				event.setCancelled(true);
 				return;
 			}

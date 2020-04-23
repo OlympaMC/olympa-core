@@ -6,6 +6,7 @@ import org.bukkit.plugin.PluginManager;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.gui.Inventories;
+import fr.olympa.api.hook.ProtocolAction;
 import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
@@ -15,10 +16,12 @@ import fr.olympa.api.region.RegionManager;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
+import fr.olympa.core.spigot.chat.MentionListener;
 import fr.olympa.core.spigot.chat.SwearHandler;
 import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
+import fr.olympa.core.spigot.protocolsupport.ProtocolSupportHook;
 import fr.olympa.core.spigot.report.commands.ReportCommand;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
 import fr.olympa.core.spigot.scoreboards.ScoreboardListener;
@@ -28,7 +31,6 @@ import fr.olympa.core.spigot.security.PluginCommand;
 import fr.olympa.core.spigot.status.SetStatusCommand;
 import fr.olympa.core.spigot.status.StatusMotdListener;
 import fr.olympa.core.spigot.tps.TpsCommand;
-import redis.clients.jedis.Jedis;
 
 public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
@@ -40,13 +42,20 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
 	private SwearHandler swearHandler;
 	private RegionManager regionManager = new RegionManager();
+	private ProtocolAction protocolSupportHook;
+
+	@Override
+	public ProtocolAction getProtocolSupport() {
+		return protocolSupportHook;
+	}
+
+	@Override
+	public RegionManager getRegionManager() {
+		return regionManager;
+	}
 
 	public SwearHandler getSwearHandler() {
 		return swearHandler;
-	}
-
-	public RegionManager getRegionManager() {
-		return regionManager;
 	}
 
 	@Override
@@ -60,7 +69,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		super.onDisable();
 
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			p.kickPlayer("§cLe serveur s'arrête."); // déconnecte les joueurs pour appeler les PlayerQuitEvent et sauvegarder les datas
+			p.kickPlayer("§cLe serveur s'arrête."); // déconnecte les joueurs pour appeler les PlayerQuitEvent et sauvegarder les
+													// datas
 		}
 
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
@@ -78,15 +88,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 		new MySQL(database);
 		new ReportMySQL(database);
-		RedisAccess redis = RedisAccess.init(getServer().getName());
-		Jedis jedis = redis.connect();
-		redis.addListenerSpigot(this, redis.connect());
-
-		if (jedis.isConnected()) {
-			sendMessage("&aConnexion à &2Redis&a établie.");
-		} else {
-			sendMessage("&cConnexion à &4Redis&c impossible.");
-		}
 		// this.getTask().runTaskAsynchronously("redis1", () -> jedis.subscribe(new
 		// OlympaPlayerSpigotListener(), "OlympaPlayer"));
 		// this.getTask().runTaskAsynchronously("redis2", () -> jedis.subscribe(new
@@ -109,9 +110,11 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		pluginManager.registerEvents(new TestListener(), this);
 		pluginManager.registerEvents(new Inventories(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
+		pluginManager.registerEvents(new MentionListener(), this);
 		pluginManager.registerEvents(regionManager, this);
 
 		new AntiWD(this);
+		protocolSupportHook = new ProtocolSupportHook(this);
 
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 	}

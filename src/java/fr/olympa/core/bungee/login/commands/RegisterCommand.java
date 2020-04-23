@@ -7,6 +7,7 @@ import java.util.Set;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
+import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.HandlerLogin;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import net.md_5.bungee.api.CommandSender;
@@ -17,25 +18,25 @@ public class RegisterCommand extends BungeeCommand {
 
 	public RegisterCommand(Plugin plugin) {
 		super(plugin, "register", "reg", "enregistrement");
-		this.usageString = "<mot de passe>";
-		this.description = "Crée un mot de passe";
-		this.allowConsole = false;
-		this.bypassAuth = true;
-		HandlerLogin.command.add(this.command);
-		for (String aliase : this.aliases) {
+		usageString = "<mot de passe>";
+		description = "Crée un mot de passe";
+		allowConsole = false;
+		bypassAuth = true;
+		HandlerLogin.command.add(command);
+		for (String aliase : aliases) {
 			HandlerLogin.command.add(aliase);
 		}
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		this.olympaPlayer = this.getOlympaPlayer();
-		if (this.olympaPlayer == null) {
-			this.sendImpossibleWithOlympaPlayer();
+		olympaPlayer = getOlympaPlayer();
+		if (olympaPlayer == null) {
+			sendImpossibleWithOlympaPlayer();
 		}
-		String playerPasswordHash = this.olympaPlayer.getPassword();
+		String playerPasswordHash = olympaPlayer.getPassword();
 		if (playerPasswordHash != null) {
-			this.sendErreur("Tu as déjà un mot de passe. Pour le changer, fait &4/passwd <ancien mot de passe> <nouveau mot de passe>&c.");
+			sendErreur("Tu as déjà un mot de passe. Pour le changer, fait &4/passwd <ancien mot de passe> <nouveau mot de passe>&c.");
 			return;
 		}
 
@@ -45,7 +46,7 @@ public class RegisterCommand extends BungeeCommand {
 		}
 
 		if (args.length > 2) {
-			this.sendUsage();
+			sendUsage();
 			return;
 		}
 
@@ -67,23 +68,19 @@ public class RegisterCommand extends BungeeCommand {
 			return;
 		}
 
-		this.olympaPlayer.setPassword(password);
-		AccountProvider account = new AccountProvider(this.olympaPlayer.getUniqueId());
-		if (HandlerLogin.isLogged(this.proxiedPlayer)) {
+		olympaPlayer.setPassword(password);
+		AccountProvider account = new AccountProvider(olympaPlayer.getUniqueId());
+		if (DataHandler.isUnlogged(proxiedPlayer)) {
 			this.sendMessage(Prefix.DEFAULT_GOOD, "Bravo ! Tu peux désormais utiliser ce mot de passe sur notre site et forum.");
 		} else {
-			// aucune idée de pourquoi j'ai fais ça
-			/*if (account.getFromCache() != null) {
-				account.saveToCache(this.olympaPlayer);
-			}*/
-			OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(this.olympaPlayer, this.proxiedPlayer));
+			OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, proxiedPlayer));
 			if (olympaPlayerLoginEvent.cancelIfNeeded()) {
 				return;
 			}
 			this.sendMessage(Prefix.DEFAULT_GOOD, "Yes, ton compte est crée.");
 
 		}
-		account.saveToRedis(this.olympaPlayer);
+		account.saveToRedis(olympaPlayer);
 	}
 
 }

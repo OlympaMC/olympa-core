@@ -11,12 +11,10 @@ import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.datamanagment.CachePlayer;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
-import fr.olympa.core.bungee.login.HandlerLogin;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -31,6 +29,10 @@ public class OlympaLoginListener implements Listener {
 		Set<String> groupsNames = olympaPlayer.getGroups().keySet().stream().map(OlympaGroup::getName).collect(Collectors.toSet());
 		if (!groupsNames.isEmpty()) {
 			player.addGroups(groupsNames.toArray(new String[0]));
+		}
+		String ip = player.getAddress().getAddress().getHostAddress();
+		if (!olympaPlayer.getIp().equals(ip)) {
+			olympaPlayer.addNewIp(ip);
 		}
 		OlympaBungee.getInstance().getTask().schedule(OlympaBungee.getInstance(), () -> {
 			CachePlayer cache = DataHandler.get(player.getName());
@@ -49,19 +51,13 @@ public class OlympaLoginListener implements Listener {
 				}
 			}
 			ServersConnection.tryConnect(player, OlympaServer.LOBBY);
-		}, 1, TimeUnit.SECONDS);
+		}, 2, TimeUnit.SECONDS);
 	}
 
 	@EventHandler
 	public void onPlayerDisconnect(PlayerDisconnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		player.removeGroups(player.getGroups().stream().collect(Collectors.toSet()).toArray(new String[0]));
-	}
-
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPostLogin(PostLoginEvent event) {
-		ProxiedPlayer player = event.getPlayer();
-		HandlerLogin.unlogged.add(player);
 	}
 
 	@EventHandler

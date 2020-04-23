@@ -6,13 +6,14 @@ import fr.olympa.api.objects.OlympaConsole;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.commands.methods.MuteIp;
 import fr.olympa.core.bungee.ban.commands.methods.MutePlayer;
-import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
 
 public class MuteCommand extends BungeeCommand {
 
@@ -31,6 +32,7 @@ public class MuteCommand extends BungeeCommand {
 			author = OlympaConsole.getUniqueId();
 		}
 
+		Configuration config = OlympaBungee.getInstance().getConfig();
 		if (Matcher.isUsername(args[0])) {
 			MutePlayer.addMute(author, sender, args[0], null, args, olympaPlayer);
 
@@ -39,7 +41,7 @@ public class MuteCommand extends BungeeCommand {
 			if (Matcher.isIP(args[0])) {
 				MuteIp.addMute(author, sender, args[0], args, olympaPlayer);
 			} else {
-				this.sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.ipinvalid").replaceAll("%ip%", args[0]));
+				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.ipinvalid").replaceAll("%ip%", args[0]));
 				return;
 			}
 
@@ -48,12 +50,12 @@ public class MuteCommand extends BungeeCommand {
 			if (Matcher.isUUID(args[0])) {
 				MutePlayer.addMute(author, sender, null, UUID.fromString(args[0]), args, olympaPlayer);
 			} else {
-				this.sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.uuidinvalid").replaceAll("%uuid%", args[0]));
+				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.uuidinvalid").replaceAll("%uuid%", args[0]));
 				return;
 			}
 
 		} else {
-			this.sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.typeunknown").replaceAll("%type%", args[0]));
+			this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replaceAll("%type%", args[0]));
 			return;
 		}
 	}

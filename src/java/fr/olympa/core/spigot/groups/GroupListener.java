@@ -63,7 +63,7 @@ public class GroupListener implements Listener {
 			if (OlympaCorePermissions.CHAT_COLOR.hasPermission(olympaPlayer)) {
 				event.setMessage(ColorUtils.color(event.getMessage()));
 			}
-			event.setFormat(group.getPrefix() + "%s " + group.getChatSufix() + " %s");
+			event.setFormat(olympaPlayer.getGroupPrefix() + "%s " + group.getChatSufix() + " %s");
 		} else {
 			event.setFormat(ColorUtils.color("&cGRADE ERREUR &7") + "%s : %s");
 		}

@@ -310,6 +310,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
+	public String getTuneChar() {
+		return gender.getTurne();
+	}
+
+	@Override
 	public UUID getUniqueId() {
 		return uuid;
 	}
@@ -331,6 +336,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public boolean isConnected() {
 		return connected != null ? connected : false;
+	}
+
+	@Override
+	public boolean isGenderFemale() {
+		return gender == Gender.FEMALE;
 	}
 
 	@Override

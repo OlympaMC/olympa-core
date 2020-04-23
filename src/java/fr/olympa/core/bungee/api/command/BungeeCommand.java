@@ -7,7 +7,7 @@ import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.core.bungee.login.HandlerLogin;
+import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -88,7 +88,7 @@ public abstract class BungeeCommand extends Command {
 			this.sender = sender;
 			if (sender instanceof ProxiedPlayer) {
 				proxiedPlayer = (ProxiedPlayer) sender;
-				if (!bypassAuth && !HandlerLogin.isLogged(proxiedPlayer)) {
+				if (!bypassAuth && DataHandler.isUnlogged(proxiedPlayer)) {
 					sendErreur("Tu dois être connecté. Fait &4/login <mdp>&c.");
 					return;
 				}
@@ -114,7 +114,6 @@ public abstract class BungeeCommand extends Command {
 				return;
 			}
 			onCommand(sender, args);
-
 		});
 
 	}

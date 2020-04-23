@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
-import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -18,6 +18,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.config.Configuration;
 
 public class IpHistory {
 
@@ -29,7 +30,8 @@ public class IpHistory {
 		String playersShow = players.stream().map(OlympaPlayer::getName).collect(Collectors.joining(", "));
 
 		if (bans == null) {
-			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
+			Configuration config = OlympaBungee.getInstance().getConfig();
+			sender.sendMessage(config.getString("bungee.ban.messages.errordb"));
 			return;
 		}
 

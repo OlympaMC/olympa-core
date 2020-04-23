@@ -13,12 +13,12 @@ import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.BanUtils;
 import fr.olympa.core.bungee.ban.commands.BanIpCommand;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
-import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -43,7 +43,7 @@ public class BanPlayer {
 		// args[1] = time + unit
 		// args[2] & + = reason
 
-		Configuration config = BungeeConfigUtils.getDefaultConfig();
+		Configuration config = OlympaBungee.getInstance().getConfig();
 		long currentTime = Utils.getCurrentTimeInSeconds();
 		ProxiedPlayer player = null;
 		if (sender instanceof ProxiedPlayer) {
@@ -70,7 +70,7 @@ public class BanPlayer {
 				olympaTarget = AccountProvider.getFromDatabase(targetname);
 			}
 		} catch (SQLException e) {
-			sender.sendMessage(BungeeConfigUtils.getString("ban.messages.errordb"));
+			sender.sendMessage(config.getString("ban.messages.errordb"));
 			e.printStackTrace();
 			return;
 		}

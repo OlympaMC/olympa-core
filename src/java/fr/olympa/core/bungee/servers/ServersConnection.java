@@ -11,7 +11,6 @@ import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
@@ -25,11 +24,9 @@ public class ServersConnection {
 	}
 
 	public static ServerInfo getAuth(ServerInfo noThis) {
-		Map<ServerInfo, Integer> auths = MonitorServers.getServers().entrySet().stream().filter(entry -> {
-			ServerInfo si = entry.getKey();
-			ServerPing sp = entry.getValue().getServerPing();
-			return noThis != si && sp != null && si.getName().startsWith("auth") && sp.getPlayers().getMax() - sp.getPlayers().getOnline() > 0;
-		}).collect(Collectors.toMap((entry) -> entry.getKey(), (entry) -> entry.getValue().getServerPing().getPlayers().getMax() / 2 - entry.getValue().getServerPing().getPlayers().getOnline()));
+		Map<ServerInfo, Integer> auths = MonitorServers.getLastServerInfo().stream().filter(si -> {
+			return si.getError() != null && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("auth") && si.getMaxPlayers() - si.getOnlinePlayer() > 0;
+		}).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayer()));
 		// TODO add sort by name1 name2 name3
 		Entry<ServerInfo, Integer> auth = auths.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
 		if (auth != null) {
@@ -44,11 +41,9 @@ public class ServersConnection {
 	}
 
 	public static ServerInfo getLobby(ServerInfo noThis) {
-		Map<ServerInfo, Integer> lobbys = MonitorServers.getServers().entrySet().stream().filter(entry -> {
-			ServerInfo si = entry.getKey();
-			ServerPing sp = entry.getValue().getServerPing();
-			return noThis != si && sp != null && si.getName().startsWith("lobby") && sp.getPlayers().getMax() / 2 - sp.getPlayers().getOnline() > 0;
-		}).collect(Collectors.toMap((entry) -> entry.getKey(), (entry) -> entry.getValue().getServerPing().getPlayers().getMax() / 2 - entry.getValue().getServerPing().getPlayers().getOnline()));
+		Map<ServerInfo, Integer> lobbys = MonitorServers.getLastServerInfo().stream().filter(si -> {
+			return si.getError() != null && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("lobby") && si.getMaxPlayers() / 2 - si.getOnlinePlayer() > 0;
+		}).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() / 2 - si.getOnlinePlayer()));
 		// TODO add sort by name1 name2 name3
 		Entry<ServerInfo, Integer> lobby = lobbys.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
 		if (lobby != null) {
@@ -59,8 +54,7 @@ public class ServersConnection {
 	}
 
 	public static ServerInfo getServer(String name) {
-		return MonitorServers.getServers().entrySet().stream().filter(entry -> entry.getValue().getServerPing() != null && entry.getKey().getName().startsWith(name.toLowerCase())).map(entry -> entry.getKey())
-				.findFirst().orElse(null);
+		return MonitorServers.getLastServerInfo().stream().filter(si -> si.getError() != null && si.getName().startsWith(name.toLowerCase())).map(MonitorInfo::getServerInfo).findFirst().orElse(null);
 	}
 
 	public static void removeTryToConnect(ProxiedPlayer player) {

@@ -18,11 +18,11 @@ import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.BanUtils;
 import fr.olympa.core.bungee.ban.commands.methods.BanIp;
 import fr.olympa.core.bungee.ban.commands.methods.BanPlayer;
-import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.TabExecutor;
+import net.md_5.bungee.config.Configuration;
 
 public class BanCommand extends BungeeCommand implements TabExecutor {
 
@@ -47,6 +47,7 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 
 		String arg = args[0];
 
+		Configuration config = OlympaBungee.getInstance().getConfig();
 		if (Matcher.isUsername(arg)) {
 			BanPlayer.addBanPlayer(author, sender, arg, null, args, olympaPlayer);
 
@@ -55,7 +56,7 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 			if (Matcher.isIP(arg)) {
 				BanIp.addBanIP(author, sender, arg, args, olympaPlayer);
 			} else {
-				this.sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.ipinvalid").replace("%ip%", arg));
+				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.ipinvalid").replace("%ip%", arg));
 				return;
 			}
 
@@ -64,12 +65,12 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 			if (Matcher.isUUID(arg)) {
 				BanPlayer.addBanPlayer(author, sender, null, UUID.fromString(arg), args, olympaPlayer);
 			} else {
-				this.sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.uuidinvalid").replace("%uuid%", arg));
+				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.uuidinvalid").replace("%uuid%", arg));
 				return;
 			}
 
 		} else {
-			this.sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.typeunknown").replace("%type%", arg));
+			this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replace("%type%", arg));
 			return;
 		}
 		return;

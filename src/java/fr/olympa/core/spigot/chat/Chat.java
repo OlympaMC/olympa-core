@@ -71,4 +71,15 @@ public class Chat {
 
 		OlympaCorePermissions.CHAT_SEEINSULTS.sendMessage(text);
 	}
+
+	public static void sendToStaff(String type, Player player, String msg, String match) {
+		TextComponent text = new TextComponent("\u2623 [" + type + "] " + player.getName() + " > ");
+		text.setColor(ChatColor.DARK_PURPLE);
+		msg = ColorUtils.color("&d" + msg.replace(match, "&l" + match + "&d"));
+		text.addExtra(msg);
+		text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ColorUtils.color("&cCliquez pour mute " + player.getName())).create()));
+		text.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/mute " + player.getName()));
+
+		OlympaCorePermissions.CHAT_SEEINSULTS.sendMessage(text);
+	}
 }

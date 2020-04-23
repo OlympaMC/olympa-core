@@ -237,6 +237,7 @@ public class AuthListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void on4ServerConnected(ServerConnectedEvent event) {
 		ProxiedPlayer player = event.getPlayer();
+		// TODO send olympaplayer to spigot serveur
 		DataHandler.removePlayer(player.getName());
 	}
 

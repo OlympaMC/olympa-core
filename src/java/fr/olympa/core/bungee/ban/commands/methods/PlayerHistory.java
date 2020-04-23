@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
-import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -22,6 +22,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.config.Configuration;
 
 public class PlayerHistory {
 
@@ -39,6 +40,7 @@ public class PlayerHistory {
 			throw new NullPointerException("The uuid or name must be specified");
 		}
 
+		Configuration config = OlympaBungee.getInstance().getConfig();
 		try {
 			if (target != null) {
 				olympaTarget = AccountProvider.get(target.getUniqueId());
@@ -48,7 +50,7 @@ public class PlayerHistory {
 				olympaTarget = AccountProvider.getFromDatabase(name);
 			}
 		} catch (SQLException e) {
-			sender.sendMessage(BungeeConfigUtils.getString("ban.messages.errordb"));
+			sender.sendMessage(config.getString("ban.messages.errordb"));
 			e.printStackTrace();
 			return;
 		}
@@ -56,7 +58,7 @@ public class PlayerHistory {
 		List<OlympaSanction> bans = BanMySQL.getSanctions(olympaTarget.getUniqueId());
 
 		if (bans == null) {
-			sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
+			sender.sendMessage(config.getString("bungee.ban.messages.errordb"));
 			return;
 		}
 

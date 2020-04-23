@@ -1,19 +1,24 @@
 package fr.olympa.core.bungee.motd;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Random;
 import java.util.UUID;
 
-import com.google.gson.Gson;
+import javax.imageio.ImageIO;
 
 import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.utils.BungeeConfigUtils;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.utils.BungeeUtils;
+import net.md_5.bungee.api.Favicon;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
 
 public class MotdListener implements Listener {
@@ -49,7 +54,8 @@ public class MotdListener implements Listener {
 
 		ver.setName(version + " §7" + players.getOnline() + "§8/§7" + players.getMax());
 		// ping.setVersion(ver);
-		String statusString = BungeeConfigUtils.getConfig("maintenance").getString("settings.status");
+		Configuration config = OlympaBungee.getInstance().getMaintConfig();
+		String statusString = config.getString("settings.status");
 		MaintenanceStatus status = MaintenanceStatus.get(statusString);
 		if (status == null) {
 			status = MaintenanceStatus.DEV;
@@ -71,8 +77,6 @@ public class MotdListener implements Listener {
 					return;
 				}
 			}
-		} else {
-			System.out.println("Unknow VirtualHost -> what ip the player trie to connect. " + new Gson().toJson(ping.getVersion()));
 		}
 		switch (status) {
 		case OPEN:
@@ -124,7 +128,17 @@ public class MotdListener implements Listener {
 			}
 			break;
 		case MAINTENANCE:
-			String maintenanceMessage = BungeeUtils.color(BungeeConfigUtils.getConfig("maintenance").getString("settings.message"));
+			try {
+				File file = new File("maintenance.png");
+				if (!file.exists()) {
+					return;
+				}
+				BufferedImage in = ImageIO.read(new File("maintenance.png"));
+				ping.setFavicon(Favicon.create(in));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			String maintenanceMessage = BungeeUtils.color(config.getString("settings.message"));
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
@@ -142,6 +156,16 @@ public class MotdListener implements Listener {
 			ping.setDescriptionComponent(new TextComponent(motd_base + "§4§l⚠ §cSERVEUR EN MAINTENANCE §4§l⚠"));
 			break;
 		case DEV:
+			try {
+				File file = new File("maintenance.png");
+				if (!file.exists()) {
+					return;
+				}
+				BufferedImage in = ImageIO.read(new File("maintenance.png"));
+				ping.setFavicon(Favicon.create(in));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),

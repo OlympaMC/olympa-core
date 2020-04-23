@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -22,16 +21,14 @@
 		</repository>
 	</repositories>
 	<dependencies>
-		<!--<dependency> <groupId>com.github.ProtocolSupport</groupId> <artifactId>ProtocolSupport</artifactId> 
-			<version>[279088df24,)</version> </dependency> <dependency> <groupId>com.github.ProtocolSupport</groupId> 
-			<artifactId>ProtocolSupportBungee</artifactId> <version>[6718e7d,)</version> 
-			</dependency>
 		<dependency>
-			<groupId>io.github.waterfallmc</groupId>
-			<artifactId>waterfall-api</artifactId>
-			<version>[1.15-SNAPSHOT,)</version>
+			<groupId>com.github.ProtocolSupport</groupId>
+			<artifactId>ProtocolSupport</artifactId>
+			<version>513e8f0371</version>
 			<scope>provided</scope>
-		</dependency> -->
+		</dependency>
+		<!-- <dependency> <groupId>io.github.waterfallmc</groupId> <artifactId>waterfall-api</artifactId> 
+			<version>[1.15-SNAPSHOT,)</version> <scope>provided</scope> </dependency> -->
 		<dependency>
 			<groupId>net.md-5</groupId>
 			<artifactId>bungeecord-api</artifactId>

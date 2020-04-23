@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.datamanagment.redislisteners;
+package fr.olympa.core.bungee.redis;
 
 import java.util.UUID;
 
@@ -20,6 +20,8 @@ public class OlympaPlayerBungeeListener extends JedisPubSub {
 		if (player == null) {
 			return;
 		}
+		System.out.println("receive " + olympaPlayer.getName() + " from redis");
 		AccountProvider olympaAccount = new AccountProvider(olympaPlayer.getUniqueId());
+		olympaAccount.saveToCache(olympaPlayer);
 	}
 }

@@ -9,12 +9,12 @@ import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.BanUtils;
 import fr.olympa.core.bungee.ban.commands.BanCommand;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
-import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -22,6 +22,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.config.Configuration;
 
 public class BanIp {
 
@@ -29,6 +30,7 @@ public class BanIp {
 	public static void addBanIP(UUID author, CommandSender sender, String targetip, String[] args, OlympaPlayer olympaPlayer) {
 		java.util.regex.Matcher matcher1 = BanUtils.matchDuration(args[1]);
 		java.util.regex.Matcher matcher2 = BanUtils.matchUnit(args[1]);
+		Configuration config = OlympaBungee.getInstance().getConfig();
 		// Si la command contient un temps et une unité valide
 		if (matcher1.find() && matcher2.find()) {
 			// Si la command contient un motif
@@ -40,18 +42,18 @@ public class BanIp {
 				long timestamp = BanUtils.toTimeStamp(Integer.parseInt(time), unit);
 				long seconds = timestamp - Utils.getCurrentTimeInSeconds();
 
-				if (seconds <= BungeeConfigUtils.getInt("bungee.ban.settings.minbantime")) {
-					sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.cantbypassmaxbantime"));
+				if (seconds <= config.getInt("bungee.ban.settings.minbantime")) {
+					sender.sendMessage(config.getString("bungee.ban.messages.cantbypassmaxbantime"));
 					return;
 				}
-				if (seconds >= BungeeConfigUtils.getInt("bungee.ban.settings.maxbantime")) {
-					sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.cantbypassmminbantime"));
+				if (seconds >= config.getInt("bungee.ban.settings.maxbantime")) {
+					sender.sendMessage(config.getString("bungee.ban.messages.cantbypassmminbantime"));
 					return;
 				}
 				String Stimestamp = Utils.timestampToDuration(timestamp);
 				OlympaSanction ban = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.BANIP, ip, author, reason, Utils.getCurrentTimeInSeconds(), timestamp);
 				if (!BanMySQL.addSanction(ban)) {
-					sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
+					sender.sendMessage(config.getString("bungee.ban.messages.errordb"));
 					return;
 				}
 
@@ -62,12 +64,12 @@ public class BanIp {
 						.collect(Collectors.toList());
 
 				for (ProxiedPlayer target : targets) {
-					target.disconnect(BungeeUtils.connectScreen(BungeeConfigUtils.getString("bungee.ban.messages.tempbandisconnect")
+					target.disconnect(BungeeUtils.connectScreen(config.getString("bungee.ban.messages.tempbandisconnect")
 							.replaceAll("%reason%", ban.getReason())
 							.replaceAll("%time%", Stimestamp)
 							.replaceAll("%id%", String.valueOf(ban.getId()))));
 					for (ProxiedPlayer players : target.getServer().getInfo().getPlayers()) {
-						players.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.tempbanannounce")
+						players.sendMessage(config.getString("bungee.ban.messages.tempbanannounce")
 								.replaceAll("%player%", target.getName())
 								.replaceAll("%time%", Stimestamp)
 								.replaceAll("%reason%", reason));
@@ -75,7 +77,7 @@ public class BanIp {
 				}
 
 				// Envoye un message au staff
-				TextComponent msg = BungeeUtils.formatStringToJSON(BungeeConfigUtils.getString("bungee.ban.messages.tempbanipannouncetoauthor")
+				TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("bungee.ban.messages.tempbanipannouncetoauthor")
 						.replaceAll("%ip%", BungeeUtils.getPlayersNamesByIp(ip))
 						.replaceAll("%time%", Stimestamp)
 						.replaceAll("%reason%", reason));
@@ -94,7 +96,7 @@ public class BanIp {
 			OlympaSanction ban = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.BANIP, ip, author, reason, Utils.getCurrentTimeInSeconds(), 0);
 
 			if (!BanMySQL.addSanction(ban)) {
-				sender.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.errordb"));
+				sender.sendMessage(config.getString("bungee.ban.messages.errordb"));
 				return;
 			}
 
@@ -104,15 +106,15 @@ public class BanIp {
 					.filter(player -> player.getAddress().getAddress().getHostAddress().equals(ip))
 					.collect(Collectors.toList())) {
 				target.disconnect(BungeeUtils
-						.connectScreen(BungeeConfigUtils.getString("bungee.ban.messages.bandisconnect").replaceAll("%reason%", ban.getReason()).replaceAll("%id%", String.valueOf(ban.getId()))));
+						.connectScreen(config.getString("bungee.ban.messages.bandisconnect").replaceAll("%reason%", ban.getReason()).replaceAll("%id%", String.valueOf(ban.getId()))));
 				for (ProxiedPlayer players : target.getServer().getInfo().getPlayers()) {
-					players.sendMessage(BungeeConfigUtils.getString("bungee.ban.messages.banannounce").replaceAll("%player%", target.getName()).replaceAll("%reason%", reason));
+					players.sendMessage(config.getString("bungee.ban.messages.banannounce").replaceAll("%player%", target.getName()).replaceAll("%reason%", reason));
 				}
 			}
 
 			// Envoye un message au staff
 			TextComponent msg = BungeeUtils.formatStringToJSON(
-					BungeeConfigUtils.getString("bungee.ban.messages.banipannouncetoauthor").replaceAll("%ip%", BungeeUtils.getPlayersNamesByIp(ip)).replaceAll("%reason%", reason));
+					config.getString("bungee.ban.messages.banipannouncetoauthor").replaceAll("%ip%", BungeeUtils.getPlayersNamesByIp(ip)).replaceAll("%reason%", reason));
 			msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
 			msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + ban.getId()));
 			OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);

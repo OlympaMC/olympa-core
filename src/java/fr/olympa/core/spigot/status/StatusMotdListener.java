@@ -13,7 +13,7 @@ public class StatusMotdListener implements Listener {
 	@EventHandler
 	public void onPing(ServerListPingEvent event) {
 		MaintenanceStatus status = OlympaCore.getInstance().getStatus();
-		event.setMotd(status.getName() + " " + TPS.getTPS());
+		event.setMotd(status.getName() + " " + TPS.getAllStringTPS());
 	}
 
 }

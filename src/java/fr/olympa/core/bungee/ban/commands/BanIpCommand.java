@@ -10,23 +10,23 @@ import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.commands.methods.BanIp;
-import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
 
 public class BanIpCommand extends BungeeCommand {
 
 	public static OlympaPermission permToBandef;
 
-	public BanIpCommand(Plugin plugin) {
+	public BanIpCommand(OlympaBungee plugin) {
 		super(plugin, "banip", OlympaCorePermissions.BAN_BANIP_COMMAND, "tempbanip");
 		permToBandef = OlympaCorePermissions.BAN_BANIPDEF_COMMAND;
 		minArg = 2;
-		usageString = BungeeConfigUtils.getString("ban.messages.usageban");
+		usageString = plugin.getConfig().getString("ban.messages.usageban");
 	}
 
 	@Override
@@ -38,6 +38,7 @@ public class BanIpCommand extends BungeeCommand {
 			author = OlympaConsole.getUniqueId();
 		}
 
+		Configuration config = OlympaBungee.getInstance().getConfig();
 		try {
 			if (Matcher.isUsername(args[0])) {
 
@@ -58,7 +59,7 @@ public class BanIpCommand extends BungeeCommand {
 					BanIp.addBanIP(author, sender, args[0], args, olympaPlayer);
 
 				} else {
-					sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.ipinvalid").replaceAll("%ip%", args[0]));
+					sendMessage(Prefix.DEFAULT_BAD, config.getString("default.ipinvalid").replaceAll("%ip%", args[0]));
 					return;
 				}
 
@@ -71,18 +72,18 @@ public class BanIpCommand extends BungeeCommand {
 					}
 
 				} else {
-					sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.uuidinvalid").replaceAll("%uuid%", args[0]));
+					sendMessage(Prefix.DEFAULT_BAD, config.getString("default.uuidinvalid").replaceAll("%uuid%", args[0]));
 					return;
 				}
 
 			} else {
-				sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("default.typeunknown").replaceAll("%type%", args[0]));
+				sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replaceAll("%type%", args[0]));
 				return;
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			sendMessage(Prefix.DEFAULT_BAD, BungeeConfigUtils.getString("ban.errordb"));
+			sendMessage(Prefix.DEFAULT_BAD, config.getString("ban.errordb"));
 			return;
 		}
 	}

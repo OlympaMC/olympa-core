@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.datamanagment.redislisteners;
+package fr.olympa.core.bungee.redis;
 
 import java.util.UUID;
 import java.util.function.Consumer;

@@ -20,7 +20,6 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.task.OlympaTask;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.SpigotUtils;
-import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class DataManagmentListener implements Listener {
@@ -60,9 +59,6 @@ public class DataManagmentListener implements Listener {
 			return;
 		}
 
-		olympaPlayer.setIp(player.getAddress().getAddress().getHostAddress());
-		olympaPlayer.setLastConnection(Utils.getCurrentTimeInSeconds());
-
 		event.setJoinMessage(null);
 
 		OlympaCore.getInstance().launchAsync(() -> {
@@ -76,8 +72,6 @@ public class DataManagmentListener implements Listener {
 				if (loginevent.getJoinMessage() != null && !loginevent.getJoinMessage().isEmpty()) {
 					Bukkit.broadcastMessage(loginevent.getJoinMessage());
 				}
-				// pas utile si ?
-				// olympaAccount.saveToRedis(olympaPlayer);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

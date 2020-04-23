@@ -28,8 +28,9 @@ public class ChatListener implements Listener {
 	// private Pattern matchIpv6 = Pattern.compile(
 	// "^(?>(?>([a-f0-9]{1,4})(?>:(?1)){7}|(?!(?:.*[a-f0-9](?>:|$)){8,})((?1)(?>:(?1)){0,6})?::(?2)?)|(?>(?>(?1)(?>:(?1)){5}:|(?!(?:.*[a-f0-9]:){6,})(?3)?::(?>((?1)(?>:(?1)){0,4}):)?)?(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(?>.(?4)){3}))$");
 	private Pattern matchIpv4 = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
-	private Pattern matchLink = Pattern.compile("[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)");
-	private Pattern matchFlood = Pattern.compile("(.)\\1{2,}");
+	private Pattern matchLink = Pattern.compile("(https?:\\/\\/(www\\.)?)?([-\\w]+(\\.|\\W|[0-9]))+(fr|org|net|com|xxx|name|xyr|gg|ly|be|lu|cach)");
+	private Pattern matchFlood = Pattern.compile("\\S*((.)\\2{3,})\\S*");
+	private Pattern matchNoWord = Pattern.compile("[^\\w\\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ\\-+÷²!@#%^&*(),.?\"':{}|[\\]<>~€$£\\\\\\/]+");
 
 	@EventHandler
 	public void onPlayerChatEvent(AsyncPlayerChatEvent event) {
@@ -87,7 +88,7 @@ public class ChatListener implements Listener {
 			if (!linkWhitelist.stream().filter(l -> link.contains(l)).findFirst().isPresent()) {
 				event.setCancelled(true);
 				player.sendMessage(ColorUtils.color(Prefix.BAD + "Les liens sont interdits."));
-				Chat.sendToStaff("Lien", player, message);
+				Chat.sendToStaff("Lien", player, message, link);
 				return;
 			}
 		}
@@ -95,9 +96,10 @@ public class ChatListener implements Listener {
 		// Si le message contient des ips, cancel message
 		matcher = matchIpv4.matcher(msgNFD);
 		if (matcher.find()) {
+			String ip = matcher.group();
 			event.setCancelled(true);
 			player.sendMessage(ColorUtils.color(Prefix.BAD + "Les adresses IPs sont interdites."));
-			Chat.sendToStaff("IP", player, message);
+			Chat.sendToStaff("IP", player, message, ip);
 			return;
 		}
 
@@ -134,7 +136,8 @@ public class ChatListener implements Listener {
 			int uppers = (int) msgNFD.chars().filter(c -> Character.isUpperCase(c)).count();
 
 			if (Math.round(uppers * 1.0 / (msgNFD.length() * 1.0) * 100.0) > serverSettings.getMaxCaps()) {
-				event.setMessage(message.toLowerCase().replaceFirst(".", String.valueOf(message.toLowerCase().charAt(0)).toUpperCase()));
+				message = message.toLowerCase().replaceFirst(".", String.valueOf(message.toLowerCase().charAt(0)).toUpperCase());
+				event.setMessage(message);
 				player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci d'éviter de mettre trop de majuscules."));
 			}
 		}
@@ -145,30 +148,51 @@ public class ChatListener implements Listener {
 			matcher = matchFlood.matcher(message);
 
 			int i = 0;
+			boolean find = false;
 			if (matcher.find()) {
 				do {
-					String charsFlooded = matcher.group();
-					char charFlooded = charsFlooded.charAt(0);
+					String wordFlooded = matcher.group();
+					String charsFlooded = matcher.group(1);
+					String charFlooded = matcher.group(2);
 
-					Matcher matcher2 = Pattern.compile("\\S*(" + charFlooded + ")\\1{2,}\\S*").matcher(message);
-					String wordFlooded = matcher2.group();
-					if (Bukkit.getPlayer(wordFlooded) != null || charFlooded == '.' && charsFlooded.length() <= 3) {
-						// TODO Gestion flood legit
-						player.sendMessage(ColorUtils.color(Prefix.BAD + "Une erreur est survenu, nous travaillons sur ce problème. Signale aux dev stp."));
-						break;
+					if (Bukkit.getPlayer(wordFlooded) != null) {
+						String wordWithoutFlood = wordFlooded.replace(charsFlooded, charFlooded);
+						message.replace(wordFlooded, wordWithoutFlood);
+						find = true;
 					}
-					String word = wordFlooded.replace(charsFlooded.substring(1), "");
-					message = message.replace(wordFlooded, word);
-					if (++i > 100) {
-						Bukkit.getConsoleSender().sendMessage(ColorUtils.color("§4ERROR §cBoucle infini dans la gestion de chat."));
+					if (++i > 50) {
+						Bukkit.getConsoleSender().sendMessage(ColorUtils.color("&4ERROR &cBoucle infini dans la gestion de chat pour le flood."));
 						break;
 					}
 					matcher = matchFlood.matcher(message);
 				} while (matcher.find());
 
-				event.setMessage(message);
-				player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci d'éviter le flood."));
+				if (find) {
+					event.setMessage(message);
+					player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci d'éviter le flood."));
+				}
 			}
+			i = 0;
+			find = false;
+			// Si le message contient des charatères non autorisé
+			matcher = matchNoWord.matcher(message);
+			if (matcher.find()) {
+				do {
+					String chars = matcher.group();
+					message = message.replace(chars, "");
+					if (++i > 50) {
+						Bukkit.getConsoleSender().sendMessage(ColorUtils.color("&4ERROR &cBoucle infini dans la gestion de chat pour les symboles interdits."));
+						break;
+					}
+					matcher = matchNoWord.matcher(message);
+				} while (matcher.find());
+
+				if (find) {
+					event.setMessage(message);
+					player.sendMessage(ColorUtils.color(Prefix.BAD + "Les symboles chelou sont interdit."));
+				}
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

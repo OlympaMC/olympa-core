@@ -8,6 +8,7 @@ import fr.olympa.api.provider.OlympaPlayerObject;
 import fr.olympa.api.utils.Passwords;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
+import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.HandlerLogin;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.utils.BungeeUtils;
@@ -49,7 +50,7 @@ public class LoginCommand extends BungeeCommand {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		if (HandlerLogin.isLogged(proxiedPlayer)) {
+		if (!DataHandler.isUnlogged(proxiedPlayer)) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Tu es déjà connecté.");
 			return;
 		}

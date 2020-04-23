@@ -10,10 +10,10 @@ public class OlympaCorePermissions {
 	// TODO change to OlympaGroup.MODP
 	public static OlympaPermission GROUP_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 
-	public static OlympaPermission CHAT_COMMAND = new OlympaPermission(OlympaGroup.MOD);
-	public static OlympaPermission CHAT_SEEINSULTS = new OlympaPermission(OlympaGroup.MOD);
+	public static OlympaPermission CHAT_COMMAND = new OlympaPermission(OlympaGroup.ASSISTANT);
+	public static OlympaPermission CHAT_SEEINSULTS = new OlympaPermission(OlympaGroup.ASSISTANT);
 	public static OlympaPermission CHAT_BYPASS = new OlympaPermission(OlympaGroup.MODP);
-	public static OlympaPermission CHAT_MUTEDBYPASS = new OlympaPermission(OlympaGroup.MOD);
+	public static OlympaPermission CHAT_MUTEDBYPASS = new OlympaPermission(OlympaGroup.GRAPHISTE);
 
 	public static OlympaPermission BAN_BYPASS_MAXTIME = new OlympaBungeePermission(OlympaGroup.FONDA);
 	public static OlympaPermission BAN_BYPASS_SANCTION_STAFF = new OlympaBungeePermission(OlympaGroup.MODP);
@@ -48,5 +48,8 @@ public class OlympaCorePermissions {
 	public static OlympaPermission INFO_COMMAND = new OlympaPermission(OlympaGroup.ASSISTANT);
 	public static OlympaPermission INFO_COMMAND_EXTRA = new OlympaPermission(OlympaGroup.MODP);
 	public static OlympaPermission STAFF_CHAT = new OlympaPermission(OlympaGroup.GRAPHISTE);
+
+	public static OlympaPermission SERVER_LIST_COMMAND = new OlympaPermission(OlympaGroup.DEV, OlympaGroup.RESP_TECH, OlympaGroup.ADMIN, OlympaGroup.FONDA);
+	public static OlympaPermission SERVER_START_COMMAND = new OlympaPermission(OlympaGroup.DEV, OlympaGroup.RESP_TECH, OlympaGroup.ADMIN, OlympaGroup.FONDA);
 
 }

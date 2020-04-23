@@ -1,59 +1,51 @@
 package fr.olympa.core.bungee.maintenance;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.logging.Level;
 
-import fr.olympa.core.bungee.utils.BungeeConfigUtils;
+import fr.olympa.api.maintenance.MaintenanceStatus;
+import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.TabCompleteEvent;
+import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 
+@SuppressWarnings("deprecation")
 public class MaintenanceListener implements Listener {
 
-	@EventHandler
-	public void onTabComplete(TabCompleteEvent event) {
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void PreLoginEvent(PreLoginEvent event) {
 		if (event.isCancelled()) {
 			return;
 		}
-		String msg = event.getCursor();
-		if (!msg.startsWith("/" + MaintenanceCommand.command)) {
-			return;
-		}
-		String[] args = msg.split(" ");
-		List<String> suggestion = event.getSuggestions();
-		if (event.getSender() instanceof ProxiedPlayer) {
-			ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-			if (!MaintenanceCommand.permission.hasPermission(player.getUniqueId())) {
-				return;
-			}
-		}
-		String check = args[args.length - 1].toLowerCase();
-		if (args.length == 1) {
-			if (msg.endsWith(" ")) {
-				for (String arg : MaintenanceCommand.arg2) {
-					if (arg.toLowerCase().startsWith(check)) {
-						suggestion.add(arg);
-					}
+		String playername = event.getConnection().getName();
+		Configuration config = OlympaBungee.getInstance().getMaintConfig();
+		String message = config.getString("settings.message");
+		String statusString = config.getString("settings.status");
+		MaintenanceStatus maintenanceStatus = MaintenanceStatus.get(statusString);
+		// Vérifie si le serveur n'est pas en maintenance
+
+		String playerName = playername;
+		if (!config.getStringList("whitelist").contains(playerName)) {
+			if (maintenanceStatus == MaintenanceStatus.DEV) {
+				event.setCancelReason(BungeeUtils.connectScreen("&6Le serveur est actuellement en développement.\n\n&3Plus d'infos sur le &bTwitter &n@Olympa_fr\n&3Ou &bDiscord &nwww.discord.olympa.fr"));
+				event.setCancelled(true);
+				ProxyServer.getInstance().getLogger().log(Level.INFO, BungeeUtils.color("&d" + playername + " ne peux pas se connecter (serveur en dev)"));
+			} else if (maintenanceStatus == MaintenanceStatus.SOON) {
+				event.setCancelReason(BungeeUtils.connectScreen("&cNous ouvrons bientôt !.\n\n&3Plus d'infos sur le &bTwitter &n@Olympa_fr\\n&3Ou &bDiscord &nwww.discord.olympa.fr"));
+				event.setCancelled(true);
+				ProxyServer.getInstance().getLogger().log(Level.INFO, BungeeUtils.color("&d" + playername + " ne peux pas se connecter (serveur en dev, open soon)"));
+			} else if (maintenanceStatus == null || maintenanceStatus != MaintenanceStatus.OPEN || maintenanceStatus == MaintenanceStatus.DEV) {
+				if (message != null && !message.isEmpty()) {
+					message = "\n\n&c&nRaison:&c " + message;
 				}
-			}
-		} else if (args.length == 2) {
-			if (!msg.endsWith(" ")) {
-				suggestion.addAll(MaintenanceCommand.arg2);
-			} else {
-				if (args[1].equalsIgnoreCase("remove")) {
-					suggestion.addAll(BungeeConfigUtils.getConfig("maintenance").getStringList("whitelist"));
-				}
-			}
-		} else if (args.length == 3) {
-			if (!msg.endsWith(" ")) {
-				if (args[1].equalsIgnoreCase("add")) {
-					suggestion.addAll(ProxyServer.getInstance().getPlayers().stream().map(ProxiedPlayer::getName).filter(playerName -> playerName.toLowerCase().startsWith(check)).collect(Collectors.toList()));
-				} else if (args[1].equalsIgnoreCase("remove")) {
-					suggestion.addAll(BungeeConfigUtils.getConfig("maintenance").getStringList("whitelist").stream().filter(playerName -> playerName.toLowerCase().startsWith(check)).collect(Collectors.toList()));
-				}
+				event.setCancelReason(BungeeUtils.connectScreen("&cLe serveur est actuellement en maintenance." + message));
+				event.setCancelled(true);
+				ProxyServer.getInstance().getLogger().log(Level.INFO, BungeeUtils.color("&d" + playername + " ne peux pas se connecter (serveur en maintenance)"));
 			}
 		}
 	}
+
 }

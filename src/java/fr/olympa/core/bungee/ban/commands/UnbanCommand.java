@@ -15,11 +15,11 @@ import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.commands.methods.UnbanIp;
 import fr.olympa.core.bungee.ban.commands.methods.UnbanPlayer;
-import fr.olympa.core.bungee.utils.BungeeConfigUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.TabExecutor;
+import net.md_5.bungee.config.Configuration;
 
 @SuppressWarnings("deprecation")
 public class UnbanCommand extends BungeeCommand implements TabExecutor {
@@ -39,12 +39,13 @@ public class UnbanCommand extends BungeeCommand implements TabExecutor {
 			author = OlympaConsole.getUniqueId();
 		}
 
+		Configuration config = OlympaBungee.getInstance().getConfig();
 		if (Matcher.isFakeIP(args[0])) {
 			if (Matcher.isIP(args[0])) {
 				UnbanIp.unBan(author, sender, args[0], args);
 
 			} else {
-				sender.sendMessage(BungeeConfigUtils.getString("default.ipinvalid").replace("%ip%", args[0]));
+				sender.sendMessage(config.getString("default.ipinvalid").replace("%ip%", args[0]));
 				return;
 			}
 
@@ -57,11 +58,11 @@ public class UnbanCommand extends BungeeCommand implements TabExecutor {
 				UnbanPlayer.unBan(author, sender, UUID.fromString(args[0]), null, args);
 
 			} else {
-				sender.sendMessage(BungeeConfigUtils.getString("default.uuidinvalid").replace("%uuid%", args[0]));
+				sender.sendMessage(config.getString("default.uuidinvalid").replace("%uuid%", args[0]));
 				return;
 			}
 		} else {
-			sender.sendMessage(BungeeConfigUtils.getString("default.typeunknown").replace("%type%", args[0]));
+			sender.sendMessage(config.getString("default.typeunknown").replace("%type%", args[0]));
 			return;
 		}
 		return;

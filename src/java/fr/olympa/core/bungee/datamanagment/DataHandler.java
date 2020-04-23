@@ -3,6 +3,8 @@ package fr.olympa.core.bungee.datamanagment;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+
 public class DataHandler {
 
 	static Set<CachePlayer> players = new HashSet<>();
@@ -17,6 +19,14 @@ public class DataHandler {
 
 	public static Set<CachePlayer> getPlayers() {
 		return players;
+	}
+
+	public static boolean isUnlogged(ProxiedPlayer player) {
+		return isUnlogged(player.getName());
+	}
+
+	public static boolean isUnlogged(String name) {
+		return players.stream().anyMatch(p -> p.getName() != null && name.equals(p.getName()));
 	}
 
 	public static void removePlayer(CachePlayer player) {

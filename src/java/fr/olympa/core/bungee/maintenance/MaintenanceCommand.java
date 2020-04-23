@@ -3,24 +3,25 @@ package fr.olympa.core.bungee.maintenance;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import fr.olympa.api.maintenance.MaintenanceStatus;
+import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.permission.OlympaPermission;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.utils.BungeeConfigUtils;
+import fr.olympa.core.bungee.api.config.CustomBungeeConfig;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import net.md_5.bungee.config.Configuration;
 
 @SuppressWarnings("deprecation")
-public class MaintenanceCommand extends BungeeCommand implements Listener {
+public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 
 	/*
 	 * Dev: Tristiisch74 Pemet de mettre le serveur en maintenance ./maintenance
@@ -31,7 +32,6 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 
 	static List<String> arg2 = new ArrayList<>();
 	static String command;
-	static OlympaPermission permission;
 
 	public MaintenanceCommand(Plugin plugin) {
 		super(plugin, "maintenance", OlympaCorePermissions.MAINTENANCE_COMMAND, "maint");
@@ -40,21 +40,12 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 		minArg = 1;
 		arg2.addAll(Arrays.asList("status", "add", "remove", "list"));
 		arg2.addAll(MaintenanceStatus.getNames());
-		// this.usageString = "<" + String.join("|",
-		// MaintenanceCommand.arg2).toLowerCase() + "> [joueur]";
+		usageString = "<" + String.join("|", MaintenanceCommand.arg2).toLowerCase() + "> [joueur]";
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		ProxyServer.getInstance().getScheduler().runAsync(OlympaBungee.getInstance(), () -> {
-			if (sender instanceof ProxiedPlayer) {
-				ProxiedPlayer player = (ProxiedPlayer) sender;
-				olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
-				if (!MaintenanceCommand.permission.hasPermission(olympaPlayer)) {
-					sendDoNotHavePermission();
-					return;
-				}
-			}
 			MaintenanceStatus maintenanceStatus = MaintenanceStatus.getByCommandArg(args[0]);
 			if (maintenanceStatus != null) {
 				switch (maintenanceStatus) {
@@ -95,7 +86,10 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 					break;
 				}
 			} else {
-				Configuration config = BungeeConfigUtils.getConfig("maintenance");
+				OlympaBungee olympaBungee = (OlympaBungee) plugin;
+				CustomBungeeConfig customConfig = olympaBungee.getMaintCustomConfig();
+				Configuration maintconfig = customConfig.getConfig();
+				Configuration defaultConfig = olympaBungee.getConfig();
 				switch (args[0].toLowerCase()) {
 				case "add":
 					if (args.length < 2) {
@@ -103,16 +97,16 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 						return;
 					}
 
-					List<String> whitelist = config.getStringList("whitelist");
+					List<String> whitelist = maintconfig.getStringList("whitelist");
 
 					if (!whitelist.contains(args[1])) {
 						whitelist.add(args[1]);
-						sender.sendMessage(BungeeConfigUtils.getString("maintenance.messages.added").replace("%player%", args[1]));
+						sender.sendMessage(defaultConfig.getString("maintenance.messages.added").replace("%player%", args[1]));
 					} else {
-						sender.sendMessage(BungeeConfigUtils.getString("maintenance.messages.alreadyadded").replace("%player%", args[1]));
+						sender.sendMessage(defaultConfig.getString("maintenance.messages.alreadyadded").replace("%player%", args[1]));
 					}
-					config.set("whitelist", whitelist);
-					BungeeConfigUtils.saveConfig("maintenance");
+					maintconfig.set("whitelist", whitelist);
+					customConfig.save();
 					break;
 
 				case "remove":
@@ -120,28 +114,28 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 						sendUsage();
 						return;
 					}
-					whitelist = config.getStringList("whitelist");
+					whitelist = maintconfig.getStringList("whitelist");
 					if (whitelist.contains(args[1])) {
 						whitelist.remove(args[1]);
-						sender.sendMessage(BungeeConfigUtils.getString("maintenance.messages.removed").replace("%player%", args[1]));
+						sender.sendMessage(defaultConfig.getString("maintenance.messages.removed").replace("%player%", args[1]));
 					} else {
-						sender.sendMessage(BungeeConfigUtils.getString("maintenance.messages.alreadyremoved").replace("%player%", args[1]));
+						sender.sendMessage(defaultConfig.getString("maintenance.messages.alreadyremoved").replace("%player%", args[1]));
 					}
-					config.set("whitelist", whitelist);
-					BungeeConfigUtils.saveConfig("maintenance");
+					maintconfig.set("whitelist", whitelist);
+					customConfig.save();
 					break;
 
 				case "list":
-					whitelist = config.getStringList("whitelist");
-					sender.sendMessage(BungeeConfigUtils.getString("maintenance.messages.whitelist")
+					whitelist = maintconfig.getStringList("whitelist");
+					sender.sendMessage(defaultConfig.getString("maintenance.messages.whitelist")
 							.replace("%size%", String.valueOf(whitelist.size()))
-							.replace("%list%", String.join(BungeeConfigUtils.getString("maintenance.messages.whitelist_separator"), whitelist)));
+							.replace("%list%", String.join(defaultConfig.getString("maintenance.messages.whitelist_separator"), whitelist)));
 					break;
 
 				case "status":
 
-					String message = config.getString("settings.message");
-					String statusString = config.getString("settings.status");
+					String message = maintconfig.getString("settings.message");
+					String statusString = maintconfig.getString("settings.status");
 					maintenanceStatus = MaintenanceStatus.get(statusString);
 					String statusmsg = "";
 					if (message != "") {
@@ -159,11 +153,35 @@ public class MaintenanceCommand extends BungeeCommand implements Listener {
 
 	}
 
+	@Override
+	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+		switch (args.length) {
+		case 0:
+			return arg2;
+		case 1:
+			return Utils.startWords(args[0], arg2);
+		case 2:
+			switch (Utils.removeAccents(args[0]).toLowerCase()) {
+			case "remove":
+				Configuration maintconfig = OlympaBungee.getInstance().getMaintConfig();
+				if (maintconfig != null) {
+					return Utils.startWords(args[1], maintconfig.getStringList("whitelist"));
+				}
+				break;
+			case "add":
+				return MySQL.getPlayersBySimilarName(args[1]).stream().map(OlympaPlayer::getName).collect(Collectors.toList());
+			}
+			break;
+		}
+		return new ArrayList<>();
+	}
+
 	private void setMaintenance(MaintenanceStatus maintenanceStatus, String message, CommandSender player) {
-		Configuration config = BungeeConfigUtils.getConfig("maintenance");
+		CustomBungeeConfig customConfig = OlympaBungee.getInstance().getMaintCustomConfig();
+		Configuration config = customConfig.getConfig();
 		config.set("settings.status", maintenanceStatus.getName());
 		config.set("settings.message", message);
-		BungeeConfigUtils.saveConfig("maintenance");
+		customConfig.save();
 		String statusmsg = "";
 		if (message != null && !message.isEmpty()) {
 			statusmsg = "(" + message.replace("\n", "") + ")";
