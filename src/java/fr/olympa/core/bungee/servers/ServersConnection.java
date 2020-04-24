@@ -19,7 +19,7 @@ import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 public class ServersConnection {
 
-	static Map<ProxiedPlayer, ScheduledTask> connect = new HashMap<>();
+	private static Map<ProxiedPlayer, ScheduledTask> connect = new HashMap<>();
 
 	public static boolean canPlayerConnect(ServerInfo name) {
 		MonitorInfo monitor = MonitorServers.getLastServerInfo().stream().filter(si -> si.getName().equals(name.getName())).findFirst().orElse(null);

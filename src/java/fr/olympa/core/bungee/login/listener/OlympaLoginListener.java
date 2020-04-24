@@ -6,13 +6,13 @@ import java.util.stream.Collectors;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.objects.OlympaServer;
-import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.core.bungee.datamanagment.CachePlayer;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -41,6 +41,12 @@ public class OlympaLoginListener implements Listener {
 	}
 
 	@EventHandler
+	public void onServerConnect(ServerConnectEvent event) {
+		ProxiedPlayer player = event.getPlayer();
+		ServersConnection.removeTryToConnect(player);
+	}
+
+	@EventHandler
 	public void onServerConnected(ServerConnectedEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		CachePlayer cache = DataHandler.get(player.getName());
@@ -48,7 +54,6 @@ public class OlympaLoginListener implements Listener {
 			String subdomain = cache.getSubDomain();
 			DataHandler.removePlayer(player.getName());
 			if (subdomain != null) {
-				cache.setSubDomain((String) null);
 				if (subdomain.equalsIgnoreCase("buildeur")) {
 					ServersConnection.tryConnect(player, OlympaServer.BUILDEUR, null);
 					return;
@@ -59,6 +64,5 @@ public class OlympaLoginListener implements Listener {
 			}
 		}
 		ServersConnection.tryConnect(player, OlympaServer.LOBBY, null);
-		new AccountProvider(player.getUniqueId()).removeFromCache();
 	}
 }
