@@ -1,14 +1,12 @@
 package fr.olympa.core.bungee.login.listener;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.objects.OlympaServer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.datamanagment.CachePlayer;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
@@ -34,24 +32,6 @@ public class OlympaLoginListener implements Listener {
 		if (!olympaPlayer.getIp().equals(ip)) {
 			olympaPlayer.addNewIp(ip);
 		}
-		OlympaBungee.getInstance().getTask().schedule(OlympaBungee.getInstance(), () -> {
-			CachePlayer cache = DataHandler.get(player.getName());
-			if (cache != null) {
-				String subdomain = cache.getSubDomain();
-				DataHandler.removePlayer(player.getName());
-				if (subdomain != null) {
-					cache.setSubDomain((String) null);
-					if (subdomain.equalsIgnoreCase("buildeur")) {
-						ServersConnection.tryConnect(player, OlympaServer.BUILDEUR);
-						return;
-					} else if (subdomain.equalsIgnoreCase("dev")) {
-						ServersConnection.tryConnect(player, OlympaServer.DEV);
-						return;
-					}
-				}
-			}
-			ServersConnection.tryConnect(player, OlympaServer.LOBBY);
-		}, 2, TimeUnit.SECONDS);
 	}
 
 	@EventHandler
@@ -63,6 +43,22 @@ public class OlympaLoginListener implements Listener {
 	@EventHandler
 	public void onServerConnected(ServerConnectedEvent event) {
 		ProxiedPlayer player = event.getPlayer();
+		CachePlayer cache = DataHandler.get(player.getName());
+		if (cache != null) {
+			String subdomain = cache.getSubDomain();
+			DataHandler.removePlayer(player.getName());
+			if (subdomain != null) {
+				cache.setSubDomain((String) null);
+				if (subdomain.equalsIgnoreCase("buildeur")) {
+					ServersConnection.tryConnect(player, OlympaServer.BUILDEUR, null);
+					return;
+				} else if (subdomain.equalsIgnoreCase("dev")) {
+					ServersConnection.tryConnect(player, OlympaServer.DEV, null);
+					return;
+				}
+			}
+		}
+		ServersConnection.tryConnect(player, OlympaServer.LOBBY, null);
 		new AccountProvider(player.getUniqueId()).removeFromCache();
 	}
 }

@@ -6,8 +6,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.objects.OlympaServer;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
@@ -18,6 +20,11 @@ import net.md_5.bungee.api.scheduler.ScheduledTask;
 public class ServersConnection {
 
 	static Map<ProxiedPlayer, ScheduledTask> connect = new HashMap<>();
+
+	public static boolean canPlayerConnect(ServerInfo name) {
+		MonitorInfo monitor = MonitorServers.getLastServerInfo().stream().filter(si -> si.getName().equals(name.getName())).findFirst().orElse(null);
+		return monitor != null && !monitor.getStatus().equals(MaintenanceStatus.CLOSE) && !monitor.getStatus().equals(MaintenanceStatus.UNKNOWN);
+	}
 
 	public static ServerInfo getAuth() {
 		return getAuth(null);
@@ -57,6 +64,18 @@ public class ServersConnection {
 		return MonitorServers.getLastServerInfo().stream().filter(si -> si.getError() != null && si.getName().startsWith(name.toLowerCase())).map(MonitorInfo::getServerInfo).findFirst().orElse(null);
 	}
 
+	public static ServerInfo getServerByNameOrIpPort(String nameOrIpPort) {
+		Map<String, ServerInfo> servers = ProxyServer.getInstance().getServers();
+		ServerInfo server = servers.get(nameOrIpPort);
+		if (server == null) {
+			String[] ipPort = nameOrIpPort.split(":");
+			if (ipPort.length >= 2) {
+				server = servers.values().stream().filter(sr -> sr.getAddress().getAddress().getHostAddress().equals(ipPort[0]) && sr.getAddress().getPort() == Integer.parseInt(ipPort[1])).findFirst().orElse(null);
+			}
+		}
+		return server;
+	}
+
 	public static void removeTryToConnect(ProxiedPlayer player) {
 		ScheduledTask task = connect.get(player);
 		if (task != null) {
@@ -65,32 +84,39 @@ public class ServersConnection {
 		}
 	}
 
-	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer) {
-		ScheduledTask task = ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer), 0, 10, TimeUnit.SECONDS);
+	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer, ServerInfo server) {
+		ScheduledTask task = ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer, server), 0, 10, TimeUnit.SECONDS);
 		connect.put(player, task);
 	}
 
 	@SuppressWarnings("deprecation")
-	private static void tryConnectTo(ProxiedPlayer player, OlympaServer olympaServer) {
-		ServerInfo server;
-		switch (olympaServer) {
-		case LOBBY:
-			server = ServersConnection.getLobby();
-			break;
-		case AUTH:
-			server = ServersConnection.getAuth();
-			break;
-		default:
-			server = getServer(olympaServer.getName());
-			break;
-		}
+	private static void tryConnectTo(ProxiedPlayer player, OlympaServer olympaServer, ServerInfo server) {
 		if (server != null) {
-			player.connect(server);
-			player.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("Connexion au serveur " + server.getName() + "..."));
-			removeTryToConnect(player);
-			return;
-		} else {
-			player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Aucun serveur " + olympaServer.getNameCaps() + " n'est actuellement disponible merci de patienter ..."));
+			switch (olympaServer) {
+			case LOBBY:
+				server = ServersConnection.getLobby();
+				break;
+			case AUTH:
+				server = ServersConnection.getAuth();
+				break;
+			default:
+				server = getServer(olympaServer.getName());
+				break;
+			}
 		}
+		if (server == null) {
+			player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Aucun serveur " + olympaServer.getNameCaps() + " n'est actuellement disponible merci de patienter ..."));
+			return;
+		}
+		String serverName = Utils.capitalize(server.getName());
+		if (!canPlayerConnect(server)) {
+			player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu es en file d'attente pour rejoindre le serveur &4" + serverName + "&c..."));
+			return;
+		}
+		player.connect(server);
+		player.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("Connexion au serveur &4" + serverName + "&c..."));
+		removeTryToConnect(player);
+		return;
+
 	}
 }

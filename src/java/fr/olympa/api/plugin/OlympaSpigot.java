@@ -15,7 +15,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 
 	protected DbConnection database = null;
 	protected MaintenanceStatus status;
-	private String serverName;
+	private String serverName = getServer().getIp() + ":" + getServer().getPort();
 
 	@Override
 	public Connection getDatabase() throws SQLException {
@@ -92,7 +92,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 			i1 = is[0] + 1;
 		}
 		int i = i1;
-		RedisAccess redisAccess = RedisAccess.init("bungee");
+		RedisAccess redisAccess = RedisAccess.init(getServerName());
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
 			// Test

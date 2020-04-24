@@ -9,6 +9,7 @@ import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
@@ -20,7 +21,6 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.TabExecutor;
 import net.md_5.bungee.config.Configuration;
 
-@SuppressWarnings("deprecation")
 public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 
 	/*
@@ -101,9 +101,9 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 
 					if (!whitelist.contains(args[1])) {
 						whitelist.add(args[1]);
-						sender.sendMessage(defaultConfig.getString("maintenance.messages.added").replace("%player%", args[1]));
+						sendMessage(defaultConfig.getString("maintenance.messages.added").replace("%player%", args[1]));
 					} else {
-						sender.sendMessage(defaultConfig.getString("maintenance.messages.alreadyadded").replace("%player%", args[1]));
+						sendMessage(defaultConfig.getString("maintenance.messages.alreadyadded").replace("%player%", args[1]));
 					}
 					maintconfig.set("whitelist", whitelist);
 					customConfig.save();
@@ -117,9 +117,9 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 					whitelist = maintconfig.getStringList("whitelist");
 					if (whitelist.contains(args[1])) {
 						whitelist.remove(args[1]);
-						sender.sendMessage(defaultConfig.getString("maintenance.messages.removed").replace("%player%", args[1]));
+						sendMessage(defaultConfig.getString("maintenance.messages.removed").replace("%player%", args[1]));
 					} else {
-						sender.sendMessage(defaultConfig.getString("maintenance.messages.alreadyremoved").replace("%player%", args[1]));
+						sendMessage(defaultConfig.getString("maintenance.messages.alreadyremoved").replace("%player%", args[1]));
 					}
 					maintconfig.set("whitelist", whitelist);
 					customConfig.save();
@@ -127,7 +127,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 
 				case "list":
 					whitelist = maintconfig.getStringList("whitelist");
-					sender.sendMessage(defaultConfig.getString("maintenance.messages.whitelist")
+					sendMessage(defaultConfig.getString("maintenance.messages.whitelist")
 							.replace("%size%", String.valueOf(whitelist.size()))
 							.replace("%list%", String.join(defaultConfig.getString("maintenance.messages.whitelist_separator"), whitelist)));
 					break;
@@ -141,7 +141,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 					if (message != "") {
 						statusmsg = "(" + message.replaceAll("\n", "") + ")";
 					}
-					sender.sendMessage(BungeeUtils.color("&6Le mode maintenance est en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
+					sendMessage(BungeeUtils.color("&6Le mode maintenance est en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
 					break;
 
 				default:
@@ -176,6 +176,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 		return new ArrayList<>();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void setMaintenance(MaintenanceStatus maintenanceStatus, String message, CommandSender player) {
 		CustomBungeeConfig customConfig = OlympaBungee.getInstance().getMaintCustomConfig();
 		Configuration config = customConfig.getConfig();
@@ -186,6 +187,6 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 		if (message != null && !message.isEmpty()) {
 			statusmsg = "(" + message.replace("\n", "") + ")";
 		}
-		player.sendMessage(BungeeUtils.color("&6Le mode maintenance est désormais en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
+		player.sendMessage(ColorUtils.color("&6Le mode maintenance est désormais en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
 	}
 }

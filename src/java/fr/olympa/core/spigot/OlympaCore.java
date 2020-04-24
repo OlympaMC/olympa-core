@@ -23,6 +23,7 @@ import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
 import fr.olympa.core.spigot.protocolsupport.ProtocolSupportHook;
+import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.report.commands.ReportCommand;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
 import fr.olympa.core.spigot.scoreboards.ScoreboardListener;
@@ -66,6 +67,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
 	@Override
 	public void onDisable() {
+		RedisSpigotSend.sendShutdown();
 		RedisAccess.close();
 		status = MaintenanceStatus.CLOSE;
 		super.onDisable();
@@ -112,7 +114,9 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		pluginManager.registerEvents(new StatusMotdListener(), this);
 
 		new AntiWD(this);
-		if (getServer().getPluginManager().isPluginEnabled("ProtocolSupport")) protocolSupportHook = new ProtocolSupportHook(this);
+		if (getServer().getPluginManager().isPluginEnabled("ProtocolSupport")) {
+			protocolSupportHook = new ProtocolSupportHook(this);
+		}
 
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 	}

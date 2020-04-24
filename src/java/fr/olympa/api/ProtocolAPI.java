@@ -1,8 +1,9 @@
-package fr.olympa.core.bungee.api;
+package fr.olympa.api;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -82,7 +83,8 @@ public enum ProtocolAPI {
 	 * Only Spigot
 	 */
 	public static List<String> getVersionSupported() {
-		String version = Bukkit.getBukkitVersion();
+		String versionLong = Bukkit.getVersion();
+		String version = Pattern.compile("\\d+.\\d+(.\\d+)?").matcher(versionLong).group();
 		ProtocolAPI versionProto = Arrays.stream(ProtocolAPI.values()).filter(p -> p.getName().equals(version)).findFirst().orElse(null);
 		if (versionProto != null) {
 			return gets(versionProto.getProtocolNumber()).stream().map(ProtocolAPI::getName).collect(Collectors.toList());

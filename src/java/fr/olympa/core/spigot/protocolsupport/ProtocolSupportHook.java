@@ -1,6 +1,8 @@
 package fr.olympa.core.spigot.protocolsupport;
 
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.bukkit.plugin.Plugin;
@@ -8,6 +10,7 @@ import org.bukkit.plugin.Plugin;
 import fr.olympa.api.hook.ProtocolAction;
 import protocolsupport.ProtocolSupport;
 import protocolsupport.api.ProtocolSupportAPI;
+import protocolsupport.api.ProtocolType;
 import protocolsupport.api.ProtocolVersion;
 
 public class ProtocolSupportHook implements ProtocolAction {
@@ -48,6 +51,14 @@ public class ProtocolSupportHook implements ProtocolAction {
 		}
 	}
 
+	public String getBigVersion(String version) {
+		Matcher matcher = Pattern.compile("\\d+.\\d+").matcher(version);
+		if (matcher.find()) {
+			return matcher.group();
+		}
+		return null;
+	}
+
 	public ProtocolSupport getProtocolSupport() {
 		return protocolSupport;
 	}
@@ -59,23 +70,24 @@ public class ProtocolSupportHook implements ProtocolAction {
 		return null;
 	}
 
+	public String getRangeVersion() {
+		ProtocolVersion last = ProtocolVersion.getLatest(ProtocolType.PC);
+		ProtocolVersion[] all = ProtocolVersion.getAllBeforeE(last);
+		ProtocolVersion old = all[all.length - 1];
+		String oldBigVersion = getBigVersion(old.getName());
+		return oldBigVersion + " à " + last.getName();
+	}
+
 	public String getVersionSupported() {
 		Collection<ProtocolVersion> proto = getProtocolSupported();
-		ProtocolVersion last = proto.iterator().next();
-		String nameLast = last.getName();
-		if (nameLast.length() >= 5) {
-			nameLast = nameLast.substring(0, nameLast.length() - 3);
-		}
-		String lastName = nameLast;
+		ProtocolVersion last = ProtocolVersion.getLatest(ProtocolType.PC);
+		String lastMajorVersion = getBigVersion(last.getName());
 		return proto.stream().map(p -> {
-			String name = new String(p.getName());
-			if (name.length() >= 5) {
-				name = name.substring(0, name.length() - 3);
-				if (!lastName.equals(name)) {
-					return name;
-				}
+			String name = getBigVersion(p.getName());
+			if (lastMajorVersion.startsWith(name)) {
+				return p.getName();
 			}
-			return p.getName();
+			return name;
 		}).distinct().collect(Collectors.joining(", "));
 	}
 }

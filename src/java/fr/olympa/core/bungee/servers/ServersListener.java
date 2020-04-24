@@ -39,11 +39,14 @@ public class ServersListener implements Listener {
 				server = ServersConnection.getAuth(serverKicked);
 			}
 			if (server == null) {
-				event.setKickReasonComponent(TextComponent.fromLegacyText(BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e s'est redémarré, merci de te reconnecter dans quelques secondes...")));
+				BaseComponent[] msg = TextComponent.fromLegacyText(BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e s'est redémarré, merci de te reconnecter dans quelques secondes..."));
+				player.sendMessage(msg);
+				event.setKickReasonComponent(msg);
 				return;
 			}
 			event.setCancelled(true);
 			event.setCancelServer(server);
+			ServersConnection.tryConnect(player, null, serverKicked);
 			return;
 		}
 

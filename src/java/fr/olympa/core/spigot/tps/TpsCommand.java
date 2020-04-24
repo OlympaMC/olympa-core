@@ -12,11 +12,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.Plugin;
 
+import fr.olympa.api.ProtocolAPI;
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.TPS;
 import fr.olympa.api.utils.TPSUtils;
-import fr.olympa.core.bungee.api.ProtocolAPI;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.protocolsupport.ProtocolSupportHook;
 
@@ -30,7 +30,7 @@ public class TpsCommand extends OlympaCommand {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		double[] tps = TPS.getDoubleTPS();
 		float average = TPS.getAverage(tps);
-		//float[] tpsFloat = TPS.round(tps);
+		// float[] tpsFloat = TPS.round(tps);
 		MachineInfo machine = new MachineInfo();
 		OlympaCore core = OlympaCore.getInstance();
 		StringJoiner sb = new StringJoiner("\n");
@@ -45,7 +45,7 @@ public class TpsCommand extends OlympaCommand {
 		sb.add("&6Version du serveur: &c" + Bukkit.getBukkitVersion() + "&6.");
 		ProtocolSupportHook protocolSupport = (ProtocolSupportHook) core.getProtocolSupport();
 		if (protocolSupport != null) {
-			sb.add("&6Versions supportés: &c" + protocolSupport.getVersionSupported() + "&6.");
+			sb.add("&6Versions supportés: &c" + protocolSupport.getRangeVersion() + "&6.");
 		} else {
 			List<String> versions = ProtocolAPI.getVersionSupported();
 			if (!versions.isEmpty()) {
