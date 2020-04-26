@@ -117,7 +117,7 @@ public class MySQL {
 	}
 
 	public static void setDatasTable(String tableName, Map<String, String> columns) throws SQLException {
-		StringJoiner creationJoiner = new StringJoiner(", ", "CREATE TABLE IF NOT EXISTS `" + tableName + "` (", ")");
+		StringJoiner creationJoiner = new StringJoiner(", ", "CREATE TABLE IF NOT EXISTS " + tableName + " (", ")");
 		creationJoiner.add("`player_id` BIGINT NOT NULL");
 		for (Entry<String, String> column : columns.entrySet()) {
 			creationJoiner.add("`" + column.getKey() + "` " + column.getValue());

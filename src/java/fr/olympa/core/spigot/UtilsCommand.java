@@ -6,7 +6,9 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_15_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.plugin.Plugin;
@@ -21,7 +23,6 @@ import fr.olympa.api.region.RegionManager;
 import fr.olympa.api.region.RegionManager.TrackedRegion;
 import net.minecraft.server.v1_15_R1.BlockPosition;
 import net.minecraft.server.v1_15_R1.TileEntity;
-import net.minecraft.server.v1_15_R1.World;
 
 public class UtilsCommand extends ComplexCommand {
 
@@ -31,7 +32,7 @@ public class UtilsCommand extends ComplexCommand {
 
 	@Cmd (player = true)
 	public void chunkfix(CommandContext cmd) {
-		World world = ((CraftPlayer) sender).getHandle().world;
+		net.minecraft.server.v1_15_R1.World world = ((CraftPlayer) sender).getHandle().world;
 		Chunk oriChunk = getPlayer().getLocation().getChunk();
 		for (int x = oriChunk.getX() - 16; x < oriChunk.getX() + 16; x++) {
 			for (int z = oriChunk.getZ() - 16; z < oriChunk.getZ() + 16; z++) {
@@ -68,6 +69,19 @@ public class UtilsCommand extends ComplexCommand {
 
 		Set<TrackedRegion> applicable = trackedRegions.stream().filter(x -> x.getRegion().isIn(cmd.player)).collect(Collectors.toSet());
 		sendInfo("Différences entre les régions en cache et les régions calculées : §l" + Sets.symmetricDifference(playerRegions, applicable));
+	}
+
+	@Cmd (min = 4, args = { "", "INTEGER", "INTEGER", "INTEGER" })
+	public void testRegion(CommandContext cmd) {
+		World world = Bukkit.getWorld((String) cmd.args[0]);
+		int x = (int) cmd.args[1];
+		int y = (int) cmd.args[2];
+		int z = (int) cmd.args[3];
+		for (TrackedRegion trackedRegion : OlympaCore.getInstance().getRegionManager().getTrackedRegions()) {
+			if (trackedRegion.getRegion().isIn(world, x, y, z)) {
+				sendInfo("Is in " + trackedRegion.getID());
+			}else sendInfo("Not in " + trackedRegion.getID());
+		}
 	}
 
 }

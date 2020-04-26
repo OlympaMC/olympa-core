@@ -91,7 +91,7 @@ public class AccountProvider implements OlympaAccount {
 
 	public static void setPlayerProvider(Class<? extends OlympaPlayerObject> playerClass, OlympaPlayerProvider supplier, String pluginName, Map<String, String> columns) {
 		try {
-			providerTableName = pluginName.toLowerCase() + "_players";
+			providerTableName = "`" + pluginName.toLowerCase() + "_players`";
 			MySQL.setDatasTable(providerTableName, columns);
 			AccountProvider.playerClass = playerClass;
 			playerProvider = supplier;
@@ -99,6 +99,10 @@ public class AccountProvider implements OlympaAccount {
 			e.printStackTrace();
 			providerTableName = null;
 		}
+	}
+
+	public static String getPlayerProviderTableName() {
+		return providerTableName;
 	}
 
 	RedisAccess redisAccesss;
