@@ -91,7 +91,7 @@ public class ServersConnection {
 
 	@SuppressWarnings("deprecation")
 	private static void tryConnectTo(ProxiedPlayer player, OlympaServer olympaServer, ServerInfo server) {
-		if (server != null) {
+		if (olympaServer != null) {
 			switch (olympaServer) {
 			case LOBBY:
 				server = ServersConnection.getLobby();

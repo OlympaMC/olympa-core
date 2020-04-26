@@ -21,6 +21,7 @@ import net.md_5.bungee.event.EventPriority;
 
 public class OlympaLoginListener implements Listener {
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onOlympaPlayerLogin(OlympaPlayerLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
@@ -56,6 +57,7 @@ public class OlympaLoginListener implements Listener {
 	public void onPlayerDisconnect(PlayerDisconnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		player.removeGroups(player.getGroups().stream().collect(Collectors.toSet()).toArray(new String[0]));
+		ServersConnection.removeTryToConnect(player);
 	}
 
 	@EventHandler
