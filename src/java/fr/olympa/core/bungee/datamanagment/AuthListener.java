@@ -27,7 +27,6 @@ import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
-import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
@@ -43,7 +42,7 @@ public class AuthListener implements Listener {
 	// CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.SECONDS).build();
 	private Set<String> wait = new HashSet<>();
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void on1PreLogin(PreLoginEvent event) {
 		if (event.isCancelled()) {
 			return;
@@ -126,6 +125,7 @@ public class AuthListener implements Listener {
 				event.setCancelReason(BungeeUtils.connectScreen("&eLes cracks ne sont pas encore autoriser."));
 				event.setCancelled(true);
 				System.out.println("Crack with no data " + name);
+				return;
 			}
 		}
 
@@ -232,13 +232,6 @@ public class AuthListener implements Listener {
 		OlympaPlayer olympaPlayer = DataHandler.get(player.getName()).getOlympaPlayer();
 		OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, player));
 		olympaPlayerLoginEvent.cancelIfNeeded();
-	}
-
-	@EventHandler(priority = EventPriority.HIGH)
-	public void on4ServerConnected(ServerConnectedEvent event) {
-		ProxiedPlayer player = event.getPlayer();
-		// TODO send olympaplayer to spigot serveur
-		DataHandler.removePlayer(player.getName());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)

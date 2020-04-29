@@ -61,7 +61,7 @@ public class ServersConnection {
 	}
 
 	public static ServerInfo getServer(String name) {
-		return MonitorServers.getLastServerInfo().stream().filter(si -> si.getError() != null && si.getName().startsWith(name.toLowerCase())).map(MonitorInfo::getServerInfo).findFirst().orElse(null);
+		return MonitorServers.getLastServerInfo().stream().filter(si -> si.getError() == null && si.getName().startsWith(name)).map(MonitorInfo::getServerInfo).findFirst().orElse(null);
 	}
 
 	public static ServerInfo getServerByNameOrIpPort(String nameOrIpPort) {
@@ -91,6 +91,7 @@ public class ServersConnection {
 
 	@SuppressWarnings("deprecation")
 	private static void tryConnectTo(ProxiedPlayer player, OlympaServer olympaServer, ServerInfo server) {
+		System.out.println("debug: olympaServer " + olympaServer.getName());
 		if (olympaServer != null) {
 			switch (olympaServer) {
 			case LOBBY:
@@ -114,7 +115,7 @@ public class ServersConnection {
 			return;
 		}
 		player.connect(server);
-		player.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("Connexion au serveur &4" + serverName + "&c..."));
+		player.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("Connexion au serveur &2" + serverName + "&a..."));
 		removeTryToConnect(player);
 		return;
 

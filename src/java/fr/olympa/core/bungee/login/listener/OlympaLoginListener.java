@@ -34,10 +34,12 @@ public class OlympaLoginListener implements Listener {
 		if (!olympaPlayer.getIp().equals(ip)) {
 			olympaPlayer.addNewIp(ip);
 		}
+
 		OlympaBungee.getInstance().getTask().schedule(OlympaBungee.getInstance(), () -> {
+
 			CachePlayer cache = DataHandler.get(player.getName());
 			if (cache != null) {
-				String subdomain = cache.getSubDomain();
+				String subdomain = new String(cache.getSubDomain());
 				DataHandler.removePlayer(player.getName());
 				if (subdomain != null) {
 					if (subdomain.equalsIgnoreCase("buildeur")) {
@@ -50,7 +52,7 @@ public class OlympaLoginListener implements Listener {
 				}
 			}
 			ServersConnection.tryConnect(player, OlympaServer.LOBBY, null);
-		}, 2, TimeUnit.SECONDS);
+		}, 1, TimeUnit.SECONDS);
 	}
 
 	@EventHandler
