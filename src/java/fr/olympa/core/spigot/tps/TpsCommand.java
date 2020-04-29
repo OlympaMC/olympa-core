@@ -47,12 +47,16 @@ public class TpsCommand extends OlympaCommand {
 		if (protocolSupport != null) {
 			sb.add("&6Versions supportés: &c" + protocolSupport.getRangeVersion() + "&6.");
 		} else {
-			List<String> versions = ProtocolAPI.getVersionSupported();
-			if (!versions.isEmpty()) {
-				sb.add("&6Versions supportés: &c" + String.join(", ", versions) + "&6.");
-			} else {
-				sb.add("&6Versions supportés: &c" + "erreur" + "&6.");
+			String versionsString = "erreur";
+			try {
+				List<String> versions = ProtocolAPI.getVersionSupported();
+				if (!versions.isEmpty()) {
+					versionsString = String.join(", ", versions);
+				}
+			}catch (Exception ex) {
+				versionsString = "erreur : " + ex.getMessage();
 			}
+			sb.add("&6Versions supportés: &c" + versionsString + "&6.");
 		}
 		for (World world : OlympaCore.getInstance().getServer().getWorlds()) {
 			Chunk[] chunks = world.getLoadedChunks();

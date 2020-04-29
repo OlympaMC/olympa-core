@@ -83,7 +83,7 @@ public enum ProtocolAPI {
 	 * Only Spigot
 	 */
 	public static List<String> getVersionSupported() {
-		String versionLong = Bukkit.getVersion();
+		String versionLong = Bukkit.getBukkitVersion();
 		String version = Pattern.compile("\\d+.\\d+(.\\d+)?").matcher(versionLong).group();
 		ProtocolAPI versionProto = Arrays.stream(ProtocolAPI.values()).filter(p -> p.getName().equals(version)).findFirst().orElse(null);
 		if (versionProto != null) {
