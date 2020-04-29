@@ -28,6 +28,7 @@ import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.api.utils.UtilsCore;
 import fr.olympa.core.spigot.OlympaCore;
+import fr.olympa.core.spigot.redis.RedisSpigotSend;
 
 public class GroupCommand extends OlympaCommand {
 
@@ -85,17 +86,11 @@ public class GroupCommand extends OlympaCommand {
 			if (newGroup == null) {
 				Collection<String> pentialsGroup = UtilsCore.similarWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toSet()));
 				if (pentialsGroup.isEmpty()) {
-
 					this.sendMessage(Prefix.DEFAULT_BAD + "Le groupe &4%group&c n'existe pas.".replace("%group", args[1]));
 				} else {
 					this.sendMessage(Prefix.DEFAULT_BAD + "Le groupe &4%group&c n'existe pas. Essayez plutôt avec &4%pentialsGroup&c."
 							.replace("%group", args[1]).replace("%pentialsGroup", String.join(", ", pentialsGroup)));
 				}
-				return true;
-			}
-			TreeMap<OlympaGroup, Long> oldGroups = olympaTarget.getGroups();
-			if (oldGroups.containsKey(newGroup)) {
-				this.sendMessage(Prefix.DEFAULT_BAD + "%player&c est déjà dans le groupe &4%group&c.".replace("%player", olympaTarget.getName()).replace("%group", newGroup.getName()));
 				return true;
 			}
 
@@ -113,31 +108,50 @@ public class GroupCommand extends OlympaCommand {
 				}
 			}
 
-			String timestampString = "";
+			TreeMap<OlympaGroup, Long> oldGroups = olympaTarget.getGroups();
+			OlympaPlayer oldOlympaTarget = olympaTarget.clone();
+			String timestampString = new String();
 			if (timestamp != 0) {
 				timestampString = "pendant &2" + Utils.timestampToDuration(timestamp) + "&a";
 			}
 
+			ChangeType state;
 			String msg = "&aTu es désormais dans le groupe &2%group&a%time.";
 			if (args.length >= 4) {
 				if (args[3].equalsIgnoreCase("add")) {
+					Entry<OlympaGroup, Long> oldGroup = oldGroups.entrySet().stream().filter(entry -> entry.getKey().getId() == newGroup.getId()).findFirst().orElse(null);
+					if (oldGroup == null || oldGroup.getValue() != 0 && timestamp != 0 || timestamp > oldGroup.getValue()) {
+						this.sendMessage(Prefix.DEFAULT_BAD + "%player&c est déjà dans le groupe &4%group&c.".replace("%player", olympaTarget.getName()).replace("%group", newGroup.getName()));
+						return true;
+					}
+					state = ChangeType.ADD;
 					olympaTarget.addGroup(newGroup, timestamp);
 					Entry<OlympaGroup, Long> entry = olympaTarget.getGroups().firstEntry();
 					OlympaGroup principalGroup = entry.getKey();
 					Long timestamp2 = entry.getValue();
-					String timestampString2 = "";
+					String timestampString2 = new String();
 					if (timestamp2 != 0) {
 						timestampString2 = "pendant &2" + Utils.timestampToDuration(timestamp2) + "&a";
 					}
 					msg = "&aTu es désormais en plus dans le groupe &2%group&a%time. Ton grade principale est &2%group2&a%time2.".replace("%time2", timestampString2).replace("%group2", principalGroup.getName());
 				} else if (args[3].equalsIgnoreCase("remove")) {
+					if (!oldGroups.containsKey(newGroup)) {
+						this.sendMessage(Prefix.DEFAULT_BAD + "%player&c n'est pas dans le groupe &4%group&c.".replace("%player", olympaTarget.getName()).replace("%group", newGroup.getName()));
+						return true;
+					}
 					msg = null;
+					state = ChangeType.REMOVE;
 					olympaTarget.removeGroup(newGroup);
 				} else {
 					sendUsage(label);
 					return true;
 				}
 			} else {
+				if (oldGroups.containsKey(newGroup)) {
+					this.sendMessage(Prefix.DEFAULT_BAD + "%player&c est déjà dans le groupe &4%group&c.".replace("%player", olympaTarget.getName()).replace("%group", newGroup.getName()));
+					return true;
+				}
+				state = ChangeType.SET;
 				olympaTarget.setGroup(newGroup, timestamp);
 			}
 
@@ -154,6 +168,7 @@ public class GroupCommand extends OlympaCommand {
 				done.accept(false);
 				// olympaAccount.sendModifications(olympaTarget, done);
 			} else {
+				RedisSpigotSend.sendOlympaGroupChange(oldOlympaTarget, newGroup, timestamp, state);
 				OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, ChangeType.ADD, olympaTarget, newGroup));
 				olympaAccount.saveToRedis(olympaTarget);
 				olympaAccount.saveToDb(olympaTarget);

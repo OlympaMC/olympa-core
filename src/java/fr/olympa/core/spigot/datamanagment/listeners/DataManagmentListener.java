@@ -48,7 +48,7 @@ public class DataManagmentListener implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void on1PlayerPreLogin(AsyncPlayerPreLoginEvent event) {
 		UUID uuid = event.getUniqueId();
 
@@ -68,7 +68,7 @@ public class DataManagmentListener implements Listener {
 		olympaAccount.saveToCache(olympaPlayer);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on2PlayerLogin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		AccountProvider olympaAccount = new AccountProvider(player.getUniqueId());

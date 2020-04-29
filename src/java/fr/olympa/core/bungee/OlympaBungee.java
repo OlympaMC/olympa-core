@@ -40,7 +40,7 @@ import fr.olympa.core.bungee.privatemessage.ReplyCommand;
 import fr.olympa.core.bungee.protocol.ProtocolListener;
 import fr.olympa.core.bungee.redis.AskServerNameListener;
 import fr.olympa.core.bungee.redis.OlympaPlayerBungeeListener;
-import fr.olympa.core.bungee.redis.OlympaPlayerBungeeReceiveListener;
+import fr.olympa.core.bungee.redis.PlayerGroupChangeListener;
 import fr.olympa.core.bungee.redis.ShutdownListener;
 import fr.olympa.core.bungee.security.BasicSecurityListener;
 import fr.olympa.core.bungee.servers.MonitorServers;
@@ -242,7 +242,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		if (redisAcces.isConnected()) {
 			new Thread((Runnable) () -> redisAcces.newConnection().subscribe(new AskServerNameListener(), "askServerName"), "subscriberThread").start();
 			new Thread((Runnable) () -> redisAcces.newConnection().subscribe(new OlympaPlayerBungeeListener(), "olympaplayer"), "subscriberThread").start();
-			new Thread((Runnable) () -> redisAcces.newConnection().subscribe(new OlympaPlayerBungeeReceiveListener(), "olympaplayer"), "subscriberThread").start();
+			new Thread((Runnable) () -> redisAcces.newConnection().subscribe(new PlayerGroupChangeListener(), "playerGroupChange"), "subscriberThread").start();
 			new Thread((Runnable) () -> redisAcces.newConnection().subscribe(new ShutdownListener(), "shutdown"), "subscriberThread").start();
 			// Test
 			new Thread((Runnable) () -> redisAcces.newConnection().subscribe(new RedisTestListener(), "test"), "subscriberThread").start();

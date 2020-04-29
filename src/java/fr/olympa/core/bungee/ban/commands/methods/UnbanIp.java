@@ -24,6 +24,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class UnbanIp {
 
+	@SuppressWarnings("deprecation")
 	public static void unBan(UUID author, CommandSender sender, String ip, String[] args) {
 		List<OlympaPlayer> emeraldTargets = MySQL.getPlayersByIp(ip);
 		String emeraldTargetsName = emeraldTargets.stream().map(OlympaPlayer::getName).collect(Collectors.joining(", "));

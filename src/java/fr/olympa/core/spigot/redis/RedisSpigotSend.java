@@ -1,7 +1,11 @@
 package fr.olympa.core.spigot.redis;
 
 import fr.olympa.api.LinkSpigotBungee;
+import fr.olympa.api.groups.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
+import fr.olympa.api.groups.OlympaGroup;
+import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.RedisAccess;
+import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
 
@@ -18,6 +22,14 @@ public class RedisSpigotSend {
 			}
 			RedisAccess.INSTANCE.disconnect();
 		});
+	}
+
+	public static void sendOlympaGroupChange(OlympaPlayer olympaPlayer, OlympaGroup groupChanged, long timestamp, ChangeType state) {
+		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
+			String serverName = OlympaCore.getInstance().getServerName();
+			jedis.publish("playerGroupChange", serverName + ";" + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer.toString()) + ";" + groupChanged.getId() + ":" + timestamp + ";" + state.getState());
+		}
+		RedisAccess.INSTANCE.disconnect();
 	}
 
 	public static void sendShutdown() {

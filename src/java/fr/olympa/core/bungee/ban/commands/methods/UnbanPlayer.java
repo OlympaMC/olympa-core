@@ -32,6 +32,7 @@ public class UnbanPlayer {
 	 *                   Console, author = "Console")
 	 * @param targetname Name of player to ban. case insensitive
 	 */
+	@SuppressWarnings("deprecation")
 	public static void unBan(UUID author, CommandSender sender, UUID targetUUID, String targetname, String[] args) {
 
 		ProxiedPlayer target = null;
