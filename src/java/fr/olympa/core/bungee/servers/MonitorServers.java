@@ -45,6 +45,11 @@ public class MonitorServers {
 		return serversInfo.asMap();
 	}
 
+	public static boolean isServerOpen(String name) {
+		MonitorInfo serv = get(name);
+		return serv != null && serv.isOpen();
+	}
+
 	public static void updateServer(ServerInfo serverInfo) {
 		Entry<Integer, Set<MonitorInfo>> entry = getLastInfo();
 		Set<MonitorInfo> servs = getLastServerInfo();

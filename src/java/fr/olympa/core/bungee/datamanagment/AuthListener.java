@@ -42,7 +42,7 @@ public class AuthListener implements Listener {
 	// CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.SECONDS).build();
 	private Set<String> wait = new HashSet<>();
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler
 	public void on1PreLogin(PreLoginEvent event) {
 		if (event.isCancelled()) {
 			return;
@@ -50,7 +50,6 @@ public class AuthListener implements Listener {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
 		CachePlayer cache = new CachePlayer(name);
-		DataHandler.addPlayer(cache);
 		OlympaPlayer olympaPlayer;
 		UUID uuidCrack = null;
 
@@ -132,7 +131,7 @@ public class AuthListener implements Listener {
 		// Si le joueur s'est déjà connecté
 		if (olympaPlayer != null) {
 			cache.setOlympaPlayer(olympaPlayer);
-			System.out.println("player info " + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
+			System.out.println("player info " + GsonCustomizedObjectTypeAdapter.GSON.toJson(cache.getOlympaPlayer()));
 			if (olympaPlayer.getPremiumUniqueId() == null) {
 				if (connection.isOnlineMode()) {
 					event.setCancelReason(BungeeUtils.connectScreen(
@@ -155,6 +154,7 @@ public class AuthListener implements Listener {
 			}
 		}
 		cache.setSubDomain(event.getConnection());
+		DataHandler.addPlayer(cache);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -164,7 +164,6 @@ public class AuthListener implements Listener {
 		}
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
-		System.out.println("LoginEvent onlinemode ? " + connection.isOnlineMode() + " " + name);
 		CachePlayer cache = DataHandler.get(name);
 		if (cache == null) {
 			// à ajouter à la liste des erreurs
@@ -172,8 +171,9 @@ public class AuthListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		String ip = connection.getAddress().getAddress().getHostAddress();
 		OlympaPlayer olympaPlayer = cache.getOlympaPlayer();
+		System.out.println("LoginEvent onlinemode ? " + connection.isOnlineMode() + " " + name + " p: " + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
+		String ip = connection.getAddress().getAddress().getHostAddress();
 		AccountProvider olympaAccount;
 		// Si le joueur s'est déjà connecté
 		if (olympaPlayer != null) {
@@ -237,10 +237,8 @@ public class AuthListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on5Disconnect(PlayerDisconnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
-		DataHandler.removePlayer(player.getName());
 		AccountProvider olympaAccount = new AccountProvider(player.getUniqueId());
 		olympaAccount.removeFromCache();
-		player.removeGroups(player.getGroups().toArray(new String[0]));
 		wait.add(player.getName());
 		ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> {
 			wait.remove(player.getName());

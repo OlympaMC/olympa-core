@@ -1,6 +1,8 @@
 package fr.olympa.core.spigot.protocolsupport;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -63,19 +65,18 @@ public class ProtocolSupportHook implements ProtocolAction {
 		return protocolSupport;
 	}
 
-	public Collection<ProtocolVersion> getProtocolSupported() {
+	public ArrayList<ProtocolVersion> getProtocolSupported() {
 		if (protocolSupport != null) {
-			return ProtocolSupportAPI.getEnabledProtocolVersions();
+			return (ArrayList<ProtocolVersion>) ProtocolSupportAPI.getEnabledProtocolVersions();
 		}
 		return null;
 	}
 
 	public String getRangeVersion() {
-		ProtocolVersion last = ProtocolVersion.getLatest(ProtocolType.PC);
-		ProtocolVersion[] all = ProtocolVersion.getAllBeforeE(last);
-		ProtocolVersion old = all[all.length - 1];
-		String oldBigVersion = getBigVersion(old.getName());
-		return oldBigVersion + " à " + last.getName();
+		List<ProtocolVersion> proto = getProtocolSupported();
+		ProtocolVersion last = proto.get(0);
+		ProtocolVersion first = proto.get(proto.size() - 1);
+		return last.getName() + " à " + first.getName();
 	}
 
 	public String getVersionSupported() {

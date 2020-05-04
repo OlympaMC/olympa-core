@@ -1,4 +1,4 @@
-package fr.olympa.core.spigot.datamanagment.redis;
+package fr.olympa.core.spigot.redis;
 
 import org.bukkit.entity.Player;
 
@@ -23,6 +23,7 @@ public class OlympaPlayerSpigotListener extends JedisPubSub {
 		AccountProvider olympaAccount = new AccountProvider(olympaPlayer.getUniqueId());
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(player, ChangeType.ADD, olympaPlayer, olympaPlayer.getGroup()));
 		olympaAccount.saveToCache(olympaPlayer);
-		OlympaCore.getInstance().sendMessage("&c[DEBUG] NEW DATA from Redis for " + olympaPlayer.getName());
+		OlympaCore.getInstance().sendMessage("&a[DEBUG] PLAYER CHANGE GROUPE from Redis for " + olympaPlayer.getName());
+		olympaAccount.sendModificationsReceive();
 	}
 }

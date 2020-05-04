@@ -1,4 +1,4 @@
-package fr.olympa.core.spigot.datamanagment.redis;
+package fr.olympa.core.spigot.redis;
 
 import java.util.UUID;
 import java.util.function.Consumer;

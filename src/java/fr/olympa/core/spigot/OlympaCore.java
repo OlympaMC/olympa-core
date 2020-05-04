@@ -15,9 +15,9 @@ import fr.olympa.api.plugin.OlympaSpigot;
 import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.region.RegionManager;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
-import fr.olympa.core.spigot.chat.MentionListener;
 import fr.olympa.core.spigot.chat.SwearHandler;
 import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
@@ -26,7 +26,11 @@ import fr.olympa.core.spigot.protocolsupport.ProtocolSupportHook;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.report.commands.ReportCommand;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
-import fr.olympa.core.spigot.scoreboards.ScoreboardListener;
+import fr.olympa.core.spigot.scoreboards.NameTagListener;
+import fr.olympa.core.spigot.scoreboards.NametagManager;
+import fr.olympa.core.spigot.scoreboards.ScoreboardTeamListener;
+import fr.olympa.core.spigot.scoreboards.api.INametagApi;
+import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
 import fr.olympa.core.spigot.security.AntiWD;
 import fr.olympa.core.spigot.security.HelpCommand;
 import fr.olympa.core.spigot.security.PluginCommand;
@@ -45,6 +49,11 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	private SwearHandler swearHandler;
 	private RegionManager regionManager = new RegionManager();
 	private ProtocolAction protocolSupportHook;
+	private INametagApi nameTagApi;
+
+	public INametagApi getNameTagApi() {
+		return nameTagApi;
+	}
 
 	@Override
 	public ProtocolAction getProtocolSupport() {
@@ -70,6 +79,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		RedisSpigotSend.sendShutdown();
 		RedisAccess.close();
 		status = MaintenanceStatus.CLOSE;
+		nameTagApi.reset();
 		super.onDisable();
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			p.kickPlayer("Server closed");
@@ -103,15 +113,19 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(new DataManagmentListener(), this);
 		pluginManager.registerEvents(new GroupListener(), this);
-		pluginManager.registerEvents(new ChatListener(), this);
-		pluginManager.registerEvents(new ScoreboardListener(), this);
+		pluginManager.registerEvents(new CancerListener(), this);
+		pluginManager.registerEvents(new NameTagListener(), this);
 		pluginManager.registerEvents(new TestListener(), this);
 		pluginManager.registerEvents(new Inventories(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
-		pluginManager.registerEvents(new MentionListener(), this);
+		pluginManager.registerEvents(new ChatListener(), this);
 		pluginManager.registerEvents(regionManager, this);
 		pluginManager.registerEvents(new CommandListener(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
+		pluginManager.registerEvents(new NameTagListener(), this);
+		pluginManager.registerEvents(new ScoreboardTeamListener(), this);
+		nameTagApi = new NametagAPI(new NametagManager());
+		((NametagAPI) nameTagApi).testCompat();
 
 		new AntiWD(this);
 		if (getServer().getPluginManager().isPluginEnabled("ProtocolSupport")) {

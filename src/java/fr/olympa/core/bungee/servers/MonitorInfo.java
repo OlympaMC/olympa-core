@@ -76,4 +76,8 @@ public class MonitorInfo {
 		return tps;
 	}
 
+	public boolean isOpen() {
+		return error == null;
+	}
+
 }

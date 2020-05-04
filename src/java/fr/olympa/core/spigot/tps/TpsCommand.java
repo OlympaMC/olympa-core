@@ -1,5 +1,6 @@
 package fr.olympa.core.spigot.tps;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -34,18 +35,18 @@ public class TpsCommand extends OlympaCommand {
 		MachineInfo machine = new MachineInfo();
 		OlympaCore core = OlympaCore.getInstance();
 		StringJoiner sb = new StringJoiner("\n");
-		sb.add("&6Serveur <servername>");
-		sb.add("&6Ouvert depuis &c" + core.getUptime() + "&6.");
-		sb.add("&6Status: " + core.getStatus().getNameColored() + "&6.");
-		sb.add("&6TPS: &c1m " + TPSUtils.getColor(tps[0]) + "&c 5m " + TPSUtils.getColor(tps[1]) + "&c 15m " + TPSUtils.getColor(tps[2]) + "&6.");
-		sb.add("&6Moyenne: &c" + String.valueOf(average).replace(".0", "") + "&6.");
-		sb.add("&6RAM: &c" + machine.getMemUsage() + "&6 (" + machine.getMemUse() + ").");
-		sb.add("&6CPU: &c" + machine.getCPUUsage() + "&6 (" + machine.getCores() + " cores).");
-		sb.add("&6Threads: &c" + machine.getThreads() + "&6.");
-		sb.add("&6Version du serveur: &c" + Bukkit.getBukkitVersion() + "&6.");
+		sb.add("&3Serveur " + core.getServerName());
+		sb.add("&3Ouvert depuis &b" + core.getUptime() + "&3.");
+		sb.add("&3Status: " + core.getStatus().getNameColored() + "&3.");
+		sb.add("&3TPS: &b1m " + TPSUtils.getTpsColor(tps[0]) + "&b 5m " + TPSUtils.getTpsColor(tps[1]) + "&b 15m " + TPSUtils.getTpsColor(tps[2]) + "&3.");
+		sb.add("&3Moyenne: &b" + TPSUtils.getTpsColor(average) + "&3.");
+		sb.add("&3RAM: &b" + machine.getMemUsage() + "&3 (" + machine.getMemUse() + ").");
+		sb.add("&3CPU: &b" + machine.getCPUUsage() + "&3 (" + machine.getCores() + " cores).");
+		sb.add("&3Threads: &b" + machine.getThreads() + "&3.");
+		sb.add("&3Version du serveur: &b" + Bukkit.getBukkitVersion() + "&3.");
 		ProtocolSupportHook protocolSupport = (ProtocolSupportHook) core.getProtocolSupport();
 		if (protocolSupport != null) {
-			sb.add("&6Versions supportés: &c" + protocolSupport.getRangeVersion() + "&6.");
+			sb.add("&3Versions supportés: &b" + protocolSupport.getVersionSupported() + "&3.");
 		} else {
 			String versionsString = "erreur";
 			try {
@@ -53,16 +54,21 @@ public class TpsCommand extends OlympaCommand {
 				if (!versions.isEmpty()) {
 					versionsString = String.join(", ", versions);
 				}
-			}catch (Exception ex) {
+			} catch (Exception ex) {
 				versionsString = "erreur : " + ex.getMessage();
 			}
-			sb.add("&6Versions supportés: &c" + versionsString + "&6.");
+			sb.add("&3Versions supportés: &b" + versionsString + "&3.");
 		}
 		for (World world : OlympaCore.getInstance().getServer().getWorlds()) {
 			Chunk[] chunks = world.getLoadedChunks();
 			List<Entity> entities = world.getEntities();
 			List<LivingEntity> livingEntities = world.getLivingEntities();
-			sb.add("&6Monde &c" + world.getName() + "&6: &c" + chunks.length + "&6 chunks &c" + livingEntities.size() + "/" + entities.size() + "&6 entités" + "&6.");
+			Collection<Chunk> forceChunks = world.getForceLoadedChunks();
+			String fc = "";
+			if (!forceChunks.isEmpty()) {
+				fc = " (" + forceChunks.size() + " forcés)";
+			}
+			sb.add("&3Monde &b" + world.getName() + "&3: &b" + chunks.length + "&3 chunks &b" + livingEntities.size() + "/" + entities.size() + fc + "&3 entités" + "&3.");
 		}
 
 		sendMessage(Prefix.DEFAULT, sb.toString());

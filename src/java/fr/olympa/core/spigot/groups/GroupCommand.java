@@ -30,6 +30,7 @@ import fr.olympa.api.utils.UtilsCore;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 
+@SuppressWarnings("deprecation")
 public class GroupCommand extends OlympaCommand {
 
 	public GroupCommand(Plugin plugin) {
@@ -120,7 +121,7 @@ public class GroupCommand extends OlympaCommand {
 			if (args.length >= 4) {
 				if (args[3].equalsIgnoreCase("add")) {
 					Entry<OlympaGroup, Long> oldGroup = oldGroups.entrySet().stream().filter(entry -> entry.getKey().getId() == newGroup.getId()).findFirst().orElse(null);
-					if (oldGroup == null || oldGroup.getValue() != 0 && timestamp != 0 || timestamp > oldGroup.getValue()) {
+					if (oldGroup != null && oldGroup.getValue() == timestamp) {
 						this.sendMessage(Prefix.DEFAULT_BAD + "%player&c est déjà dans le groupe &4%group&c.".replace("%player", olympaTarget.getName()).replace("%group", newGroup.getName()));
 						return true;
 					}
@@ -165,8 +166,7 @@ public class GroupCommand extends OlympaCommand {
 						this.sendMessage("&aLe joueur &2%player&a n'est pas connecté, la modification a bien été prise en compte.".replace("%player", olympaTarget.getName()));
 					}
 				};
-				done.accept(false);
-				// olympaAccount.sendModifications(olympaTarget, done);
+				olympaAccount.sendModifications(olympaTarget, done);
 			} else {
 				RedisSpigotSend.sendOlympaGroupChange(oldOlympaTarget, newGroup, timestamp, state);
 				OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, ChangeType.ADD, olympaTarget, newGroup));

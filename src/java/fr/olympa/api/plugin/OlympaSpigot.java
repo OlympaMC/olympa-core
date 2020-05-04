@@ -9,6 +9,9 @@ import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.redis.RedisTestListener;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
+import fr.olympa.core.spigot.redis.GiveOlympaPlayerListener;
+import fr.olympa.core.spigot.redis.GiveToOlympaPlayerListener;
+import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.redis.SendServerNameListener;
 
 public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCoreInterface {
@@ -96,8 +99,11 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
 			// Test
-			new Thread((Runnable) () -> redisAccess.newConnection().subscribe(new RedisTestListener(), "test"), "subscriberThread").start();
-			new Thread((Runnable) () -> redisAccess.newConnection().subscribe(new SendServerNameListener(), "sendServerName"), "subscriberThread").start();
+			new Thread(() -> redisAccess.newConnection().subscribe(new RedisTestListener(), "test"), "subscriberThread").start();
+			new Thread(() -> redisAccess.newConnection().subscribe(new SendServerNameListener(), "sendServerName"), "subscriberThread").start();
+			new Thread(() -> redisAccess.newConnection().subscribe(new GiveOlympaPlayerListener(), "giveOlympaPlayer"), "subscriberThread").start();
+			new Thread(() -> redisAccess.newConnection().subscribe(new GiveToOlympaPlayerListener(), "giveToOlympaPlayer"), "subscriberThread").start();
+			RedisSpigotSend.askServerName();
 
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {

@@ -24,6 +24,7 @@ import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
 import fr.olympa.core.bungee.datamanagment.GetUUIDCommand;
+import fr.olympa.core.bungee.footer.FooterListener;
 import fr.olympa.core.bungee.login.commands.EmailCommand;
 import fr.olympa.core.bungee.login.commands.LoginCommand;
 import fr.olympa.core.bungee.login.commands.RegisterCommand;
@@ -39,7 +40,6 @@ import fr.olympa.core.bungee.privatemessage.PrivateMessageToggleCommand;
 import fr.olympa.core.bungee.privatemessage.ReplyCommand;
 import fr.olympa.core.bungee.protocol.ProtocolListener;
 import fr.olympa.core.bungee.redis.AskServerNameListener;
-import fr.olympa.core.bungee.redis.OlympaPlayerBungeeListener;
 import fr.olympa.core.bungee.redis.PlayerGroupChangeListener;
 import fr.olympa.core.bungee.redis.ShutdownListener;
 import fr.olympa.core.bungee.security.BasicSecurityListener;
@@ -160,6 +160,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		pluginManager.registerListener(this, new OlympaLoginListener());
 		pluginManager.registerListener(this, new StaffChatListener());
 		pluginManager.registerListener(this, new ProtocolListener());
+		pluginManager.registerListener(this, new FooterListener());
 
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();
@@ -240,12 +241,11 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		RedisAccess redisAcces = RedisAccess.init("bungee");
 		redisAcces.connect();
 		if (redisAcces.isConnected()) {
-			new Thread((Runnable) () -> redisAcces.newConnection().subscribe(new AskServerNameListener(), "askServerName"), "subscriberThread").start();
-			new Thread((Runnable) () -> redisAcces.newConnection().subscribe(new OlympaPlayerBungeeListener(), "olympaplayer"), "subscriberThread").start();
-			new Thread((Runnable) () -> redisAcces.newConnection().subscribe(new PlayerGroupChangeListener(), "playerGroupChange"), "subscriberThread").start();
-			new Thread((Runnable) () -> redisAcces.newConnection().subscribe(new ShutdownListener(), "shutdown"), "subscriberThread").start();
+			new Thread(() -> redisAcces.newConnection().subscribe(new AskServerNameListener(), "askServerName"), "subscriberThread").start();
+			new Thread(() -> redisAcces.newConnection().subscribe(new PlayerGroupChangeListener(), "playerGroupChange"), "subscriberThread").start();
+			new Thread(() -> redisAcces.newConnection().subscribe(new ShutdownListener(), "shutdown"), "subscriberThread").start();
 			// Test
-			new Thread((Runnable) () -> redisAcces.newConnection().subscribe(new RedisTestListener(), "test"), "subscriberThread").start();
+			new Thread(() -> redisAcces.newConnection().subscribe(new RedisTestListener(), "test"), "subscriberThread").start();
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0) {

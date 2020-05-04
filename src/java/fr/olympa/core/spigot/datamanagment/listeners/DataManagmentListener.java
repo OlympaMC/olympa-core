@@ -65,11 +65,25 @@ public class DataManagmentListener implements Listener {
 			event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotNoData"));
 			return;
 		}
+
 		olympaAccount.saveToCache(olympaPlayer);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void on2PlayerLogin(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
+
+		if (olympaPlayer == null) {
+			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur est impossible, contacte-vite le staff. \n§eCode d'erreur: §l#Nucléaire"));
+			event.setJoinMessage(null);
+			return;
+		}
+		event.setJoinMessage(ColorUtils.color("&7[&a+&7] %prefix%name".replace("%group", olympaPlayer.getGroupName()).replace("%prefix", olympaPlayer.getGroupPrefix()).replace("%name", player.getDisplayName())));
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void on3PlayerLogin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		AccountProvider olympaAccount = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
@@ -86,24 +100,14 @@ public class DataManagmentListener implements Listener {
 				MySQL.loadPlayerPluginDatas(olympaPlayer);
 
 				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
-				loginevent.setJoinMessage("&7[&a+&7] %prefix%name");
 				Bukkit.getPluginManager().callEvent(loginevent);
-
-				if (loginevent.getJoinMessage() != null && !loginevent.getJoinMessage().isEmpty()) {
-					Bukkit.broadcastMessage(loginevent.getJoinMessage());
-				}
 			} catch (SQLException e) {
 				e.printStackTrace();
+				player.kickPlayer(SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SpigotJoin"));
+				return;
 			}
 		});
 	}
-
-	/*
-	 * @EventHandler(priority = EventPriority.HIGHEST) public void
-	 * onPlayerQuitHighest(PlayerQuitEvent event) { Player player =
-	 * event.getPlayer(); new AccountProvider(player.getUniqueId()).accountExpire();
-	 * }
-	 */
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerQuitHigh(PlayerQuitEvent event) {
@@ -111,10 +115,7 @@ public class DataManagmentListener implements Listener {
 		AccountProvider account = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = account.getFromCache();
 		if (olympaPlayer != null) {
-			event.setQuitMessage(ColorUtils.color("&7[&c-&7] %prefix%name"
-					.replaceAll("%group", olympaPlayer.getGroupName())
-					.replaceAll("%prefix", olympaPlayer.getGroupPrefix())
-					.replaceAll("%name", player.getName())));
+			event.setQuitMessage(ColorUtils.color("&7[&c-&7] %prefix%name".replace("%group", olympaPlayer.getGroupName()).replace("%prefix", olympaPlayer.getGroupPrefix()).replace("%name", player.getDisplayName())));
 		}
 	}
 

@@ -9,6 +9,13 @@ import redis.clients.jedis.Jedis;
 
 public class RedisBungeeSend {
 
+	public static void giveOlympaPlayer(ServerInfo serverFrom, ServerInfo serverTo) {
+		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
+			jedis.publish("giveOlympaPlayer", serverFrom.getName() + ";" + serverTo.getName());
+		}
+		RedisAccess.INSTANCE.disconnect();
+	}
+
 	@SuppressWarnings("deprecation")
 	public static void sendServerName(ServerInfo serverInfo) {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {

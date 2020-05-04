@@ -20,8 +20,8 @@ public class AccountProvider implements OlympaAccount {
 
 	private static String REDIS_KEY = "player:";
 	private static int cachePlayer = 60;
-	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
 	private static Map<UUID, OlympaPlayer> cache = new HashMap<>();
+	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
 	private static Map<Long, OlympaPlayerInformations> cachedInformations = new HashMap<>();
 
 	public static Class<? extends OlympaPlayer> playerClass = OlympaPlayerObject.class;
@@ -89,6 +89,10 @@ public class AccountProvider implements OlympaAccount {
 		return info;
 	}
 
+	public static String getPlayerProviderTableName() {
+		return providerTableName;
+	}
+
 	public static void setPlayerProvider(Class<? extends OlympaPlayerObject> playerClass, OlympaPlayerProvider supplier, String pluginName, Map<String, String> columns) {
 		try {
 			providerTableName = "`" + pluginName.toLowerCase() + "_players`";
@@ -99,10 +103,6 @@ public class AccountProvider implements OlympaAccount {
 			e.printStackTrace();
 			providerTableName = null;
 		}
-	}
-
-	public static String getPlayerProviderTableName() {
-		return providerTableName;
 	}
 
 	RedisAccess redisAccesss;
@@ -220,16 +220,13 @@ public class AccountProvider implements OlympaAccount {
 	public void sendModifications(OlympaPlayer olympaPlayer, Consumer<? super Boolean> done) {
 		this.sendModifications(olympaPlayer);
 		modificationReceive.put(olympaPlayer.getUniqueId(), done);
-		OlympaCore.getInstance().getTask().runTaskLater("waitModifications" + olympaPlayer.getUniqueId().toString(), () -> {
+		OlympaCore.getInstance().getTask().runTaskLater("waitModifications" + uuid.toString(), () -> {
 			Consumer<? super Boolean> callable = modificationReceive.get(uuid);
 			callable.accept(false);
 			modificationReceive.remove(uuid);
-		}, 5 * 20);
+		}, 3 * 20);
 	}
 
-	/*
-	 * Only Spigot
-	 */
 	public void sendModificationsReceive() {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
 			try (Jedis jedis = redisAccesss.newConnection()) {
@@ -238,5 +235,4 @@ public class AccountProvider implements OlympaAccount {
 			redisAccesss.closeResource();
 		});
 	}
-
 }

@@ -22,7 +22,7 @@ public class ServersConnection {
 	private static Map<ProxiedPlayer, ScheduledTask> connect = new HashMap<>();
 
 	public static boolean canPlayerConnect(ServerInfo name) {
-		MonitorInfo monitor = MonitorServers.getLastServerInfo().stream().filter(si -> si.getName().equals(name.getName())).findFirst().orElse(null);
+		MonitorInfo monitor = MonitorServers.get(name.getName());
 		return monitor != null && !monitor.getStatus().equals(MaintenanceStatus.CLOSE) && !monitor.getStatus().equals(MaintenanceStatus.UNKNOWN);
 	}
 
@@ -32,7 +32,7 @@ public class ServersConnection {
 
 	public static ServerInfo getAuth(ServerInfo noThis) {
 		Map<ServerInfo, Integer> auths = MonitorServers.getLastServerInfo().stream().filter(si -> {
-			return si.getError() == null && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("auth") && si.getMaxPlayers() - si.getOnlinePlayer() > 0;
+			return si.isOpen() && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("auth") && si.getMaxPlayers() - si.getOnlinePlayer() > 0;
 		}).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayer()));
 		// TODO add sort by name1 name2 name3
 		Entry<ServerInfo, Integer> auth = auths.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
@@ -49,7 +49,7 @@ public class ServersConnection {
 
 	public static ServerInfo getLobby(ServerInfo noThis) {
 		Map<ServerInfo, Integer> lobbys = MonitorServers.getLastServerInfo().stream().filter(si -> {
-			return si.getError() == null && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("lobby") && si.getMaxPlayers() / 2 - si.getOnlinePlayer() > 0;
+			return si.isOpen() && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("lobby") && si.getMaxPlayers() / 2 - si.getOnlinePlayer() > 0;
 		}).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() / 2 - si.getOnlinePlayer()));
 		// TODO add sort by name1 name2 name3
 		Entry<ServerInfo, Integer> lobby = lobbys.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
@@ -91,7 +91,6 @@ public class ServersConnection {
 
 	@SuppressWarnings("deprecation")
 	private static void tryConnectTo(ProxiedPlayer player, OlympaServer olympaServer, ServerInfo server) {
-		System.out.println("debug: olympaServer " + olympaServer.getName());
 		if (olympaServer != null) {
 			switch (olympaServer) {
 			case LOBBY:
@@ -116,7 +115,6 @@ public class ServersConnection {
 		}
 		player.connect(server);
 		player.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("Connexion au serveur &2" + serverName + "&a..."));
-		removeTryToConnect(player);
 		return;
 
 	}

@@ -4,6 +4,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.ThreadMXBean;
 
+import fr.olympa.api.utils.TPSUtils;
+
 public class MachineInfo {
 
 	private long memFree, memUsed, memeTotal;
@@ -15,7 +17,7 @@ public class MachineInfo {
 		memUsed = r.totalMemory() / 1048576L;
 		memFree = r.freeMemory() / 1048576L;
 		memeTotal = r.maxMemory() / 1048576L;
-		memUsage = ((double) memUsed) / ((double) memeTotal) * 100.0;
+		memUsage = (double) memUsed / (double) memeTotal * 100.0;
 
 		OperatingSystemMXBean osMXBean = ManagementFactory.getOperatingSystemMXBean();
 		cpuUsage = osMXBean.getSystemLoadAverage();
@@ -31,7 +33,7 @@ public class MachineInfo {
 	}
 
 	public String getCPUUsage() {
-		return Math.round(cpuUsage) + "%";
+		return TPSUtils.getCPUUsageColor((int) Math.round(cpuUsage)) + "%";
 	}
 
 	public long getMemFree() {
@@ -43,7 +45,7 @@ public class MachineInfo {
 	}
 
 	public String getMemUsage() {
-		return Math.round(memUsage) + "%";
+		return TPSUtils.getRamUsageColor((int) Math.round(memUsage)) + "%";
 	}
 
 	public String getMemUse() {

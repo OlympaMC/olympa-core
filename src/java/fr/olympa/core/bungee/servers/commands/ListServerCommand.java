@@ -34,7 +34,7 @@ public class ListServerCommand extends BungeeCommand {
 				sb.add(serverInfo.getOnlinePlayer() + "/" + serverInfo.getMaxPlayers());
 			}
 			if (serverInfo.getTps() != null) {
-				sb.add(TPSUtils.getColor(serverInfo.getTps()) + "tps");
+				sb.add(TPSUtils.getTpsColor(serverInfo.getTps()) + "tps");
 			}
 			if (serverInfo.getPing() != null) {
 				sb.add(serverInfo.getPing() + "ms");

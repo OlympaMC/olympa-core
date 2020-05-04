@@ -24,6 +24,14 @@ public class RedisSpigotSend {
 		});
 	}
 
+	public static void giveOlympaPlayer(OlympaPlayer olympaPlayer, String serverTo) {
+		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
+			String serverName = OlympaCore.getInstance().getServerName();
+			jedis.publish("giveToOlympaPlayer", OlympaCore.getInstance().getServerName() + ";" + serverName + ";" + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer.toString()));
+		}
+		RedisAccess.INSTANCE.disconnect();
+	}
+
 	public static void sendOlympaGroupChange(OlympaPlayer olympaPlayer, OlympaGroup groupChanged, long timestamp, ChangeType state) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 			String serverName = OlympaCore.getInstance().getServerName();
@@ -39,4 +47,5 @@ public class RedisSpigotSend {
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
+
 }
