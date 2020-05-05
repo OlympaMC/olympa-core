@@ -1,7 +1,7 @@
 package fr.olympa.core.spigot.redis;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.groups.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
+import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.RedisAccess;

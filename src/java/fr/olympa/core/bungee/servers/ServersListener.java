@@ -18,7 +18,8 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 public class ServersListener implements Listener {
-	
+
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onServerKick(ServerKickEvent event) {
 		ServerInfo serverKicked = event.getKickedFrom();

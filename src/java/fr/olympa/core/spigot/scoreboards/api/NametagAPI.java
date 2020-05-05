@@ -7,9 +7,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.scoreboard.tab.FakeTeam;
+import fr.olympa.api.scoreboard.tab.INametagApi;
+import fr.olympa.api.scoreboard.tab.Nametag;
 import fr.olympa.core.spigot.scoreboards.NametagManager;
-import fr.olympa.core.spigot.scoreboards.api.data.FakeTeam;
-import fr.olympa.core.spigot.scoreboards.api.data.Nametag;
 import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
 
 /**
@@ -105,8 +106,8 @@ public final class NametagAPI implements INametagApi {
 	}
 
 	@Override
-	public void updateNametag(Player player, String suffix, List<Player> toPlayers) {
-		manager.changeSuffix(player.getName(), suffix, toPlayers);
+	public void updateFakeNameTag(Player player, Nametag nametag, List<Player> toPlayers) {
+		manager.changeFakeNametag(player.getName(), nametag, toPlayers);
 	}
 
 }

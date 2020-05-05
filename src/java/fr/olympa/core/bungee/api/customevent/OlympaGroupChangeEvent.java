@@ -1,6 +1,6 @@
 package fr.olympa.core.bungee.api.customevent;
 
-import fr.olympa.api.groups.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
+import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.OlympaPlayer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

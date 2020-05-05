@@ -30,7 +30,7 @@ public class ChatListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromCache();
+		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
 		if (olympaPlayer == null) {
 			event.setFormat(ColorUtils.color("&cERREUR &7") + "%s : %s");
 			return;
@@ -55,11 +55,11 @@ public class ChatListener implements Listener {
 		Map<Player, String> mentionned = new HashMap<>();
 		for (String arg : message.split(" ")) {
 			arg = ChatColor.stripColor(arg);
-			if (!Matcher.isUsername(arg)) {
-				continue;
-			}
 			if (arg.startsWith("@")) {
 				arg = arg.substring(1);
+			}
+			if (!Matcher.isUsername(arg)) {
+				continue;
 			}
 			Player target = Bukkit.getPlayer(arg);
 			if (target == null) {

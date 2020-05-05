@@ -52,9 +52,9 @@ public class PacketWrapper {
 					PacketAccessor.PREFIX.set(packet, prefix);
 					PacketAccessor.SUFFIX.set(packet, suffix);
 				} else {
-					String color = ChatColor.getLastColors(prefix);
 					String colorCode = null;
-
+					String color = ChatColor.getLastColors(prefix);
+					PacketAccessor.PREFIX.set(packet, ChatComponentText.newInstance(prefix));
 					if (!color.isEmpty()) {
 						colorCode = color.substring(color.length() - 1);
 						String chatColor = ChatColor.getByChar(colorCode).name();
@@ -66,23 +66,16 @@ public class PacketWrapper {
 						Enum<?> colorEnum = Enum.valueOf(typeEnumChatFormat, chatColor);
 						PacketAccessor.TEAM_COLOR.set(packet, colorEnum);
 					}
-
-					PacketAccessor.DISPLAY_NAME.set(packet, ChatComponentText.newInstance(name));
-					PacketAccessor.PREFIX.set(packet, ChatComponentText.newInstance(prefix));
-
 					if (colorCode != null) {
 						suffix = ChatColor.getByChar(colorCode) + suffix;
 					}
-
 					PacketAccessor.SUFFIX.set(packet, ChatComponentText.newInstance(suffix));
+					PacketAccessor.DISPLAY_NAME.set(packet, ChatComponentText.newInstance(name));
 				}
-
 				PacketAccessor.PACK_OPTION.set(packet, 1);
-
 				if (PacketAccessor.VISIBILITY != null) {
 					PacketAccessor.VISIBILITY.set(packet, "always");
 				}
-
 				if (param == 0) {
 					((Collection) PacketAccessor.MEMBERS.get(packet)).addAll(players);
 				}

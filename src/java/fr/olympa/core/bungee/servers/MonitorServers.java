@@ -20,7 +20,7 @@ public class MonitorServers {
 	private static Cache<Integer, Set<MonitorInfo>> serversInfo = CacheBuilder.newBuilder().maximumSize(60).build();
 
 	public static MonitorInfo get(String name) {
-		return getLastServerInfo().stream().filter(si -> si.getName().startsWith(name.toLowerCase())).findFirst().orElse(null);
+		return getLastServerInfo().stream().filter(si -> si.getName().equals(name.toLowerCase())).findFirst().orElse(null);
 	}
 
 	public static Entry<Integer, Set<MonitorInfo>> getLastInfo() {

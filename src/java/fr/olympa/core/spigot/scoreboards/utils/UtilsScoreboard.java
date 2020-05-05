@@ -10,7 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import fr.olympa.core.spigot.scoreboards.packets.VersionChecker;
+import fr.olympa.api.scoreboard.tab.VersionChecker;
 
 public class UtilsScoreboard {
 
@@ -39,15 +39,6 @@ public class UtilsScoreboard {
 
 	public static String format(String[] text, int to, int from) {
 		return StringUtils.join(text, ' ', to, from).replace("'", "");
-	}
-
-	public static String generateUUID() {
-		String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < 5; i++) {
-			builder.append(chars.charAt((int) (Math.random() * chars.length())));
-		}
-		return builder.toString();
 	}
 
 	public static List<Player> getOnline() {

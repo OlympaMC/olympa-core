@@ -64,6 +64,7 @@ public class ServersConnection {
 		return MonitorServers.getLastServerInfo().stream().filter(si -> si.getError() == null && si.getName().startsWith(name)).map(MonitorInfo::getServerInfo).findFirst().orElse(null);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static ServerInfo getServerByNameOrIpPort(String nameOrIpPort) {
 		Map<String, ServerInfo> servers = ProxyServer.getInstance().getServers();
 		ServerInfo server = servers.get(nameOrIpPort);
@@ -113,8 +114,8 @@ public class ServersConnection {
 			player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu es en file d'attente pour rejoindre le serveur &4" + serverName + "&c..."));
 			return;
 		}
+		player.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("Tentative de connexion au serveur &2" + serverName + "&a..."));
 		player.connect(server);
-		player.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("Connexion au serveur &2" + serverName + "&a..."));
 		return;
 
 	}

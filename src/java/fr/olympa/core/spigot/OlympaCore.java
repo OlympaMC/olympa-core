@@ -14,11 +14,13 @@ import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.plugin.OlympaSpigot;
 import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.region.RegionManager;
+import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
 import fr.olympa.core.spigot.chat.SwearHandler;
+import fr.olympa.core.spigot.commands.SexCommand;
 import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
@@ -29,7 +31,6 @@ import fr.olympa.core.spigot.report.connections.ReportMySQL;
 import fr.olympa.core.spigot.scoreboards.NameTagListener;
 import fr.olympa.core.spigot.scoreboards.NametagManager;
 import fr.olympa.core.spigot.scoreboards.ScoreboardTeamListener;
-import fr.olympa.core.spigot.scoreboards.api.INametagApi;
 import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
 import fr.olympa.core.spigot.security.AntiWD;
 import fr.olympa.core.spigot.security.HelpCommand;
@@ -51,6 +52,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	private ProtocolAction protocolSupportHook;
 	private INametagApi nameTagApi;
 
+	@Override
 	public INametagApi getNameTagApi() {
 		return nameTagApi;
 	}
@@ -108,6 +110,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new HelpCommand(this).register();
 		new TpsCommand(this).registerPreProcess();
 		new UtilsCommand(this).register();
+		new SexCommand(this).register();
 		// new PasswdCommand(this).register();
 
 		PluginManager pluginManager = getServer().getPluginManager();

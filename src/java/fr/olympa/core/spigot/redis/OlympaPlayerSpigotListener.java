@@ -2,8 +2,8 @@ package fr.olympa.core.spigot.redis;
 
 import org.bukkit.entity.Player;
 
-import fr.olympa.api.groups.AsyncOlympaPlayerChangeGroupEvent;
-import fr.olympa.api.groups.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
+import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
+import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;

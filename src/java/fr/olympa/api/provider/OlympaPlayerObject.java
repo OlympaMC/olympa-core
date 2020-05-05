@@ -31,6 +31,7 @@ import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Passwords;
 import fr.olympa.api.utils.Utils;
 
+@SuppressWarnings("unchecked")
 public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	public static class OlympaPlayerDeserializer implements JsonDeserializer<OlympaPlayer> {
@@ -232,7 +233,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			if (entry.getValue() != 0) {
 				time = " (" + Utils.timestampToDateAndHour(entry.getValue()) + ")";
 			}
-			return entry.getKey().getName() + time;
+			return entry.getKey().getName(gender) + time;
 		}).collect(Collectors.joining(", "));
 	}
 
