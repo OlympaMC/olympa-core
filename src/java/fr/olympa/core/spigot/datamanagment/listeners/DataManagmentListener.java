@@ -103,7 +103,9 @@ public class DataManagmentListener implements Listener {
 				Bukkit.getPluginManager().callEvent(loginevent);
 			} catch (SQLException e) {
 				e.printStackTrace();
-				player.kickPlayer(SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SpigotJoin"));
+				OlympaCore.getInstance().getTask().runTask(() -> {
+					player.kickPlayer(SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SpigotJoin"));
+				});
 				return;
 			}
 		});

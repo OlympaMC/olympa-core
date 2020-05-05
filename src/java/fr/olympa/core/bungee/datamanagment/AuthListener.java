@@ -158,12 +158,22 @@ public class AuthListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void on2Login(LoginEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+	public void on22Login(LoginEvent event) {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
+		if (event.isCancelled()) {
+			DataHandler.removePlayer(name);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void on2Login(LoginEvent event) {
+		PendingConnection connection = event.getConnection();
+		String name = connection.getName();
+		if (event.isCancelled()) {
+			DataHandler.removePlayer(name);
+			return;
+		}
 		CachePlayer cache = DataHandler.get(name);
 		if (cache == null) {
 			// à ajouter à la liste des erreurs
@@ -203,6 +213,7 @@ public class AuthListener implements Listener {
 				e.printStackTrace();
 				event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#UTF8BungeeCantCreateNew"));
 				event.setCancelled(true);
+				DataHandler.removePlayer(name);
 				return;
 			}
 		}
@@ -215,6 +226,7 @@ public class AuthListener implements Listener {
 			e.printStackTrace();
 			event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#BungeeReflection"));
 			event.setCancelled(true);
+			DataHandler.removePlayer(name);
 			return;
 		}
 		olympaPlayer.setConnected(true);
