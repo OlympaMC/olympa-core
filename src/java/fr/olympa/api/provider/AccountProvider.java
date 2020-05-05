@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import fr.olympa.api.LinkSpigotBungee;
+import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.objects.OlympaPlayerInformations;
 import fr.olympa.api.objects.OlympaPlayerProvider;
@@ -129,6 +130,7 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	public OlympaPlayer createNew(OlympaPlayer olympaPlayer) throws SQLException {
+		olympaPlayer.addGroup(OlympaGroup.PLAYER);
 		olympaPlayer.setId(MySQL.createPlayer(olympaPlayer));
 		return olympaPlayer;
 	}
