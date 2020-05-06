@@ -77,7 +77,6 @@ public class OlympaLoginListener implements Listener {
 		ProxiedPlayer player = event.getPlayer();
 		player.removeGroups(player.getGroups().toArray(new String[0]));
 		ServersConnection.removeTryToConnect(player);
-		DataHandler.removePlayer(player.getName());
 	}
 
 	@EventHandler

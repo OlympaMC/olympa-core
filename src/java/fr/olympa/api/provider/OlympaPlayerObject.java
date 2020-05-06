@@ -25,7 +25,6 @@ import fr.olympa.api.objects.Gender;
 import fr.olympa.api.objects.OlympaMoney;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.objects.OlympaPlayerInformations;
-import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Passwords;
@@ -320,11 +319,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	public String hashPassword(String password_toHash) {
 		return Passwords.getSHA512(password_toHash, "DYhG9guiRVoUubWwvn2G0Fg3b0qyJfIxfs2aC9mi".getBytes());
-	}
-
-	@Override
-	public boolean hasPermission(OlympaPermission permission) {
-		return groups != null && groups.keySet().stream().filter(group -> group.getPower() >= permission.getGroup().getPower()).findFirst().isPresent();
 	}
 
 	@Override

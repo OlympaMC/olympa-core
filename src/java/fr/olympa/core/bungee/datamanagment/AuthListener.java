@@ -158,7 +158,7 @@ public class AuthListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void on22Login(LoginEvent event) {
+	public void on2PreLogin(PreLoginEvent event) {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
 		if (event.isCancelled()) {
@@ -167,13 +167,9 @@ public class AuthListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void on2Login(LoginEvent event) {
+	public void on3Login(LoginEvent event) {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
-		if (event.isCancelled()) {
-			DataHandler.removePlayer(name);
-			return;
-		}
 		CachePlayer cache = DataHandler.get(name);
 		if (cache == null) {
 			// à ajouter à la liste des erreurs
@@ -234,8 +230,17 @@ public class AuthListener implements Listener {
 		olympaAccount.accountPersist();
 	}
 
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void on42Login(LoginEvent event) {
+		PendingConnection connection = event.getConnection();
+		String name = connection.getName();
+		if (event.isCancelled()) {
+			DataHandler.removePlayer(name);
+		}
+	}
+
 	@EventHandler(priority = EventPriority.LOW)
-	public void on3PostLogin(PostLoginEvent event) {
+	public void on5PostLogin(PostLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		System.out.println("PostLoginEvent onlinemode ? " + player.getPendingConnection().isOnlineMode());
 		if (!player.getPendingConnection().isOnlineMode()) {
@@ -247,11 +252,12 @@ public class AuthListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void on5Disconnect(PlayerDisconnectEvent event) {
+	public void on6Disconnect(PlayerDisconnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		AccountProvider olympaAccount = new AccountProvider(player.getUniqueId());
 		olympaAccount.removeFromCache();
 		wait.add(player.getName());
+		DataHandler.removePlayer(player.getName());
 		ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> {
 			wait.remove(player.getName());
 			OlympaPlayer olympaPlayer = olympaAccount.getFromRedis();

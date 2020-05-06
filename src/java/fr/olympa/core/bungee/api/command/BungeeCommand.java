@@ -96,7 +96,7 @@ public abstract class BungeeCommand extends Command {
 						sendImpossibleWithOlympaPlayer();
 						return;
 					}
-					if (!olympaPlayer.hasPermission(permission)) {
+					if (!permission.hasPermission(olympaPlayer)) {
 						sendDoNotHavePermission();
 						return;
 					}

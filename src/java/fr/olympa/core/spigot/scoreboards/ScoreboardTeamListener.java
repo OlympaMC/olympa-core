@@ -1,7 +1,5 @@
 package fr.olympa.core.spigot.scoreboards;
 
-import java.util.Arrays;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,7 +10,6 @@ import fr.olympa.api.customevents.PlayerSexChangeEvent;
 import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.scoreboard.tab.INametagApi;
-import fr.olympa.api.scoreboard.tab.Nametag;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class ScoreboardTeamListener implements Listener {
@@ -28,24 +25,19 @@ public class ScoreboardTeamListener implements Listener {
 		if (nameTagApi.getFakeTeam(player) == null) {
 			nameTagApi.setNametag(olympaPlayer);
 		}
-		nameTagApi.updateFakeNameTag(player, new Nametag(null, " §4Gros Bg"), Arrays.asList(player));
 	}
 
 	@EventHandler
 	public void on1OlympaPlayerChangeGroup(AsyncOlympaPlayerChangeGroupEvent event) {
-		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
 		INametagApi nameTagApi = OlympaCore.getInstance().getNameTagApi();
 		nameTagApi.setNametag(olympaPlayer);
-		nameTagApi.updateFakeNameTag(player, new Nametag(null, " §4Gros Bg"), Arrays.asList(player));
 	}
 
 	@EventHandler
 	public void on2PlayerSexChange(PlayerSexChangeEvent event) {
-		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
 		INametagApi nameTagApi = OlympaCore.getInstance().getNameTagApi();
 		nameTagApi.setNametag(olympaPlayer);
-		nameTagApi.updateFakeNameTag(player, new Nametag(null, " §4Gros Bg"), Arrays.asList(player));
 	}
 }

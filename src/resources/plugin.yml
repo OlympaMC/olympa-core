@@ -1,6 +1,7 @@
 name: OlympaCore
+website: https://olympa.fr
 main: fr.olympa.core.spigot.OlympaCore
 authors: [Tristiisch, SkytAsul]
-soft-depend: ProtocolSupport
-api-version: 1.15
 version: 0.1
+softdepend: [ProtocolSupport]
+api-version: 1.15

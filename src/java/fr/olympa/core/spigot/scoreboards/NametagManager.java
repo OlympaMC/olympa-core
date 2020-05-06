@@ -2,6 +2,7 @@ package fr.olympa.core.spigot.scoreboards;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +65,7 @@ public class NametagManager {
 		CACHED_FAKE_TEAMS.put(player, fakeTeam);
 	}
 
-	public void changeFakeNametag(String player, Nametag nameTag, List<Player> toPlayers) {
+	public void changeFakeNametag(String player, Nametag nameTag, Collection<? extends Player> toPlayers) {
 		FakeTeam previous = getFakeTeam(player);
 		String suffix = nameTag.getSuffix();
 		String prefix = nameTag.getPrefix();

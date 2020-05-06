@@ -13,9 +13,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.Plugin;
 
-import fr.olympa.api.ProtocolAPI;
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.api.utils.ProtocolAPI;
 import fr.olympa.api.utils.TPS;
 import fr.olympa.api.utils.TPSUtils;
 import fr.olympa.core.spigot.OlympaCore;

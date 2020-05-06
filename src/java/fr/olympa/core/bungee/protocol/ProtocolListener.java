@@ -1,6 +1,6 @@
 package fr.olympa.core.bungee.protocol;
 
-import fr.olympa.api.ProtocolAPI;
+import fr.olympa.api.utils.ProtocolAPI;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.event.PreLoginEvent;

@@ -1,7 +1,7 @@
 package fr.olympa.core.spigot.scoreboards.api;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -106,8 +106,13 @@ public final class NametagAPI implements INametagApi {
 	}
 
 	@Override
-	public void updateFakeNameTag(Player player, Nametag nametag, List<Player> toPlayers) {
-		manager.changeFakeNametag(player.getName(), nametag, toPlayers);
+	public void updateFakeNameTag(Player player, Nametag nametag, Collection<? extends Player> toPlayers) {
+		updateFakeNameTag(player.getName(), nametag, toPlayers);
+	}
+
+	@Override
+	public void updateFakeNameTag(String player, Nametag nametag, Collection<? extends Player> toPlayers) {
+		manager.changeFakeNametag(player, nametag, toPlayers);
 	}
 
 }

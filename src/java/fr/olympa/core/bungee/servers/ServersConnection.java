@@ -86,7 +86,7 @@ public class ServersConnection {
 	}
 
 	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer, ServerInfo server) {
-		ScheduledTask task = ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer, server), 0, 10, TimeUnit.SECONDS);
+		ScheduledTask task = ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer, server), 0, 30, TimeUnit.SECONDS);
 		connect.put(player, task);
 	}
 
