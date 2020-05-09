@@ -90,10 +90,9 @@ public class DataManagmentListener implements Listener {
 
 		if (olympaPlayer == null) {
 			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur est impossible, contacte-vite le staff. \n§eCode d'erreur: §l#Nucléaire"));
+			event.setJoinMessage(null);
 			return;
 		}
-
-		event.setJoinMessage(null);
 
 		OlympaCore.getInstance().launchAsync(() -> {
 			try {
@@ -105,6 +104,7 @@ public class DataManagmentListener implements Listener {
 				e.printStackTrace();
 				OlympaCore.getInstance().getTask().runTask(() -> {
 					player.kickPlayer(SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SpigotJoin"));
+					event.setJoinMessage(null);
 				});
 				return;
 			}
@@ -118,6 +118,8 @@ public class DataManagmentListener implements Listener {
 		OlympaPlayer olympaPlayer = account.getFromCache();
 		if (olympaPlayer != null) {
 			event.setQuitMessage(ColorUtils.color("&7[&c-&7] %prefix%name".replace("%group", olympaPlayer.getGroupName()).replace("%prefix", olympaPlayer.getGroupPrefix()).replace("%name", player.getDisplayName())));
+		} else {
+			event.setQuitMessage(null);
 		}
 	}
 

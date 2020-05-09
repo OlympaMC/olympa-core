@@ -27,7 +27,7 @@ public class NametagManager {
 	 * Adds a player to a FakeTeam. If they are already on this team, we do NOT
 	 * change that.
 	 */
-	private void addPlayerToTeam(String player, String prefix, String suffix, int sortPriority, boolean playerTag) {
+	private void addPlayerToTeam(String player, String prefix, String suffix, int sortPriority) {
 		FakeTeam previous = getFakeTeam(player);
 		if (previous != null && previous.isSimilar(prefix, suffix)) {
 			return;
@@ -37,7 +37,7 @@ public class NametagManager {
 		if (joining != null) {
 			joining.addMember(player);
 		} else {
-			joining = new FakeTeam(prefix, suffix, sortPriority, playerTag);
+			joining = new FakeTeam(prefix, suffix, sortPriority);
 			joining.addMember(player);
 			TEAMS.put(joining.getName(), joining);
 			addTeamPackets(joining);
@@ -162,10 +162,6 @@ public class NametagManager {
 	}
 
 	public void setNametag(String player, String prefix, String suffix, int sortPriority) {
-		setNametag(player, prefix, suffix, sortPriority, true);
-	}
-
-	public void setNametag(String player, String prefix, String suffix, int sortPriority, boolean playerTag) {
-		addPlayerToTeam(player, prefix != null ? prefix : "", suffix != null ? suffix : "", sortPriority, playerTag);
+		addPlayerToTeam(player, prefix != null ? prefix : "", suffix != null ? suffix : "", sortPriority);
 	}
 }

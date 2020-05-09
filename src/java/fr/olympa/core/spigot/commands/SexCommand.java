@@ -34,7 +34,7 @@ public class SexCommand extends OlympaCommand {
 		}
 		Gender olympaGender = olympaPlayer.getGender();
 		if (olympaGender != Gender.NO_SPECIFED) {
-			sendMessage(Prefix.DEFAULT_BAD, "Tu as déjà choisi ton sexe qui est &4" + Utils.capitalize(gender.getName()) + "&c.");
+			sendMessage(Prefix.DEFAULT_BAD, "Tu as déjà choisi le sexe &4" + Utils.capitalize(olympaGender.getName()) + "&c.");
 			return false;
 		}
 
@@ -45,7 +45,7 @@ public class SexCommand extends OlympaCommand {
 		olympaPlayer.setGender(gender);
 		new AccountProvider(player.getUniqueId()).saveToRedis(olympaPlayer);
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new PlayerSexChangeEvent(player, olympaPlayer, true));
-		sendMessage(Prefix.DEFAULT_GOOD, "Tu as choisi le sexe &2" + Utils.capitalize(gender.getName()) + "&a.");
+		sendMessage(Prefix.DEFAULT_GOOD, "Tu as choisi le 	 &2" + Utils.capitalize(gender.getName()) + "&a.");
 		return false;
 	}
 
