@@ -112,9 +112,9 @@ public class LoginChatListener implements Listener {
 				textComponent2 = new TextComponent("Ton mot de passe est le même sur le site et le forum\n");
 				textComponent2.setColor(ChatColor.AQUA);
 
-				textComponent2 = new TextComponent("Fait ");
-				textComponent2.setColor(ChatColor.GREEN);
-				textComponent.addExtra(textComponent2);
+				textComponent3 = new TextComponent("Fait ");
+				textComponent3.setColor(ChatColor.GREEN);
+				textComponent2.addExtra(textComponent2);
 
 				textComponent3 = new TextComponent("/login <mot de passe>");
 				textComponent3.setColor(ChatColor.DARK_GREEN);
@@ -128,13 +128,11 @@ public class LoginChatListener implements Listener {
 				textComponent3.setColor(ChatColor.DARK_GREEN);
 				textComponent2.addExtra(textComponent3);
 
-				textComponent3 = new TextComponent("et écrit ton mot de passe.\n");
+				textComponent3 = new TextComponent(" et écrit ton mot de passe.\n");
 				textComponent3.setColor(ChatColor.GREEN);
 				textComponent2.addExtra(textComponent3);
 
-				textComponent2.setHoverEvent(new HoverEvent(Action.SHOW_TEXT,
-						new ComponentBuilder("Clique pour avoir directement la commande").color(ChatColor.YELLOW)
-								.create()));
+				textComponent2.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder("Clique pour avoir directement la commande").color(ChatColor.YELLOW).create()));
 				textComponent2.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/login "));
 				textComponent.addExtra(textComponent2);
 			}
@@ -159,25 +157,21 @@ public class LoginChatListener implements Listener {
 				textComponent3.setColor(ChatColor.GREEN);
 				textComponent2.addExtra(textComponent3);
 
-				textComponent2.setHoverEvent(
-						new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder("Clique pour avoir directement la commande").color(ChatColor.YELLOW).create()));
+				textComponent2.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder("Clique pour avoir directement la commande").color(ChatColor.YELLOW).create()));
 				textComponent2.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/register "));
 				textComponent.addExtra(textComponent2);
 			}
-
 		}
 		textComponent2 = new TextComponent("\n");
 		textComponent2.setColor(ChatColor.AQUA);
 		textComponent.addExtra(textComponent2);
-
-//		textComponent2 = new TextComponent("Ajoute ton email: ");
-//		textComponent2.setColor(ChatColor.GREEN);
-//		textComponent.addExtra(textComponent2);
-//
-//		textComponent2 = new TextComponent("/email\n");
-//		textComponent2.setColor(ChatColor.DARK_GREEN);
-//		textComponent.addExtra(textComponent2);
-
+		//		textComponent2 = new TextComponent("Ajoute ton email: ");
+		//		textComponent2.setColor(ChatColor.GREEN);
+		//		textComponent.addExtra(textComponent2);
+		//
+		//		textComponent2 = new TextComponent("/email\n");
+		//		textComponent2.setColor(ChatColor.DARK_GREEN);
+		//		textComponent.addExtra(textComponent2);
 		textComponent2 = new TextComponent("---------------------------------------");
 		textComponent2.setColor(ChatColor.DARK_RED);
 		textComponent2.setBold(true);

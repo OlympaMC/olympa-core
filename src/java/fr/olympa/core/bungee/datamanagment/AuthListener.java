@@ -116,11 +116,11 @@ public class AuthListener implements Listener {
 				// Si le pseudo n'est pas un compte premium
 
 				// Si la connection est premium
-				if (connection.isOnlineMode()) {
+				/*if (connection.isOnlineMode()) {
 					event.setCancelReason(BungeeUtils.connectScreen("&cTu ne peux pas te faire passer pour un compte premium."));
 					event.setCancelled(true);
 					return;
-				}
+				}*/
 				event.setCancelReason(BungeeUtils.connectScreen("&eLes cracks ne sont pas encore autoriser."));
 				event.setCancelled(true);
 				System.out.println("Crack with no data " + name);
@@ -133,24 +133,20 @@ public class AuthListener implements Listener {
 			cache.setOlympaPlayer(olympaPlayer);
 			System.out.println("player info " + GsonCustomizedObjectTypeAdapter.GSON.toJson(cache.getOlympaPlayer()));
 			if (olympaPlayer.getPremiumUniqueId() == null) {
-				if (connection.isOnlineMode()) {
+				/*if (connection.isOnlineMode()) {
 					event.setCancelReason(BungeeUtils.connectScreen(
 							"&cCe pseudo &4" + olympaPlayer.getName() + "&c est utilisé par un compte crack.\n&bIl est préférable de changer de pseudo, toutefois il est possible de faire une demande au Staff."));
 					event.setCancelled(true);
 					return;
-				}
+				}*/
 				if (!name.equals(olympaPlayer.getName())) {
 					event.setCancelReason(BungeeUtils.connectScreen("&aTu as mal écrit ton pseudo, connecte toi avec &2" + olympaPlayer.getName() + "&a.\n&eLa tu utilise le pseudo " + name + "."));
 					event.setCancelled(true);
 					return;
 				}
+				connection.setOnlineMode(false);
 			} else {
 				connection.setOnlineMode(true);
-				if (!connection.isOnlineMode()) {
-					event.setCancelReason(BungeeUtils.connectScreen("&cLe pseudo &4" + olympaPlayer.getName() + "&c est utilisé par un compte premium.\n&c&nTu ne peux pas l'utiliser."));
-					event.setCancelled(true);
-					return;
-				}
 			}
 		}
 		cache.setSubDomain(event.getConnection());

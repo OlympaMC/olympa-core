@@ -26,7 +26,7 @@ public class SetStatusCommand extends OlympaCommand {
 
 	public SetStatusCommand(Plugin plugin) {
 		super(plugin, "setstatus", OlympaCorePermissions.SETSTATUS_COMMAND, "setstate");
-		this.usageString = "<" + String.join(", ", MaintenanceStatus.getNames()) + ">";
+		usageString = "<" + String.join(", ", MaintenanceStatus.getNames()) + ">";
 	}
 
 	@Override
@@ -42,12 +42,12 @@ public class SetStatusCommand extends OlympaCommand {
 			return true;
 		}
 		if (status == status2) {
-			this.sendError("Le serveur est déjà en mode " + status.getNameColored() + "&c.");
+			sendError("Le serveur est déjà en mode " + status.getNameColored() + "&c.");
 			return true;
 		}
 		OlympaPermission needPermission = status2.getPermission();
-		if (needPermission != null && !needPermission.hasPermission(sender)) {
-			this.sendError("Tu n'a pas la permission d'être connecter si tu met le mode " + status.getNameColored() + "&c.");
+		if (needPermission != null && !needPermission.hasSenderPermission(sender)) {
+			sendError("Tu n'a pas la permission d'être connecter si tu met le mode " + status.getNameColored() + "&c.");
 			return true;
 		}
 		OlympaCore.getInstance().setStatus(status2);
@@ -57,12 +57,12 @@ public class SetStatusCommand extends OlympaCommand {
 			};
 			Consumer<? super Collection<? extends Player>> empty = players -> {
 				players.forEach(player -> player.kickPlayer(SpigotUtils.connectScreen("&eDésolé le serveur est désormais en mode " + status.getNameColored() + "&e.\nEt tu n'y a plus accès. (tqt c'est temporaire)")));
-				this.sendSuccess("Tu as kick " + players.size() + " joueur, qui n'ont pas la permission &6&n" + status.getPermission().toString() + "&a.");
+				sendSuccess("Tu as kick " + players.size() + " joueur, qui n'ont pas la permission &6&n" + status.getPermission().toString() + "&a.");
 
 			};
 			needPermission.getPlayers(succes, empty);
 		}
-		this.sendSuccess("Le serveur est désormais en mode " + status2.getNameColored() + "&a, il était avant en mode " + status.getNameColored() + "&a.");
+		sendSuccess("Le serveur est désormais en mode " + status2.getNameColored() + "&a, il était avant en mode " + status.getNameColored() + "&a.");
 		return false;
 	}
 
