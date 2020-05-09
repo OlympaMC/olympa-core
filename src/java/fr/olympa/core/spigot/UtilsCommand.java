@@ -63,22 +63,22 @@ public class UtilsCommand extends ComplexCommand {
 		sendInfo("Régions trackées : " + trackedRegions.size());
 		sendInfo("Total de points : " + trackedRegions.stream().mapToInt(x -> x.getRegion().getLocations().size()).sum());
 
-		Set<TrackedRegion> playerRegions = regionManager.getCachedPlayerRegions(cmd.player);
+		Set<TrackedRegion> playerRegions = regionManager.getCachedPlayerRegions(getPlayer());
 		StringJoiner joiner = new StringJoiner(", ", "Vous êtes actuellement dans les régions : [", "]");
 		if (playerRegions == null) playerRegions = Collections.EMPTY_SET;
 		playerRegions.forEach(x -> joiner.add(x.getID()));
 		sendInfo(joiner.toString());
 
-		Set<TrackedRegion> applicable = trackedRegions.stream().filter(x -> x.getRegion().isIn(cmd.player)).collect(Collectors.toSet());
+		Set<TrackedRegion> applicable = trackedRegions.stream().filter(x -> x.getRegion().isIn(getPlayer())).collect(Collectors.toSet());
 		sendInfo("Différences entre les régions en cache et les régions calculées : §l" + Sets.symmetricDifference(playerRegions, applicable));
 	}
 
 	@Cmd (min = 4, args = { "", "INTEGER", "INTEGER", "INTEGER" })
 	public void testRegion(CommandContext cmd) {
-		World world = Bukkit.getWorld((String) cmd.args[0]);
-		int x = (int) cmd.args[1];
-		int y = (int) cmd.args[2];
-		int z = (int) cmd.args[3];
+		World world = Bukkit.getWorld((String) cmd.getArgument(0));
+		int x = cmd.getArgument(1);
+		int y = cmd.getArgument(2);
+		int z = cmd.getArgument(3);
 		for (TrackedRegion trackedRegion : OlympaCore.getInstance().getRegionManager().getTrackedRegions()) {
 			if (trackedRegion.getRegion().isIn(world, x, y, z)) {
 				sendInfo("Is in " + trackedRegion.getID());
