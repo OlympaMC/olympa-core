@@ -23,7 +23,7 @@ public class StaffChatListener implements Listener {
 			}
 			message = message.substring(1);
 		}
-		OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
+		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
 		if (!OlympaCorePermissions.STAFF_CHAT.hasPermission(olympaPlayer)) {
 			StaffChatHandler.staffChat.remove(player);
 			return;
