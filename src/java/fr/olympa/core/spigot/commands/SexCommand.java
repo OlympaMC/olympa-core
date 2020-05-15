@@ -8,8 +8,8 @@ import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.customevents.PlayerSexChangeEvent;
-import fr.olympa.api.objects.Gender;
-import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.player.Gender;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;

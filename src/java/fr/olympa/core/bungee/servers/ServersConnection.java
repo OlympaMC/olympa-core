@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.maintenance.MaintenanceStatus;
-import fr.olympa.api.objects.OlympaServer;
+import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;

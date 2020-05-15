@@ -5,8 +5,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;

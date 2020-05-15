@@ -8,10 +8,10 @@ import java.util.function.Consumer;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.objects.OlympaPlayer;
-import fr.olympa.api.objects.OlympaPlayerInformations;
-import fr.olympa.api.objects.OlympaPlayerProvider;
-import fr.olympa.api.permission.OlympaAccount;
+import fr.olympa.api.player.OlympaAccount;
+import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.player.OlympaPlayerInformations;
+import fr.olympa.api.player.OlympaPlayerProvider;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;

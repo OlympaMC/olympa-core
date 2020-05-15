@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 
-import fr.olympa.api.objects.OlympaConsole;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;

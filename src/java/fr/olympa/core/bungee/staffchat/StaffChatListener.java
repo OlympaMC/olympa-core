@@ -1,7 +1,7 @@
 package fr.olympa.core.bungee.staffchat;
 
-import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;

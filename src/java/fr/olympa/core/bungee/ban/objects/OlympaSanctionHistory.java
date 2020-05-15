@@ -6,8 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
-import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.api.utils.spigot.SpigotUtils;
 
 public class OlympaSanctionHistory {
 

@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Matcher;
-import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;

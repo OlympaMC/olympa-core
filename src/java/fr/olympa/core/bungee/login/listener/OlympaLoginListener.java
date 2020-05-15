@@ -5,8 +5,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.objects.OlympaPlayer;
-import fr.olympa.api.objects.OlympaServer;
+import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.server.OlympaServer;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.customevent.OlympaGroupChangeEvent;
 import fr.olympa.core.bungee.datamanagment.CachePlayer;

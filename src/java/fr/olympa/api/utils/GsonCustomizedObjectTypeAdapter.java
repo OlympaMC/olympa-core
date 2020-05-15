@@ -13,7 +13,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
-import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.OlympaPlayerObject.OlympaPlayerDeserializer;
 
 public class GsonCustomizedObjectTypeAdapter extends TypeAdapter<Object> {

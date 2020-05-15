@@ -12,7 +12,7 @@ import java.util.UUID;
 
 import com.google.common.collect.Lists;
 
-import fr.olympa.api.objects.OlympaConsole;
+import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;

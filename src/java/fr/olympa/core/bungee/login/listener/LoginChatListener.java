@@ -1,6 +1,6 @@
 package fr.olympa.core.bungee.login.listener;
 
-import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.datamanagment.DataHandler;

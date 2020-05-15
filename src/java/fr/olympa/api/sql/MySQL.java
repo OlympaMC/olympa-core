@@ -17,9 +17,9 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.objects.Gender;
-import fr.olympa.api.objects.OlympaPlayer;
-import fr.olympa.api.objects.OlympaPlayerInformations;
+import fr.olympa.api.player.Gender;
+import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.provider.OlympaPlayerInformationsObject;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;

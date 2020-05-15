@@ -15,9 +15,9 @@ import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.ProtocolAPI;
-import fr.olympa.api.utils.TPS;
-import fr.olympa.api.utils.TPSUtils;
+import fr.olympa.api.utils.spigot.ProtocolAPI;
+import fr.olympa.api.utils.spigot.TPS;
+import fr.olympa.api.utils.spigot.TPSUtils;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.protocolsupport.ProtocolSupportHook;
 

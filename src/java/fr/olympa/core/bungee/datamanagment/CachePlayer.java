@@ -2,7 +2,7 @@ package fr.olympa.core.bungee.datamanagment;
 
 import java.util.UUID;
 
-import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.player.OlympaPlayer;
 import net.md_5.bungee.api.connection.PendingConnection;
 
 public class CachePlayer {

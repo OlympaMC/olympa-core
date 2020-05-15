@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import fr.olympa.api.objects.OlympaConsole;
-import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.player.OlympaConsole;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;

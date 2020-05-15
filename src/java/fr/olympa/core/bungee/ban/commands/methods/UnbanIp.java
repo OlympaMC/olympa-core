@@ -6,10 +6,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.config.CustomConfig;
-import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.utils.SpigotUtils;
+import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionHistory;

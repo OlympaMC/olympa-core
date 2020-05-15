@@ -3,7 +3,7 @@ package fr.olympa.core.bungee.ban.commands.methods;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.OlympaBungee;

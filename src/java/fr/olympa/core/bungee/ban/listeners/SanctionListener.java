@@ -7,8 +7,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.provider.BungeeNewPlayerEvent;
-import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.MuteUtils;

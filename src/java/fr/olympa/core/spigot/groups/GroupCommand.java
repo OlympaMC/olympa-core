@@ -18,15 +18,15 @@ import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.api.utils.UtilsCore;
+import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 

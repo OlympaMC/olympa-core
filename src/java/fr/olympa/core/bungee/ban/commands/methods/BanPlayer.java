@@ -7,12 +7,12 @@ import java.util.regex.Matcher;
 
 import org.bukkit.Bukkit;
 
-import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.SpigotUtils;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.BanUtils;

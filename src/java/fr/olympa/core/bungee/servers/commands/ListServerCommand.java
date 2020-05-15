@@ -6,7 +6,7 @@ import java.util.StringJoiner;
 import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.ColorUtils;
-import fr.olympa.api.utils.TPSUtils;
+import fr.olympa.api.utils.spigot.TPSUtils;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.servers.MonitorInfo;
 import fr.olympa.core.bungee.servers.MonitorServers;

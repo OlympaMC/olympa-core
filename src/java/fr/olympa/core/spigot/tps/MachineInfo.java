@@ -4,7 +4,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.ThreadMXBean;
 
-import fr.olympa.api.utils.TPSUtils;
+import fr.olympa.api.utils.spigot.TPSUtils;
 
 public class MachineInfo {
 

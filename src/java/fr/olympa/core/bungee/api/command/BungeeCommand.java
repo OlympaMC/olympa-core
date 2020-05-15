@@ -2,8 +2,8 @@ package fr.olympa.core.bungee.api.command;
 
 import java.util.Arrays;
 
-import fr.olympa.api.objects.OlympaPlayer;
 import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.datamanagment.DataHandler;

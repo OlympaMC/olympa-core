@@ -9,7 +9,7 @@ import org.bukkit.event.server.ServerListPingEvent;
 import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.ColorUtils;
-import fr.olympa.api.utils.TPS;
+import fr.olympa.api.utils.spigot.TPS;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class StatusMotdListener implements Listener {

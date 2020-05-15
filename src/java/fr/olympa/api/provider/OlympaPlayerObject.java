@@ -20,11 +20,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.annotations.Expose;
 
+import fr.olympa.api.economy.OlympaMoney;
 import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.objects.Gender;
-import fr.olympa.api.objects.OlympaMoney;
-import fr.olympa.api.objects.OlympaPlayer;
-import fr.olympa.api.objects.OlympaPlayerInformations;
+import fr.olympa.api.player.Gender;
+import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Passwords;

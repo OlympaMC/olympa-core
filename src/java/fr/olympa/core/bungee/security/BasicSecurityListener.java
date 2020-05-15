@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import fr.olympa.api.objects.OlympaConsole;
-import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.player.OlympaConsole;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.utils.BungeeUtils;

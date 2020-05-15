@@ -11,7 +11,7 @@ import org.bukkit.event.Listener;
 
 import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;

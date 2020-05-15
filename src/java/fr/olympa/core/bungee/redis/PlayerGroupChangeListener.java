@@ -2,7 +2,7 @@ package fr.olympa.core.bungee.redis;
 
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.objects.OlympaPlayer;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.bungee.api.customevent.OlympaGroupChangeEvent;
 import fr.olympa.core.bungee.servers.ServersConnection;
