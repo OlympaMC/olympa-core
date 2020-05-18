@@ -20,7 +20,7 @@ import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
 import fr.olympa.core.spigot.chat.SwearHandler;
-import fr.olympa.core.spigot.commands.SexCommand;
+import fr.olympa.core.spigot.commands.GenderCommand;
 import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
@@ -110,7 +110,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new HelpCommand(this).register();
 		new TpsCommand(this).registerPreProcess();
 		new UtilsCommand(this).register();
-		new SexCommand(this).register();
+		new GenderCommand(this).register();
 		// new PasswdCommand(this).register();
 
 		PluginManager pluginManager = getServer().getPluginManager();

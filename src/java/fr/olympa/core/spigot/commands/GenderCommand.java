@@ -15,16 +15,16 @@ import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
 
-public class SexCommand extends OlympaCommand {
-	
-	public SexCommand(Plugin plugin) {
-		super(plugin, "sexe", "Change ton sexe. Accorde le grade et différents messages.");
+public class GenderCommand extends OlympaCommand {
+
+	public GenderCommand(Plugin plugin) {
+		super(plugin, "genre", "Change ton sexe. Accorde le grade et différents messages.", "sexe");
 		addArgs(true, Gender.getNames());
 		allowConsole = false;
 		minArg = 1;
 		isAsynchronous = true;
 	}
-	
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
@@ -36,7 +36,7 @@ public class SexCommand extends OlympaCommand {
 			sendMessage(Prefix.DEFAULT_BAD, "Tu as déjà choisi le sexe &4" + Utils.capitalize(olympaGender.getName()) + "&c.");
 			return false;
 		}
-		
+
 		if (gender == olympaGender) {
 			sendMessage(Prefix.DEFAULT_BAD, "Tu as déjà le sexe &4" + Utils.capitalize(gender.getName()) + "&c.");
 			return false;
@@ -47,7 +47,7 @@ public class SexCommand extends OlympaCommand {
 		sendMessage(Prefix.DEFAULT_GOOD, "Tu as choisi le 	 &2" + Utils.capitalize(gender.getName()) + "&a.");
 		return false;
 	}
-	
+
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		return null;
