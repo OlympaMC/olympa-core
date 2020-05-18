@@ -16,7 +16,7 @@ import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class SexCommand extends OlympaCommand {
-
+	
 	public SexCommand(Plugin plugin) {
 		super(plugin, "sexe", "Change ton sexe. Accorde le grade et différents messages.");
 		addArgs(true, Gender.getNames());
@@ -24,20 +24,19 @@ public class SexCommand extends OlympaCommand {
 		minArg = 1;
 		isAsynchronous = true;
 	}
-
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
 		Gender gender = Gender.get(args[0]);
-		if (gender == null) {
+		if (gender == null)
 			sendUsage(label);
-		}
 		Gender olympaGender = olympaPlayer.getGender();
-		if (olympaGender != Gender.NO_SPECIFED) {
+		if (olympaGender != Gender.UNSPECIFIED) {
 			sendMessage(Prefix.DEFAULT_BAD, "Tu as déjà choisi le sexe &4" + Utils.capitalize(olympaGender.getName()) + "&c.");
 			return false;
 		}
-
+		
 		if (gender == olympaGender) {
 			sendMessage(Prefix.DEFAULT_BAD, "Tu as déjà le sexe &4" + Utils.capitalize(gender.getName()) + "&c.");
 			return false;
@@ -48,7 +47,7 @@ public class SexCommand extends OlympaCommand {
 		sendMessage(Prefix.DEFAULT_GOOD, "Tu as choisi le 	 &2" + Utils.capitalize(gender.getName()) + "&a.");
 		return false;
 	}
-
+	
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		return null;
