@@ -9,6 +9,7 @@ import org.bukkit.help.HelpTopic;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
+import fr.olympa.api.utils.Prefix;
 
 public class HelpCommand extends OlympaCommand {
 
@@ -19,7 +20,7 @@ public class HelpCommand extends OlympaCommand {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		for (HelpTopic cmdLabel : Bukkit.getServer().getHelpMap().getHelpTopics()) {
-			sendMessage(cmdLabel.getName() + " | " + cmdLabel.getShortText() + " | " + cmdLabel.getFullText(sender));
+			sendMessage(Prefix.NONE, cmdLabel.getName() + " | " + cmdLabel.getShortText() + " | " + cmdLabel.getFullText(sender));
 		}
 		return false;
 	}

@@ -53,12 +53,11 @@ public class SetStatusCommand extends OlympaCommand {
 		OlympaCore.getInstance().setStatus(status2);
 		if (needPermission != null) {
 			Consumer<? super Set<Player>> succes = players -> {
-				players.forEach(player -> this.sendMessage(player, Prefix.ERROR, "Le serveur est désormais en mode " + status.getNameColored() + "&c."));
+				this.sendMessage(players, Prefix.ERROR, "Le serveur est désormais en mode %s&c.", status.getNameColored());
 			};
 			Consumer<? super Collection<? extends Player>> empty = players -> {
-				players.forEach(player -> player.kickPlayer(SpigotUtils.connectScreen("&eDésolé le serveur est désormais en mode " + status.getNameColored() + "&e.\nEt tu n'y a plus accès. (tqt c'est temporaire)")));
+				players.forEach(player -> player.kickPlayer(SpigotUtils.connectScreen("&eDésolé le serveur est désormais en mode " + status.getNameColored() + "&e.\nEt tu n'y a plus accès. (pas d'inquiétudes, c'est temporaire !)")));
 				sendSuccess("Tu as kick " + players.size() + " joueur, qui n'ont pas la permission &6&n" + status.getPermission().toString() + "&a.");
-
 			};
 			needPermission.getPlayers(succes, empty);
 		}

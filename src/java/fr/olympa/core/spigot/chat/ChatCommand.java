@@ -48,15 +48,15 @@ public class ChatCommand extends OlympaCommand {
 				for (int i = 0; i < 100; i++) {
 					allPlayer.sendMessage("");
 				}
-				this.sendMessage(allPlayer, Prefix.DEFAULT_BAD, "&lLe chat a été nettoyé.");
+				Prefix.DEFAULT_BAD.sendMessage(allPlayer, "&lLe chat a été nettoyé.");
 			}
 		} else if (args[0].equalsIgnoreCase("mute")) {
 			if (!serverSettings.isChatMute()) {
 				serverSettings.setChatMute(true);
-				this.sendMessageToAll(Prefix.DEFAULT_GOOD, "&lLe chat a été réactivé.");
+				this.broadcastToAll(Prefix.DEFAULT_GOOD, "&lLe chat a été réactivé.");
 			} else {
 				serverSettings.setChatMute(false);
-				this.sendMessageToAll(Prefix.DEFAULT_BAD, "&lLe chat a été désactivé.");
+				this.broadcastToAll(Prefix.DEFAULT_BAD, "&lLe chat a été désactivé.");
 			}
 
 		} else {

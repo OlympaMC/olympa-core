@@ -11,7 +11,7 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.plugin.OlympaSpigot;
 import fr.olympa.api.provider.RedisAccess;
-import fr.olympa.api.region.RegionManager;
+import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.spigot.chat.CancerListener;

@@ -20,8 +20,8 @@ import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.command.complex.ComplexCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.region.RegionManager;
-import fr.olympa.api.region.RegionManager.TrackedRegion;
+import fr.olympa.api.region.tracking.RegionManager;
+import fr.olympa.api.region.tracking.TrackedRegion;
 import net.minecraft.server.v1_15_R1.BlockPosition;
 import net.minecraft.server.v1_15_R1.TileEntity;
 

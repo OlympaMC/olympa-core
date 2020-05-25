@@ -11,7 +11,6 @@ import fr.olympa.api.customevents.PlayerSexChangeEvent;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
 
@@ -33,18 +32,18 @@ public class GenderCommand extends OlympaCommand {
 			sendUsage(label);
 		Gender olympaGender = olympaPlayer.getGender();
 		if (olympaGender != Gender.UNSPECIFIED) {
-			sendMessage(Prefix.DEFAULT_BAD, "Tu as déjà choisi le sexe &4" + Utils.capitalize(olympaGender.getName()) + "&c.");
+			sendError("Tu as déjà choisi le sexe &4%s&c.", Utils.capitalize(olympaGender.getName()));
 			return false;
 		}
 
 		if (gender == olympaGender) {
-			sendMessage(Prefix.DEFAULT_BAD, "Tu as déjà le sexe &4" + Utils.capitalize(gender.getName()) + "&c.");
+			sendError("Tu as déjà le sexe &4%s&c.", Utils.capitalize(gender.getName()));
 			return false;
 		}
 		olympaPlayer.setGender(gender);
 		new AccountProvider(player.getUniqueId()).saveToRedis(olympaPlayer);
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new PlayerSexChangeEvent(player, olympaPlayer, true));
-		sendMessage(Prefix.DEFAULT_GOOD, "Tu as choisi le 	 &2" + Utils.capitalize(gender.getName()) + "&a.");
+		sendError("Tu as choisi le sexe &2%s&a.", Utils.capitalize(gender.getName()));
 		return false;
 	}
 
