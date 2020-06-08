@@ -46,7 +46,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	}
 
 	private SwearHandler swearHandler;
-	private RegionManager regionManager = new RegionManager();
+	private RegionManager regionManager;
 	private ProtocolAction protocolSupportHook;
 	private INametagApi nameTagApi;
 
@@ -112,12 +112,11 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		pluginManager.registerEvents(new DataManagmentListener(), this);
 		pluginManager.registerEvents(new GroupListener(), this);
 		pluginManager.registerEvents(new CancerListener(), this);
-		pluginManager.registerEvents(new NameTagListener(), this);
 		pluginManager.registerEvents(new TestListener(), this);
 		pluginManager.registerEvents(new Inventories(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
 		pluginManager.registerEvents(new ChatListener(), this);
-		pluginManager.registerEvents(regionManager, this);
+		pluginManager.registerEvents(regionManager = new RegionManager(), this);
 		pluginManager.registerEvents(new CommandListener(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
 		pluginManager.registerEvents(new NameTagListener(), this);

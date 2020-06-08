@@ -33,7 +33,7 @@ public class MachineInfo {
 	}
 
 	public String getCPUUsage() {
-		return TPSUtils.getCPUUsageColor((int) Math.round(cpuUsage)) + "%";
+		return TPSUtils.getCPUUsageColor((int) Math.round(cpuUsage)) + "%%";
 	}
 
 	public long getMemFree() {
@@ -45,7 +45,7 @@ public class MachineInfo {
 	}
 
 	public String getMemUsage() {
-		return TPSUtils.getRamUsageColor((int) Math.round(memUsage)) + "%";
+		return TPSUtils.getRamUsageColor((int) Math.round(memUsage)) + "%%";
 	}
 
 	public String getMemUse() {

@@ -1,5 +1,6 @@
 package fr.olympa.core.spigot;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -58,7 +59,7 @@ public class UtilsCommand extends ComplexCommand {
 	@Cmd (player = true)
 	public void regions(CommandContext cmd) {
 		RegionManager regionManager = OlympaCore.getInstance().getRegionManager();
-		Set<TrackedRegion> trackedRegions = regionManager.getTrackedRegions();
+		Collection<TrackedRegion> trackedRegions = regionManager.getTrackedRegions().values();
 
 		sendInfo("Régions trackées : " + trackedRegions.size());
 		sendInfo("Total de points : " + trackedRegions.stream().mapToInt(x -> x.getRegion().getLocations().size()).sum());
@@ -79,7 +80,7 @@ public class UtilsCommand extends ComplexCommand {
 		int x = cmd.getArgument(1);
 		int y = cmd.getArgument(2);
 		int z = cmd.getArgument(3);
-		for (TrackedRegion trackedRegion : OlympaCore.getInstance().getRegionManager().getTrackedRegions()) {
+		for (TrackedRegion trackedRegion : OlympaCore.getInstance().getRegionManager().getTrackedRegions().values()) {
 			if (trackedRegion.getRegion().isIn(world, x, y, z)) {
 				sendInfo("Is in " + trackedRegion.getID());
 			}else sendInfo("Not in " + trackedRegion.getID());
