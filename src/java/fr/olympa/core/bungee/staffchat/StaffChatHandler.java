@@ -3,6 +3,7 @@ package fr.olympa.core.bungee.staffchat;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.permission.OlympaCorePermissions;
@@ -15,7 +16,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class StaffChatHandler {
 
-	public static Set<ProxiedPlayer> staffChat = new HashSet<>();
+	public static Set<UUID> staffChat = new HashSet<>();
 
 	@SuppressWarnings("deprecation")
 	public static void sendMessage(OlympaPlayer olympaPlayer, ProxiedPlayer player, String msg) {

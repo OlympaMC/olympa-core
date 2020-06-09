@@ -94,12 +94,12 @@ public class AccountProvider implements OlympaAccount {
 		return providerTableName;
 	}
 
-	public static void setPlayerProvider(Class<? extends OlympaPlayerObject> playerClass, OlympaPlayerProvider supplier, String pluginName, Map<String, String> columns) {
+	public static void setPlayerProvider(Class<? extends OlympaPlayerObject> playerClass, OlympaPlayerProvider provider, String pluginName, Map<String, String> columns) {
 		try {
 			providerTableName = "`" + pluginName.toLowerCase() + "_players`";
 			MySQL.setDatasTable(providerTableName, columns);
 			AccountProvider.playerClass = playerClass;
-			playerProvider = supplier;
+			playerProvider = provider;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			providerTableName = null;

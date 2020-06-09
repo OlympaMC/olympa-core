@@ -1,5 +1,7 @@
 package fr.olympa.core.bungee.staffchat;
 
+import java.util.UUID;
+
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
@@ -15,26 +17,29 @@ public class StaffChatCommand extends BungeeCommand {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
+		UUID uuid = proxiedPlayer.getUniqueId();
 		if (args.length == 0) {
-			if (StaffChatHandler.staffChat.contains(proxiedPlayer)) {
-				StaffChatHandler.staffChat.remove(proxiedPlayer);
+			System.out.println(StaffChatHandler.staffChat.size());
+			if (StaffChatHandler.staffChat.contains(uuid)) {
+				StaffChatHandler.staffChat.remove(uuid);
 				sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode désactivé.");
 			} else {
-				StaffChatHandler.staffChat.add(proxiedPlayer);
+				StaffChatHandler.staffChat.add(uuid);
 				sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode activé.");
 			}
+			System.out.println(StaffChatHandler.staffChat.size());
 		} else if (args[0].equalsIgnoreCase("off")) {
-			if (StaffChatHandler.staffChat.contains(proxiedPlayer)) {
-				StaffChatHandler.staffChat.remove(proxiedPlayer);
+			if (StaffChatHandler.staffChat.contains(uuid)) {
+				StaffChatHandler.staffChat.remove(uuid);
 				sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode désactivé.");
 			} else {
 				sendMessage(Prefix.DEFAULT_BAD + "StaffChat déjà désactivé.");
 			}
 		} else if (args[0].equalsIgnoreCase("on")) {
-			if (StaffChatHandler.staffChat.contains(proxiedPlayer)) {
+			if (StaffChatHandler.staffChat.contains(uuid)) {
 				sendMessage(Prefix.DEFAULT_BAD + "StaffChat déjà activé.");
 			} else {
-				StaffChatHandler.staffChat.add(proxiedPlayer);
+				StaffChatHandler.staffChat.add(uuid);
 				sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode activé.");
 			}
 		} else {

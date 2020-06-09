@@ -1,5 +1,7 @@
 package fr.olympa.core.bungee.staffchat;
 
+import java.util.UUID;
+
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
@@ -12,22 +14,24 @@ public class StaffChatListener implements Listener {
 
 	@EventHandler
 	public void onChat(ChatEvent event) {
-		if (!(event.getSender() instanceof ProxiedPlayer)) {
-			return;
-		}
+		if (!(event.getSender() instanceof ProxiedPlayer)) return;
+
 		ProxiedPlayer player = (ProxiedPlayer) event.getSender();
+		UUID uuid = player.getUniqueId();
 		String message = event.getMessage();
-		if (!StaffChatHandler.staffChat.contains(player)) {
-			if (message.charAt(0) != '$') {
+
+		OlympaPlayer olympaPlayer;
+		if (StaffChatHandler.staffChat.contains(uuid)) {
+			olympaPlayer = AccountProvider.get(uuid);
+			if (!OlympaCorePermissions.STAFF_CHAT.hasPermission(olympaPlayer)) {
+				StaffChatHandler.staffChat.remove(uuid);
 				return;
 			}
-			message = message.substring(1);
+		}else {
+			if (message.charAt(0) != '$') return;
+			olympaPlayer = AccountProvider.get(uuid);
 		}
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
-		if (!OlympaCorePermissions.STAFF_CHAT.hasPermission(olympaPlayer)) {
-			StaffChatHandler.staffChat.remove(player);
-			return;
-		}
+
 		StaffChatHandler.sendMessage(olympaPlayer, player, message);
 		event.setCancelled(true);
 	}
