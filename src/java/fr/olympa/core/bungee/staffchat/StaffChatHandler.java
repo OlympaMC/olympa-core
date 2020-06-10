@@ -15,11 +15,12 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class StaffChatHandler {
-
+	
 	public static Set<UUID> staffChat = new HashSet<>();
-
+	
 	@SuppressWarnings("deprecation")
 	public static void sendMessage(OlympaPlayer olympaPlayer, ProxiedPlayer player, String msg) {
+		System.out.println("" + olympaPlayer.getName() + " " + msg);
 		String message = msg.replaceAll("( )\\1+", " ");
 		Collection<ProxiedPlayer> players = ProxyServer.getInstance().getPlayers();
 		Set<ProxiedPlayer> playerswithPerm = players.stream().filter(p -> OlympaCorePermissions.STAFF_CHAT.hasPermission(AccountProvider.<OlympaPlayer>get(p.getUniqueId()))).collect(Collectors.toSet());
