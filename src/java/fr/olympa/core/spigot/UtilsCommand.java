@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.command.complex.ComplexCommand;
+import fr.olympa.api.item.ItemUtils;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.region.tracking.TrackedRegion;
@@ -85,6 +86,16 @@ public class UtilsCommand extends ComplexCommand {
 				sendInfo("Is in " + trackedRegion.getID());
 			}else sendInfo("Not in " + trackedRegion.getID());
 		}
+	}
+
+	@Cmd (player = true, min = 1, syntax = "<player name>")
+	public void givePlayerHead(CommandContext cmd) {
+		ItemUtils.skull(x -> player.getInventory().addItem(x), "item tête", cmd.getArgument(0));
+	}
+
+	@Cmd (player = true, min = 1, syntax = "<head value>")
+	public void giveCustomHead(CommandContext cmd) {
+		player.getInventory().addItem(ItemUtils.skullCustom("item custom tête", cmd.getArgument(0)));
 	}
 
 }
