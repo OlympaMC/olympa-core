@@ -55,10 +55,8 @@ public class OlympaStatement {
 			sj2.add("?");
 		sj.add(sj2.toString());
 
-		sj.add(";");
-		statement = sj.toString();
+		statement = sj.toString() + ";";
 		returnGeneratedKeys = true;
-		System.out.println("statement1 " + statement);
 	}
 	
 	public OlympaStatement(StatementType type, String tableName, String what, String[] keys) {
@@ -92,7 +90,6 @@ public class OlympaStatement {
 			sj.add(sj2.toString());
 		}
 		statement = sj.toString() + ";";
-		System.out.println("statement2 " + statement);
 	}
 
 	public OlympaStatement(String statement) {
