@@ -19,27 +19,25 @@ public class StaffChatCommand extends BungeeCommand {
 	public void onCommand(CommandSender sender, String[] args) {
 		UUID uuid = proxiedPlayer.getUniqueId();
 		if (args.length == 0) {
-			System.out.println(StaffChatHandler.staffChat.size());
-			if (StaffChatHandler.staffChat.contains(uuid)) {
-				StaffChatHandler.staffChat.remove(uuid);
+			if (StaffChatHandler.getStaffchat().contains(uuid)) {
+				StaffChatHandler.getStaffchat().remove(uuid);
 				sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode désactivé.");
 			} else {
-				StaffChatHandler.staffChat.add(uuid);
+				StaffChatHandler.getStaffchat().add(uuid);
 				sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode activé.");
 			}
-			System.out.println(StaffChatHandler.staffChat.size());
 		} else if (args[0].equalsIgnoreCase("off")) {
-			if (StaffChatHandler.staffChat.contains(uuid)) {
-				StaffChatHandler.staffChat.remove(uuid);
+			if (StaffChatHandler.getStaffchat().contains(uuid)) {
+				StaffChatHandler.getStaffchat().remove(uuid);
 				sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode désactivé.");
 			} else {
 				sendMessage(Prefix.DEFAULT_BAD + "StaffChat déjà désactivé.");
 			}
 		} else if (args[0].equalsIgnoreCase("on")) {
-			if (StaffChatHandler.staffChat.contains(uuid)) {
+			if (StaffChatHandler.getStaffchat().contains(uuid)) {
 				sendMessage(Prefix.DEFAULT_BAD + "StaffChat déjà activé.");
 			} else {
-				StaffChatHandler.staffChat.add(uuid);
+				StaffChatHandler.getStaffchat().add(uuid);
 				sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode activé.");
 			}
 		} else {
