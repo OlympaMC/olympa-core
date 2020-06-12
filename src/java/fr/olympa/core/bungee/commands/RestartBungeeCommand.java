@@ -10,17 +10,17 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class RestartBungeeCommand extends BungeeCommand {
-	
+
 	public RestartBungeeCommand(Plugin plugin) {
-		super(plugin, "restart", OlympaCorePermissions.SERVER_RESTART_COMMAND);
+		super(plugin, "restartbungee", OlympaCorePermissions.SERVER_RESTART_COMMAND);
 		allowConsole = true;
 	}
-	
+
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		restart();
 	}
-	
+
 	public void restart() {
 		plugin.getProxy().stop();
 		new Thread((Runnable) () -> {
