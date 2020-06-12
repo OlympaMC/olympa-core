@@ -8,7 +8,7 @@ import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.servers.MonitorInfo;
 import fr.olympa.core.bungee.servers.MonitorServers;
-import fr.olympa.core.bungee.servers.ServerStartStop;
+import fr.olympa.core.bungee.servers.ScriptBashMc;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.TabExecutor;
@@ -23,7 +23,7 @@ public class StopServerCommand extends BungeeCommand implements TabExecutor {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		ServerStartStop.action("stop", args[0], sender);
+		ScriptBashMc.action("stop", args[0], sender);
 	}
 
 	@Override
