@@ -120,9 +120,8 @@ public abstract class BungeeCommand extends Command {
 	}
 
 	protected OlympaPlayer getOlympaPlayer() {
-		if (proxiedPlayer != null) {
+		if (proxiedPlayer != null)
 			return new AccountProvider(proxiedPlayer.getUniqueId()).getFromRedis();
-		}
 		return null;
 	}
 
@@ -156,21 +155,21 @@ public abstract class BungeeCommand extends Command {
 		sendErreur("Une erreur est survenu avec tes donnés.");
 	}
 
-	public void sendMessage(CommandSender sender, Prefix prefix, String text) {
-		this.sendMessage(sender, prefix + BungeeUtils.color(text));
+	public static void sendMessage(CommandSender sender, Prefix prefix, String text) {
+		sendMessage(sender, prefix + BungeeUtils.color(text));
 	}
 
 	@SuppressWarnings("deprecation")
-	public void sendMessage(CommandSender sender, String text) {
+	public static void sendMessage(CommandSender sender, String text) {
 		sender.sendMessage(BungeeUtils.color(text));
 	}
 
 	public void sendMessage(Prefix prefix, String text) {
-		this.sendMessage(sender, prefix, text);
+		sendMessage(sender, prefix, text);
 	}
 
 	public void sendMessage(String text) {
-		this.sendMessage(sender, BungeeUtils.color(text));
+		sendMessage(sender, BungeeUtils.color(text));
 	}
 
 	public void sendMessage(TextComponent text) {
