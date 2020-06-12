@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee;
+package fr.olympa.core.bungee.commands;
 
 import java.sql.SQLException;
 
