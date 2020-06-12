@@ -1,16 +1,22 @@
 package fr.olympa.core.spigot.chat;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 public class SwearHandler {
-
-	private List<Pattern> regexSwear;
-
+	
+	private Map<String, Pattern> regexSwear;
+	
 	public SwearHandler(List<String> swears) {
-		regexSwear = new ArrayList<>();
+		regexSwear = new HashMap<>();
 		for (String swear : swears) {
 			StringBuilder sb = new StringBuilder();
 			String start = new String();
@@ -42,20 +48,38 @@ public class SwearHandler {
 				}
 				sb.append(out + "+[^a-zA-Z]*");
 			}
-			regexSwear.add(Pattern.compile("(?iu)" + start + "(" + sb.toString() + end + ")"));
+			regexSwear.put(swear, Pattern.compile("(?iu)" + start + "(" + sb.toString() + end + ")"));
 		}
 	}
-
-	public List<Pattern> getRegexSwear() {
-		return regexSwear;
+	
+	public Collection<Pattern> getRegexSwear() {
+		return regexSwear.values();
 	}
 
-	public void test(String msg) {
-		for (Pattern pattern : regexSwear) {
+	public String testAndReplace(String msg, String prefix, String suffix) {
+		Multimap<String, String> test = test(msg);
+		if (test.isEmpty())
+			return null;
+		return replace(msg, test(msg), prefix, suffix);
+	}
+	
+	public Multimap<String, String> test(String msg) {
+		Multimap<String, String> match = ArrayListMultimap.create();
+		for (Entry<String, Pattern> entry : regexSwear.entrySet()) {
+			String word = entry.getKey();
+			Pattern pattern = entry.getValue();
 			Matcher matcher = pattern.matcher(msg);
-			if (matcher.find()) {
-				System.out.println("[M] " + matcher.group() + " 1: " + matcher.group(1) + " '" + msg + "'");
+			while (matcher.find()) {
+				System.out.println("[M] " + word + " '" + matcher.group() + "' '" + pattern + "'");
+				match.put(word, matcher.group());
 			}
 		}
+		return match;
+	}
+
+	public String replace(String messageRaw, Multimap<String, String> test, String prefix, String suffix) {
+		for (Entry<String, String> entry : test.entries())
+			messageRaw = messageRaw.replace(entry.getValue(), prefix + entry.getValue() + suffix);
+		return messageRaw;
 	}
 }
