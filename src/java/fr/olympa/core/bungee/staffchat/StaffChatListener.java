@@ -34,10 +34,11 @@ public class StaffChatListener implements Listener {
 			}
 		}else {
 			if (message.charAt(0) != '$') return;
+			message = message.substring(1);
 			olympaPlayer = new AccountProvider(uuid).getFromRedis();
 		}
 
-		StaffChatHandler.sendMessage(olympaPlayer, player, message.substring(1));
+		StaffChatHandler.sendMessage(olympaPlayer, player, message);
 		event.setCancelled(true);
 	}
 }

@@ -60,7 +60,7 @@ public class LoginCommand extends BungeeCommand {
 		}
 		String playerPasswordHash = olympaPlayer.getPassword();
 		if (playerPasswordHash == null || playerPasswordHash.isEmpty()) {
-			sendErreur("Tu n'a pas de mot de passe. Pour le créer, fait &4/register <mot de passe>&c.");
+			sendError("Tu n'a pas de mot de passe. Pour le créer, fait &4/register <mot de passe>&c.");
 			return;
 		}
 

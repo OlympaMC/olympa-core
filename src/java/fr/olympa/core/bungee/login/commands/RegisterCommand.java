@@ -36,7 +36,7 @@ public class RegisterCommand extends BungeeCommand {
 		}
 		String playerPasswordHash = olympaPlayer.getPassword();
 		if (playerPasswordHash != null) {
-			sendErreur("Tu as déjà un mot de passe. Pour le changer, fait &4/passwd <ancien mot de passe> <nouveau mot de passe>&c.");
+			sendError("Tu as déjà un mot de passe. Pour le changer, fait &4/passwd <ancien mot de passe> <nouveau mot de passe>&c.");
 			return;
 		}
 

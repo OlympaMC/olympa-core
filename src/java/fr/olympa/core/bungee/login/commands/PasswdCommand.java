@@ -28,7 +28,7 @@ public class PasswdCommand extends BungeeCommand {
 		}
 		String playerPasswordHash = this.olympaPlayer.getPassword();
 		if (playerPasswordHash == null) {
-			this.sendErreur("Tu n'as pas encore de mot de passe, fait &4/register <mot de passe>&c pour en crée un.");
+			this.sendError("Tu n'as pas encore de mot de passe, fait &4/register <mot de passe>&c pour en crée un.");
 			return;
 		}
 		
