@@ -60,7 +60,7 @@ public class SwearHandler {
 		Multimap<String, String> test = test(msg);
 		if (test.isEmpty())
 			return null;
-		return replace(msg, test(msg), prefix, suffix);
+		return replace(msg, test, prefix, suffix);
 	}
 	
 	public Multimap<String, String> test(String msg) {

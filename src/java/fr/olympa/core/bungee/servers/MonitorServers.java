@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -41,9 +42,9 @@ public class MonitorServers {
 		return entry.getValue();
 	}
 
-	public static ConcurrentMap<Integer, Set<MonitorInfo>> getServerInfo() {
+	/*public static ConcurrentMap<Integer, Set<MonitorInfo>> getServerInfo() {
 		return serversInfo.asMap();
-	}
+	}*/
 
 	public static boolean isServerOpen(String name) {
 		MonitorInfo serv = get(name);
@@ -61,12 +62,9 @@ public class MonitorServers {
 		});
 	}
 
+	private int i = 0;
 	public MonitorServers(Plugin plugin) {
-		getData(plugin, 1);
-	}
-
-	private void getData(Plugin plugin, int i) {
-		plugin.getProxy().getScheduler().runAsync(plugin, () -> {
+		plugin.getProxy().getScheduler().schedule(plugin, () -> {
 			Map<String, ServerInfo> allServers = ProxyServer.getInstance().getServers();
 			Set<MonitorInfo> serversList = new HashSet<>();
 			for (ServerInfo serverInfo : allServers.values()) {
@@ -75,8 +73,8 @@ public class MonitorServers {
 					serversList.add(new MonitorInfo(serverInfo, nano, result, error));
 				});
 			}
-			serversInfo.put(i, serversList);
-			plugin.getProxy().getScheduler().schedule(plugin, () -> getData(plugin, i + 1), 10, TimeUnit.SECONDS);
-		});
+			serversInfo.put(i++, serversList);
+			RedisBungeeSend.sendServersInfos(serversList);
+		}, 0, 10, TimeUnit.SECONDS);
 	}
 }
