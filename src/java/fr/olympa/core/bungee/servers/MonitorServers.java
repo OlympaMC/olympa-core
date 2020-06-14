@@ -15,6 +15,7 @@ import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.scheduler.TaskScheduler;
 
 public class MonitorServers {
 
@@ -28,17 +29,15 @@ public class MonitorServers {
 		ConcurrentMap<Integer, Set<MonitorInfo>> all = serversInfo.asMap();
 		Iterator<Entry<Integer, Set<MonitorInfo>>> iterator = all.entrySet().iterator();
 		Entry<Integer, Set<MonitorInfo>> entry = null;
-		while (iterator.hasNext()) {
+		while (iterator.hasNext())
 			entry = iterator.next();
-		}
 		return entry;
 	}
 
 	public static Set<MonitorInfo> getLastServerInfo() {
 		Entry<Integer, Set<MonitorInfo>> entry = getLastInfo();
-		if (entry == null) {
+		if (entry == null)
 			return null;
-		}
 		return entry.getValue();
 	}
 
@@ -63,18 +62,22 @@ public class MonitorServers {
 	}
 
 	private int i = 0;
+
 	public MonitorServers(Plugin plugin) {
-		plugin.getProxy().getScheduler().schedule(plugin, () -> {
-			Map<String, ServerInfo> allServers = ProxyServer.getInstance().getServers();
-			Set<MonitorInfo> serversList = new HashSet<>();
-			for (ServerInfo serverInfo : allServers.values()) {
-				long nano = System.nanoTime();
-				serverInfo.ping((result, error) -> {
-					serversList.add(new MonitorInfo(serverInfo, nano, result, error));
-				});
-			}
-			serversInfo.put(i++, serversList);
-			RedisBungeeSend.sendServersInfos(serversList);
+		TaskScheduler schuduler = plugin.getProxy().getScheduler();
+		schuduler.schedule(plugin, () -> {
+			schuduler.runAsync(plugin, () -> {
+				Map<String, ServerInfo> allServers = ProxyServer.getInstance().getServers();
+				Set<MonitorInfo> serversList = new HashSet<>();
+				for (ServerInfo serverInfo : allServers.values()) {
+					long nano = System.nanoTime();
+					serverInfo.ping((result, error) -> {
+						serversList.add(new MonitorInfo(serverInfo, nano, result, error));
+					});
+				}
+				serversInfo.put(i++, serversList);
+				RedisBungeeSend.sendServersInfos(serversList);
+			});
 		}, 0, 10, TimeUnit.SECONDS);
 	}
 }
