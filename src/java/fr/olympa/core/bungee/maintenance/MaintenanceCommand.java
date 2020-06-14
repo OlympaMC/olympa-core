@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Utils;
@@ -39,14 +39,14 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 		command = getCommand();
 		minArg = 1;
 		arg2.addAll(Arrays.asList("status", "add", "remove", "list"));
-		arg2.addAll(MaintenanceStatus.getNames());
+		arg2.addAll(ServerStatus.getNames());
 		usageString = "<" + String.join("|", MaintenanceCommand.arg2).toLowerCase() + "> [joueur]";
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		ProxyServer.getInstance().getScheduler().runAsync(OlympaBungee.getInstance(), () -> {
-			MaintenanceStatus maintenanceStatus = MaintenanceStatus.getByCommandArg(args[0]);
+			ServerStatus maintenanceStatus = ServerStatus.getByCommandArg(args[0]);
 			if (maintenanceStatus != null) {
 				switch (maintenanceStatus) {
 
@@ -136,7 +136,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 
 					String message = maintconfig.getString("settings.message");
 					String statusString = maintconfig.getString("settings.status");
-					maintenanceStatus = MaintenanceStatus.get(statusString);
+					maintenanceStatus = ServerStatus.get(statusString);
 					String statusmsg = "";
 					if (message != "") {
 						statusmsg = "(" + message.replaceAll("\n", "") + ")";
@@ -177,7 +177,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 	}
 
 	@SuppressWarnings("deprecation")
-	private void setMaintenance(MaintenanceStatus maintenanceStatus, String message, CommandSender player) {
+	private void setMaintenance(ServerStatus maintenanceStatus, String message, CommandSender player) {
 		CustomBungeeConfig customConfig = OlympaBungee.getInstance().getMaintCustomConfig();
 		Configuration config = customConfig.getConfig();
 		config.set("settings.status", maintenanceStatus.getName());

@@ -14,9 +14,9 @@ import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.api.utils.spigot.SpigotUtils;
@@ -26,17 +26,17 @@ public class SetStatusCommand extends OlympaCommand {
 
 	public SetStatusCommand(Plugin plugin) {
 		super(plugin, "setstatus", OlympaCorePermissions.SETSTATUS_COMMAND, "setstate");
-		usageString = "<" + String.join(", ", MaintenanceStatus.getNames()) + ">";
+		usageString = "<" + String.join(", ", ServerStatus.getNames()) + ">";
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		MaintenanceStatus status = OlympaCore.getInstance().getStatus();
+		ServerStatus status = OlympaCore.getInstance().getStatus();
 		if (args.length == 0) {
 			this.sendMessage(Prefix.DEFAULT, "Le serveur est actuellement en mode " + status.getNameColored() + "&7.");
 			return true;
 		}
-		MaintenanceStatus status2 = MaintenanceStatus.get(args[0]);
+		ServerStatus status2 = ServerStatus.get(args[0]);
 		if (status2 == null) {
 			this.sendUsage(label);
 			return true;
@@ -68,7 +68,7 @@ public class SetStatusCommand extends OlympaCommand {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		if (args.length == 1) {
-			List<String> postentielNames = Utils.startWords(args[0], MaintenanceStatus.getNames());
+			List<String> postentielNames = Utils.startWords(args[0], ServerStatus.getNames());
 			return postentielNames;
 		} else if (args.length == 2) {
 			List<String> postentielGroups = Utils.startWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toList()));

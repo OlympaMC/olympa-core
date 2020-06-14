@@ -3,8 +3,8 @@ package fr.olympa.core.bungee.servers.commands;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.spigot.TPSUtils;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
@@ -26,7 +26,7 @@ public class ListServerCommand extends BungeeCommand {
 		sj.add("&6Liste des serveurs:");
 		Set<MonitorInfo> info = MonitorServers.getLastServerInfo();
 		for (MonitorInfo serverInfo : info) {
-			MaintenanceStatus status = serverInfo.getStatus();
+			ServerStatus status = serverInfo.getStatus();
 			StringJoiner sb = new StringJoiner(" ");
 			sb.add("&7[" + status.getNameColored() + "&7]");
 			sb.add(status.getColor() + serverInfo.getName() + "&e:");

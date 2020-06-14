@@ -6,13 +6,13 @@ import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.command.CommandListener;
 import fr.olympa.api.gui.Inventories;
 import fr.olympa.api.hook.ProtocolAction;
-import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.plugin.OlympaSpigot;
 import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.scoreboard.tab.INametagApi;
+import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
@@ -79,7 +79,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	public void onDisable() {
 		RedisSpigotSend.sendShutdown();
 		RedisAccess.close();
-		status = MaintenanceStatus.CLOSE;
+		status = ServerStatus.CLOSE;
 		nameTagApi.reset();
 		super.onDisable();
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
@@ -90,7 +90,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		instance = this;
 		LinkSpigotBungee.Provider.link = this;
 		
-		status = MaintenanceStatus.DEV;
+		status = ServerStatus.DEV;
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		super.onEnable();
 		

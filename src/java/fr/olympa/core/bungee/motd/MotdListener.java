@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
-import fr.olympa.api.maintenance.MaintenanceStatus;
+import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.utils.BungeeUtils;
@@ -56,9 +56,9 @@ public class MotdListener implements Listener {
 		// ping.setVersion(ver);
 		Configuration config = OlympaBungee.getInstance().getMaintConfig();
 		String statusString = config.getString("settings.status");
-		MaintenanceStatus status = MaintenanceStatus.get(statusString);
+		ServerStatus status = ServerStatus.get(statusString);
 		if (status == null) {
-			status = MaintenanceStatus.DEV;
+			status = ServerStatus.DEV;
 		}
 		if (virtualHost != null) {
 			String connectIp = virtualHost.getHostName();

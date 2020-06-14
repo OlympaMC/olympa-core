@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.maintenance.MaintenanceStatus;
+import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
@@ -23,7 +23,7 @@ public class ServersConnection {
 
 	public static boolean canPlayerConnect(ServerInfo name) {
 		MonitorInfo monitor = MonitorServers.get(name.getName());
-		return monitor != null && !monitor.getStatus().equals(MaintenanceStatus.CLOSE) && !monitor.getStatus().equals(MaintenanceStatus.UNKNOWN);
+		return monitor != null && !monitor.getStatus().equals(ServerStatus.CLOSE) && !monitor.getStatus().equals(ServerStatus.UNKNOWN);
 	}
 
 	public static ServerInfo getAuth() {

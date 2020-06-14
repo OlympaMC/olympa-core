@@ -4,9 +4,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import fr.olympa.api.hook.ProtocolAction;
-import fr.olympa.api.maintenance.MaintenanceStatus;
 import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.redis.RedisTestListener;
+import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.core.spigot.redis.GiveOlympaPlayerListener;
@@ -18,7 +18,7 @@ import redis.clients.jedis.JedisPubSub;
 public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCoreInterface {
 
 	protected DbConnection database = null;
-	protected MaintenanceStatus status;
+	protected ServerStatus status;
 	private String serverName = getServer().getIp() + ":" + getServer().getPort();
 	private RedisAccess redisAccess;
 
@@ -35,7 +35,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 	}
 
 	@Override
-	public MaintenanceStatus getStatus() {
+	public ServerStatus getStatus() {
 		return status;
 	}
 
@@ -57,7 +57,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		if (config != null) {
 			String statusString = config.getString("status");
 			if (statusString != null && !statusString.isEmpty()) {
-				MaintenanceStatus status2 = MaintenanceStatus.get(statusString);
+				ServerStatus status2 = ServerStatus.get(statusString);
 				if (status2 != null) {
 					setStatus(status2);
 				}
@@ -73,7 +73,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 	}
 
 	@Override
-	public void setStatus(MaintenanceStatus status) {
+	public void setStatus(ServerStatus status) {
 		this.status = status;
 	}
 

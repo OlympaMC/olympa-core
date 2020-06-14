@@ -412,7 +412,7 @@ public class MySQL {
 			} else {
 				pstate.setString(i++, null);
 			}
-			pstate.setInt(i++, olympaPlayer.getGender().getId());
+			pstate.setInt(i++, olympaPlayer.getGender().ordinal());
 			pstate.setLong(i++, olympaPlayer.getId());
 			pstate.executeUpdate();
 		} catch (SQLException e) {

@@ -2,7 +2,7 @@ package fr.olympa.core.bungee.maintenance;
 
 import java.util.logging.Level;
 
-import fr.olympa.api.maintenance.MaintenanceStatus;
+import fr.olympa.api.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
@@ -24,20 +24,20 @@ public class MaintenanceListener implements Listener {
 		Configuration config = OlympaBungee.getInstance().getMaintConfig();
 		String message = config.getString("settings.message");
 		String statusString = config.getString("settings.status");
-		MaintenanceStatus maintenanceStatus = MaintenanceStatus.get(statusString);
+		ServerStatus maintenanceStatus = ServerStatus.get(statusString);
 		// Vérifie si le serveur n'est pas en maintenance
 
 		String playerName = playername;
 		if (!config.getStringList("whitelist").contains(playerName)) {
-			if (maintenanceStatus == MaintenanceStatus.DEV) {
+			if (maintenanceStatus == ServerStatus.DEV) {
 				event.setCancelReason(BungeeUtils.connectScreen("&6Le serveur est actuellement en développement.\n\n&3Plus d'infos sur le &bTwitter &n@Olympa_fr\n&3Ou &bDiscord &nwww.discord.olympa.fr"));
 				event.setCancelled(true);
 				ProxyServer.getInstance().getLogger().log(Level.INFO, BungeeUtils.color("&d" + playername + " ne peux pas se connecter (serveur en dev)"));
-			} else if (maintenanceStatus == MaintenanceStatus.SOON) {
+			} else if (maintenanceStatus == ServerStatus.SOON) {
 				event.setCancelReason(BungeeUtils.connectScreen("&cNous ouvrons bientôt !.\n\n&3Plus d'infos sur le &bTwitter &n@Olympa_fr\\n&3Ou &bDiscord &nwww.discord.olympa.fr"));
 				event.setCancelled(true);
 				ProxyServer.getInstance().getLogger().log(Level.INFO, BungeeUtils.color("&d" + playername + " ne peux pas se connecter (serveur en dev, open soon)"));
-			} else if (maintenanceStatus == null || maintenanceStatus != MaintenanceStatus.OPEN || maintenanceStatus == MaintenanceStatus.DEV) {
+			} else if (maintenanceStatus == null || maintenanceStatus != ServerStatus.OPEN || maintenanceStatus == ServerStatus.DEV) {
 				if (message != null && !message.isEmpty()) {
 					message = "\n\n&c&nRaison:&c " + message;
 				}
