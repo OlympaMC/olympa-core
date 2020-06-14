@@ -34,6 +34,8 @@ public class RedisBungeeSend {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
 			try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 				StringJoiner servers = new StringJoiner("|");
+				for (MonitorInfo x : infos)
+					servers.add(x.getName() + ":" + x.getOnlinePlayer() + ":" + x.getMaxPlayers() + ":" + x.getStatus().getId());
 				infos.forEach(x -> servers.add(x.getName() + ":" + x.getOnlinePlayer() + ":" + x.getMaxPlayers() + ":" + x.getStatus().getId()));
 				jedis.publish("sendServersInfos", servers.toString());
 			}
