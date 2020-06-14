@@ -11,14 +11,14 @@ import net.md_5.bungee.api.config.ServerInfo;
 import redis.clients.jedis.Jedis;
 
 public class RedisBungeeSend {
-
+	
 	public static void giveOlympaPlayer(ServerInfo serverFrom, ServerInfo serverTo) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 			jedis.publish("giveOlympaPlayer", serverFrom.getName() + ";" + serverTo.getName());
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	public static void sendServerName(ServerInfo serverInfo) {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
@@ -29,16 +29,16 @@ public class RedisBungeeSend {
 			RedisAccess.INSTANCE.disconnect();
 		});
 	}
-	
+
 	public static void sendServersInfos(Set<MonitorInfo> infos) {
-		LinkSpigotBungee.Provider.link.launchAsync(() -> {
-			try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
-				StringJoiner servers = new StringJoiner("|");
-				for (MonitorInfo x : infos)
-					servers.add(x.getName() + ":" + x.getOnlinePlayer() + ":" + x.getMaxPlayers() + ":" + x.getStatus().getId());
-				infos.forEach(x -> servers.add(x.getName() + ":" + x.getOnlinePlayer() + ":" + x.getMaxPlayers() + ":" + x.getStatus().getId()));
-				jedis.publish("sendServersInfos", servers.toString());
-			}
-		});
+		//LinkSpigotBungee.Provider.link.launchAsync(() -> {
+		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
+			StringJoiner servers = new StringJoiner("|");
+			for (MonitorInfo x : infos)
+				servers.add(x.getName() + ":" + x.getOnlinePlayer() + ":" + x.getMaxPlayers() + ":" + x.getStatus().getId());
+			infos.forEach(x -> servers.add(x.getName() + ":" + x.getOnlinePlayer() + ":" + x.getMaxPlayers() + ":" + x.getStatus().getId()));
+			jedis.publish("sendServersInfos", servers.toString());
+		}
+		//});
 	}
 }
