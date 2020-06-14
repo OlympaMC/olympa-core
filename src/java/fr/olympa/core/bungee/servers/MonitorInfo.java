@@ -1,6 +1,6 @@
 package fr.olympa.core.bungee.servers;
 
-import fr.olympa.api.maintenance.MaintenanceStatus;
+import fr.olympa.api.server.ServerStatus;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Players;
@@ -12,7 +12,7 @@ public class MonitorInfo {
 	Integer ping;
 	Integer onlinePlayer;
 	Integer maxPlayers;
-	MaintenanceStatus status = MaintenanceStatus.UNKNOWN;
+	ServerStatus status = ServerStatus.UNKNOWN;
 	// Float[] tpss;
 	String error;
 	Float tps;
@@ -25,21 +25,15 @@ public class MonitorInfo {
 			onlinePlayer = players.getOnline();
 			maxPlayers = players.getMax();
 			String allMotd = serverPing.getDescriptionComponent().toLegacyText();
-			if (allMotd.startsWith("§")) {
+			if (allMotd.startsWith("§"))
 				allMotd = allMotd.substring(2);
-			}
 			String[] motd = allMotd.split(" ");
-			if (motd.length >= 1) {
-				status = MaintenanceStatus.get(motd[0]);
-			}
-			if (motd.length >= 2) {
+			if (motd.length >= 1)
+				status = ServerStatus.get(motd[0]);
+			if (motd.length >= 2)
 				tps = Float.valueOf(motd[1]);
-			}
-			// tpss =
-			// Arrays.copyOfRange(Arrays.stream(motd).map(Float::valueOf).toArray(Float[]::new),
-			// 1, motd.length);
 		} else {
-			status = MaintenanceStatus.CLOSE;
+			status = ServerStatus.CLOSE;
 			this.error = error.getMessage();
 		}
 	}
@@ -68,7 +62,7 @@ public class MonitorInfo {
 		return ProxyServer.getInstance().getServers().get(serverName);
 	}
 
-	public MaintenanceStatus getStatus() {
+	public ServerStatus getStatus() {
 		return status;
 	}
 
