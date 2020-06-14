@@ -6,6 +6,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+<<<<<<< src/java/fr/olympa/core/bungee/servers/ServersConnection.java
+=======
+import fr.olympa.api.server.ServerStatus;
+>>>>>>> src/java/fr/olympa/core/bungee/servers/ServersConnection.java
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.Prefix;

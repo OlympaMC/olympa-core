@@ -21,7 +21,7 @@ public class StaffChatHandler {
 	@SuppressWarnings("deprecation")
 	public static void sendMessage(OlympaPlayer olympaPlayer, ProxiedPlayer player, String msg) {
 		String message = msg.replaceAll("( )\\1+", " ");
-		BaseComponent[] messageComponent = TextComponent.fromLegacyText(Prefix.STAFFCHAT + Utils.capitalize(player.getServer().getInfo().getName()) + " " + olympaPlayer.getGroupNameColored() + " " + player.getName() + " §7: " + message);
+		BaseComponent[] messageComponent = TextComponent.fromLegacyText(Prefix.STAFFCHAT + Utils.capitalize(player.getServer().getInfo().getName()) + " " + olympaPlayer.getGroupNameColored() + " §l" + player.getName() + " §7: " + message);
 		ProxyServer.getInstance().getPlayers().stream().filter(p -> OlympaCorePermissions.STAFF_CHAT.hasPermission(new AccountProvider(p.getUniqueId()).getFromRedis())).forEach(p -> p.sendMessage(messageComponent));
 	}
 

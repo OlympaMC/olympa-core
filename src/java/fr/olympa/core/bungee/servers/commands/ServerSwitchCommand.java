@@ -24,7 +24,7 @@ public class ServerSwitchCommand extends BungeeCommand implements TabExecutor {
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		if (args.length == 0) {
-			sendErreur("Syntaxe incorrecte.");
+			sendError("Syntaxe incorrecte.");
 			return;
 		}
 		MonitorInfo server = MonitorServers.get(args[0]);

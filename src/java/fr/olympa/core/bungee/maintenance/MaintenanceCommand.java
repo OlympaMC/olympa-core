@@ -47,7 +47,11 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 	public void onCommand(CommandSender sender, String[] args) {
 		ProxyServer.getInstance().getScheduler().runAsync(OlympaBungee.getInstance(), () -> {
 			ServerStatus maintenanceStatus = ServerStatus.getByCommandArg(args[0]);
+<<<<<<< src/java/fr/olympa/core/bungee/maintenance/MaintenanceCommand.java
 			if (maintenanceStatus != null)
+=======
+			if (maintenanceStatus != null) {
+>>>>>>> src/java/fr/olympa/core/bungee/maintenance/MaintenanceCommand.java
 				switch (maintenanceStatus) {
 
 				case OPEN:
@@ -172,8 +176,13 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 	}
 
 	@SuppressWarnings("deprecation")
+<<<<<<< src/java/fr/olympa/core/bungee/maintenance/MaintenanceCommand.java
 	private void setServerStatus(ServerStatus status, String message, CommandSender player) {
 		BungeeCustomConfig customConfig = OlympaBungee.getInstance().getMaintCustomConfig();
+=======
+	private void setMaintenance(ServerStatus maintenanceStatus, String message, CommandSender player) {
+		CustomBungeeConfig customConfig = OlympaBungee.getInstance().getMaintCustomConfig();
+>>>>>>> src/java/fr/olympa/core/bungee/maintenance/MaintenanceCommand.java
 		Configuration config = customConfig.getConfig();
 		config.set("settings.status", status.getName());
 		config.set("settings.message", message);

@@ -57,8 +57,14 @@ public class MotdListener implements Listener {
 		Configuration config = OlympaBungee.getInstance().getMaintConfig();
 		String statusString = config.getString("settings.status");
 		ServerStatus status = ServerStatus.get(statusString);
+<<<<<<< src/java/fr/olympa/core/bungee/motd/MotdListener.java
 		if (status == null)
 			status = ServerStatus.DEV;
+=======
+		if (status == null) {
+			status = ServerStatus.DEV;
+		}
+>>>>>>> src/java/fr/olympa/core/bungee/motd/MotdListener.java
 		if (virtualHost != null) {
 			String connectIp = virtualHost.getHostName();
 			// System.out.println("ping to " + connectIp + " ping " + new

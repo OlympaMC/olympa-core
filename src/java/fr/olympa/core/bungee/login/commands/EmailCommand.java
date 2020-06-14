@@ -66,7 +66,7 @@ public class EmailCommand extends BungeeCommand {
 		String playerPasswordHash = this.olympaPlayer.getPassword();
 		if (playerPasswordHash != null) {
 			// TODO JSON NEEDED
-			this.sendErreur("Tu as déjà une adresse mail. Pour la changer, rends-toi sur le site www.olympa.fr/profile.");
+			this.sendError("Tu as déjà une adresse mail. Pour la changer, rends-toi sur le site www.olympa.fr/profile.");
 			return;
 		}
 

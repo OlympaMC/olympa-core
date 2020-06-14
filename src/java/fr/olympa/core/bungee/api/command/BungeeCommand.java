@@ -86,7 +86,7 @@ public abstract class BungeeCommand extends Command {
 			if (sender instanceof ProxiedPlayer) {
 				proxiedPlayer = (ProxiedPlayer) sender;
 				if (!bypassAuth && DataHandler.isUnlogged(proxiedPlayer)) {
-					sendErreur("Tu dois être connecté. Fait &4/login <mdp>&c.");
+					sendError("Tu dois être connecté. Fait &4/login <mdp>&c.");
 					return;
 				}
 
@@ -120,9 +120,8 @@ public abstract class BungeeCommand extends Command {
 	}
 
 	protected OlympaPlayer getOlympaPlayer() {
-		if (proxiedPlayer != null)
-			return new AccountProvider(proxiedPlayer.getUniqueId()).getFromRedis();
-		return null;
+		if (proxiedPlayer == null) return null;
+		return olympaPlayer == null ? olympaPlayer = new AccountProvider(proxiedPlayer.getUniqueId()).getFromRedis() : olympaPlayer;
 	}
 
 	public OlympaPermission getPerm() {
@@ -140,28 +139,27 @@ public abstract class BungeeCommand extends Command {
 	}
 
 	public void sendDoNotHavePermission() {
-		sendErreur("Tu as pas la permission &l(◑_◑)");
+		sendError("Tu as pas la permission &l(◑_◑)");
 	}
 
-	public void sendErreur(String message) {
+	public void sendError(String message) {
 		this.sendMessage(Prefix.DEFAULT_BAD, message);
 	}
 
 	public void sendImpossibleWithConsole() {
-		sendErreur("Impossible avec la console.");
+		sendError("Impossible avec la console.");
 	}
 
 	public void sendImpossibleWithOlympaPlayer() {
-		sendErreur("Une erreur est survenu avec tes donnés.");
+		sendError("Une erreur est survenu avec tes donnés.");
 	}
 
 	public static void sendMessage(CommandSender sender, Prefix prefix, String text) {
 		sendMessage(sender, prefix + BungeeUtils.color(text));
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void sendMessage(CommandSender sender, String text) {
-		sender.sendMessage(BungeeUtils.color(text));
+		sender.sendMessage(TextComponent.fromLegacyText(BungeeUtils.color(text)));
 	}
 
 	public void sendMessage(Prefix prefix, String text) {
@@ -177,7 +175,7 @@ public abstract class BungeeCommand extends Command {
 	}
 
 	public void sendUnknownPlayer(String name) {
-		sendErreur("Le joueur &4" + name + "&c est introuvable.");
+		sendError("Le joueur &4" + name + "&c est introuvable.");
 		// TODO check historique player
 	}
 

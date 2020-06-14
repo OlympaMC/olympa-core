@@ -411,6 +411,10 @@ public class MySQL {
 				pstate.setString(i++, GsonCustomizedObjectTypeAdapter.GSON.toJson(histIp));
 			else
 				pstate.setString(i++, null);
+<<<<<<< src/java/fr/olympa/api/sql/MySQL.java
+=======
+			}
+>>>>>>> src/java/fr/olympa/api/sql/MySQL.java
 			pstate.setInt(i++, olympaPlayer.getGender().ordinal());
 			pstate.setLong(i++, olympaPlayer.getId());
 			pstate.executeUpdate();

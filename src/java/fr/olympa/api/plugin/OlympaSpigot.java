@@ -13,12 +13,14 @@ import fr.olympa.core.spigot.redis.GiveOlympaPlayerListener;
 import fr.olympa.core.spigot.redis.GiveToOlympaPlayerListener;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.redis.SendServerNameListener;
+import redis.clients.jedis.JedisPubSub;
 
 public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCoreInterface {
 
 	protected DbConnection database = null;
 	protected ServerStatus status;
 	private String serverName = getServer().getIp() + ":" + getServer().getPort();
+	private RedisAccess redisAccess;
 
 	@Override
 	public Connection getDatabase() throws SQLException {
@@ -37,6 +39,10 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		return status;
 	}
 
+	public void registerRedisSub(JedisPubSub sub, String channel) {
+		new Thread(() -> redisAccess.newConnection().subscribe(sub, channel), "subscriberThread").start();
+	}
+
 	@Override
 	public void onDisable() {
 		super.onDisable();
@@ -51,7 +57,11 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 			String statusString = config.getString("status");
 			if (statusString != null && !statusString.isEmpty()) {
 				ServerStatus status2 = ServerStatus.get(statusString);
+<<<<<<< src/java/fr/olympa/api/plugin/OlympaSpigot.java
 				if (status2 != null)
+=======
+				if (status2 != null) {
+>>>>>>> src/java/fr/olympa/api/plugin/OlympaSpigot.java
 					setStatus(status2);
 			}
 			setupDatabase();
@@ -90,14 +100,14 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		if (is != null && is.length != 0)
 			i1 = is[0] + 1;
 		int i = i1;
-		RedisAccess redisAccess = RedisAccess.init(getServerName());
+		redisAccess = RedisAccess.init(getServerName());
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
 			// Test
-			new Thread(() -> redisAccess.newConnection().subscribe(new RedisTestListener(), "test"), "subscriberThread").start();
-			new Thread(() -> redisAccess.newConnection().subscribe(new SendServerNameListener(), "sendServerName"), "subscriberThread").start();
-			new Thread(() -> redisAccess.newConnection().subscribe(new GiveOlympaPlayerListener(), "giveOlympaPlayer"), "subscriberThread").start();
-			new Thread(() -> redisAccess.newConnection().subscribe(new GiveToOlympaPlayerListener(), "giveToOlympaPlayer"), "subscriberThread").start();
+			registerRedisSub(new RedisTestListener(), "test");
+			registerRedisSub(new SendServerNameListener(), "sendServerName");
+			registerRedisSub(new GiveOlympaPlayerListener(), "giveOlympaPlayer");
+			registerRedisSub(new GiveToOlympaPlayerListener(), "giveToOlympaPlayer");
 			RedisSpigotSend.askServerName();
 
 			sendMessage("&aConnexion à &2Redis&a établie.");
