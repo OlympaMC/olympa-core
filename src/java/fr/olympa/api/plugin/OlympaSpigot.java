@@ -46,9 +46,8 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 	@Override
 	public void onDisable() {
 		super.onDisable();
-		if (database != null) {
+		if (database != null)
 			database.close();
-		}
 	}
 
 	@Override
@@ -58,9 +57,12 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 			String statusString = config.getString("status");
 			if (statusString != null && !statusString.isEmpty()) {
 				ServerStatus status2 = ServerStatus.get(statusString);
+<<<<<<< src/java/fr/olympa/api/plugin/OlympaSpigot.java
+				if (status2 != null)
+=======
 				if (status2 != null) {
+>>>>>>> src/java/fr/olympa/api/plugin/OlympaSpigot.java
 					setStatus(status2);
-				}
 			}
 			setupDatabase();
 			setupRedis();
@@ -79,27 +81,24 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 
 	private void setupDatabase(int... is) {
 		int i1 = 0;
-		if (is != null && is.length != 0) {
+		if (is != null && is.length != 0)
 			i1 = is[0] + 1;
-		}
 		int i = i1;
 		DbCredentials dbcredentials = new DbCredentials(getConfig());
 		database = new DbConnection(dbcredentials);
-		if (database.connect()) {
+		if (database.connect())
 			sendMessage("&aConnexion à la base de donnée &2" + dbcredentials.getDatabase() + "&a établie.");
-		} else {
-			if (i % 100 == 0) {
+		else {
+			if (i % 100 == 0)
 				sendMessage("&cConnexion à la base de donnée &4" + dbcredentials.getDatabase() + "&c impossible.");
-			}
 			getTask().runTaskLater(() -> setupDatabase(i), 10 * 20);
 		}
 	}
 
 	private void setupRedis(int... is) {
 		int i1 = 0;
-		if (is != null && is.length != 0) {
+		if (is != null && is.length != 0)
 			i1 = is[0] + 1;
-		}
 		int i = i1;
 		redisAccess = RedisAccess.init(getServerName());
 		redisAccess.connect();
@@ -113,9 +112,8 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
-			if (i % 100 == 0) {
+			if (i % 100 == 0)
 				sendMessage("&cConnexion à &4Redis&c impossible.");
-			}
 			getTask().runTaskLater(() -> setupRedis(i), 10 * 20);
 		}
 	}

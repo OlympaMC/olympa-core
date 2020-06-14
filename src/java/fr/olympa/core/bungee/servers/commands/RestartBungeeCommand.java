@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.commands;
+package fr.olympa.core.bungee.servers.commands;
 
 import java.io.BufferedReader;
 import java.io.IOException;

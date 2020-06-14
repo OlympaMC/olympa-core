@@ -6,8 +6,12 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+<<<<<<< src/java/fr/olympa/core/bungee/servers/ServersConnection.java
+=======
 import fr.olympa.api.server.ServerStatus;
+>>>>>>> src/java/fr/olympa/core/bungee/servers/ServersConnection.java
 import fr.olympa.api.server.OlympaServer;
+import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -36,9 +40,8 @@ public class ServersConnection {
 		}).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayer()));
 		// TODO add sort by name1 name2 name3
 		Entry<ServerInfo, Integer> auth = auths.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
-		if (auth != null) {
+		if (auth != null)
 			return auth.getKey();
-		}
 		// TODO create new server
 		return null;
 	}
@@ -53,9 +56,8 @@ public class ServersConnection {
 		}).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() / 2 - si.getOnlinePlayer()));
 		// TODO add sort by name1 name2 name3
 		Entry<ServerInfo, Integer> lobby = lobbys.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
-		if (lobby != null) {
+		if (lobby != null)
 			return lobby.getKey();
-		}
 		// TODO create new server
 		return null;
 	}
@@ -70,9 +72,8 @@ public class ServersConnection {
 		ServerInfo server = servers.get(nameOrIpPort);
 		if (server == null) {
 			String[] ipPort = nameOrIpPort.split(":");
-			if (ipPort.length >= 2) {
+			if (ipPort.length >= 2)
 				server = servers.values().stream().filter(sr -> sr.getAddress().getAddress().getHostAddress().equals(ipPort[0]) && sr.getAddress().getPort() == Integer.parseInt(ipPort[1])).findFirst().orElse(null);
-			}
 		}
 		return server;
 	}
@@ -92,7 +93,7 @@ public class ServersConnection {
 
 	@SuppressWarnings("deprecation")
 	private static void tryConnectTo(ProxiedPlayer player, OlympaServer olympaServer, ServerInfo server) {
-		if (olympaServer != null) {
+		if (olympaServer != null)
 			switch (olympaServer) {
 			case LOBBY:
 				server = ServersConnection.getLobby();
@@ -104,7 +105,6 @@ public class ServersConnection {
 				server = getServer(olympaServer.getName());
 				break;
 			}
-		}
 		if (server == null) {
 			player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Aucun serveur " + olympaServer.getNameCaps() + " n'est actuellement disponible merci de patienter ..."));
 			return;

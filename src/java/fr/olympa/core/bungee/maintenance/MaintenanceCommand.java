@@ -13,7 +13,7 @@ import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.api.config.CustomBungeeConfig;
+import fr.olympa.core.bungee.api.config.BungeeCustomConfig;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -47,11 +47,15 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 	public void onCommand(CommandSender sender, String[] args) {
 		ProxyServer.getInstance().getScheduler().runAsync(OlympaBungee.getInstance(), () -> {
 			ServerStatus maintenanceStatus = ServerStatus.getByCommandArg(args[0]);
+<<<<<<< src/java/fr/olympa/core/bungee/maintenance/MaintenanceCommand.java
+			if (maintenanceStatus != null)
+=======
 			if (maintenanceStatus != null) {
+>>>>>>> src/java/fr/olympa/core/bungee/maintenance/MaintenanceCommand.java
 				switch (maintenanceStatus) {
 
 				case OPEN:
-					setMaintenance(maintenanceStatus, null, sender);
+					setServerStatus(maintenanceStatus, null, sender);
 					break;
 
 				case MAINTENANCE:
@@ -65,29 +69,28 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 								i1 = 0;
 							}
 						}
-						setMaintenance(maintenanceStatus, "&c" + String.join(" ", reason), sender);
-					} else {
-						setMaintenance(maintenanceStatus, "", sender);
-					}
+						setServerStatus(maintenanceStatus, "&c" + String.join(" ", reason), sender);
+					} else
+						setServerStatus(maintenanceStatus, "", sender);
 					break;
 
 				case DEV:
-					setMaintenance(maintenanceStatus, null, sender);
+					setServerStatus(maintenanceStatus, null, sender);
 					break;
 
 				case SOON:
-					setMaintenance(maintenanceStatus, null, sender);
+					setServerStatus(maintenanceStatus, null, sender);
 					break;
 
 				case BETA:
-					setMaintenance(maintenanceStatus, null, sender);
+					setServerStatus(maintenanceStatus, null, sender);
 					break;
 				default:
 					break;
 				}
-			} else {
+			else {
 				OlympaBungee olympaBungee = (OlympaBungee) plugin;
-				CustomBungeeConfig customConfig = olympaBungee.getMaintCustomConfig();
+				BungeeCustomConfig customConfig = olympaBungee.getMaintCustomConfig();
 				Configuration maintconfig = customConfig.getConfig();
 				Configuration defaultConfig = olympaBungee.getConfig();
 				switch (args[0].toLowerCase()) {
@@ -102,9 +105,8 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 					if (!whitelist.contains(args[1])) {
 						whitelist.add(args[1]);
 						sendMessage(defaultConfig.getString("maintenance.messages.added").replace("%player%", args[1]));
-					} else {
+					} else
 						sendMessage(defaultConfig.getString("maintenance.messages.alreadyadded").replace("%player%", args[1]));
-					}
 					maintconfig.set("whitelist", whitelist);
 					customConfig.save();
 					break;
@@ -118,9 +120,8 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 					if (whitelist.contains(args[1])) {
 						whitelist.remove(args[1]);
 						sendMessage(defaultConfig.getString("maintenance.messages.removed").replace("%player%", args[1]));
-					} else {
+					} else
 						sendMessage(defaultConfig.getString("maintenance.messages.alreadyremoved").replace("%player%", args[1]));
-					}
 					maintconfig.set("whitelist", whitelist);
 					customConfig.save();
 					break;
@@ -138,9 +139,8 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 					String statusString = maintconfig.getString("settings.status");
 					maintenanceStatus = ServerStatus.get(statusString);
 					String statusmsg = "";
-					if (message != "") {
+					if (message != "")
 						statusmsg = "(" + message.replaceAll("\n", "") + ")";
-					}
 					sendMessage(BungeeUtils.color("&6Le mode maintenance est en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
 					break;
 
@@ -164,9 +164,8 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 			switch (Utils.removeAccents(args[0]).toLowerCase()) {
 			case "remove":
 				Configuration maintconfig = OlympaBungee.getInstance().getMaintConfig();
-				if (maintconfig != null) {
+				if (maintconfig != null)
 					return Utils.startWords(args[1], maintconfig.getStringList("whitelist"));
-				}
 				break;
 			case "add":
 				return MySQL.getPlayersBySimilarName(args[1]).stream().map(OlympaPlayer::getName).collect(Collectors.toList());
@@ -177,16 +176,20 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 	}
 
 	@SuppressWarnings("deprecation")
+<<<<<<< src/java/fr/olympa/core/bungee/maintenance/MaintenanceCommand.java
+	private void setServerStatus(ServerStatus status, String message, CommandSender player) {
+		BungeeCustomConfig customConfig = OlympaBungee.getInstance().getMaintCustomConfig();
+=======
 	private void setMaintenance(ServerStatus maintenanceStatus, String message, CommandSender player) {
 		CustomBungeeConfig customConfig = OlympaBungee.getInstance().getMaintCustomConfig();
+>>>>>>> src/java/fr/olympa/core/bungee/maintenance/MaintenanceCommand.java
 		Configuration config = customConfig.getConfig();
-		config.set("settings.status", maintenanceStatus.getName());
+		config.set("settings.status", status.getName());
 		config.set("settings.message", message);
 		customConfig.save();
 		String statusmsg = "";
-		if (message != null && !message.isEmpty()) {
+		if (message != null && !message.isEmpty())
 			statusmsg = "(" + message.replace("\n", "") + ")";
-		}
-		player.sendMessage(ColorUtils.color("&6Le mode maintenance est désormais en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
+		player.sendMessage(ColorUtils.color("&6Le mode maintenance est désormais en mode " + status.getNameColored() + "&6" + statusmsg + "."));
 	}
 }

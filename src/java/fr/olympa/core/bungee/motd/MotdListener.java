@@ -57,9 +57,14 @@ public class MotdListener implements Listener {
 		Configuration config = OlympaBungee.getInstance().getMaintConfig();
 		String statusString = config.getString("settings.status");
 		ServerStatus status = ServerStatus.get(statusString);
+<<<<<<< src/java/fr/olympa/core/bungee/motd/MotdListener.java
+		if (status == null)
+			status = ServerStatus.DEV;
+=======
 		if (status == null) {
 			status = ServerStatus.DEV;
 		}
+>>>>>>> src/java/fr/olympa/core/bungee/motd/MotdListener.java
 		if (virtualHost != null) {
 			String connectIp = virtualHost.getHostName();
 			// System.out.println("ping to " + connectIp + " ping " + new
@@ -95,16 +100,16 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()),
 			});
-			if (new Random().nextInt(2) == 0) {
+			if (new Random().nextInt(2) == 0)
 				ping.setDescriptionComponent(new TextComponent(motd_base + games));
-			} else {
+			else {
 				StringBuilder sb = new StringBuilder();
 				int before = -1;
 				for (int i = 0; i < 2; i++) {
 					int random;
-					do {
+					do
 						random = new Random().nextInt(4);
-					} while (before == random);
+					while (before == random);
 					switch (random) {
 					case 0:
 						sb.append(teamspeak);
@@ -119,9 +124,8 @@ public class MotdListener implements Listener {
 						sb.append(discord);
 						break;
 					}
-					if (i == 0) {
+					if (i == 0)
 						sb.append(separator);
-					}
 					before = random;
 				}
 				ping.setDescriptionComponent(new TextComponent(motd_base + sb.toString()));
@@ -130,9 +134,8 @@ public class MotdListener implements Listener {
 		case MAINTENANCE:
 			try {
 				File file = new File("maintenance.png");
-				if (!file.exists()) {
+				if (!file.exists())
 					return;
-				}
 				BufferedImage in = ImageIO.read(new File("maintenance.png"));
 				ping.setFavicon(Favicon.create(in));
 			} catch (IOException e) {
@@ -158,9 +161,8 @@ public class MotdListener implements Listener {
 		case DEV:
 			try {
 				File file = new File("maintenance.png");
-				if (!file.exists()) {
+				if (!file.exists())
 					return;
-				}
 				BufferedImage in = ImageIO.read(new File("maintenance.png"));
 				ping.setFavicon(Favicon.create(in));
 			} catch (IOException e) {

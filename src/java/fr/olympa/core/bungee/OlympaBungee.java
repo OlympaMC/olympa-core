@@ -11,7 +11,7 @@ import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.api.config.CustomBungeeConfig;
+import fr.olympa.core.bungee.api.config.BungeeCustomConfig;
 import fr.olympa.core.bungee.ban.commands.BanCommand;
 import fr.olympa.core.bungee.ban.commands.BanHistoryCommand;
 import fr.olympa.core.bungee.ban.commands.BanIpCommand;
@@ -23,7 +23,6 @@ import fr.olympa.core.bungee.ban.commands.UnbanCommand;
 import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
 import fr.olympa.core.bungee.commands.InfoCommand;
-import fr.olympa.core.bungee.commands.RestartBungeeCommand;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
 import fr.olympa.core.bungee.datamanagment.GetUUIDCommand;
 import fr.olympa.core.bungee.footer.FooterListener;
@@ -48,6 +47,7 @@ import fr.olympa.core.bungee.security.BasicSecurityListener;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersListener;
 import fr.olympa.core.bungee.servers.commands.ListServerCommand;
+import fr.olympa.core.bungee.servers.commands.RestartBungeeCommand;
 import fr.olympa.core.bungee.servers.commands.RestartServerCommand;
 import fr.olympa.core.bungee.servers.commands.ServerSwitchCommand;
 import fr.olympa.core.bungee.servers.commands.StartServerCommand;
@@ -73,8 +73,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	
 	protected DbConnection database = null;
 	protected long uptime = Utils.getCurrentTimeInSeconds();
-	protected CustomBungeeConfig defaultConfig;
-	protected CustomBungeeConfig maintConfig;
+	protected BungeeCustomConfig defaultConfig;
+	protected BungeeCustomConfig maintConfig;
 	
 	public Configuration getConfig() {
 		return defaultConfig.getConfig();
@@ -85,7 +85,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		return database.getConnection();
 	}
 	
-	public CustomBungeeConfig getDefaultConfig() {
+	public BungeeCustomConfig getDefaultConfig() {
 		return defaultConfig;
 	}
 	
@@ -93,7 +93,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		return maintConfig != null ? maintConfig.getConfig() : null;
 	}
 	
-	public CustomBungeeConfig getMaintCustomConfig() {
+	public BungeeCustomConfig getMaintCustomConfig() {
 		return maintConfig;
 	}
 	
@@ -132,9 +132,9 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		instance = this;
 		LinkSpigotBungee.Provider.link = this;
 		
-		defaultConfig = new CustomBungeeConfig(this, "config");
+		defaultConfig = new BungeeCustomConfig(this, "config");
 		defaultConfig.load();
-		maintConfig = new CustomBungeeConfig(this, "maintenance");
+		maintConfig = new BungeeCustomConfig(this, "maintenance");
 		maintConfig.load();
 		setupDatabase();
 		new MySQL(database);
@@ -200,11 +200,11 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		getProxy().getConsole().sendMessage(BungeeUtils.color(getPrefixConsole() + message));
 	}
 	
-	public void setDefaultConfig(CustomBungeeConfig defaultConfig) {
+	public void setDefaultConfig(BungeeCustomConfig defaultConfig) {
 		this.defaultConfig = defaultConfig;
 	}
 	
-	public void setMaintConfig(CustomBungeeConfig maintConfig) {
+	public void setMaintConfig(BungeeCustomConfig maintConfig) {
 		this.maintConfig = maintConfig;
 	}
 	

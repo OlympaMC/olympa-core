@@ -25,19 +25,13 @@ public class MonitorInfo {
 			onlinePlayer = players.getOnline();
 			maxPlayers = players.getMax();
 			String allMotd = serverPing.getDescriptionComponent().toLegacyText();
-			if (allMotd.startsWith("§")) {
+			if (allMotd.startsWith("§"))
 				allMotd = allMotd.substring(2);
-			}
 			String[] motd = allMotd.split(" ");
-			if (motd.length >= 1) {
+			if (motd.length >= 1)
 				status = ServerStatus.get(motd[0]);
-			}
-			if (motd.length >= 2) {
+			if (motd.length >= 2)
 				tps = Float.valueOf(motd[1]);
-			}
-			// tpss =
-			// Arrays.copyOfRange(Arrays.stream(motd).map(Float::valueOf).toArray(Float[]::new),
-			// 1, motd.length);
 		} else {
 			status = ServerStatus.CLOSE;
 			this.error = error.getMessage();

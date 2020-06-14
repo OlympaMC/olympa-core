@@ -23,12 +23,12 @@ import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class SetStatusCommand extends OlympaCommand {
-
+	
 	public SetStatusCommand(Plugin plugin) {
 		super(plugin, "setstatus", OlympaCorePermissions.SETSTATUS_COMMAND, "setstate");
 		usageString = "<" + String.join(", ", ServerStatus.getNames()) + ">";
 	}
-
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		ServerStatus status = OlympaCore.getInstance().getStatus();
@@ -38,7 +38,7 @@ public class SetStatusCommand extends OlympaCommand {
 		}
 		ServerStatus status2 = ServerStatus.get(args[0]);
 		if (status2 == null) {
-			this.sendUsage(label);
+			sendUsage(label);
 			return true;
 		}
 		if (status == status2) {
@@ -64,7 +64,7 @@ public class SetStatusCommand extends OlympaCommand {
 		sendSuccess("Le serveur est désormais en mode " + status2.getNameColored() + "&a, il était avant en mode " + status.getNameColored() + "&a.");
 		return false;
 	}
-
+	
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		if (args.length == 1) {
@@ -76,5 +76,5 @@ public class SetStatusCommand extends OlympaCommand {
 		}
 		return null;
 	}
-
+	
 }

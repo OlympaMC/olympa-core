@@ -30,18 +30,14 @@ public class ListServerCommand extends BungeeCommand {
 			StringJoiner sb = new StringJoiner(" ");
 			sb.add("&7[" + status.getNameColored() + "&7]");
 			sb.add(status.getColor() + serverInfo.getName() + "&e:");
-			if (serverInfo.getOnlinePlayer() != null) {
+			if (serverInfo.getOnlinePlayer() != null)
 				sb.add(serverInfo.getOnlinePlayer() + "/" + serverInfo.getMaxPlayers());
-			}
-			if (serverInfo.getTps() != null) {
+			if (serverInfo.getTps() != null)
 				sb.add(TPSUtils.getTpsColor(serverInfo.getTps()) + "tps");
-			}
-			if (serverInfo.getPing() != null) {
+			if (serverInfo.getPing() != null)
 				sb.add(serverInfo.getPing() + "ms");
-			}
-			if (serverInfo.getError() != null) {
+			if (serverInfo.getError() != null)
 				sb.add(status.getColor() + "Erreur: " + serverInfo.getError());
-			}
 			sj.add(sb.toString());
 		}
 		sender.sendMessage(ColorUtils.color(sj.toString()));
