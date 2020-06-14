@@ -15,24 +15,28 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
-public class CustomBungeeConfig {
-
+public class BungeeCustomConfig {
+	
 	private Plugin plugin;
 	private String fileName;
 	private Configuration configuration;
-
-	public CustomBungeeConfig(Plugin plugin, String fileName) {
+	
+	public BungeeCustomConfig(Plugin plugin, String fileName) {
 		this.plugin = plugin;
-		if (!fileName.contains(".yml")) {
+		if (!fileName.contains(".yml"))
 			fileName += ".yml";
-		}
 		this.fileName = fileName;
 	}
-
+	
 	public Configuration getConfig() {
 		return configuration;
 	}
-
+	
+	public void reload() {
+		load();
+		plugin.getProxy().getPluginManager().callEvent(new BungeeConfigReloadEvent(getConfig()));
+	}
+	
 	/**
 	 * Charge la config & met la met à jour si besoin
 	 *
@@ -40,9 +44,8 @@ public class CustomBungeeConfig {
 	 */
 	public void load() {
 		File folder = plugin.getDataFolder();
-		if (!folder.exists()) {
+		if (!folder.exists())
 			folder.mkdir();
-		}
 		File configFile = new File(folder, fileName);
 		try {
 			if (!configFile.exists()) {
@@ -62,13 +65,13 @@ public class CustomBungeeConfig {
 					configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
 				}
 			}
-
+			
 		} catch (IOException e) {
 			ProxyServer.getInstance().getLogger().log(Level.SEVERE, ChatColor.RED + "Impossible de charger la config: " + fileName);
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Sauvegarde la config
 	 *

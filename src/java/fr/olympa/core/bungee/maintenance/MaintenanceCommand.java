@@ -13,7 +13,7 @@ import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.api.config.CustomBungeeConfig;
+import fr.olympa.core.bungee.api.config.BungeeCustomConfig;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -87,7 +87,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 				}
 			} else {
 				OlympaBungee olympaBungee = (OlympaBungee) plugin;
-				CustomBungeeConfig customConfig = olympaBungee.getMaintCustomConfig();
+				BungeeCustomConfig customConfig = olympaBungee.getMaintCustomConfig();
 				Configuration maintconfig = customConfig.getConfig();
 				Configuration defaultConfig = olympaBungee.getConfig();
 				switch (args[0].toLowerCase()) {
@@ -178,7 +178,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 
 	@SuppressWarnings("deprecation")
 	private void setMaintenance(MaintenanceStatus maintenanceStatus, String message, CommandSender player) {
-		CustomBungeeConfig customConfig = OlympaBungee.getInstance().getMaintCustomConfig();
+		BungeeCustomConfig customConfig = OlympaBungee.getInstance().getMaintCustomConfig();
 		Configuration config = customConfig.getConfig();
 		config.set("settings.status", maintenanceStatus.getName());
 		config.set("settings.message", message);
