@@ -6,10 +6,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-<<<<<<< src/java/fr/olympa/core/bungee/servers/ServersConnection.java
-=======
-import fr.olympa.api.server.ServerStatus;
->>>>>>> src/java/fr/olympa/core/bungee/servers/ServersConnection.java
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.Prefix;
@@ -22,18 +18,18 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 public class ServersConnection {
-
+	
 	private static Map<ProxiedPlayer, ScheduledTask> connect = new HashMap<>();
-
+	
 	public static boolean canPlayerConnect(ServerInfo name) {
 		MonitorInfo monitor = MonitorServers.get(name.getName());
 		return monitor != null && !monitor.getStatus().equals(ServerStatus.CLOSE) && !monitor.getStatus().equals(ServerStatus.UNKNOWN);
 	}
-
+	
 	public static ServerInfo getAuth() {
 		return getAuth(null);
 	}
-
+	
 	public static ServerInfo getAuth(ServerInfo noThis) {
 		Map<ServerInfo, Integer> auths = MonitorServers.getLastServerInfo().stream().filter(si -> {
 			return si.isOpen() && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("auth") && si.getMaxPlayers() - si.getOnlinePlayer() > 0;
@@ -45,11 +41,11 @@ public class ServersConnection {
 		// TODO create new server
 		return null;
 	}
-
+	
 	public static ServerInfo getLobby() {
 		return getLobby(null);
 	}
-
+	
 	public static ServerInfo getLobby(ServerInfo noThis) {
 		Map<ServerInfo, Integer> lobbys = MonitorServers.getLastServerInfo().stream().filter(si -> {
 			return si.isOpen() && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("lobby") && si.getMaxPlayers() / 2 - si.getOnlinePlayer() > 0;
@@ -61,11 +57,11 @@ public class ServersConnection {
 		// TODO create new server
 		return null;
 	}
-
+	
 	public static ServerInfo getServer(String name) {
 		return MonitorServers.getLastServerInfo().stream().filter(si -> si.getError() == null && si.getName().startsWith(name)).map(MonitorInfo::getServerInfo).findFirst().orElse(null);
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	public static ServerInfo getServerByNameOrIpPort(String nameOrIpPort) {
 		Map<String, ServerInfo> servers = ProxyServer.getInstance().getServers();
@@ -77,7 +73,7 @@ public class ServersConnection {
 		}
 		return server;
 	}
-
+	
 	public static void removeTryToConnect(ProxiedPlayer player) {
 		ScheduledTask task = connect.get(player);
 		if (task != null) {
@@ -85,12 +81,12 @@ public class ServersConnection {
 			connect.remove(player);
 		}
 	}
-
+	
 	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer, ServerInfo server) {
 		ScheduledTask task = ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer, server), 0, 30, TimeUnit.SECONDS);
 		connect.put(player, task);
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	private static void tryConnectTo(ProxiedPlayer player, OlympaServer olympaServer, ServerInfo server) {
 		if (olympaServer != null)
@@ -117,6 +113,6 @@ public class ServersConnection {
 		player.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("Tentative de connexion au serveur &2" + serverName + "&a..."));
 		player.connect(server);
 		return;
-
+		
 	}
 }
