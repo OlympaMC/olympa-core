@@ -22,7 +22,7 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
 
 public class MotdListener implements Listener {
-
+	
 	String prefix = "§e-------------§6 Olympa §e-------------";
 	String motd_base = "§3⬣ §e§lOlympa §6§n1.9 à 1.15.2+§3 ⬣\n";
 	// §6Fun \u2606 Tryhard \u2606 Ranked
@@ -35,7 +35,7 @@ public class MotdListener implements Listener {
 	String reason = "§6Raison de la maintenance :";
 	String separator = "§7|";
 	String suffix = "§e---------------------------------";
-
+	
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPing(ProxyPingEvent event) {
@@ -45,26 +45,20 @@ public class MotdListener implements Listener {
 		ServerPing ping = event.getResponse();
 		ServerPing.Protocol ver = ping.getVersion();
 		ServerPing.Players players = ping.getPlayers();
-
+		
 		// Petit troll pour ceux qui récup des stats
 		if (ip.equals("54.38.31.134")) {
 			players.setOnline(new Random().nextInt(10000));
 			return;
 		}
-
+		
 		ver.setName(version + " §7" + players.getOnline() + "§8/§7" + players.getMax());
 		// ping.setVersion(ver);
 		Configuration config = OlympaBungee.getInstance().getMaintConfig();
 		String statusString = config.getString("settings.status");
 		ServerStatus status = ServerStatus.get(statusString);
-<<<<<<< src/java/fr/olympa/core/bungee/motd/MotdListener.java
 		if (status == null)
 			status = ServerStatus.DEV;
-=======
-		if (status == null) {
-			status = ServerStatus.DEV;
-		}
->>>>>>> src/java/fr/olympa/core/bungee/motd/MotdListener.java
 		if (virtualHost != null) {
 			String connectIp = virtualHost.getHostName();
 			// System.out.println("ping to " + connectIp + " ping " + new
