@@ -1,8 +1,6 @@
 package fr.olympa.core.bungee.redis;
 
 import java.net.InetSocketAddress;
-import java.util.Set;
-import java.util.StringJoiner;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.provider.RedisAccess;
@@ -30,15 +28,9 @@ public class RedisBungeeSend {
 		});
 	}
 
-	public static void sendServersInfos(Set<MonitorInfo> infos) {
-		//LinkSpigotBungee.Provider.link.launchAsync(() -> {
+	public static void sendServerInfos(MonitorInfo server) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
-			StringJoiner servers = new StringJoiner("|");
-			for (MonitorInfo x : infos)
-				servers.add(x.getName() + ":" + x.getOnlinePlayer() + ":" + x.getMaxPlayers() + ":" + x.getStatus().getId());
-			infos.forEach(x -> servers.add(x.getName() + ":" + x.getOnlinePlayer() + ":" + x.getMaxPlayers() + ":" + x.getStatus().getId()));
-			jedis.publish("sendServersInfos", servers.toString());
+			jedis.publish("sendServersInfos", server.getName() + ":" + server.getOnlinePlayer() + ":" + server.getMaxPlayers() + ":" + server.getStatus().getId());
 		}
-		//});
 	}
 }

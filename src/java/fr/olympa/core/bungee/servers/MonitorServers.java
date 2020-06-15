@@ -56,7 +56,9 @@ public class MonitorServers {
 		long nano = System.nanoTime();
 		serverInfo.ping((result, error) -> {
 			servs.removeIf(e -> e.serverName.equals(serverInfo.getName()));
-			servs.add(new MonitorInfo(serverInfo, nano, result, error));
+			MonitorInfo info = new MonitorInfo(serverInfo, nano, result, error);
+			servs.add(info);
+			RedisBungeeSend.sendServerInfos(info);
 			serversInfo.put(entry.getKey(), servs);
 		});
 	}
@@ -73,11 +75,13 @@ public class MonitorServers {
 				Set<MonitorInfo> serversList = new HashSet<>();
 				for (ServerInfo serverInfo : allServers.values()) {
 					long nano = System.nanoTime();
-					serverInfo.ping((result, error) -> serversList.add(new MonitorInfo(serverInfo, nano, result, error)));
+					serverInfo.ping((result, error) -> {
+						MonitorInfo info = new MonitorInfo(serverInfo, nano, result, error);
+						serversList.add(info);
+						RedisBungeeSend.sendServerInfos(info);
+					});
 				}
 				serversInfo.put(i++, serversList);
-				RedisBungeeSend.sendServersInfos(serversList);
-
 			}
 		}, 0, 10, TimeUnit.SECONDS);
 	}
