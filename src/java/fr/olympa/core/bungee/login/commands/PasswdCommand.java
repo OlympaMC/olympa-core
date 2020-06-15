@@ -15,7 +15,7 @@ public class PasswdCommand extends BungeeCommand {
 	public PasswdCommand(Plugin plugin) {
 		super(plugin, "passwd", "password", "mdp", "motdepasse");
 		this.usageString = "<ancien mot de passe> <nouveau mot de passe>";
-		this.description = "Change ton mot de passe";
+		this.description = "Permet de changer son mot de passe";
 		this.allowConsole = false;
 		this.bypassAuth = false;
 	}
@@ -28,7 +28,7 @@ public class PasswdCommand extends BungeeCommand {
 		}
 		String playerPasswordHash = this.olympaPlayer.getPassword();
 		if (playerPasswordHash == null) {
-			this.sendError("Tu n'as pas encore de mot de passe, fait &4/register <mot de passe>&c pour en crée un.");
+			this.sendError("Tu n'as pas encore de mot de passe, fais &4/register <mot de passe>&c pour en créer un.");
 			return;
 		}
 		
@@ -45,18 +45,18 @@ public class PasswdCommand extends BungeeCommand {
 		String password = args[0];
 		
 		if (password.length() < 5) {
-			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé 5 charatères minimum.");
+			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, 5 caratères minimum.");
 			return;
 		}
 		
 		if (password.length() > 100) {
-			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé 100 charatères maximum.");
+			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, 100 caratères maximum.");
 			return;
 		}
 		
 		Set<String> disallowPassword = new HashSet<>(Arrays.asList("azerty", "qwerty", "12345", "01234"));
 		if (disallowPassword.stream().anyMatch(dis -> dis.equalsIgnoreCase(password) || password.startsWith(dis))) {
-			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé ce mot de passe n'est pas possible.");
+			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, ce mot de passe n'est pas possible car trop risqué.");
 			return;
 		}
 		
@@ -64,6 +64,6 @@ public class PasswdCommand extends BungeeCommand {
 		AccountProvider account = new AccountProvider(this.olympaPlayer.getUniqueId());
 		account.saveToCache(this.olympaPlayer);
 		account.saveToRedis(this.olympaPlayer);
-		this.sendMessage(Prefix.DEFAULT_GOOD, "Bravo ! Tu peux désormais utiliser ton nouveau mdp sur le site.");
+		this.sendMessage(Prefix.DEFAULT_GOOD, "Bravo ! Tu peux désormais utiliser ton nouveau mot de passe sur le site.");
 	}
 }

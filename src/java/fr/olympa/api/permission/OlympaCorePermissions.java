@@ -57,4 +57,6 @@ public class OlympaCorePermissions {
 	// TODO change to OlympaGroup.GRAPHISTE, change to OlympaGroup.ASSISTANT later
 	public static OlympaPermission SERVER_BYPASS_MAITENANCE_SPIGOT = new OlympaPermission(OlympaGroup.PLAYER);
 	
+	public static OlympaPermission LOBBY_COMMAND = new OlympaPermission(OlympaGroup.PLAYER);
+
 }
