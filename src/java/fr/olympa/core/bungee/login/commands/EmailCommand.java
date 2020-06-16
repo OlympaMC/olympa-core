@@ -48,7 +48,7 @@ public class EmailCommand extends BungeeCommand {
 	public EmailCommand(Plugin plugin) {
 		super(plugin, "email", "mail", "setemail", "changeemail");
 		this.usageString = "<adresse@mail.fr>";
-		this.description = "Ajoute ton adresse mail";
+		this.description = "Ajouter son adresse mail";
 		this.allowConsole = false;
 		this.bypassAuth = false;
 		HandlerLogin.command.add(this.command);
@@ -66,13 +66,13 @@ public class EmailCommand extends BungeeCommand {
 		String playerPasswordHash = this.olympaPlayer.getPassword();
 		if (playerPasswordHash != null) {
 			// TODO JSON NEEDED
-			this.sendError("Tu as déjà une adresse mail. Pour la changer, rends-toi sur le site www.olympa.fr/profile.");
+			this.sendError("Tu as déjà une adresse mail. Pour la changer, rends-toi sur le site : www.olympa.fr/profile.");
 			return;
 		}
 
 		if (args.length == 0) {
 			// TODO + annonce mais pas de spam
-			this.sendMessage(Prefix.DEFAULT_GOOD, "Ajoute ton email pour augmenter la sécuriter de ton compte.");
+			this.sendMessage(Prefix.DEFAULT_GOOD, "Ajoute ton email pour augmenter la sécurité de ton compte.");
 			return;
 		}
 
@@ -83,18 +83,18 @@ public class EmailCommand extends BungeeCommand {
 
 		String email = args[0];
 		if (!Matcher.isEmail(email)) {
-			this.sendMessage(Prefix.DEFAULT_BAD, "Adresse mail incorrect.");
+			this.sendMessage(Prefix.DEFAULT_BAD, "Adresse mail incorrecte.");
 			return;
 		}
 
 		if (isDisposableEmail(email)) {
-			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé les adresses mails temporaires sont désactiver. Nous n'allons pas te spammer, ton adresse sert avant tous à sécuriser ton compte.");
+			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, les adresses mail temporaires sont interdites. Nous n'allons pas te spammer, ton adresse sert avant tout à sécuriser ton compte.");
 			return;
 		}
 
 		this.olympaPlayer.setEmail(email);
 		AccountProvider account = new AccountProvider(this.olympaPlayer.getUniqueId());
 		account.saveToRedis(this.olympaPlayer);
-		this.sendMessage(Prefix.DEFAULT_GOOD, "Ton adresse mail est enregistrer.");
+		this.sendMessage(Prefix.DEFAULT_GOOD, "Ton adresse mail est désormais enregistrée !");
 	}
 }

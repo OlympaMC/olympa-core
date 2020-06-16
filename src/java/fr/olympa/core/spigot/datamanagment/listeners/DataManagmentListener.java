@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.task.OlympaTask;
 import fr.olympa.api.utils.ColorUtils;
@@ -63,6 +64,21 @@ public class DataManagmentListener implements Listener {
 		}
 		if (olympaPlayer == null) {
 			event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotNoData"));
+			return;
+		}
+
+		OlympaCore core = OlympaCore.getInstance();
+		ServerStatus status = core.getStatus();
+		if (status == ServerStatus.CLOSE) {
+			event.disallow(Result.KICK_OTHER, ColorUtils.color("&cLe serveur &4" + core.getName() + "&c est fermé, réessaye dans quelques instants..."));
+			return;
+		}
+		if (status == ServerStatus.UNKNOWN) {
+			event.disallow(Result.KICK_OTHER, ColorUtils.color("&cImpossible de se connecter au serveur &4" + core.getName() + "&c, réessaye dans quelques instants..."));
+			return;
+		}
+		if (status.getPermission() != null && !status.getPermission().hasPermission(olympaPlayer)) {
+			event.disallow(Result.KICK_OTHER, ColorUtils.color("&cLe serveur &4" + core.getServerName() + "&c est actuellement en mode " + status.getNameColored() + "&c."));
 			return;
 		}
 

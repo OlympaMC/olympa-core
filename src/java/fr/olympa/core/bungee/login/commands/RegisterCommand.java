@@ -53,18 +53,18 @@ public class RegisterCommand extends BungeeCommand {
 		String password = args[0];
 
 		if (password.length() < 5) {
-			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé 5 charatères minimum.");
+			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, 5 caratères minimum.");
 			return;
 		}
 
 		if (password.length() > 100) {
-			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé 100 charatères maximum.");
+			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, 100 caratères maximum.");
 			return;
 		}
 
 		Set<String> disallowPassword = new HashSet<>(Arrays.asList("azerty", "qwerty", "12345", "01234"));
 		if (disallowPassword.stream().anyMatch(dis -> dis.equalsIgnoreCase(password) || password.startsWith(dis))) {
-			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé ce mot de passe n'est pas possible.");
+			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, ce mot de passe n'est pas possible.");
 			return;
 		}
 
@@ -77,7 +77,7 @@ public class RegisterCommand extends BungeeCommand {
 			if (olympaPlayerLoginEvent.cancelIfNeeded()) {
 				return;
 			}
-			this.sendMessage(Prefix.DEFAULT_GOOD, "Yes, ton compte est crée.");
+			this.sendMessage(Prefix.DEFAULT_GOOD, "Yes, ton compte est créé.");
 
 		}
 		account.saveToRedis(olympaPlayer);

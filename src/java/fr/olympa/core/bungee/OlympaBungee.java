@@ -47,6 +47,7 @@ import fr.olympa.core.bungee.security.BasicSecurityListener;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersListener;
 import fr.olympa.core.bungee.servers.commands.ListServerCommand;
+import fr.olympa.core.bungee.servers.commands.LobbyCommand;
 import fr.olympa.core.bungee.servers.commands.RestartBungeeCommand;
 import fr.olympa.core.bungee.servers.commands.RestartServerCommand;
 import fr.olympa.core.bungee.servers.commands.ServerSwitchCommand;
@@ -190,6 +191,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new StopServerCommand(this).register();
 		new RestartServerCommand(this).register();
 		new RestartBungeeCommand(this).register();
+		new LobbyCommand(this).register();
 		
 		new MonitorServers(this);
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");

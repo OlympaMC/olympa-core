@@ -55,6 +55,8 @@ public class OlympaCorePermissions {
 	public static OlympaPermission SERVER_START_COMMAND = new OlympaPermission(OlympaGroup.DEV, OlympaGroup.RESP_TECH, OlympaGroup.ADMIN, OlympaGroup.FONDA);
 	public static OlympaPermission SERVER_RESTART_COMMAND = new OlympaPermission(OlympaGroup.DEV, OlympaGroup.RESP_TECH, OlympaGroup.ADMIN, OlympaGroup.FONDA);
 	// TODO change to OlympaGroup.GRAPHISTE, change to OlympaGroup.ASSISTANT later
-	public static OlympaPermission SERVER_BYPASS_MAITENANCE_SPIGOT = new OlympaPermission(OlympaGroup.PLAYER);
+	//public static OlympaPermission SERVER_BYPASS_MAITENANCE_SPIGOT = new OlympaPermission(OlympaGroup.PLAYER);
 	
+	public static OlympaPermission LOBBY_COMMAND = new OlympaPermission(OlympaGroup.PLAYER);
+
 }

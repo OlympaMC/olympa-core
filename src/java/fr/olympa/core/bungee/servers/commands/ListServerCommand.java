@@ -30,8 +30,8 @@ public class ListServerCommand extends BungeeCommand {
 			StringJoiner sb = new StringJoiner(" ");
 			sb.add("&7[" + status.getNameColored() + "&7]");
 			sb.add(status.getColor() + serverInfo.getName() + "&e:");
-			if (serverInfo.getOnlinePlayer() != null)
-				sb.add(serverInfo.getOnlinePlayer() + "/" + serverInfo.getMaxPlayers());
+			if (serverInfo.getOnlinePlayers() != null)
+				sb.add(serverInfo.getOnlinePlayers() + "/" + serverInfo.getMaxPlayers());
 			if (serverInfo.getTps() != null)
 				sb.add(TPSUtils.getTpsColor(serverInfo.getTps()) + "tps");
 			if (serverInfo.getPing() != null)

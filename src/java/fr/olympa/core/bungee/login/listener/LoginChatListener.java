@@ -7,6 +7,7 @@ import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.HandlerLogin;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -21,6 +22,56 @@ import net.md_5.bungee.event.EventPriority;
 
 public class LoginChatListener implements Listener {
 
+	private TextComponent joinMessageCrackNew;
+	private TextComponent joinMessageCrackCreated;
+	private TextComponent joinMessagePremiumNew;
+	private TextComponent joinMessagePremiumCreated;
+
+	public LoginChatListener() {
+		HoverEvent hoverTooltip = new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder("Clique pour avoir directement la commande").color(ChatColor.YELLOW).create());
+
+		TextComponent base = new TextComponent();
+		addLegacyText(base, "§4§l§m-----------------§7 [§cLogin§7] §4§l§m-----------------\n"
+				+ "§bBienvenue sur §6§lOlympa§b§r.\n\n");
+		TextComponent end = new TextComponent("\n\n--------------------------------------");
+		end.setColor(ChatColor.DARK_RED);
+		end.setBold(true);
+		end.setStrikethrough(true);
+
+		joinMessageCrackNew = base.duplicate();
+		TextComponent link = new TextComponent();
+		addLegacyText(link, "§aCrée ton compte avec §2/register <mot de passe>§a ou §2clique ici §aet écris ton mot de passe.");
+		link.setHoverEvent(hoverTooltip);
+		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/register "));
+		joinMessageCrackNew.addExtra(link);
+		joinMessageCrackNew.addExtra(end);
+
+		joinMessageCrackCreated = base.duplicate();
+		link = new TextComponent();
+		addLegacyText(link, "§aTon mot de passe est le même sur le site et le forum.\n§aFait §2/login <mot de passe>§a ou §2clique ici §aet écris ton mot de passe.");
+		link.setHoverEvent(hoverTooltip);
+		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/login "));
+		joinMessageCrackCreated.addExtra(link);
+		joinMessageCrackCreated.addExtra(end);
+
+		joinMessagePremiumNew = base.duplicate();
+		link = new TextComponent();
+		addLegacyText(link, "§aCrée-toi un compte sur le site avec §2/register <mot de passe>§a ou §2clique ici §aet écris ton mot de passe.");
+		link.setHoverEvent(hoverTooltip);
+		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/register "));
+		joinMessagePremiumNew.addExtra(link);
+		joinMessagePremiumNew.addExtra(end);
+
+		joinMessagePremiumCreated = base.duplicate();
+		joinMessagePremiumCreated.addExtra(end);
+	}
+
+	private void addLegacyText(TextComponent component, String legacyText) {
+		for (BaseComponent compo : TextComponent.fromLegacyText(legacyText)) {
+			component.addExtra(compo);
+		}
+	}
+
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onChat(ChatEvent event) {
@@ -33,9 +84,9 @@ public class LoginChatListener implements Listener {
 		if (DataHandler.isUnlogged(player) && (!event.isCommand() || !HandlerLogin.command.contains(command))) {
 			OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
 			if (olympaPlayer == null || olympaPlayer.getPassword() == null || olympaPlayer.getPassword().isEmpty()) {
-				player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu dois t'enregistrer. Fait &4/register <mdp>&c."));
+				player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu dois t'enregistrer. Fais &4/register <mdp>&c."));
 			} else {
-				player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu dois être connecté. Fait &4/login <mdp>&c."));
+				player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu dois être connecté. Fais &4/login <mdp>&c."));
 			}
 			event.setCancelled(true);
 		}
@@ -45,140 +96,9 @@ public class LoginChatListener implements Listener {
 	public void onPostLogin(PostLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		OlympaPlayer olympaPlayer = DataHandler.get(player.getName()).getOlympaPlayer();
-		TextComponent textComponent = new TextComponent();
-		TextComponent textComponent2 = new TextComponent("----------------");
-		TextComponent textComponent3;
-
-		textComponent2.setColor(ChatColor.DARK_RED);
-		textComponent2.setBold(true);
-		textComponent2.setStrikethrough(true);
-		textComponent.addExtra(textComponent2);
-
-		textComponent2 = new TextComponent(" [");
-		textComponent2.setColor(ChatColor.GRAY);
-		textComponent.addExtra(textComponent2);
-
-		textComponent2 = new TextComponent("Login");
-		textComponent2.setColor(ChatColor.RED);
-		textComponent.addExtra(textComponent2);
-
-		textComponent2 = new TextComponent("] ");
-		textComponent2.setColor(ChatColor.GRAY);
-		textComponent.addExtra(textComponent2);
-
-		textComponent2 = new TextComponent("----------------\n");
-		textComponent2.setColor(ChatColor.DARK_RED);
-		textComponent2.setBold(true);
-		textComponent2.setStrikethrough(true);
-		textComponent.addExtra(textComponent2);
-
-		textComponent2 = new TextComponent("Bienvenue sur ");
-		textComponent2.setColor(ChatColor.AQUA);
-		textComponent.addExtra(textComponent2);
-
-		textComponent2 = new TextComponent("Olympa");
-		textComponent2.setColor(ChatColor.GOLD);
-		textComponent2.setBold(true);
-		textComponent.addExtra(textComponent2);
-
-		textComponent2 = new TextComponent(".\n\n");
-		textComponent2.setColor(ChatColor.AQUA);
-		textComponent.addExtra(textComponent2);
-		if (!olympaPlayer.isPremium()) {
-			if (olympaPlayer.getPassword() != null) {
-				textComponent2 = new TextComponent("Crée toi un compte avec ");
-				textComponent2.setColor(ChatColor.AQUA);
-
-				textComponent3 = new TextComponent("/register <mot de passe>");
-				textComponent3.setColor(ChatColor.DARK_GREEN);
-				textComponent2.addExtra(textComponent3);
-
-				textComponent3 = new TextComponent(" ou ");
-				textComponent3.setColor(ChatColor.GREEN);
-				textComponent2.addExtra(textComponent3);
-
-				textComponent3 = new TextComponent("clique-ici ");
-				textComponent3.setColor(ChatColor.DARK_GREEN);
-				textComponent2.addExtra(textComponent3);
-
-				textComponent3 = new TextComponent("et écrit ton mot de passe.\n");
-				textComponent3.setColor(ChatColor.GREEN);
-				textComponent2.addExtra(textComponent3);
-
-				textComponent2.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder("Clique pour avoir directement la commande").color(ChatColor.YELLOW).create()));
-				textComponent2.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/register "));
-				textComponent.addExtra(textComponent2);
-			} else {
-				textComponent2 = new TextComponent("Ton mot de passe est le même sur le site et le forum\n");
-				textComponent2.setColor(ChatColor.AQUA);
-
-				textComponent3 = new TextComponent("Fait ");
-				textComponent3.setColor(ChatColor.GREEN);
-				textComponent2.addExtra(textComponent2);
-
-				textComponent3 = new TextComponent("/login <mot de passe>");
-				textComponent3.setColor(ChatColor.DARK_GREEN);
-				textComponent2.addExtra(textComponent3);
-
-				textComponent3 = new TextComponent(" ou ");
-				textComponent3.setColor(ChatColor.GREEN);
-				textComponent2.addExtra(textComponent3);
-
-				textComponent3 = new TextComponent("clique-ici");
-				textComponent3.setColor(ChatColor.DARK_GREEN);
-				textComponent2.addExtra(textComponent3);
-
-				textComponent3 = new TextComponent(" et écrit ton mot de passe.\n");
-				textComponent3.setColor(ChatColor.GREEN);
-				textComponent2.addExtra(textComponent3);
-
-				textComponent2.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder("Clique pour avoir directement la commande").color(ChatColor.YELLOW).create()));
-				textComponent2.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/login "));
-				textComponent.addExtra(textComponent2);
-			}
-		} else {
-			if (olympaPlayer.getPassword() == null) {
-				textComponent2 = new TextComponent("Crée-toi un compte sur le site avec ");
-				textComponent2.setColor(ChatColor.GREEN);
-
-				textComponent3 = new TextComponent("/register <mot de passe>");
-				textComponent3.setColor(ChatColor.DARK_GREEN);
-				textComponent2.addExtra(textComponent3);
-
-				textComponent3 = new TextComponent(" ou ");
-				textComponent3.setColor(ChatColor.GREEN);
-				textComponent2.addExtra(textComponent3);
-
-				textComponent3 = new TextComponent("clique-ici ");
-				textComponent3.setColor(ChatColor.DARK_GREEN);
-				textComponent2.addExtra(textComponent3);
-
-				textComponent3 = new TextComponent("et écrit ton mot de passe.\n");
-				textComponent3.setColor(ChatColor.GREEN);
-				textComponent2.addExtra(textComponent3);
-
-				textComponent2.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder("Clique pour avoir directement la commande").color(ChatColor.YELLOW).create()));
-				textComponent2.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/register "));
-				textComponent.addExtra(textComponent2);
-			}
-		}
-		textComponent2 = new TextComponent("\n");
-		textComponent2.setColor(ChatColor.AQUA);
-		textComponent.addExtra(textComponent2);
-		//		textComponent2 = new TextComponent("Ajoute ton email: ");
-		//		textComponent2.setColor(ChatColor.GREEN);
-		//		textComponent.addExtra(textComponent2);
-		//
-		//		textComponent2 = new TextComponent("/email\n");
-		//		textComponent2.setColor(ChatColor.DARK_GREEN);
-		//		textComponent.addExtra(textComponent2);
-		textComponent2 = new TextComponent("---------------------------------------");
-		textComponent2.setColor(ChatColor.DARK_RED);
-		textComponent2.setBold(true);
-		textComponent2.setStrikethrough(true);
-		textComponent.addExtra(textComponent2);
-
-		player.sendMessage(textComponent);
+		boolean hasPassword = olympaPlayer.getPassword() != null;
+		TextComponent message = hasPassword ? (olympaPlayer.isPremium() ? joinMessagePremiumCreated : joinMessageCrackCreated) : (olympaPlayer.isPremium() ? joinMessagePremiumNew : joinMessageCrackNew);
+		player.sendMessage(message);
 	}
 
 }

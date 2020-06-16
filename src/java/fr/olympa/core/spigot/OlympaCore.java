@@ -6,6 +6,7 @@ import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.command.CommandListener;
 import fr.olympa.api.gui.Inventories;
 import fr.olympa.api.hook.ProtocolAction;
+import fr.olympa.api.permission.OlympaAPIPermissions;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.plugin.OlympaSpigot;
@@ -91,6 +92,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		LinkSpigotBungee.Provider.link = this;
 		
 		status = ServerStatus.DEV;
+		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		super.onEnable();
 		

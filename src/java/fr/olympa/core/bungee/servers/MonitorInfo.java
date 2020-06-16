@@ -10,7 +10,7 @@ public class MonitorInfo {
 
 	String serverName;
 	Integer ping;
-	Integer onlinePlayer;
+	Integer onlinePlayers;
 	Integer maxPlayers;
 	ServerStatus status = ServerStatus.UNKNOWN;
 	// Float[] tpss;
@@ -22,7 +22,7 @@ public class MonitorInfo {
 		ping = Math.round((System.nanoTime() - time) / 1000000);
 		if (error == null) {
 			Players players = serverPing.getPlayers();
-			onlinePlayer = players.getOnline();
+			onlinePlayers = players.getOnline();
 			maxPlayers = players.getMax();
 			String allMotd = serverPing.getDescriptionComponent().toLegacyText();
 			if (allMotd.startsWith("§"))
@@ -50,8 +50,8 @@ public class MonitorInfo {
 		return serverName;
 	}
 
-	public Integer getOnlinePlayer() {
-		return onlinePlayer;
+	public Integer getOnlinePlayers() {
+		return onlinePlayers;
 	}
 
 	public Integer getPing() {

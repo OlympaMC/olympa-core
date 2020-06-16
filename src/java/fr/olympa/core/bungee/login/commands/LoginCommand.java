@@ -60,7 +60,7 @@ public class LoginCommand extends BungeeCommand {
 		}
 		String playerPasswordHash = olympaPlayer.getPassword();
 		if (playerPasswordHash == null || playerPasswordHash.isEmpty()) {
-			sendError("Tu n'a pas de mot de passe. Pour le créer, fait &4/register <mot de passe>&c.");
+			sendError("Tu n'as pas de mot de passe. Pour le créer, fais &4/register <mot de passe>&c.");
 			return;
 		}
 
@@ -84,7 +84,7 @@ public class LoginCommand extends BungeeCommand {
 			} else if (timeFails <= 3) {
 				HandlerLogin.timesFails.put(proxiedPlayer, ++timeFails);
 			} else {
-				proxiedPlayer.disconnect(BungeeUtils.connectScreen("Tu as échoué trop de fois ton mdp"));
+				proxiedPlayer.disconnect(BungeeUtils.connectScreen("Tu as fait trop de tentatives de connexion."));
 			}
 
 			return;
@@ -93,6 +93,6 @@ public class LoginCommand extends BungeeCommand {
 		if (olympaPlayerLoginEvent.cancelIfNeeded()) {
 			return;
 		}
-		this.sendMessage(Prefix.DEFAULT_GOOD, "Connexion effectuée, transfert en cours ...");
+		this.sendMessage(Prefix.DEFAULT_GOOD, "Connexion effectuée, transfert en cours...");
 	}
 }
