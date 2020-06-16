@@ -32,8 +32,8 @@ public class ServersConnection {
 	
 	public static ServerInfo getAuth(ServerInfo noThis) {
 		Map<ServerInfo, Integer> auths = MonitorServers.getLastServerInfo().stream().filter(si -> {
-			return si.isOpen() && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("auth") && si.getMaxPlayers() - si.getOnlinePlayer() > 0;
-		}).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayer()));
+			return si.isOpen() && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("auth") && si.getMaxPlayers() - si.getOnlinePlayers() > 0;
+		}).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayers()));
 		// TODO add sort by name1 name2 name3
 		Entry<ServerInfo, Integer> auth = auths.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
 		if (auth != null)
@@ -47,17 +47,23 @@ public class ServersConnection {
 	}
 	
 	public static ServerInfo getLobby(ServerInfo noThis) {
-		Map<ServerInfo, Integer> lobbys = MonitorServers.getLastServerInfo().stream().filter(si -> {
-			return si.isOpen() && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("lobby") && si.getMaxPlayers() / 2 - si.getOnlinePlayer() > 0;
-		}).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() / 2 - si.getOnlinePlayer()));
+		Map<ServerInfo, Integer> lobbys = MonitorServers.getLastServerInfo().stream().filter(si -> isValidLobby(si, noThis)).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayers()));
 		// TODO add sort by name1 name2 name3
 		Entry<ServerInfo, Integer> lobby = lobbys.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
-		if (lobby != null)
-			return lobby.getKey();
+		if (lobby != null) return lobby.getKey();
 		// TODO create new server
 		return null;
 	}
 	
+	private static boolean isValidLobby(MonitorInfo server, ServerInfo notThis) {
+		System.out.println(server.getName() + " " + server.getOnlinePlayers() + " " + server.getMaxPlayers());
+		if (!server.isOpen()) return false;
+		if (notThis != null && server.getName().equals(notThis.getName())) return false;
+		if (!server.getName().startsWith("lobby")) return false;
+		if (server.getMaxPlayers() * 0.9 - server.getOnlinePlayers() <= 0) return false;
+		return true;
+	}
+
 	public static ServerInfo getServer(String name) {
 		return MonitorServers.getLastServerInfo().stream().filter(si -> si.getError() == null && si.getName().startsWith(name)).map(MonitorInfo::getServerInfo).findFirst().orElse(null);
 	}
@@ -102,7 +108,7 @@ public class ServersConnection {
 				break;
 			}
 		if (server == null) {
-			player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Aucun serveur " + olympaServer.getNameCaps() + " n'est actuellement disponible merci de patienter ..."));
+			player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Aucun serveur " + olympaServer.getNameCaps() + " n'est actuellement disponible, merci de patienter..."));
 			return;
 		}
 		String serverName = Utils.capitalize(server.getName());

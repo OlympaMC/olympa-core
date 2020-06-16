@@ -30,7 +30,7 @@ public class RedisBungeeSend {
 
 	public static void sendServerInfos(MonitorInfo server) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
-			jedis.publish("sendServersInfos", server.getName() + ":" + server.getOnlinePlayer() + ":" + server.getMaxPlayers() + ":" + server.getStatus().getId());
+			jedis.publish("sendServersInfos", server.getName() + ":" + server.getOnlinePlayers() + ":" + server.getMaxPlayers() + ":" + server.getStatus().getId());
 		}
 	}
 }

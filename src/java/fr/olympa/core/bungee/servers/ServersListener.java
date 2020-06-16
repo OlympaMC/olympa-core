@@ -37,14 +37,14 @@ public class ServersListener implements Listener {
 				server = ServersConnection.getAuth(serverKicked);
 			}
 			if (server == null) {
-				BaseComponent[] msg = TextComponent.fromLegacyText(BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e s'est redémarré, merci de te reconnecter dans quelques secondes..."));
+				BaseComponent[] msg = TextComponent.fromLegacyText(BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e redémarre, merci de te reconnecter dans quelques secondes..."));
 				player.sendMessage(msg);
 				event.setKickReasonComponent(msg);
 				return;
 			}
 			event.setCancelled(true);
 			event.setCancelServer(server);
-			player.sendMessage(ColorUtils.color(Prefix.DEFAULT_GOOD + "Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a s'est redémarré, merci de patienter avant d'être reconnecter automatiquement."));
+			player.sendMessage(ColorUtils.color(Prefix.DEFAULT_GOOD + "Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter avant d'être reconnecté automatiquement."));
 			ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> ServersConnection.tryConnect(player, null, serverKicked), 10, TimeUnit.SECONDS);
 			return;
 		}
