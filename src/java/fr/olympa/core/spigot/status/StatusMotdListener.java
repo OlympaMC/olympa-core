@@ -6,7 +6,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 
-import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.spigot.TPS;
@@ -24,18 +23,16 @@ public class StatusMotdListener implements Listener {
 	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
 		OlympaCore core = OlympaCore.getInstance();
 		ServerStatus status = core.getStatus();
-		if (status == ServerStatus.OPEN)
-			return;
+		if (status == ServerStatus.OPEN) return;
 		if (status == ServerStatus.CLOSE) {
 			event.setKickMessage(ColorUtils.color("&cLe serveur &4" + core.getName() + "&c est fermé, réessaye dans quelques instants..."));
 			return;
 		}
-		if (OlympaCorePermissions.SERVER_BYPASS_MAITENANCE_SPIGOT.hasPermission(event.getUniqueId()))
-			return;
+		//if (OlympaCorePermissions.SERVER_BYPASS_MAITENANCE_SPIGOT.hasPermission(event.getUniqueId())) return;
 		if (status == ServerStatus.UNKNOWN) {
 			event.setKickMessage(ColorUtils.color("&cImpossible de se connecter au serveur &4" + core.getName() + "&c, réessaye dans quelques instants..."));
 			return;
 		}
-		event.setKickMessage(ColorUtils.color("&cLe serveur &4" + core.getName() + "&c est actuellement en " + status.getNameColored() + "&c."));
+		if (status.getPermission() != null && !status.getPermission().hasPermission(event.getUniqueId())) event.setKickMessage(ColorUtils.color("&cLe serveur &4" + core.getServerName() + "&c est actuellement en mode " + status.getNameColored() + "&c."));
 	}
 }
