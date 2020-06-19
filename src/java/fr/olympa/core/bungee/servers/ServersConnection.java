@@ -56,7 +56,6 @@ public class ServersConnection {
 	}
 	
 	private static boolean isValidLobby(MonitorInfo server, ServerInfo notThis) {
-		System.out.println(server.getName() + " " + server.getOnlinePlayers() + " " + server.getMaxPlayers());
 		if (!server.isOpen()) return false;
 		if (notThis != null && server.getName().equals(notThis.getName())) return false;
 		if (!server.getName().startsWith("lobby")) return false;

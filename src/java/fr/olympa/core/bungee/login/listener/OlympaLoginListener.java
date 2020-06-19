@@ -1,8 +1,6 @@
 package fr.olympa.core.bungee.login.listener;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.OlympaPlayer;
@@ -35,9 +33,9 @@ public class OlympaLoginListener implements Listener {
 		ProxiedPlayer player = event.getPlayer();
 		player.removeGroups(player.getGroups().toArray(new String[0]));
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
-		Set<String> groupsNames = olympaPlayer.getGroups().keySet().stream().map(OlympaGroup::getName).collect(Collectors.toSet());
-		if (!groupsNames.isEmpty()) {
-			player.addGroups(groupsNames.toArray(new String[0]));
+		String[] groupsNames = olympaPlayer.getGroups().keySet().stream().map(OlympaGroup::name).toArray(String[]::new);
+		if (groupsNames.length > 0) {
+			player.addGroups(groupsNames);
 		}
 	}
 
@@ -45,9 +43,9 @@ public class OlympaLoginListener implements Listener {
 	public void onOlympaPlayerLogin(OlympaPlayerLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
-		Set<String> groupsNames = olympaPlayer.getGroups().keySet().stream().map(OlympaGroup::getName).collect(Collectors.toSet());
-		if (!groupsNames.isEmpty()) {
-			player.addGroups(groupsNames.toArray(new String[0]));
+		String[] groupsNames = olympaPlayer.getGroups().keySet().stream().map(OlympaGroup::name).toArray(String[]::new);
+		if (groupsNames.length > 0) {
+			player.addGroups(groupsNames);
 		}
 		String ip = player.getAddress().getAddress().getHostAddress();
 		if (!olympaPlayer.getIp().equals(ip)) {
