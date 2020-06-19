@@ -21,7 +21,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 	protected ServerStatus status;
 	private String serverName = getServer().getIp() + ":" + getServer().getPort();
 	private RedisAccess redisAccess;
-	
+
 	@Override
 	public Connection getDatabase() throws SQLException {
 		return database.getConnection();
@@ -46,8 +46,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 	@Override
 	public void onDisable() {
 		super.onDisable();
-		if (database != null)
-			database.close();
+		if (database != null) database.close();
 	}
 	
 	@Override
@@ -64,7 +63,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 			setupRedis();
 		}
 	}
-	
+
 	@Override
 	public void setServerName(String serverName) {
 		this.serverName = serverName;

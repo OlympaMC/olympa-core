@@ -5,6 +5,7 @@ import org.bukkit.plugin.PluginManager;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.command.CommandListener;
 import fr.olympa.api.gui.Inventories;
+import fr.olympa.api.holograms.HologramsManager;
 import fr.olympa.api.hook.ProtocolAction;
 import fr.olympa.api.permission.OlympaAPIPermissions;
 import fr.olympa.api.permission.OlympaCorePermissions;
@@ -49,6 +50,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	
 	private SwearHandler swearHandler;
 	private RegionManager regionManager;
+	private HologramsManager hologramsManager;
 	private ProtocolAction protocolSupportHook;
 	private INametagApi nameTagApi;
 	
@@ -67,6 +69,11 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		return regionManager;
 	}
 	
+	@Override
+	public HologramsManager getHologramsManager() {
+		return hologramsManager;
+	}
+
 	public SwearHandler getSwearHandler() {
 		return swearHandler;
 	}
@@ -82,6 +89,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		RedisAccess.close();
 		status = ServerStatus.CLOSE;
 		nameTagApi.reset();
+		hologramsManager.unload();
 		super.onDisable();
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
 	}
@@ -96,6 +104,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		super.onEnable();
 		
+		hologramsManager = new HologramsManager();
+
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 		new MySQL(database);
 		new ReportMySQL(database);
