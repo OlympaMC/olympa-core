@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.utils.Utils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Players;
@@ -30,7 +31,8 @@ public class MonitorInfo {
 
 		Matcher matcher = ID_PATTERN.matcher(serverName);
 		matcher.find();
-		serverID = Integer.parseInt(matcher.group());
+		String id = matcher.group();
+		serverID = Utils.isEmpty(id) ? 0 : Integer.parseInt(id);
 		olympaServer = OlympaServer.valueOf(matcher.replaceAll("").toUpperCase());
 
 		ping = Math.round((System.nanoTime() - time) / 1000000);

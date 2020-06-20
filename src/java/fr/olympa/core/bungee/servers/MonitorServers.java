@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.collect.ImmutableMap;
 
 import fr.olympa.api.server.OlympaServer;
+import fr.olympa.api.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import net.md_5.bungee.api.ProxyServer;
@@ -39,7 +40,8 @@ public class MonitorServers {
 			MonitorInfo info = new MonitorInfo(serverInfo, nano, result, error);
 			bungeeServers.put(serverInfo, info);
 			MonitorInfo previous = olympaServers.get(info.getOlympaServer()).put(info.getServerID(), info);
-			if (previous != null && previous.getStatus() != info.getStatus()) OlympaBungee.getInstance().getLogger().info("Serveur " + info.getName() + " : " + previous.getStatus() + " -> " + info.getStatus());
+			ServerStatus previousStatus = previous == null ? ServerStatus.CLOSE : previous.getStatus();
+			if (previousStatus != info.getStatus()) OlympaBungee.getInstance().getLogger().info("Serveur " + info.getName() + " : " + previousStatus + " -> " + info.getStatus() + (previous != null && previous.getError() != null ? "(" + previous.getError() + ")" : ""));
 			RedisBungeeSend.sendServerInfos(info);
 		});
 	}
