@@ -3,6 +3,7 @@ package fr.olympa.core.spigot;
 import org.bukkit.plugin.PluginManager;
 
 import fr.olympa.api.LinkSpigotBungee;
+import fr.olympa.api.SwearHandler;
 import fr.olympa.api.command.CommandListener;
 import fr.olympa.api.gui.Inventories;
 import fr.olympa.api.holograms.HologramsManager;
@@ -19,7 +20,6 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
-import fr.olympa.core.spigot.chat.SwearHandler;
 import fr.olympa.core.spigot.commands.GenderCommand;
 import fr.olympa.core.spigot.commands.RestartCommand;
 import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
@@ -41,48 +41,48 @@ import fr.olympa.core.spigot.status.StatusMotdListener;
 import fr.olympa.core.spigot.tps.TpsCommand;
 
 public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
-	
+
 	private static OlympaCore instance = null;
-	
+
 	public static OlympaCore getInstance() {
 		return instance;
 	}
-	
+
 	private SwearHandler swearHandler;
 	private RegionManager regionManager;
 	private HologramsManager hologramsManager;
 	private ProtocolAction protocolSupportHook;
 	private INametagApi nameTagApi;
-	
+
 	@Override
 	public INametagApi getNameTagApi() {
 		return nameTagApi;
 	}
-	
+
 	@Override
 	public ProtocolAction getProtocolSupport() {
 		return protocolSupportHook;
 	}
-	
+
 	@Override
 	public RegionManager getRegionManager() {
 		return regionManager;
 	}
-	
+
 	@Override
 	public HologramsManager getHologramsManager() {
 		return hologramsManager;
 	}
-
+	
 	public SwearHandler getSwearHandler() {
 		return swearHandler;
 	}
-	
+
 	@Override
 	public void launchAsync(Runnable run) {
 		getTask().runTaskAsynchronously(run);
 	}
-	
+
 	@Override
 	public void onDisable() {
 		RedisSpigotSend.sendShutdown();
@@ -93,23 +93,23 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		super.onDisable();
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
 	}
-	
+
 	@Override
 	public void onEnable() {
 		instance = this;
 		LinkSpigotBungee.Provider.link = this;
-		
+
 		status = ServerStatus.DEV;
 		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		super.onEnable();
-		
-		hologramsManager = new HologramsManager();
 
+		hologramsManager = new HologramsManager();
+		
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 		new MySQL(database);
 		new ReportMySQL(database);
-		
+
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();
 		new ReportCommand(this).register();
@@ -121,7 +121,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new GenderCommand(this).register();
 		new RestartCommand(this).registerPreProcess();
 		// new PasswdCommand(this).register();
-		
+
 		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(new DataManagmentListener(), this);
 		pluginManager.registerEvents(new GroupListener(), this);
@@ -137,12 +137,12 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		pluginManager.registerEvents(new ScoreboardTeamListener(), this);
 		nameTagApi = new NametagAPI(new NametagManager());
 		((NametagAPI) nameTagApi).testCompat();
-		
+
 		new AntiWD(this);
 		if (getServer().getPluginManager().isPluginEnabled("ProtocolSupport"))
 			protocolSupportHook = new ProtocolSupportHook(this);
-		
+
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 	}
-	
+
 }
