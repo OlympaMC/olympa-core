@@ -1,6 +1,5 @@
 package fr.olympa.core.bungee.servers.commands;
 
-import java.util.Set;
 import java.util.StringJoiner;
 
 import fr.olympa.api.permission.OlympaCorePermissions;
@@ -24,8 +23,7 @@ public class ListServerCommand extends BungeeCommand {
 	public void onCommand(CommandSender sender, String[] args) {
 		StringJoiner sj = new StringJoiner("\n");
 		sj.add("&6Liste des serveurs:");
-		Set<MonitorInfo> info = MonitorServers.getLastServerInfo();
-		for (MonitorInfo serverInfo : info) {
+		for (MonitorInfo serverInfo : MonitorServers.getServers()) {
 			ServerStatus status = serverInfo.getStatus();
 			StringJoiner sb = new StringJoiner(" ");
 			sb.add("&7[" + status.getNameColored() + "&7]");

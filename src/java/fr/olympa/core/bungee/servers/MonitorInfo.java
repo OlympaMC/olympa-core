@@ -1,5 +1,9 @@
 package fr.olympa.core.bungee.servers;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
@@ -8,17 +12,27 @@ import net.md_5.bungee.api.config.ServerInfo;
 
 public class MonitorInfo {
 
-	String serverName;
-	Integer ping;
-	Integer onlinePlayers;
-	Integer maxPlayers;
-	ServerStatus status = ServerStatus.UNKNOWN;
-	// Float[] tpss;
-	String error;
-	Float tps;
+	private static final Pattern ID_PATTERN = Pattern.compile("\\d*$");
+
+	private String serverName;
+	private OlympaServer olympaServer;
+	private int serverID;
+
+	private Integer ping;
+	private Integer onlinePlayers;
+	private Integer maxPlayers;
+	private ServerStatus status = ServerStatus.UNKNOWN;
+	private String error;
+	private Float tps;
 
 	public MonitorInfo(ServerInfo server, long time, ServerPing serverPing, Throwable error) {
 		serverName = server.getName();
+
+		Matcher matcher = ID_PATTERN.matcher(serverName);
+		matcher.find();
+		serverID = Integer.parseInt(matcher.group());
+		olympaServer = OlympaServer.valueOf(matcher.replaceAll("").toUpperCase());
+
 		ping = Math.round((System.nanoTime() - time) / 1000000);
 		if (error == null) {
 			Players players = serverPing.getPlayers();
@@ -36,6 +50,14 @@ public class MonitorInfo {
 			status = ServerStatus.CLOSE;
 			this.error = error.getMessage();
 		}
+	}
+
+	public OlympaServer getOlympaServer() {
+		return olympaServer;
+	}
+
+	public int getServerID() {
+		return serverID;
 	}
 
 	public String getError() {

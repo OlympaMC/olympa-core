@@ -13,7 +13,6 @@ import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersConnection;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -79,14 +78,11 @@ public class OlympaLoginListener implements Listener {
 
 	@EventHandler
 	public void onServerConnect(ServerConnectEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
+		if (event.isCancelled()) return;
 		ProxiedPlayer player = event.getPlayer();
 		Reason reason = event.getReason();
-		if (reason != Reason.JOIN_PROXY) {
-			return;
-		}
+		if (reason != Reason.JOIN_PROXY) return;
+
 		boolean tryConnect = false;
 		CachePlayer cache = DataHandler.get(player.getName());
 		if (cache != null) {
@@ -94,24 +90,24 @@ public class OlympaLoginListener implements Listener {
 			if (olympaPlayer != null && olympaPlayer.isConnected() && olympaPlayer.isPremium()) {
 				String subdomain = cache.getSubDomain();
 				if (subdomain != null && !subdomain.equalsIgnoreCase("play")) {
-					OlympaServer server = null;
+					OlympaServer olympaServer = null;
 					if (subdomain.equalsIgnoreCase("buildeur")) {
-						server = OlympaServer.BUILDEUR;
+						olympaServer = OlympaServer.BUILDEUR;
 					} else if (subdomain.equalsIgnoreCase("dev")) {
-						server = OlympaServer.DEV;
+						olympaServer = OlympaServer.DEV;
 					}
-					if (server != null) {
-						if (!MonitorServers.isServerOpen(server.getName())) {
+					if (olympaServer != null) {
+						ServerInfo server = ServersConnection.getBestServer(olympaServer, null);
+						if (!MonitorServers.getMonitor(server).isOpen()) {
 							tryConnect = true;
-							ServersConnection.tryConnect(player, server, null);
+							ServersConnection.tryConnect(player, olympaServer, null);
 						} else {
-							ServerInfo serv = ProxyServer.getInstance().getServers().get(server.getName());
-							event.setTarget(serv);
+							event.setTarget(server);
 							return;
 						}
 					}
 				}
-				ServerInfo lobby = ServersConnection.getLobby();
+				ServerInfo lobby = ServersConnection.getBestServer(OlympaServer.LOBBY, null);
 				if (lobby != null) {
 					event.setTarget(lobby);
 					return;
@@ -120,7 +116,7 @@ public class OlympaLoginListener implements Listener {
 				}
 			}
 		}
-		ServerInfo auth = ServersConnection.getAuth();
+		ServerInfo auth = ServersConnection.getBestServer(OlympaServer.AUTH, null);
 		System.out.println("ok " + auth);
 		if (auth != null) {
 			event.setTarget(auth);

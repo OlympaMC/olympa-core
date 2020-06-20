@@ -1,6 +1,7 @@
 package fr.olympa.core.bungee.servers.commands;
 
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
@@ -29,7 +30,7 @@ public class LobbyCommand extends BungeeCommand {
 			return;
 		}
 
-		ServerInfo lobby = ServersConnection.getLobby();
+		ServerInfo lobby = ServersConnection.getBestServer(OlympaServer.LOBBY, null);
 		if (lobby == null) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Aucun serveur lobby n'est actuellement disponible.");
 			return;

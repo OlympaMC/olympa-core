@@ -2,6 +2,7 @@ package fr.olympa.core.bungee.servers;
 
 import java.util.concurrent.TimeUnit;
 
+import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
@@ -32,10 +33,10 @@ public class ServersListener implements Listener {
 		}
 		if (kickReason.contains("restarting") || kickReason.contains("closed")) {
 
-			ServerInfo server = ServersConnection.getLobby(serverKicked);
-			if (server == null) {
+			ServerInfo server = ServersConnection.getBestServer(OlympaServer.LOBBY, serverKicked);
+			/*if (server == null) {
 				server = ServersConnection.getAuth(serverKicked);
-			}
+			}*/
 			if (server == null) {
 				BaseComponent[] msg = TextComponent.fromLegacyText(BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e redémarre, merci de te reconnecter dans quelques secondes..."));
 				player.sendMessage(msg);
@@ -50,7 +51,7 @@ public class ServersListener implements Listener {
 		}
 
 		if (!kickReason.contains("ban")) {
-			ServerInfo serverInfolobby = ServersConnection.getLobby(serverKicked);
+			ServerInfo serverInfolobby = ServersConnection.getBestServer(OlympaServer.LOBBY, serverKicked);
 			if (serverInfolobby == null) {
 				return;
 			}
