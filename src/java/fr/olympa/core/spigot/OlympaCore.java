@@ -1,5 +1,8 @@
 package fr.olympa.core.spigot;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.bukkit.plugin.PluginManager;
 
 import fr.olympa.api.LinkSpigotBungee;
@@ -104,7 +107,12 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		super.onEnable();
 
-		hologramsManager = new HologramsManager();
+		try {
+			hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml"));
+		}catch (IOException e) {
+			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
+			e.printStackTrace();
+		}
 		
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 		new MySQL(database);

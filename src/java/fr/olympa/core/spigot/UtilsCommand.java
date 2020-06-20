@@ -1,6 +1,5 @@
 package fr.olympa.core.spigot;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -21,10 +20,7 @@ import com.google.common.collect.Sets;
 import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.command.complex.ComplexCommand;
-import fr.olympa.api.holograms.Hologram;
 import fr.olympa.api.item.ItemUtils;
-import fr.olympa.api.lines.AbstractLine;
-import fr.olympa.api.lines.FixedLine;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.region.tracking.TrackedRegion;
@@ -100,12 +96,6 @@ public class UtilsCommand extends ComplexCommand {
 	@Cmd (player = true, min = 1, syntax = "<head value>")
 	public void giveCustomHead(CommandContext cmd) {
 		player.getInventory().addItem(ItemUtils.skullCustom("item custom tête", cmd.getArgument(0)));
-	}
-
-	@Cmd (player = true, min = 1, syntax = "<lignes>")
-	public void createHologram(CommandContext cmd) {
-		String[] linesStrings = cmd.getFrom(0).split("\\|");
-		OlympaCore.getInstance().getHologramsManager().addHologram(new Hologram(player.getLocation().add(0, 1, 0), Arrays.stream(linesStrings).map(x -> new FixedLine<>(x)).toArray(AbstractLine[]::new)));
 	}
 
 }
