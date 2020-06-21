@@ -12,15 +12,14 @@ import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.server.OlympaServerSettings;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.Utils;
 
 public class ChatCommand extends OlympaCommand {
-	
+
 	public ChatCommand(Plugin plugin) {
 		super(plugin, "chat", OlympaCorePermissions.CHAT_COMMAND, "tchat");
 		this.addArgs(true, "slow", "clear", "mute");
 	}
-	
+
 	/*
 	 * Dev: Tristiisch74
 	 *
@@ -30,7 +29,7 @@ public class ChatCommand extends OlympaCommand {
 	 * tchat ./chat mute = Met le tchat en pause (toggle on/off)
 	 *
 	 */
-	
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		OlympaServerSettings serverSettings = OlympaServerSettings.getInstance();
@@ -57,19 +56,15 @@ public class ChatCommand extends OlympaCommand {
 				serverSettings.setChatMute(false);
 				broadcastToAll(Prefix.DEFAULT_GOOD, "&lLe chat a été réactivé.");
 			}
-			
+
 		} else
 			sendUsage(label);
 		return true;
 	}
-	
+
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		if (args.length == 1) {
-			List<String> postentielArgs = Utils.startWords(args[0], this.args.values().iterator().next());
-			return postentielArgs;
-		}
 		return null;
 	}
-	
+
 }
