@@ -1,11 +1,9 @@
 package fr.olympa.core.spigot.status;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,22 +11,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
-import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.Utils;
 import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class SetStatusCommand extends OlympaCommand {
-	
+
 	public SetStatusCommand(Plugin plugin) {
 		super(plugin, "setstatus", OlympaCorePermissions.SETSTATUS_COMMAND, "setstate");
-		usageString = "<" + String.join(", ", ServerStatus.getNames()) + ">";
+		this.addArgs(false, ServerStatus.getNames());
 	}
-	
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		ServerStatus status = OlympaCore.getInstance().getStatus();
@@ -64,17 +60,12 @@ public class SetStatusCommand extends OlympaCommand {
 		sendSuccess("Le serveur est désormais en mode " + status2.getNameColored() + "&a, il était avant en mode " + status.getNameColored() + "&a.");
 		return false;
 	}
-	
+
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		if (args.length == 1) {
-			List<String> postentielNames = Utils.startWords(args[0], ServerStatus.getNames());
-			return postentielNames;
-		} else if (args.length == 2) {
-			List<String> postentielGroups = Utils.startWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toList()));
-			return postentielGroups;
-		}
+		//		if (args.length == 1)
+		//			return Utils.startWords(args[0], ServerStatus.getNames());
 		return null;
 	}
-	
+
 }
