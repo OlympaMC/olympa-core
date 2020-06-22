@@ -33,7 +33,7 @@ import net.md_5.bungee.event.EventPriority;
 
 @SuppressWarnings("deprecation")
 public class AuthListener implements Listener {
-
+	
 	// public static Cache<String, String> cacheServer =
 	// CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.SECONDS).build();
 	// private Cache<String, UUID> cachePremiumUUID =
@@ -41,17 +41,16 @@ public class AuthListener implements Listener {
 	// private Cache<String, OlympaPlayer> cachePlayer =
 	// CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.SECONDS).build();
 	private Set<String> wait = new HashSet<>();
-
+	
 	@EventHandler
 	public void on1PreLogin(PreLoginEvent event) {
-		if (event.isCancelled()) {
+		if (event.isCancelled())
 			return;
-		}
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
 		CachePlayer cache = new CachePlayer(name);
 		OlympaPlayer olympaPlayer;
-		UUID uuidCrack = null;
+		//		UUID uuidCrack = null;
 
 		if (wait.contains(name)) {
 			event.setCancelReason(BungeeUtils.connectScreen("&eMerci de patienter avant chaque reconnection."));
@@ -109,8 +108,9 @@ public class AuthListener implements Listener {
 						event.setCancelled(true);
 						return;
 					}
-				}
-				OlympaBungee.getInstance().sendMessage("&cNouveau Joueur  " + name + " " + connection.getUniqueId() + " UUID CRACK: " + uuidCrack + " HAS PREMIUM ? " + uuidPremium + " HIS PREMIUM ? " + connection.isOnlineMode());
+					OlympaBungee.getInstance().sendMessage("&cChangement de pseudo  " + name + " HAS PREMIUM ? " + uuidPremium + " HIS PREMIUM ? " + connection.isOnlineMode());
+				} else
+					OlympaBungee.getInstance().sendMessage("&cNouveau Joueur  " + name + " HAS PREMIUM ? " + uuidPremium + " HIS PREMIUM ? " + connection.isOnlineMode());
 
 			} else {
 				// Si le pseudo n'est pas un compte premium
@@ -129,7 +129,9 @@ public class AuthListener implements Listener {
 		}
 
 		// Si le joueur s'est déjà connecté
-		if (olympaPlayer != null) {
+		if (olympaPlayer != null)
+
+		{
 			cache.setOlympaPlayer(olympaPlayer);
 			System.out.println("player info " + GsonCustomizedObjectTypeAdapter.GSON.toJson(cache.getOlympaPlayer()));
 			if (olympaPlayer.getPremiumUniqueId() == null) {
@@ -145,23 +147,21 @@ public class AuthListener implements Listener {
 					return;
 				}
 				connection.setOnlineMode(false);
-			} else {
+			} else
 				connection.setOnlineMode(true);
-			}
 		}
 		cache.setSubDomain(event.getConnection());
 		DataHandler.addPlayer(cache);
 	}
-
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on2PreLogin(PreLoginEvent event) {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
-		if (event.isCancelled()) {
+		if (event.isCancelled())
 			DataHandler.removePlayer(name);
-		}
 	}
-
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on3Login(LoginEvent event) {
 		PendingConnection connection = event.getConnection();
@@ -179,11 +179,10 @@ public class AuthListener implements Listener {
 		AccountProvider olympaAccount;
 		// Si le joueur s'est déjà connecté
 		if (olympaPlayer != null) {
-			if (!olympaPlayer.getName().equals(name)) {
+			if (!olympaPlayer.getName().equals(name))
 				olympaPlayer.addNewName(name);
-			}
 			olympaAccount = new AccountProvider(olympaPlayer.getUniqueId());
-		} else {
+		} else
 			// Si le joueur ne s'est jamais connecté
 			try {
 				UUID uuidCrack = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes("UTF-8"));
@@ -196,9 +195,8 @@ public class AuthListener implements Listener {
 					return;
 				}
 				UUID uuidPremium = cache.getPremiumUUID();
-				if (uuidPremium != null) {
+				if (uuidPremium != null)
 					olympaPlayer.setPremiumUniqueId(uuidPremium);
-				}
 				olympaPlayer = olympaAccount.createNew(olympaPlayer);
 				cache.setOlympaPlayer(olympaPlayer);
 			} catch (SQLException | UnsupportedEncodingException e) {
@@ -208,7 +206,6 @@ public class AuthListener implements Listener {
 				DataHandler.removePlayer(name);
 				return;
 			}
-		}
 		try {
 			Class<?> initialHandlerClass = connection.getClass();
 			Field uniqueIdField = initialHandlerClass.getDeclaredField("uniqueId");
@@ -225,28 +222,26 @@ public class AuthListener implements Listener {
 		olympaAccount.saveToRedis(olympaPlayer);
 		olympaAccount.accountPersist();
 	}
-
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on42Login(LoginEvent event) {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
-		if (event.isCancelled()) {
+		if (event.isCancelled())
 			DataHandler.removePlayer(name);
-		}
 	}
-
+	
 	@EventHandler(priority = EventPriority.LOW)
 	public void on5PostLogin(PostLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		System.out.println("PostLoginEvent onlinemode ? " + player.getPendingConnection().isOnlineMode());
-		if (!player.getPendingConnection().isOnlineMode()) {
+		if (!player.getPendingConnection().isOnlineMode())
 			return;
-		}
 		OlympaPlayer olympaPlayer = DataHandler.get(player.getName()).getOlympaPlayer();
 		OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, player));
 		olympaPlayerLoginEvent.cancelIfNeeded();
 	}
-
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on6Disconnect(PlayerDisconnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
@@ -267,5 +262,5 @@ public class AuthListener implements Listener {
 			olympaAccount.saveToDb(olympaPlayer);
 		}, 2, TimeUnit.SECONDS);
 	}
-
+	
 }
