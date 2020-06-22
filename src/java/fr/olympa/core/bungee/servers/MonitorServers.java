@@ -34,23 +34,36 @@ public class MonitorServers {
 		return bungeeServers.values();
 	}
 
-	public static void updateServer(ServerInfo serverInfo) {
+	public static void updateServer(ServerInfo serverInfo, boolean instantUpdate) {
 		long nano = System.nanoTime();
 		serverInfo.ping((result, error) -> {
 			MonitorInfo info = new MonitorInfo(serverInfo, nano, result, error);
 			bungeeServers.put(serverInfo, info);
 			MonitorInfo previous = olympaServers.get(info.getOlympaServer()).put(info.getServerID(), info);
 			ServerStatus previousStatus = previous == null ? ServerStatus.CLOSE : previous.getStatus();
-			if (previousStatus != info.getStatus()) OlympaBungee.getInstance().getLogger().info("Serveur " + info.getName() + " : " + previousStatus + " -> " + info.getStatus() + (previous != null && previous.getError() != null ? "(" + previous.getError() + ")" : ""));
-			RedisBungeeSend.sendServerInfos(info);
+			if (previousStatus != info.getStatus()) {
+				OlympaBungee.getInstance().getLogger().info("Serveur " + info.getName() + " : " + previousStatus + " -> " + info.getStatus() + (info.getError() != null ? "(" + info.getError() + ")" : ""));
+				if (instantUpdate) updateOlympaServer(info.getOlympaServer());
+			}
 		});
 	}
 	
+	private static void updateOlympaServer(OlympaServer olympaServer) {
+		Collection<MonitorInfo> servers = olympaServers.get(olympaServer).values();
+		if (servers.isEmpty()) return;
+		MonitorInfo upper = servers.stream().sorted((x, y) -> Integer.compare(y.getStatus().getId(), x.getStatus().getId())).findFirst().orElse(null);
+		int online = servers.stream().filter(x -> x.getStatus() != ServerStatus.CLOSE).mapToInt(x -> x.getOnlinePlayers()).sum();
+		RedisBungeeSend.sendServerInfos(olympaServer, online, upper == null ? ServerStatus.CLOSE : upper.getStatus());
+	}
+
 	public MonitorServers(Plugin plugin) {
 		TaskScheduler schuduler = plugin.getProxy().getScheduler();
 		schuduler.schedule(plugin, () -> {
 			for (ServerInfo serverInfo : ProxyServer.getInstance().getServers().values()) {
-				updateServer(serverInfo);
+				updateServer(serverInfo, false);
+			}
+			for (OlympaServer olympaServer : olympaServers.keySet()) {
+				updateOlympaServer(olympaServer);
 			}
 		}, 1, 10, TimeUnit.SECONDS);
 	}

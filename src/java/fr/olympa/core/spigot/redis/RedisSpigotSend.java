@@ -1,10 +1,13 @@
 package fr.olympa.core.spigot.redis;
 
+import org.bukkit.entity.Player;
+
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.RedisAccess;
+import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
@@ -46,6 +49,12 @@ public class RedisSpigotSend {
 			jedis.publish("shutdown", serverName);
 		}
 		RedisAccess.INSTANCE.disconnect();
+	}
+
+	public static void sendServerSwitch(Player p, OlympaServer server) {
+		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
+			jedis.publish("switch", p.getName() + ":" + server.name());
+		}
 	}
 
 }

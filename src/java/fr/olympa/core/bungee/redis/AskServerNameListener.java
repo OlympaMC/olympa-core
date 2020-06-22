@@ -15,7 +15,7 @@ public class AskServerNameListener extends JedisPubSub {
 		}
 		ServerInfo serverInfo = ServersConnection.getServerByNameOrIpPort(message);
 		if (serverInfo != null) {
-			MonitorServers.updateServer(serverInfo);
+			MonitorServers.updateServer(serverInfo, true);
 			RedisBungeeSend.sendServerName(serverInfo);
 		}
 	}

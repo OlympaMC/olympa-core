@@ -42,6 +42,7 @@ import fr.olympa.core.bungee.privatemessage.ReplyCommand;
 import fr.olympa.core.bungee.protocol.ProtocolListener;
 import fr.olympa.core.bungee.redis.AskServerNameListener;
 import fr.olympa.core.bungee.redis.PlayerGroupChangeListener;
+import fr.olympa.core.bungee.redis.ServerSwitchListener;
 import fr.olympa.core.bungee.redis.ShutdownListener;
 import fr.olympa.core.bungee.security.BasicSecurityListener;
 import fr.olympa.core.bungee.servers.MonitorServers;
@@ -245,6 +246,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 			new Thread(() -> redisAcces.newConnection().subscribe(new AskServerNameListener(), "askServerName"), "subscriberThread").start();
 			new Thread(() -> redisAcces.newConnection().subscribe(new PlayerGroupChangeListener(), "playerGroupChange"), "subscriberThread").start();
 			new Thread(() -> redisAcces.newConnection().subscribe(new ShutdownListener(), "shutdown"), "subscriberThread").start();
+			new Thread(() -> redisAcces.newConnection().subscribe(new ServerSwitchListener(), "switch"), "subscriberThread").start();
 			// Test
 			new Thread(() -> redisAcces.newConnection().subscribe(new RedisTestListener(), "test"), "subscriberThread").start();
 			sendMessage("&aConnexion à &2Redis&a établie.");
