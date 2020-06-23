@@ -56,14 +56,14 @@ public class OlympaLoginListener implements Listener {
 				String subdomain = cache.getSubDomain();
 				if (subdomain != null) {
 					if (subdomain.equalsIgnoreCase("buildeur")) {
-						ServersConnection.tryConnect(player, OlympaServer.BUILDEUR, null);
+						ServersConnection.tryConnect(player, OlympaServer.BUILDEUR);
 						return;
 					} else if (subdomain.equalsIgnoreCase("dev")) {
-						ServersConnection.tryConnect(player, OlympaServer.DEV, null);
+						ServersConnection.tryConnect(player, OlympaServer.DEV);
 						return;
 					}
 				}
-				ServersConnection.tryConnect(player, OlympaServer.LOBBY, null);
+				ServersConnection.tryConnect(player, OlympaServer.LOBBY);
 			}
 			DataHandler.removePlayer(player.getName());
 		}, 2, TimeUnit.SECONDS);
@@ -98,9 +98,9 @@ public class OlympaLoginListener implements Listener {
 					}
 					if (olympaServer != null) {
 						ServerInfo server = ServersConnection.getBestServer(olympaServer, null);
-						if (!MonitorServers.getMonitor(server).isOpen()) {
+						if (server == null || !MonitorServers.getMonitor(server).isOpen()) {
 							tryConnect = true;
-							ServersConnection.tryConnect(player, olympaServer, null);
+							ServersConnection.tryConnect(player, olympaServer);
 						} else {
 							event.setTarget(server);
 							return;
@@ -112,7 +112,7 @@ public class OlympaLoginListener implements Listener {
 					event.setTarget(lobby);
 					return;
 				} else if (!tryConnect) {
-					ServersConnection.tryConnect(player, OlympaServer.LOBBY, null);
+					ServersConnection.tryConnect(player, OlympaServer.LOBBY);
 				}
 			}
 		}
@@ -126,11 +126,7 @@ public class OlympaLoginListener implements Listener {
 
 	@EventHandler
 	public void onServerConnected(ServerConnectedEvent event) {
-		ProxiedPlayer player = event.getPlayer();
-		CachePlayer cache = DataHandler.get(player.getName());
-		if (cache == null) {
-			ServersConnection.removeTryToConnect(player);
-		}
+		ServersConnection.removeTryToConnect(event.getPlayer());
 	}
 
 	@EventHandler

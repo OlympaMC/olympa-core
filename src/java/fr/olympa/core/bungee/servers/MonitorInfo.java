@@ -1,5 +1,7 @@
 package fr.olympa.core.bungee.servers;
 
+import java.util.AbstractMap;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +17,15 @@ public class MonitorInfo {
 
 	private static final Pattern ID_PATTERN = Pattern.compile("\\d*$");
 
+	public static Entry<OlympaServer, Integer> getOlympaServer(String serverName) {
+		Matcher matcher = ID_PATTERN.matcher(serverName);
+		matcher.find();
+		String id = matcher.group();
+		int serverID = Utils.isEmpty(id) ? 0 : Integer.parseInt(id);
+		OlympaServer olympaServer = OlympaServer.valueOf(matcher.replaceAll("").toUpperCase());
+		return new AbstractMap.SimpleEntry<>(olympaServer, serverID);
+	}
+
 	private String serverName;
 	private OlympaServer olympaServer;
 	private int serverID;
@@ -29,11 +40,9 @@ public class MonitorInfo {
 	public MonitorInfo(ServerInfo server, long time, ServerPing serverPing, Throwable error) {
 		serverName = server.getName();
 
-		Matcher matcher = ID_PATTERN.matcher(serverName);
-		matcher.find();
-		String id = matcher.group();
-		serverID = Utils.isEmpty(id) ? 0 : Integer.parseInt(id);
-		olympaServer = OlympaServer.valueOf(matcher.replaceAll("").toUpperCase());
+		Entry<OlympaServer, Integer> serverInfo = getOlympaServer(serverName);
+		this.olympaServer = serverInfo.getKey();
+		this.serverID = serverInfo.getValue();
 
 		ping = Math.round((System.nanoTime() - time) / 1000000);
 		if (error == null) {

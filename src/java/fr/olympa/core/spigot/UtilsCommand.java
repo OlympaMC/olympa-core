@@ -11,7 +11,9 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_15_R1.CraftChunk;
+import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.plugin.Plugin;
 
@@ -26,6 +28,7 @@ import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.region.tracking.TrackedRegion;
 import net.minecraft.server.v1_15_R1.BlockPosition;
 import net.minecraft.server.v1_15_R1.TileEntity;
+import net.minecraft.server.v1_15_R1.TileEntityTypes;
 
 public class UtilsCommand extends ComplexCommand {
 
@@ -51,9 +54,25 @@ public class UtilsCommand extends ComplexCommand {
 						world.tileEntityListTick.remove(tile.getValue());
 						iterator.remove();
 					}
+
 				}
 				//chunk.getTileEntities().clear();
 			}
+		}
+	}
+
+	@Cmd (player = true)
+	public void blockData(CommandContext cmd) {
+		Block block = player.getTargetBlockExact(5);
+		CraftBlock cblock = (CraftBlock) block;
+		net.minecraft.server.v1_15_R1.Block nms = cblock.getNMS().getBlock();
+		TileEntity tileEntity = cblock.getCraftWorld().getHandle().getTileEntity(cblock.getPosition());
+		sendInfo("Position : %s", cblock.getPosition().toString());
+		sendInfo("Bukkit Material : %s", block.getType().name());
+		sendInfo("Tile entity : %b", nms.isTileEntity());
+		if (tileEntity != null) {
+			sendInfo("Tile entity type : %s", TileEntityTypes.a(tileEntity.getTileType()).getKey());
+			sendInfo("Tile entity valid : %b", tileEntity.getTileType().isValidBlock(nms));
 		}
 	}
 
