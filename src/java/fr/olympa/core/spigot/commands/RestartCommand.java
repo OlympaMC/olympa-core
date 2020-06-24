@@ -36,7 +36,7 @@ public class RestartCommand extends OlympaCommand {
 			try {
 				String s;
 				Process p;
-				p = Runtime.getRuntime().exec("sh start.sh");
+				p = Runtime.getRuntime().exec("sleep 5 && sh start.sh");
 				BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 				StringBuilder sb = new StringBuilder();
 				while ((s = br.readLine()) != null)

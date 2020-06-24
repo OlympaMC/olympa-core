@@ -14,12 +14,12 @@ import fr.olympa.api.server.OlympaServerSettings;
 import fr.olympa.api.utils.Prefix;
 
 public class ChatCommand extends OlympaCommand {
-
+	
 	public ChatCommand(Plugin plugin) {
 		super(plugin, "chat", OlympaCorePermissions.CHAT_COMMAND, "tchat");
 		this.addArgs(true, "slow", "clear", "mute");
 	}
-
+	
 	/*
 	 * Dev: Tristiisch74
 	 *
@@ -29,17 +29,17 @@ public class ChatCommand extends OlympaCommand {
 	 * tchat ./chat mute = Met le tchat en pause (toggle on/off)
 	 *
 	 */
-
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		OlympaServerSettings serverSettings = OlympaServerSettings.getInstance();
 		if (args[0].equalsIgnoreCase("slow")) {
 			int timecooldown = 2;
 			if (serverSettings.isChatSlow()) {
-				this.sendMessage(Prefix.DEFAULT, "L'antispam a été désactivé.");
+				sendMessage(Prefix.DEFAULT, "L'antispam a été désactivé.");
 				serverSettings.setChatSlow(false);
 			} else {
-				this.sendMessage(Prefix.DEFAULT, "&aL'antispam a été activé à un message toutes les %second% secondes.".replaceFirst("%second%", String.valueOf(timecooldown)));
+				sendMessage(Prefix.DEFAULT, "&aL'antispam a été activé à un message toutes les %s secondes.".replace("%s", String.valueOf(timecooldown)));
 				serverSettings.setChatSlow(true);
 			}
 		} else if (args[0].equalsIgnoreCase("clear"))
@@ -56,15 +56,15 @@ public class ChatCommand extends OlympaCommand {
 				serverSettings.setChatMute(false);
 				broadcastToAll(Prefix.DEFAULT_GOOD, "&lLe chat a été réactivé.");
 			}
-
+			
 		} else
 			sendUsage(label);
 		return true;
 	}
-
+	
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		return null;
 	}
-
+	
 }
