@@ -109,10 +109,11 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		instance = this;
 		LinkSpigotBungee.Provider.link = this;
 		
-		status = ServerStatus.DEV;
 		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		super.onEnable();
+		// Force Dev Status (le status dans la config est ignoré)
+		status = ServerStatus.DEV;
 		
 		try {
 			hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml"));
