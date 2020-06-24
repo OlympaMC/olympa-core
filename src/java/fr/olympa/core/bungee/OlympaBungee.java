@@ -64,6 +64,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.api.scheduler.TaskScheduler;
 import net.md_5.bungee.config.Configuration;
+import redis.clients.jedis.JedisPubSub;
 
 public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	
@@ -234,21 +235,24 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 			getTask().schedule(this, () -> setupDatabase(i), 10, TimeUnit.SECONDS);
 		}
 	}
+
+	public void registerRedisSub(RedisAccess redisAccess, JedisPubSub sub, String channel) {
+		new Thread(() -> redisAccess.newConnection().subscribe(sub, channel), "Redis sub " + channel).start();
+	}
 	
 	private void setupRedis(int... is) {
 		int i1 = 0;
 		if (is != null && is.length != 0)
 			i1 = is[0] + 1;
 		int i = i1;
-		RedisAccess redisAcces = RedisAccess.init("bungee");
-		redisAcces.connect();
-		if (redisAcces.isConnected()) {
-			new Thread(() -> redisAcces.newConnection().subscribe(new AskServerNameListener(), "askServerName"), "subscriberThread").start();
-			new Thread(() -> redisAcces.newConnection().subscribe(new PlayerGroupChangeListener(), "playerGroupChange"), "subscriberThread").start();
-			new Thread(() -> redisAcces.newConnection().subscribe(new ShutdownListener(), "shutdown"), "subscriberThread").start();
-			new Thread(() -> redisAcces.newConnection().subscribe(new ServerSwitchListener(), "switch"), "subscriberThread").start();
-			// Test
-			new Thread(() -> redisAcces.newConnection().subscribe(new RedisTestListener(), "test"), "subscriberThread").start();
+		RedisAccess redisAccess = RedisAccess.init("bungee");
+		redisAccess.connect();
+		if (redisAccess.isConnected()) {
+			registerRedisSub(redisAccess, new AskServerNameListener(), "askServerName");
+			registerRedisSub(redisAccess, new PlayerGroupChangeListener(), "playerGroupChange");
+			registerRedisSub(redisAccess, new ShutdownListener(), "shutdown");
+			registerRedisSub(redisAccess, new ServerSwitchListener(), "switch");
+			registerRedisSub(redisAccess, new RedisTestListener(), "test");
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)

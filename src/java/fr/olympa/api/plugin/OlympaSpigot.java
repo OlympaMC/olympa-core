@@ -40,7 +40,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 	}
 
 	public void registerRedisSub(JedisPubSub sub, String channel) {
-		new Thread(() -> redisAccess.newConnection().subscribe(sub, channel), "subscriberThread").start();
+		new Thread(() -> redisAccess.newConnection().subscribe(sub, channel), "Redis sub " + channel).start();
 	}
 
 	@Override
