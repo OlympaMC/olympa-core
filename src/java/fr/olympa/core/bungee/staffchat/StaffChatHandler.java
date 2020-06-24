@@ -15,16 +15,17 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class StaffChatHandler {
-	
+
 	private static final Set<UUID> staffChat = new HashSet<>();
-	
-	@SuppressWarnings("deprecation")
+
 	public static void sendMessage(OlympaPlayer olympaPlayer, ProxiedPlayer player, String msg) {
 		String message = msg.replaceAll("( )\\1+", " ");
-		BaseComponent[] messageComponent = TextComponent.fromLegacyText(Prefix.STAFFCHAT + Utils.capitalize(player.getServer().getInfo().getName()) + " " + olympaPlayer.getGroupNameColored() + " §l" + player.getName() + " §7: " + message);
-		ProxyServer.getInstance().getPlayers().stream().filter(p -> OlympaCorePermissions.STAFF_CHAT.hasPermission(new AccountProvider(p.getUniqueId()).getFromRedis())).forEach(p -> p.sendMessage(messageComponent));
+		BaseComponent[] messageComponent = TextComponent.fromLegacyText(Prefix.STAFFCHAT +
+				Utils.capitalize(player.getServer().getInfo().getName()) + " " + olympaPlayer.getGroupNameColored() + " §l" + player.getName() + " §7: " + message);
+		ProxyServer.getInstance().getPlayers().stream().filter(p -> OlympaCorePermissions.STAFF_CHAT.hasPermission(new AccountProvider(p.getUniqueId()).getFromRedis()))
+				.forEach(p -> p.sendMessage(messageComponent));
 	}
-
+	
 	public static Set<UUID> getStaffchat() {
 		return staffChat;
 	}
