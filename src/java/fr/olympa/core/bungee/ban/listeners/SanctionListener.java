@@ -28,24 +28,23 @@ import net.md_5.bungee.event.EventPriority;
 
 // TODO mute + ban = 1 request (at this moment this = 2)
 public class SanctionListener implements Listener {
-
+	
 	private List<String> commandDisableWhenMuted = new ArrayList<>();
-
+	
 	public SanctionListener() {
 		commandDisableWhenMuted.addAll(PrivateMessage.privateMessageCommand);
 		commandDisableWhenMuted.addAll(PrivateMessage.replyCommand);
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on1Login(LoginEvent event) {
-		if (event.isCancelled()) {
+		if (event.isCancelled())
 			return;
-		}
 		PendingConnection connection = event.getConnection();
 		UUID playerUUID = connection.getUniqueId();
 		String playerIp = connection.getAddress().getAddress().getHostAddress();
-
+		
 		List<OlympaSanction> sanctions;
 		try {
 			sanctions = BanMySQL.getSanctionsActive(playerUUID, playerIp);
@@ -54,66 +53,59 @@ public class SanctionListener implements Listener {
 			e.printStackTrace();
 			return;
 		}
-		if (sanctions.isEmpty()) {
+		if (sanctions.isEmpty())
 			return;
-		}
-
+		
 		List<OlympaSanction> bans = sanctions.stream().filter(sanction -> sanction.getType() == OlympaSanctionType.BAN || sanction.getType() == OlympaSanctionType.BANIP).collect(Collectors.toList());
 		if (!bans.isEmpty()) {
 			OlympaSanction permanant = bans.stream().filter(ban -> ban.isPermanent()).findFirst().orElse(null);
 			Configuration config = OlympaBungee.getInstance().getConfig();
-			if (permanant != null) {
+			if (permanant != null)
 				event.setCancelReason(SpigotUtils.connectScreen(config.getString("ban.bandisconnect")
 						.replaceAll("%reason%", permanant.getReason())
 						.replaceAll("%id%", String.valueOf(permanant.getId()))));
-			}
 			OlympaSanction temp = bans.stream().filter(ban -> !ban.isPermanent()).findFirst().orElse(null);
-			if (temp != null) {
+			if (temp != null)
 				event.setCancelReason(SpigotUtils.connectScreen(config.getString("ban.tempbandisconnect")
 						.replaceAll("%reason%", temp.getReason())
 						.replaceAll("%time%", Utils.timestampToDuration(temp.getExpires()))
 						.replaceAll("%id%", String.valueOf(temp.getId()))));
-			}
 		}
 		sanctions.stream().filter(sanction -> sanction.getType() == OlympaSanctionType.MUTE).forEach(mute -> MuteUtils.addMute(mute));
 	}
-
+	
 	@EventHandler(priority = EventPriority.HIGH)
 	public void on2PostLogin(PostLoginEvent event) {
-		OlympaBungee.getInstance().getTask().runAsync(OlympaBungee.getInstance(), () -> {
+		OlympaBungee.getInstance().getTask().runTaskAsynchronously(() -> {
 			ProxiedPlayer player = event.getPlayer();
 			OlympaSanction mute = MuteUtils.getMute(player.getUniqueId());
 			if (mute == null) {
 				mute = BanMySQL.getSanctionActive(player.getUniqueId(), OlympaSanctionType.MUTE);
-				if (mute != null) {
+				if (mute != null)
 					MuteUtils.addMute(mute);
-				}
 			}
 		});
 	}
-
+	
 	@EventHandler
 	public void onBungeeNewPlayerEvent(BungeeNewPlayerEvent event) {
-
+		
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerChat(ChatEvent event) {
-		if (event.isCancelled()) {
+		if (event.isCancelled())
 			return;
-		}
-		if (!(event.getSender() instanceof ProxiedPlayer)) {
+		if (!(event.getSender() instanceof ProxiedPlayer))
 			return;
-		}
 		String command = event.getMessage().substring(1);
-		if (event.getMessage().startsWith("/") && !commandDisableWhenMuted.contains(command)) {
+		if (event.getMessage().startsWith("/") && !commandDisableWhenMuted.contains(command))
 			return;
-		}
 		ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-
+		
 		OlympaSanction mute = MuteUtils.getMute(player.getUniqueId());
-		if (mute != null) {
+		if (mute != null)
 			if (!MuteUtils.chechExpireBan(mute)) {
 				Configuration config = OlympaBungee.getInstance().getConfig();
 				player.sendMessage(
@@ -121,6 +113,5 @@ public class SanctionListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}
-		}
 	}
 }

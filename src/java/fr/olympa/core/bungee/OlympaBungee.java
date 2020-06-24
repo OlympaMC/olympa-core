@@ -12,6 +12,7 @@ import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.api.config.BungeeCustomConfig;
+import fr.olympa.core.bungee.api.task.BungeeTask;
 import fr.olympa.core.bungee.ban.commands.BanCommand;
 import fr.olympa.core.bungee.ban.commands.BanHistoryCommand;
 import fr.olympa.core.bungee.ban.commands.BanIpCommand;
@@ -59,82 +60,82 @@ import fr.olympa.core.bungee.staffchat.StaffChatListener;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import fr.olympa.core.bungee.vpn.VpnListener;
 import fr.olympa.core.bungee.vpn.VpnSql;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
-import net.md_5.bungee.api.scheduler.TaskScheduler;
 import net.md_5.bungee.config.Configuration;
 import redis.clients.jedis.JedisPubSub;
 
 public class OlympaBungee extends Plugin implements LinkSpigotBungee {
-	
+
 	private static OlympaBungee instance;
-	
+
 	public static OlympaBungee getInstance() {
 		return instance;
 	}
-	
+
 	protected DbConnection database = null;
 	protected long uptime = Utils.getCurrentTimeInSeconds();
 	protected BungeeCustomConfig defaultConfig;
 	protected BungeeCustomConfig maintConfig;
-	
+	private BungeeTask bungeeTask;
+
 	public Configuration getConfig() {
 		return defaultConfig.getConfig();
 	}
-	
+
 	@Override
 	public Connection getDatabase() throws SQLException {
 		return database.getConnection();
 	}
-	
+
 	public BungeeCustomConfig getDefaultConfig() {
 		return defaultConfig;
 	}
-	
+
 	public Configuration getMaintConfig() {
 		return maintConfig != null ? maintConfig.getConfig() : null;
 	}
-	
+
 	public BungeeCustomConfig getMaintCustomConfig() {
 		return maintConfig;
 	}
-	
+
 	private String getPrefixConsole() {
 		return "&f[&6" + getDescription().getName() + "&f] &e";
 	}
-	
+
 	public String getServerName() {
 		return "bungee";
 	}
-	
-	public TaskScheduler getTask() {
-		return ProxyServer.getInstance().getScheduler();
+
+	public BungeeTask getTask() {
+		return bungeeTask;
 	}
-	
+
 	public String getUptime() {
 		return Utils.timestampToDuration(uptime);
 	}
-	
+
 	public long getUptimeLong() {
 		return uptime;
 	}
-	
+
 	@Override
 	public void launchAsync(Runnable run) {
-		getTask().runAsync(this, run);
+		getTask().runTaskAsynchronously(run);
 	}
-	
+
 	@Override
 	public void onDisable() {
 		sendMessage("&4" + getDescription().getName() + "&c (" + getDescription().getVersion() + ") est désactivé.");
 	}
-	
+
 	@Override
 	public void onEnable() {
 		instance = this;
 		LinkSpigotBungee.Provider.link = this;
-		
+
+		bungeeTask = new BungeeTask(this);
 		defaultConfig = new BungeeCustomConfig(this, "config");
 		defaultConfig.load();
 		maintConfig = new BungeeCustomConfig(this, "maintenance");
@@ -143,13 +144,13 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new MySQL(database);
 		new VpnSql(database);
 		setupRedis();
-		
+
 		// BungeeTaskManager tasks = new BungeeTaskManager(this);
 		// tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new
 		// RedisTestListener(), "test"));
 		// tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new
 		// OlympaPlayerBungeeReceiveListener(), "OlympaPlayerReceive"));
-		
+
 		PluginManager pluginManager = getProxy().getPluginManager();
 		pluginManager.registerListener(this, new MotdListener());
 		pluginManager.registerListener(this, new MaintenanceListener());
@@ -166,7 +167,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		pluginManager.registerListener(this, new StaffChatListener());
 		pluginManager.registerListener(this, new ProtocolListener());
 		pluginManager.registerListener(this, new FooterListener());
-		
+
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();
 		new BanIpCommand(this).register();
@@ -194,24 +195,24 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new RestartServerCommand(this).register();
 		new RestartBungeeCommand(this).register();
 		new LobbyCommand(this).register();
-		
+
 		new MonitorServers(this);
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public void sendMessage(String message) {
 		getProxy().getConsole().sendMessage(BungeeUtils.color(getPrefixConsole() + message));
 	}
-	
+
 	public void setDefaultConfig(BungeeCustomConfig defaultConfig) {
 		this.defaultConfig = defaultConfig;
 	}
-	
+
 	public void setMaintConfig(BungeeCustomConfig maintConfig) {
 		this.maintConfig = maintConfig;
 	}
-	
+
 	private void setupDatabase(int... is) {
 		int i1 = 0;
 		if (is != null && is.length != 0)
@@ -232,7 +233,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		else {
 			if (i % 100 == 0)
 				sendMessage("&cConnexion à la base de donnée &4" + dbcredentials.getDatabase() + "&c impossible.");
-			getTask().schedule(this, () -> setupDatabase(i), 10, TimeUnit.SECONDS);
+			getTask().runTaskLater("db_setup", () -> setupDatabase(i), 10, TimeUnit.SECONDS);
 		}
 	}
 
@@ -257,7 +258,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		} else {
 			if (i % 100 == 0)
 				sendMessage("&cConnexion à &4Redis&c impossible.");
-			getTask().schedule(this, () -> setupRedis(i), 10, TimeUnit.SECONDS);
+			getTask().runTaskLater("redis_setup", () -> setupRedis(i), 10, TimeUnit.SECONDS);
 		}
 	}
 }
