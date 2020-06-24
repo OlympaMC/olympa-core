@@ -34,9 +34,7 @@ public class ServersListener implements Listener {
 		if (kickReason.contains("restarting") || kickReason.contains("closed")) {
 
 			ServerInfo server = ServersConnection.getBestServer(OlympaServer.LOBBY, serverKicked);
-			/*if (server == null) {
-				server = ServersConnection.getAuth(serverKicked);
-			}*/
+			if (server == null) server = ServersConnection.getBestServer(OlympaServer.AUTH, serverKicked);
 			if (server == null) {
 				BaseComponent[] msg = TextComponent.fromLegacyText(BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e redémarre, merci de te reconnecter dans quelques secondes..."));
 				player.sendMessage(msg);
@@ -46,7 +44,8 @@ public class ServersListener implements Listener {
 			event.setCancelled(true);
 			event.setCancelServer(server);
 			player.sendMessage(ColorUtils.color(Prefix.DEFAULT_GOOD + "Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter avant d'être reconnecté automatiquement."));
-			ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> ServersConnection.tryConnect(player, null, serverKicked), 10, TimeUnit.SECONDS);
+			OlympaServer olympaServer = MonitorInfo.getOlympaServer(serverKicked.getName()).getKey();
+			if (!olympaServer.hasMultiServers()) ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> ServersConnection.tryConnect(player, olympaServer), 10, TimeUnit.SECONDS);
 			return;
 		}
 

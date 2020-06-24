@@ -21,12 +21,14 @@ public class ServersConnection {
 	
 	private static Map<ProxiedPlayer, ScheduledTask> connect = new HashMap<>();
 	
-	public static boolean canPlayerConnect(ServerInfo name) {
-		MonitorInfo monitor = MonitorServers.getMonitor(name);
+	public static boolean canPlayerConnect(ServerInfo server) {
+		MonitorInfo monitor = MonitorServers.getMonitor(server);
 		return monitor != null && !monitor.getStatus().equals(ServerStatus.CLOSE) && !monitor.getStatus().equals(ServerStatus.UNKNOWN);
 	}
 	
 	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except) {
+		if (!olympaServer.hasMultiServers()) return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(MonitorInfo::getServerInfo).orElse(null);
+
 		Map<ServerInfo, Integer> servers = MonitorServers.getServers(olympaServer).values().stream().filter(x -> x.isOpen() && (except == null || except.getName() != x.getName()) && (!olympaServer.hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0)).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayers()));
 		Entry<ServerInfo, Integer> bestServer = servers.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
 		if (bestServer != null) return bestServer.getKey();
@@ -51,15 +53,15 @@ public class ServersConnection {
 		if (task != null) task.cancel();
 	}
 	
-	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer, ServerInfo server) {
-		ScheduledTask task = ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer, server), 0, 30, TimeUnit.SECONDS);
+	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer) {
+		ScheduledTask task = ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer), 0, 30, TimeUnit.SECONDS);
 		connect.put(player, task);
 	}
 	
 	@SuppressWarnings("deprecation")
-	private static void tryConnectTo(ProxiedPlayer player, OlympaServer olympaServer, ServerInfo server) {
-		if (olympaServer != null) server = getBestServer(olympaServer, null);
-		if (server == null) {
+	private static void tryConnectTo(ProxiedPlayer player, OlympaServer olympaServer) {
+		ServerInfo server = getBestServer(olympaServer, null);
+		if (server == null && olympaServer.hasMultiServers()) {
 			player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Aucun serveur " + olympaServer.getNameCaps() + " n'est actuellement disponible, merci de patienter..."));
 			return;
 		}
