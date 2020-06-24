@@ -22,11 +22,11 @@ import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.protocolsupport.ProtocolSupportHook;
 
 public class TpsCommand extends OlympaCommand {
-	
+
 	public TpsCommand(Plugin plugin) {
 		super(plugin, "tps");
 	}
-	
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		double[] tps = TPS.getDoubleTPS();
@@ -66,16 +66,16 @@ public class TpsCommand extends OlympaCommand {
 			String fc = "";
 			if (!forceChunks.isEmpty())
 				fc = " (" + forceChunks.size() + " forcés)";
-			sb.add("&3Monde &b" + world.getName() + "&3: &b" + chunks.length + "&3 chunks" + fc + "&b" + livingEntities.size() + "/" + entities.size() + "&3 entités" + "&3.");
+			sb.add("&3Monde &b" + world.getName() + "&3: &b" + chunks.length + "&3 chunks " + fc + "&b" + livingEntities.size() + "/" + entities.size() + "&3 entités" + "&3.");
 		}
-		
+
 		sendMessage(Prefix.DEFAULT, sb.toString());
 		return false;
 	}
-	
+
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		return null;
 	}
-	
+
 }
