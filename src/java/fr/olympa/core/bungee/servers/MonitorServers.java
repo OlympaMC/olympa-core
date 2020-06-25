@@ -52,7 +52,7 @@ public class MonitorServers {
 		Collection<MonitorInfo> servers = olympaServers.get(olympaServer).values();
 		if (servers.isEmpty()) return;
 		MonitorInfo upper = servers.stream().sorted((x, y) -> Integer.compare(y.getStatus().getId(), x.getStatus().getId())).findFirst().orElse(null);
-		int online = servers.stream().filter(x -> x.getStatus() != ServerStatus.CLOSE).mapToInt(x -> x.getOnlinePlayers()).sum();
+		int online = servers.stream().filter(x -> x.getStatus().canConnect()).mapToInt(x -> x.getOnlinePlayers()).sum();
 		RedisBungeeSend.sendServerInfos(olympaServer, online, upper == null ? ServerStatus.CLOSE : upper.getStatus());
 	}
 

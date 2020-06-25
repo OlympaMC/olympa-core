@@ -17,33 +17,33 @@ public class StaffChatCommand extends BungeeCommand {
 	
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		UUID uuid = proxiedPlayer.getUniqueId();
-		if (args.length == 0) {
-			if (proxiedPlayer == null) {
-				sendImpossibleWithConsole();
-				return;
-			}
-			if (StaffChatHandler.getStaffchat().contains(uuid)) {
-				StaffChatHandler.getStaffchat().remove(uuid);
-				sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode désactivé.");
-			} else {
-				StaffChatHandler.getStaffchat().add(uuid);
-				sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode activé.");
-			}
-		}else if (args[0].equalsIgnoreCase("off") && proxiedPlayer != null) {
-			if (StaffChatHandler.getStaffchat().contains(uuid)) {
-				StaffChatHandler.getStaffchat().remove(uuid);
-				sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode désactivé.");
-			} else
-				sendMessage(Prefix.DEFAULT_BAD + "StaffChat déjà désactivé.");
-		}else if (args[0].equalsIgnoreCase("on") && proxiedPlayer != null) {
-			if (StaffChatHandler.getStaffchat().contains(uuid))
-				sendMessage(Prefix.DEFAULT_BAD + "StaffChat déjà activé.");
-			else {
-				StaffChatHandler.getStaffchat().add(uuid);
-				sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode activé.");
-			}
-		}else StaffChatHandler.sendMessage(getOlympaPlayer(), sender, buildText(0, args));
+		if (proxiedPlayer != null) {
+			UUID uuid = proxiedPlayer.getUniqueId();
+			if (args.length == 0) {
+				if (StaffChatHandler.getStaffchat().remove(uuid)) {
+					sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode désactivé.");
+				}else {
+					StaffChatHandler.getStaffchat().add(uuid);
+					sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode activé.");
+				}
+			}else if (args[0].equalsIgnoreCase("off")) {
+				if (StaffChatHandler.getStaffchat().remove(uuid)) {
+					sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode désactivé.");
+				}else
+					sendMessage(Prefix.DEFAULT_BAD + "StaffChat déjà désactivé.");
+			}else if (args[0].equalsIgnoreCase("on")) {
+				if (StaffChatHandler.getStaffchat().contains(uuid)) {
+					sendMessage(Prefix.DEFAULT_BAD + "StaffChat déjà activé.");
+				}else {
+					StaffChatHandler.getStaffchat().add(uuid);
+					sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode activé.");
+				}
+			}else StaffChatHandler.sendMessage(getOlympaPlayer(), sender, buildText(0, args));
+		}else {
+			if (args.length == 0) {
+				sendError("Un message doit être spécifié.");
+			}else StaffChatHandler.sendMessage(getOlympaPlayer(), sender, buildText(0, args));
+		}
 	}
 	
 }

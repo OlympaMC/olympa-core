@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -23,7 +22,7 @@ public class ServersConnection {
 	
 	public static boolean canPlayerConnect(ServerInfo server) {
 		MonitorInfo monitor = MonitorServers.getMonitor(server);
-		return monitor != null && !monitor.getStatus().equals(ServerStatus.CLOSE) && !monitor.getStatus().equals(ServerStatus.UNKNOWN);
+		return monitor != null && monitor.getStatus().canConnect();
 	}
 	
 	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except) {
