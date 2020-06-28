@@ -133,7 +133,7 @@ public class AuthListener implements Listener {
 
 		{
 			cache.setOlympaPlayer(olympaPlayer);
-			System.out.println("player info " + GsonCustomizedObjectTypeAdapter.GSON.toJson(cache.getOlympaPlayer()));
+			OlympaBungee.getInstance().sendMessage("Connexion du joueur connu §e" + olympaPlayer.getName());
 			if (olympaPlayer.getPremiumUniqueId() == null) {
 				/*if (connection.isOnlineMode()) {
 					event.setCancelReason(BungeeUtils.connectScreen(
@@ -174,7 +174,7 @@ public class AuthListener implements Listener {
 			return;
 		}
 		OlympaPlayer olympaPlayer = cache.getOlympaPlayer();
-		System.out.println("LoginEvent onlinemode ? " + connection.isOnlineMode() + " " + name + " p: " + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
+		OlympaBungee.getInstance().sendMessage("§7LoginEvent §6" + (connection.isOnlineMode() ? "online" : "offline/cracked") + "§7 du joueur §e" + name + "§7. Json: §f" + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 		String ip = connection.getAddress().getAddress().getHostAddress();
 		AccountProvider olympaAccount;
 		// Si le joueur s'est déjà connecté
@@ -234,7 +234,7 @@ public class AuthListener implements Listener {
 	@EventHandler(priority = EventPriority.LOW)
 	public void on5PostLogin(PostLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
-		System.out.println("PostLoginEvent onlinemode ? " + player.getPendingConnection().isOnlineMode());
+		OlympaBungee.getInstance().sendMessage("§7PostLoginEvent §6" + (player.getPendingConnection().isOnlineMode() ? "online" : "offline/cracked"));
 		if (!player.getPendingConnection().isOnlineMode())
 			return;
 		OlympaPlayer olympaPlayer = DataHandler.get(player.getName()).getOlympaPlayer();
