@@ -6,9 +6,9 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 public class TabTextListener implements Listener {
-
-	//	private static long time = Utils.getCurrentTimeInSeconds();
 	
+	//	private static long time = Utils.getCurrentTimeInSeconds();
+
 	@EventHandler
 	public void onPlayerDisconnect(PlayerDisconnectEvent event) {
 		//		long t = Utils.getCurrentTimeInSeconds();
@@ -17,7 +17,7 @@ public class TabTextListener implements Listener {
 		//		time = t;
 		TabText.sendAll();
 	}
-
+	
 	@EventHandler
 	public void onServerConnected(PostLoginEvent event) {
 		//		long t = Utils.getCurrentTimeInSeconds();
@@ -27,7 +27,7 @@ public class TabTextListener implements Listener {
 		//		}
 		//		time = t;
 		TabText.sendAll();
-		//		TabText.send(event.getPlayer());
+		TabText.send(event.getPlayer());
 	}
-
+	
 }
