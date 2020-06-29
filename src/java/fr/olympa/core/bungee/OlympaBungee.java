@@ -26,7 +26,6 @@ import fr.olympa.core.bungee.ban.listeners.SanctionListener;
 import fr.olympa.core.bungee.commands.InfoCommand;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
 import fr.olympa.core.bungee.datamanagment.GetUUIDCommand;
-import fr.olympa.core.bungee.footer.FooterListener;
 import fr.olympa.core.bungee.login.commands.EmailCommand;
 import fr.olympa.core.bungee.login.commands.LoginCommand;
 import fr.olympa.core.bungee.login.commands.RegisterCommand;
@@ -57,6 +56,7 @@ import fr.olympa.core.bungee.servers.commands.StartServerCommand;
 import fr.olympa.core.bungee.servers.commands.StopServerCommand;
 import fr.olympa.core.bungee.staffchat.StaffChatCommand;
 import fr.olympa.core.bungee.staffchat.StaffChatListener;
+import fr.olympa.core.bungee.tabtext.TabTextListener;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import fr.olympa.core.bungee.vpn.VpnListener;
 import fr.olympa.core.bungee.vpn.VpnSql;
@@ -166,7 +166,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		pluginManager.registerListener(this, new OlympaLoginListener());
 		pluginManager.registerListener(this, new StaffChatListener());
 		pluginManager.registerListener(this, new ProtocolListener());
-		pluginManager.registerListener(this, new FooterListener());
+		pluginManager.registerListener(this, new TabTextListener());
 
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();
