@@ -32,14 +32,14 @@
 		<dependency>
 			<groupId>net.md-5</groupId>
 			<artifactId>bungeecord-api</artifactId>
-			<version>[1.15-SNAPSHOT,)</version>
+			<version>1.15-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.md-5</groupId>
 			<artifactId>bungeecord-api</artifactId>
-			<version>[1.15-SNAPSHOT,)</version>
+			<version>1.15-SNAPSHOT</version>
 			<type>javadoc</type>
 			<scope>provided</scope>
 		</dependency>
@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot</artifactId>
-			<version>[1.15.1-R0.1-SNAPSHOT,)</version>
+			<version>1.15.2-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

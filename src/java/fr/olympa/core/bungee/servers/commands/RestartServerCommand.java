@@ -4,9 +4,8 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.servers.MonitorInfo;
-import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ScriptBashMc;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -28,9 +27,9 @@ public class RestartServerCommand extends BungeeCommand implements TabExecutor {
 	@Override
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		if (args.length == 0) {
-			return MonitorServers.getLastServerInfo().stream().map(MonitorInfo::getName).collect(Collectors.toList());
+			return OlympaBungee.getInstance().getProxy().getServers().keySet();
 		} else if (args.length == 1) {
-			return Utils.startWords(args[0], MonitorServers.getLastServerInfo().stream().map(MonitorInfo::getName).collect(Collectors.toList()));
+			return Utils.startWords(args[0], OlympaBungee.getInstance().getProxy().getServers().keySet());
 		}
 		return null;
 	}

@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -21,51 +20,19 @@ public class ServersConnection {
 	
 	private static Map<ProxiedPlayer, ScheduledTask> connect = new HashMap<>();
 	
-	public static boolean canPlayerConnect(ServerInfo name) {
-		MonitorInfo monitor = MonitorServers.get(name.getName());
-		return monitor != null && !monitor.getStatus().equals(ServerStatus.CLOSE) && !monitor.getStatus().equals(ServerStatus.UNKNOWN);
+	public static boolean canPlayerConnect(ServerInfo server) {
+		MonitorInfo monitor = MonitorServers.getMonitor(server);
+		return monitor != null && monitor.getStatus().canConnect();
 	}
 	
-	public static ServerInfo getAuth() {
-		return getAuth(null);
-	}
-	
-	public static ServerInfo getAuth(ServerInfo noThis) {
-		Map<ServerInfo, Integer> auths = MonitorServers.getLastServerInfo().stream().filter(si -> {
-			return si.isOpen() && (noThis == null || noThis.getName() != si.getName()) && si.getName().startsWith("auth") && si.getMaxPlayers() - si.getOnlinePlayers() > 0;
-		}).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayers()));
-		// TODO add sort by name1 name2 name3
-		Entry<ServerInfo, Integer> auth = auths.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
-		if (auth != null)
-			return auth.getKey();
-		// TODO create new server
-		return null;
-	}
-	
-	public static ServerInfo getLobby() {
-		return getLobby(null);
-	}
-	
-	public static ServerInfo getLobby(ServerInfo noThis) {
-		Map<ServerInfo, Integer> lobbys = MonitorServers.getLastServerInfo().stream().filter(si -> isValidLobby(si, noThis)).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayers()));
-		// TODO add sort by name1 name2 name3
-		Entry<ServerInfo, Integer> lobby = lobbys.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
-		if (lobby != null) return lobby.getKey();
-		// TODO create new server
-		return null;
-	}
-	
-	private static boolean isValidLobby(MonitorInfo server, ServerInfo notThis) {
-		System.out.println(server.getName() + " " + server.getOnlinePlayers() + " " + server.getMaxPlayers());
-		if (!server.isOpen()) return false;
-		if (notThis != null && server.getName().equals(notThis.getName())) return false;
-		if (!server.getName().startsWith("lobby")) return false;
-		if (server.getMaxPlayers() * 0.9 - server.getOnlinePlayers() <= 0) return false;
-		return true;
-	}
+	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except) {
+		if (!olympaServer.hasMultiServers()) return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(MonitorInfo::getServerInfo).orElse(null);
 
-	public static ServerInfo getServer(String name) {
-		return MonitorServers.getLastServerInfo().stream().filter(si -> si.getError() == null && si.getName().startsWith(name)).map(MonitorInfo::getServerInfo).findFirst().orElse(null);
+		Map<ServerInfo, Integer> servers = MonitorServers.getServers(olympaServer).values().stream().filter(x -> x.isOpen() && (except == null || except.getName() != x.getName()) && (!olympaServer.hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0)).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayers()));
+		Entry<ServerInfo, Integer> bestServer = servers.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
+		if (bestServer != null) return bestServer.getKey();
+		// TODO create new server
+		return null;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -81,33 +48,19 @@ public class ServersConnection {
 	}
 	
 	public static void removeTryToConnect(ProxiedPlayer player) {
-		ScheduledTask task = connect.get(player);
-		if (task != null) {
-			task.cancel();
-			connect.remove(player);
-		}
+		ScheduledTask task = connect.remove(player);
+		if (task != null) task.cancel();
 	}
 	
-	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer, ServerInfo server) {
-		ScheduledTask task = ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer, server), 0, 30, TimeUnit.SECONDS);
+	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer) {
+		ScheduledTask task = ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer), 0, 30, TimeUnit.SECONDS);
 		connect.put(player, task);
 	}
 	
 	@SuppressWarnings("deprecation")
-	private static void tryConnectTo(ProxiedPlayer player, OlympaServer olympaServer, ServerInfo server) {
-		if (olympaServer != null)
-			switch (olympaServer) {
-			case LOBBY:
-				server = ServersConnection.getLobby();
-				break;
-			case AUTH:
-				server = ServersConnection.getAuth();
-				break;
-			default:
-				server = getServer(olympaServer.getName());
-				break;
-			}
-		if (server == null) {
+	private static void tryConnectTo(ProxiedPlayer player, OlympaServer olympaServer) {
+		ServerInfo server = getBestServer(olympaServer, null);
+		if (server == null && olympaServer.hasMultiServers()) {
 			player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Aucun serveur " + olympaServer.getNameCaps() + " n'est actuellement disponible, merci de patienter..."));
 			return;
 		}

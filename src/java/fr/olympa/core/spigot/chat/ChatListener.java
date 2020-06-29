@@ -21,12 +21,12 @@ import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Matcher;
 
 public class ChatListener implements Listener {
-
+	
 	public String getChatColor(String format) {
 		int index = format.lastIndexOf("%s");
 		return format.substring(index - 3, index - 1);
 	}
-
+	
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
@@ -35,37 +35,33 @@ public class ChatListener implements Listener {
 			event.setFormat(ColorUtils.color("&cERREUR &7") + "%s : %s");
 			return;
 		}
-
+		
 		OlympaGroup group = olympaPlayer.getGroup();
 		if (group != null) {
-			if (OlympaCorePermissions.CHAT_COLOR.hasPermission(olympaPlayer)) {
+			if (OlympaCorePermissions.CHAT_COLOR.hasPermission(olympaPlayer))
 				event.setMessage(ColorUtils.color(event.getMessage()));
-			}
 			event.setFormat(olympaPlayer.getGroupPrefix() + "%s " + group.getChatSufix() + " %s");
-		} else {
+		} else
 			event.setFormat(ColorUtils.color("&cGRADE ERREUR &7") + "%s : %s");
-		}
 	}
-
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerChatEvent(AsyncPlayerChatEvent event) {
-		if (event.isCancelled()) return;
+		if (event.isCancelled())
+			return;
 		Player player = event.getPlayer();
 		String message = event.getMessage();
-
+		
 		Map<Player, String> mentionned = new HashMap<>();
 		for (String arg : message.split(" ")) {
 			arg = ChatColor.stripColor(arg);
-			if (arg.startsWith("@")) {
+			if (arg.startsWith("@"))
 				arg = arg.substring(1);
-			}
-			if (!Matcher.isUsername(arg)) {
+			if (!Matcher.isUsername(arg))
 				continue;
-			}
 			Player target = Bukkit.getPlayer(arg);
-			if (target == null) {
+			if (target == null)
 				continue;
-			}
 			mentionned.put(target, arg);
 		}
 		for (Entry<Player, String> entry : mentionned.entrySet()) {
@@ -73,9 +69,9 @@ public class ChatListener implements Listener {
 			String arg = entry.getValue();
 			String messageToTarget = new String(message);
 			String format = event.getFormat();
-			do {
-				messageToTarget = messageToTarget.replace(arg, "§6@" + target.getName() + getChatColor(format));
-			} while (messageToTarget.contains(" " + arg));
+			do
+				messageToTarget = messageToTarget.replace(arg, "§6" + target.getName() + getChatColor(format));
+			while (messageToTarget.contains(" " + arg));
 			target.playSound(target.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 3.0F, 0.533F);
 			new FakeMsg(format, player.getDisplayName(), messageToTarget).send(target);
 			event.getRecipients().remove(target);

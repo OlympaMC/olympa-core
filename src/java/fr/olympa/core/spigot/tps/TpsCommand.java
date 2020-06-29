@@ -45,15 +45,14 @@ public class TpsCommand extends OlympaCommand {
 		sb.add("&3Threads: &b" + machine.getThreads() + "&3.");
 		sb.add("&3Version du serveur: &b" + Bukkit.getBukkitVersion() + "&3.");
 		ProtocolSupportHook protocolSupport = (ProtocolSupportHook) core.getProtocolSupport();
-		if (protocolSupport != null) {
+		if (protocolSupport != null)
 			sb.add("&3Versions supportés: &b" + protocolSupport.getVersionSupported() + "&3.");
-		} else {
+		else {
 			String versionsString = "erreur";
 			try {
 				List<String> versions = ProtocolAPI.getVersionSupported();
-				if (!versions.isEmpty()) {
+				if (!versions.isEmpty())
 					versionsString = String.join(", ", versions);
-				}
 			} catch (Exception ex) {
 				versionsString = "erreur : " + ex.getMessage();
 			}
@@ -65,10 +64,9 @@ public class TpsCommand extends OlympaCommand {
 			List<LivingEntity> livingEntities = world.getLivingEntities();
 			Collection<Chunk> forceChunks = world.getForceLoadedChunks();
 			String fc = "";
-			if (!forceChunks.isEmpty()) {
+			if (!forceChunks.isEmpty())
 				fc = " (" + forceChunks.size() + " forcés)";
-			}
-			sb.add("&3Monde &b" + world.getName() + "&3: &b" + chunks.length + "&3 chunks &b" + livingEntities.size() + "/" + entities.size() + fc + "&3 entités" + "&3.");
+			sb.add("&3Monde &b" + world.getName() + "&3: &b" + chunks.length + "&3 chunks " + fc + "&b" + livingEntities.size() + "/" + entities.size() + "&3 entités" + "&3.");
 		}
 
 		sendMessage(Prefix.DEFAULT, sb.toString());

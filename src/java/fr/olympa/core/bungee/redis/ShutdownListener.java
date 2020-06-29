@@ -11,7 +11,7 @@ public class ShutdownListener extends JedisPubSub {
 	public void onMessage(String channel, String message) {
 		ServerInfo serverInfo = ServersConnection.getServerByNameOrIpPort(message);
 		if (serverInfo != null) {
-			MonitorServers.updateServer(serverInfo);
+			MonitorServers.updateServer(serverInfo, true);
 		}
 	}
 }

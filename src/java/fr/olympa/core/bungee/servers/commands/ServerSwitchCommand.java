@@ -2,15 +2,14 @@ package fr.olympa.core.bungee.servers.commands;
 
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.servers.MonitorInfo;
-import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
@@ -27,20 +26,20 @@ public class ServerSwitchCommand extends BungeeCommand implements TabExecutor {
 			sendError("Syntaxe incorrecte.");
 			return;
 		}
-		MonitorInfo server = MonitorServers.get(args[0]);
+		ServerInfo server = OlympaBungee.getInstance().getProxy().getServerInfo(args[0]);
 		if (server == null) {
 			sendMessage(Prefix.DEFAULT_BAD, "Le serveur &4" + args[0] + "&c n'existe pas.");
 			return;
 		}
 		sendMessage(Prefix.DEFAULT_GOOD, "Téléportation sur le serveur &2" + Utils.capitalize(server.getName()) + "&a.");
-		getProxiedPlayer().connect(server.getServerInfo());
+		getProxiedPlayer().connect(server);
 		return;
 
 	}
 
 	@Override
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-		Set<String> servers = MonitorServers.getLastServerInfo().stream().map(MonitorInfo::getName).collect(Collectors.toSet());
+		Set<String> servers = OlympaBungee.getInstance().getProxy().getServers().keySet();
 		if (args.length == 0) {
 			return servers;
 		} else if (args.length == 1) {

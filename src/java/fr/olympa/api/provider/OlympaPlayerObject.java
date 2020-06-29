@@ -20,7 +20,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.annotations.Expose;
 
-import fr.olympa.api.economy.OlympaMoney;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
@@ -72,9 +71,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			if (object.has("premiumUuid")) {
 				player.premiumUuid = context.deserialize(object.get("premiumUuid"), UUID.class);
 			}
-			if (object.has("storeMoney")) {
-				player.storeMoney = context.deserialize(object.get("storeMoney"), OlympaMoney.class);
-			}
 			if (object.has("vanish")) {
 				player.vanish = object.get("vanish").getAsBoolean();
 			}
@@ -118,8 +114,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	TreeMap<Long, String> histName = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
 	@Expose
 	TreeMap<Long, String> histIp = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
-	@Expose
-	OlympaMoney storeMoney; // TODO
 	@Expose
 	boolean vanish;
 	@Expose
@@ -295,11 +289,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public UUID getPremiumUniqueId() {
 		return premiumUuid;
-	}
-
-	@Override
-	public OlympaMoney getStoreMoney() {
-		return storeMoney;
 	}
 
 	@Override

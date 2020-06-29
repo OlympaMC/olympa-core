@@ -4,7 +4,8 @@ import java.net.InetSocketAddress;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.provider.RedisAccess;
-import fr.olympa.core.bungee.servers.MonitorInfo;
+import fr.olympa.api.server.OlympaServer;
+import fr.olympa.api.server.ServerStatus;
 import net.md_5.bungee.api.config.ServerInfo;
 import redis.clients.jedis.Jedis;
 
@@ -28,9 +29,9 @@ public class RedisBungeeSend {
 		});
 	}
 
-	public static void sendServerInfos(MonitorInfo server) {
+	public static void sendServerInfos(OlympaServer olympaServer, int players, ServerStatus status) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
-			jedis.publish("sendServersInfos", server.getName() + ":" + server.getOnlinePlayers() + ":" + server.getMaxPlayers() + ":" + server.getStatus().getId());
+			jedis.publish("sendServersInfos", olympaServer.name() + ":" + players + ":" + status.getId());
 		}
 	}
 }

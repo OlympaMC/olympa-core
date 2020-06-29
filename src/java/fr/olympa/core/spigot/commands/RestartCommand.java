@@ -13,23 +13,23 @@ import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
 
 public class RestartCommand extends OlympaCommand {
-	
+
 	public RestartCommand(Plugin plugin) {
 		super(plugin, "restart", "Redémarre le serveur", OlympaCorePermissions.SERVER_RESTART_COMMAND);
 		allowConsole = true;
 	}
-
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		restart();
 		return false;
 	}
-
+	
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		return null;
 	}
-
+	
 	public void restart() {
 		plugin.getServer().shutdown();
 		new Thread((Runnable) () -> {

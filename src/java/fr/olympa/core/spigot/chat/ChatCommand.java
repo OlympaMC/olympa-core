@@ -12,7 +12,6 @@ import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.server.OlympaServerSettings;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.Utils;
 
 public class ChatCommand extends OlympaCommand {
 	
@@ -37,10 +36,10 @@ public class ChatCommand extends OlympaCommand {
 		if (args[0].equalsIgnoreCase("slow")) {
 			int timecooldown = 2;
 			if (serverSettings.isChatSlow()) {
-				this.sendMessage(Prefix.DEFAULT, "L'antispam a été désactivé.");
+				sendMessage(Prefix.DEFAULT, "L'antispam a été désactivé.");
 				serverSettings.setChatSlow(false);
 			} else {
-				this.sendMessage(Prefix.DEFAULT, "&aL'antispam a été activé à un message toutes les %second% secondes.".replaceFirst("%second%", String.valueOf(timecooldown)));
+				sendMessage(Prefix.DEFAULT, "&aL'antispam a été activé à un message toutes les %s secondes.".replace("%s", String.valueOf(timecooldown)));
 				serverSettings.setChatSlow(true);
 			}
 		} else if (args[0].equalsIgnoreCase("clear"))
@@ -65,10 +64,6 @@ public class ChatCommand extends OlympaCommand {
 	
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		if (args.length == 1) {
-			List<String> postentielArgs = Utils.startWords(args[0], this.args.values().iterator().next());
-			return postentielArgs;
-		}
 		return null;
 	}
 	
