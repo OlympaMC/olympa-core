@@ -10,6 +10,7 @@ import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.HandlerLogin;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
+import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -23,17 +24,15 @@ public class RegisterCommand extends BungeeCommand {
 		allowConsole = false;
 		bypassAuth = true;
 		HandlerLogin.command.add(command);
-		for (String aliase : aliases) {
+		for (String aliase : aliases)
 			HandlerLogin.command.add(aliase);
-		}
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		olympaPlayer = getOlympaPlayer();
-		if (olympaPlayer == null) {
+		if (olympaPlayer == null)
 			sendImpossibleWithOlympaPlayer();
-		}
 		String playerPasswordHash = olympaPlayer.getPassword();
 		if (playerPasswordHash != null) {
 			sendError("Tu as déjà un mot de passe. Pour le changer, fait &4/passwd <ancien mot de passe> <nouveau mot de passe>&c.");
@@ -70,17 +69,18 @@ public class RegisterCommand extends BungeeCommand {
 
 		olympaPlayer.setPassword(password);
 		AccountProvider account = new AccountProvider(olympaPlayer.getUniqueId());
-		if (DataHandler.isUnlogged(proxiedPlayer)) {
+		if (DataHandler.isUnlogged(proxiedPlayer))
 			this.sendMessage(Prefix.DEFAULT_GOOD, "Bravo ! Tu peux désormais utiliser ce mot de passe sur notre site et forum.");
-		} else {
+		else {
 			OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, proxiedPlayer));
-			if (olympaPlayerLoginEvent.cancelIfNeeded()) {
+			if (olympaPlayerLoginEvent.cancelIfNeeded())
 				return;
-			}
 			this.sendMessage(Prefix.DEFAULT_GOOD, "Yes, ton compte est créé.");
 
 		}
 		account.saveToRedis(olympaPlayer);
+		account.saveToDb(olympaPlayer);
+		RedisBungeeSend.sendOlympaPlayer(proxiedPlayer.getServer().getInfo(), olympaPlayer);
 	}
 
 }

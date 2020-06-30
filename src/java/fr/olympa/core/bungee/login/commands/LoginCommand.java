@@ -5,11 +5,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import fr.olympa.api.provider.OlympaPlayerObject;
-import fr.olympa.api.utils.Passwords;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.HandlerLogin;
+import fr.olympa.core.bungee.login.Passwords;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
@@ -25,9 +25,8 @@ public class LoginCommand extends BungeeCommand {
 		allowConsole = false;
 		bypassAuth = true;
 		HandlerLogin.command.add(command);
-		for (String aliase : aliases) {
+		for (String aliase : aliases)
 			HandlerLogin.command.add(aliase);
-		}
 	}
 
 	public String get_SHA_512_SecurePassword(String passwordToHash, String salt) {
@@ -37,9 +36,8 @@ public class LoginCommand extends BungeeCommand {
 			md.update(salt.getBytes(StandardCharsets.UTF_8));
 			byte[] bytes = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
 			StringBuilder sb = new StringBuilder();
-			for (byte b : bytes) {
+			for (byte b : bytes)
 				sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-			}
 			generatedPassword = sb.toString();
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
@@ -55,9 +53,8 @@ public class LoginCommand extends BungeeCommand {
 			return;
 		}
 		olympaPlayer = getOlympaPlayer();
-		if (olympaPlayer == null) {
+		if (olympaPlayer == null)
 			sendImpossibleWithOlympaPlayer();
-		}
 		String playerPasswordHash = olympaPlayer.getPassword();
 		if (playerPasswordHash == null || playerPasswordHash.isEmpty()) {
 			sendError("Tu n'as pas de mot de passe. Pour le créer, fais &4/register <mot de passe>&c.");
@@ -71,7 +68,7 @@ public class LoginCommand extends BungeeCommand {
 
 		String password = args[0];
 		String newPasswordHash = ((OlympaPlayerObject) olympaPlayer).hashPassword(password);
-		Passwords.getSHA512(password, "DYhG9guiRVoUubWwvn2G0Fg3b0qyJfIxfs2aC9mi".getBytes());
+		Passwords.getSHA512(password);
 
 		System.out.println("playerPasswordHash: " + playerPasswordHash);
 		System.out.println("newPasswordHash: " + newPasswordHash);
@@ -79,20 +76,18 @@ public class LoginCommand extends BungeeCommand {
 		if (!newPasswordHash.equals(playerPasswordHash)) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Mot de passe incorrect, rééssaye.");
 			Integer timeFails = HandlerLogin.timesFails.get(proxiedPlayer);
-			if (timeFails == null) {
+			if (timeFails == null)
 				HandlerLogin.timesFails.put(proxiedPlayer, 1);
-			} else if (timeFails <= 3) {
+			else if (timeFails <= 3)
 				HandlerLogin.timesFails.put(proxiedPlayer, ++timeFails);
-			} else {
+			else
 				proxiedPlayer.disconnect(BungeeUtils.connectScreen("Tu as fait trop de tentatives de connexion."));
-			}
 
 			return;
 		}
 		OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, proxiedPlayer));
-		if (olympaPlayerLoginEvent.cancelIfNeeded()) {
+		if (olympaPlayerLoginEvent.cancelIfNeeded())
 			return;
-		}
 		this.sendMessage(Prefix.DEFAULT_GOOD, "Connexion effectuée, transfert en cours...");
 	}
 }

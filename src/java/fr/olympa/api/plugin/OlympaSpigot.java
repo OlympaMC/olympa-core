@@ -9,17 +9,19 @@ import fr.olympa.api.redis.RedisTestListener;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
-import fr.olympa.core.spigot.redis.GiveOlympaPlayerListener;
+import fr.olympa.core.spigot.redis.AskGiveOlympaPlayerReceiver;
 import fr.olympa.core.spigot.redis.GiveToOlympaPlayerListener;
+import fr.olympa.core.spigot.redis.OlympaPlayerSpigotListener;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
-import fr.olympa.core.spigot.redis.SendServerNameListener;
+import fr.olympa.core.spigot.redis.ServerNameListener;
 import redis.clients.jedis.JedisPubSub;
 
 public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCoreInterface {
 
 	protected DbConnection database = null;
 	protected ServerStatus status;
-	private String serverName = getServer().getIp() + ":" + getServer().getPort();
+	private String serverNameIp = getServer().getIp() + ":" + getServer().getPort();
+	private String serverName;
 	private RedisAccess redisAccess;
 	
 	@Override
@@ -31,7 +33,14 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 
 	@Override
 	public String getServerName() {
-		return serverName;
+		return serverName != null ? serverName : serverNameIp;
+	}
+
+	@Override
+	public boolean isServerName(String serverName) {
+		if (this.serverName != null)
+			return this.serverName.equalsIgnoreCase(serverName) || this.serverName.equalsIgnoreCase(serverNameIp);
+		return this.serverName.equalsIgnoreCase(serverNameIp);
 	}
 
 	@Override
@@ -101,9 +110,10 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		if (redisAccess.isConnected()) {
 			// Test
 			registerRedisSub(new RedisTestListener(), "test");
-			registerRedisSub(new SendServerNameListener(), "sendServerName");
-			registerRedisSub(new GiveOlympaPlayerListener(), "giveOlympaPlayer");
+			registerRedisSub(new ServerNameListener(), "serverName");
+			registerRedisSub(new AskGiveOlympaPlayerReceiver(), "giveOlympaPlayer");
 			registerRedisSub(new GiveToOlympaPlayerListener(), "giveToOlympaPlayer");
+			registerRedisSub(new OlympaPlayerSpigotListener(), "olympaPlayer");
 			RedisSpigotSend.askServerName();
 
 			sendMessage("&aConnexion à &2Redis&a établie.");

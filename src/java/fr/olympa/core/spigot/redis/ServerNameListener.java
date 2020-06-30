@@ -3,11 +3,11 @@ package fr.olympa.core.spigot.redis;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.JedisPubSub;
 
-public class SendServerNameListener extends JedisPubSub {
-
+public class ServerNameListener extends JedisPubSub {
+	
 	@Override
 	public void onMessage(String channel, String message) {
-		String[] info = message.split(":");
+		String[] info = message.split(";");
 		String ip = info[0];
 		int port = Integer.valueOf(info[1]);
 		String serverName = info[2];
