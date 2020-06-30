@@ -14,12 +14,14 @@ public class OlympaPlayerSpigotListener extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
-		OlympaPlayer olympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(message, OlympaPlayer.class);
+		String[] args = message.split(";");
+		if (!OlympaCore.getInstance().isServerName(args[0]))
+			return;
+		OlympaPlayer olympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(args[1], OlympaPlayer.class);
 
 		Player player = olympaPlayer.getPlayer();
-		if (player == null) {
+		if (player == null)
 			return;
-		}
 		AccountProvider olympaAccount = new AccountProvider(olympaPlayer.getUniqueId());
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(player, ChangeType.ADD, olympaPlayer, olympaPlayer.getGroup()));
 		olympaAccount.saveToCache(olympaPlayer);
