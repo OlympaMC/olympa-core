@@ -4,6 +4,7 @@ import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -17,13 +18,13 @@ import net.md_5.bungee.event.EventHandler;
 
 @SuppressWarnings("deprecation")
 public class ServersListener implements Listener {
-
+	
 	@EventHandler
 	public void onServerSwitch(ServerSwitchEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		ServerInfo from = event.getFrom();
 	}
-	
+
 	@EventHandler
 	public void onServerKick(ServerKickEvent event) {
 		ServerInfo serverKicked = event.getKickedFrom();
@@ -35,7 +36,7 @@ public class ServersListener implements Listener {
 			return;
 		}
 		if (kickReason.contains("restarting") || kickReason.contains("closed")) {
-			
+
 			ServerInfo server = ServersConnection.getBestServer(OlympaServer.LOBBY, serverKicked);
 			if (server == null)
 				server = ServersConnection.getBestServer(OlympaServer.AUTH, serverKicked);
@@ -50,10 +51,10 @@ public class ServersListener implements Listener {
 			player.sendMessage(ColorUtils.color(Prefix.DEFAULT_GOOD + "Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter avant d'être reconnecté automatiquement."));
 			OlympaServer olympaServer = MonitorInfo.getOlympaServer(serverKicked.getName()).getKey();
 			if (!olympaServer.hasMultiServers())
-				ServersConnection.tryConnect(player, olympaServer);
+				OlympaBungee.getInstance().getTask().runTaskLater(() -> ServersConnection.tryConnect(player, olympaServer), 5 * 20);
 			return;
 		}
-		
+
 		if (!kickReason.contains("ban")) {
 			ServerInfo serverInfolobby = ServersConnection.getBestServer(OlympaServer.LOBBY, serverKicked);
 			if (serverInfolobby == null)
