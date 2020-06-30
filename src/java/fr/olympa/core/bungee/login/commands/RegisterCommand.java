@@ -81,9 +81,12 @@ public class RegisterCommand extends BungeeCommand {
 		AccountProvider account = new AccountProvider(olympaPlayer.getUniqueId());
 		account.saveToRedis(olympaPlayer);
 		RedisBungeeSend.sendOlympaPlayer(proxiedPlayer.getServer().getInfo(), olympaPlayer);
-		if (DataHandler.isUnlogged(proxiedPlayer))
-			this.sendMessage(Prefix.DEFAULT_GOOD, "Yes, ton compte est créé.");
-		else {
+		if (DataHandler.isUnlogged(proxiedPlayer)) {
+			OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, proxiedPlayer));
+			if (olympaPlayerLoginEvent.cancelIfNeeded())
+				return;
+			this.sendMessage(Prefix.DEFAULT_GOOD, "Youpi, ! Ton compte est créé.");
+		} else {
 			OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, proxiedPlayer));
 			if (olympaPlayerLoginEvent.cancelIfNeeded())
 				return;
