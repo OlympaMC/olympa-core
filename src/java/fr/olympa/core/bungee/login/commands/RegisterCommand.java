@@ -68,8 +68,9 @@ public class RegisterCommand extends BungeeCommand {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, ce mot de passe n'est pas possible.");
 			return;
 		}
-		
+
 		olympaPlayer.setPassword(password);
+		System.out.println("Password set for %s1 : %s2".replace("%s1", olympaPlayer.getName()).replace("%s2", olympaPlayer.getPassword()));
 		try {
 			MySQL.savePlayerPassOrEmail(olympaPlayer);
 		} catch (SQLException e) {

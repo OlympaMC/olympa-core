@@ -19,7 +19,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 @SuppressWarnings("deprecation")
 public class LoginCommand extends BungeeCommand {
-
+	
 	public LoginCommand(Plugin plugin) {
 		super(plugin, "login", "log", "l");
 		usageString = "<mot de passe>";
@@ -30,7 +30,7 @@ public class LoginCommand extends BungeeCommand {
 		for (String aliase : aliases)
 			HandlerLogin.command.add(aliase);
 	}
-
+	
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		if (!DataHandler.isUnlogged(proxiedPlayer)) {
@@ -45,15 +45,20 @@ public class LoginCommand extends BungeeCommand {
 			sendError("Tu n'as pas de mot de passe. Pour le créer, fais &4/register <mot de passe>&c.");
 			return;
 		}
-
+		
 		if (args.length == 0 || args.length > 2) {
 			sendUsage();
 			return;
 		}
-		
+
+		if (olympaPlayer.getPassword() == null) {
+			sendUsage();
+			return;
+		}
+
 		System.out.println("playerPasswordHash: " + olympaPlayer.getPassword());
-		System.out.println("tryPasswordHash: " + Passwords.getSHA512(args[0]));
-		if (!olympaPlayer.isSamePassword(args[0])) {
+		System.out.println("tryPasswordHash: " + Passwords.getSHA512(args[1]));
+		if (olympaPlayer.isSamePassword(args[1])) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Mot de passe incorrect, rééssaye.");
 			String ip = proxiedPlayer.getAddress().getAddress().getHostAddress();
 			Integer timeFails = HandlerLogin.timesFails.getIfPresent(ip);
