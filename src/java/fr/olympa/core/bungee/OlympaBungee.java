@@ -11,6 +11,7 @@ import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.api.command.BungeeCommandListener;
 import fr.olympa.core.bungee.api.config.BungeeCustomConfig;
 import fr.olympa.core.bungee.api.task.BungeeTask;
 import fr.olympa.core.bungee.ban.commands.BanCommand;
@@ -167,6 +168,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		pluginManager.registerListener(this, new StaffChatListener());
 		pluginManager.registerListener(this, new ProtocolListener());
 		pluginManager.registerListener(this, new TabTextListener());
+		pluginManager.registerListener(this, new BungeeCommandListener());
 		
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();
@@ -184,8 +186,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new PrivateMessageToggleCommand(this).register();
 		new ListServerCommand(this).register();
 		new MaintenanceCommand(this).register();
-		new LoginCommand(this).registerPreProcess();
-		new RegisterCommand(this).registerPreProcess();
+		new LoginCommand(this).registerPreProcess().register();
+		new RegisterCommand(this).registerPreProcess().register();
 		new EmailCommand(this).register();
 		new ServerSwitchCommand(this).register();
 		new InfoCommand(this).register();
