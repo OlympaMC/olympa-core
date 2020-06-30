@@ -11,35 +11,37 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class TabText {
-
+	
 	public static void sendAll() {
 		send(ProxyServer.getInstance().getPlayers());
 	}
-
+	
 	public static void send(Collection<ProxiedPlayer> collection) {
+		if (collection.isEmpty())
+			return;
 		String header = getHeader();
 		String footer = getFooter();
 		collection.forEach(p -> send(p, header, footer));
 	}
-	
+
 	public static void send(ProxiedPlayer player) {
 		String header = getHeader();
 		String footer = getFooter();
 		send(player, header, footer);
 	}
-	
+
 	public static void send(ProxiedPlayer player, String header, String footer) {
 		player.setTabHeader(TextComponent.fromLegacyText(header), TextComponent.fromLegacyText(footer));
 	}
-	
+
 	private static String getHeader() {
 		StringJoiner sj = new StringJoiner("\n");
 		sj.add("&e&lOlympa &eΩ");
 		sj.add("&6Versions 1.9 à 1.15");
 		return ColorUtils.color(sj.toString());
-
+		
 	}
-	
+
 	private static String getFooter() {
 		StringJoiner sj = new StringJoiner("\n");
 		//		sj.add("&6Serveur &e%n");
