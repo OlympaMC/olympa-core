@@ -18,12 +18,13 @@ public class BungeeCommandListener implements Listener {
 		String[] args = message.substring(1).split(" ");
 		if (args.length == 0)
 			return;
-		BungeeCommand command = BungeeCommand.commandPreProcess.get(args[0]);
-		if (command == null)
+		String command = args[0].toLowerCase();
+		BungeeCommand cmd = BungeeCommand.commandPreProcess.entrySet().stream().filter(entry -> entry.getKey().contains(command)).map(entry -> entry.getValue()).findFirst().orElse(null);
+		if (cmd == null)
 			return;
 		
 		ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-		command.execute(player, Arrays.copyOfRange(args, 1, args.length));
+		cmd.execute(player, Arrays.copyOfRange(args, 1, args.length));
 		event.setCancelled(true);
 	}
 
