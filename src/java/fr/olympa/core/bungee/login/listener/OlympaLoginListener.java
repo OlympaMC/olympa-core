@@ -26,7 +26,7 @@ import net.md_5.bungee.event.EventPriority;
 
 @SuppressWarnings("deprecation")
 public class OlympaLoginListener implements Listener {
-
+	
 	@EventHandler
 	public void onOlympaGroupChange(OlympaGroupChangeEvent event) {
 		ProxiedPlayer player = event.getPlayer();
@@ -36,7 +36,7 @@ public class OlympaLoginListener implements Listener {
 		if (groupsNames.length > 0)
 			player.addGroups(groupsNames);
 	}
-
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onOlympaPlayerLogin(OlympaPlayerLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
@@ -48,8 +48,9 @@ public class OlympaLoginListener implements Listener {
 		if (!olympaPlayer.getIp().equals(ip))
 			olympaPlayer.addNewIp(ip);
 		CachePlayer cache = DataHandler.get(player.getName());
-		OlympaBungee.getInstance().getTask().runTaskLater(() -> {
-			if (cache != null && !olympaPlayer.isPremium()) {
+		DataHandler.removePlayer(player.getName());
+		if (cache != null && !olympaPlayer.isPremium())
+			OlympaBungee.getInstance().getTask().runTaskLater(() -> {
 				String subdomain = cache.getSubDomain();
 				if (subdomain != null)
 					if (subdomain.equalsIgnoreCase("buildeur")) {
@@ -60,18 +61,17 @@ public class OlympaLoginListener implements Listener {
 						return;
 					}
 				ServersConnection.tryConnect(player, OlympaServer.LOBBY);
-			}
-			DataHandler.removePlayer(player.getName());
-		}, 2, TimeUnit.SECONDS);
+			}, 2, TimeUnit.SECONDS);
+		
 	}
-
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerDisconnect(PlayerDisconnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		player.removeGroups(player.getGroups().toArray(new String[0]));
 		ServersConnection.removeTryToConnect(player);
 	}
-
+	
 	@EventHandler
 	public void onServerConnect(ServerConnectEvent event) {
 		if (event.isCancelled())
@@ -80,7 +80,7 @@ public class OlympaLoginListener implements Listener {
 		Reason reason = event.getReason();
 		if (reason != Reason.JOIN_PROXY)
 			return;
-
+		
 		boolean tryConnect = false;
 		CachePlayer cache = DataHandler.get(player.getName());
 		if (cache != null) {
@@ -117,17 +117,17 @@ public class OlympaLoginListener implements Listener {
 		if (auth != null)
 			event.setTarget(auth);
 	}
-
+	
 	@EventHandler
 	public void onServerConnected(ServerConnectedEvent event) {
 		ServersConnection.removeTryToConnect(event.getPlayer());
 	}
-
+	
 	@EventHandler
 	public void onServerSwitch(ServerSwitchEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		if (event.getFrom() != null)
 			RedisBungeeSend.askGiveOlympaPlayer(event.getFrom(), player.getServer().getInfo(), player.getUniqueId());
-
+		
 	}
 }
