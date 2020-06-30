@@ -45,54 +45,54 @@ import fr.olympa.core.spigot.status.StatusMotdListener;
 import fr.olympa.core.spigot.tps.TpsCommand;
 
 public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
-
+	
 	private static OlympaCore instance = null;
-
+	
 	public static OlympaCore getInstance() {
 		return instance;
 	}
-
+	
 	private SwearHandler swearHandler;
 	private RegionManager regionManager;
 	private HologramsManager hologramsManager;
 	private ImageFrameManager imageFrameManager;
 	private ProtocolAction protocolSupportHook;
 	private INametagApi nameTagApi;
-
+	
 	@Override
 	public INametagApi getNameTagApi() {
 		return nameTagApi;
 	}
-
+	
 	@Override
 	public ProtocolAction getProtocolSupport() {
 		return protocolSupportHook;
 	}
-
+	
 	@Override
 	public RegionManager getRegionManager() {
 		return regionManager;
 	}
-
+	
 	@Override
 	public HologramsManager getHologramsManager() {
 		return hologramsManager;
 	}
-
+	
 	@Override
 	public ImageFrameManager getImageFrameManager() {
 		return imageFrameManager;
 	}
-	
+
 	public SwearHandler getSwearHandler() {
 		return swearHandler;
 	}
-
+	
 	@Override
 	public void launchAsync(Runnable run) {
 		getTask().runTaskAsynchronously(run);
 	}
-
+	
 	@Override
 	public void onDisable() {
 		RedisSpigotSend.sendShutdown();
@@ -103,30 +103,28 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		super.onDisable();
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
 	}
-
+	
 	@Override
 	public void onEnable() {
 		instance = this;
 		LinkSpigotBungee.Provider.link = this;
-		
+
 		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		super.onEnable();
-		// Force Dev Status (le status dans la config est ignoré)
-		status = ServerStatus.DEV;
-		
+
 		try {
 			hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml"));
 		} catch (IOException e) {
 			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
 			e.printStackTrace();
 		}
-		
+
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 		imageFrameManager = new ImageFrameManager(this, "maps.yml", "images");
 		new MySQL(database);
 		new ReportMySQL(database);
-		
+
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();
 		new ReportCommand(this).register();
@@ -138,7 +136,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new GenderCommand(this).register();
 		new RestartCommand(this).registerPreProcess();
 		// new PasswdCommand(this).register();
-		
+
 		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(new DataManagmentListener(), this);
 		pluginManager.registerEvents(new GroupListener(), this);
@@ -154,11 +152,11 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		pluginManager.registerEvents(new ScoreboardTeamListener(), this);
 		nameTagApi = new NametagAPI(new NametagManager());
 		((NametagAPI) nameTagApi).testCompat();
-		
+
 		new AntiWD(this);
 		if (getServer().getPluginManager().isPluginEnabled("ProtocolSupport"))
 			protocolSupportHook = new ProtocolSupportHook(this);
-		
+
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 	}
 }
