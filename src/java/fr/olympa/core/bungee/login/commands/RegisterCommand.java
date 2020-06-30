@@ -45,30 +45,24 @@ public class RegisterCommand extends BungeeCommand {
 			this.sendMessage(Prefix.DEFAULT_GOOD, "Cette commande permet de choisir un mot de passe pour son compte Olympa. Valable sur notre site, forum, et minecraft (obligatoire si version non premium).");
 			return;
 		}
-		
 		if (args.length > 2) {
 			sendUsage();
 			return;
 		}
-		
 		String password = args[0];
-		
 		if (password.length() < 5) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, 5 caratères minimum.");
 			return;
 		}
-		
 		if (password.length() > 100) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, 100 caratères maximum.");
 			return;
 		}
-		
 		Set<String> disallowPassword = new HashSet<>(Arrays.asList("azerty", "qwerty", "12345", "01234"));
 		if (disallowPassword.stream().anyMatch(dis -> dis.equalsIgnoreCase(password) || password.startsWith(dis))) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, ce mot de passe n'est pas possible.");
 			return;
 		}
-
 		olympaPlayer.setPassword(password);
 		System.out.println("Password set for %s1 : %s2".replace("%s1", olympaPlayer.getName()).replace("%s2", olympaPlayer.getPassword()));
 		try {
@@ -85,7 +79,7 @@ public class RegisterCommand extends BungeeCommand {
 			OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, proxiedPlayer));
 			if (olympaPlayerLoginEvent.cancelIfNeeded())
 				return;
-			this.sendMessage(Prefix.DEFAULT_GOOD, "Youpi, ! Ton compte est créé.");
+			this.sendMessage(Prefix.DEFAULT_GOOD, "Youpi ! Ton compte est créé.");
 		} else {
 			OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, proxiedPlayer));
 			if (olympaPlayerLoginEvent.cancelIfNeeded())
