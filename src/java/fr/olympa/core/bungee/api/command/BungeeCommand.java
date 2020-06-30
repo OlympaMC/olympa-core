@@ -1,6 +1,8 @@
 package fr.olympa.core.bungee.api.command;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.player.OlympaPlayer;
@@ -17,6 +19,8 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 public abstract class BungeeCommand extends Command {
 
+	static Map<String, BungeeCommand> commandPreProcess = new HashMap<>();
+	
 	protected String[] aliases;
 	public boolean allowConsole = true;
 	protected String command;
@@ -120,7 +124,8 @@ public abstract class BungeeCommand extends Command {
 	}
 
 	protected OlympaPlayer getOlympaPlayer() {
-		if (proxiedPlayer == null) return null;
+		if (proxiedPlayer == null)
+			return null;
 		return olympaPlayer == null ? olympaPlayer = new AccountProvider(proxiedPlayer.getUniqueId()).getFromRedis() : olympaPlayer;
 	}
 
@@ -133,9 +138,13 @@ public abstract class BungeeCommand extends Command {
 	}
 
 	public abstract void onCommand(CommandSender sender, String[] args);
-
+	
 	public void register() {
 		plugin.getProxy().getPluginManager().registerCommand(plugin, this);
+	}
+
+	public void registerPreProcess() {
+		commandPreProcess.put(command, this);
 	}
 
 	public void sendDoNotHavePermission() {

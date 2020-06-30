@@ -10,6 +10,7 @@ maintenance:
       removed: '&a%player% a été retiré de la whitelist.'
       alreadyremoved: '&c%player% n''est pas dans la whitelist.'
 ban:
+   sanctionaccouncetoauthor: '&4%target&c a été banni pendant &4%time%&c pour &4%reason%&c.'
    usageban: '&cUsage &7» &c/ban <joueur|uuid|ip> [temps] <motif>'
    usageunban: '&cUsage &7» &c/unban <pseudo|uuid|ip> <motif>'
    usageunmute: '&cUsage &7» &c/unmute <pseudo|uuid> <motif>'
@@ -21,7 +22,7 @@ ban:
    tempbanannounce: '&2[&cBAN&2] &7%player% a été banni pendant %time% pour %reason%'
    tempbanannouncetostaff: '&4%player%&c a été banni par &4%author%&c pendant &4%time%&c pour &4%reason%&c.'
    tempbandisconnect: |-
-      &cVous avez été banni pour &4%reason%
+      &cTu a été banni pour &4%reason%
 
       &cDurée restante: &4%time%
 
@@ -31,16 +32,16 @@ ban:
    banannounce: '&2[&cBAN&2] &7%player% a été banni &npermanent&7 pour %reason%'
    banannouncetostaff: '&4%player% &ca été banni &npermanent&c par &4%author%&c pour &4%reason%&c.'
    bandisconnect: |-
-      &cVous avez été banni &npermanent&c pour &4%reason%
+      &cTu a été banni &npermanent&c pour &4%reason%
 
       &cId: &4%id%
    alreadyban: '&4%player% &cest déjà banni.'
    muteannounce: '&2[&cBAN&2] &7%player% a été banni &npermanent&7 pour %reason%'
-   muteannouncetotarget: '&cVous avez été mute &npermanent&c pour &4%reason%&c.'
+   muteannouncetotarget: '&cTu a été mute &npermanent&c pour &4%reason%&c.'
    muteannouncetoauthor: '&4%player%&c a été mute &npermanent&c pour &4%reason%&c.'
    tempbanipannouncetoauthor: '&4%ip%&c a été banni pendant &4%time%&c pour &4%reason%&c.'
    tempbanipdisconnect: |-
-      &cVous avez été banni pour &4%reason%
+      &cTu a été banni pour &4%reason%
 
       &cDurée restante: &4%time%
 
@@ -50,7 +51,7 @@ ban:
    banipannouncetoauthor: '&4%ip% &ca été banni &npermanent&c pour &4%reason%&c'
    banipdisconnecttoauthor: '&4%ip% &ca été banni &npermanent&c pour &4%reason%&c'
    banipdisconnect: |-
-      &cVous avez été banni &npermanent&c pour &4%reason%
+      &cTu a été banni &npermanent&c pour &4%reason%
 
       &cId: &4%id%
    unbanannouncetoastaff: '&2Unban &7» &2%player% &aa été débanni par &2%author%&a pour &2%reason%&a.'
@@ -58,28 +59,25 @@ ban:
    unmuteannouncetostaff: '&2Unmute &7» &2%player% &aa été démute par &2%author%&a pour &2%reason%&a.'
    notmuted: '&4%player% &cn''est pas mute.'
    tempmuteannounce: '&2[&cMUTE&2] &7%player% a été mute pendant %time% pour %reason%'
-   tempmuteannouncetotarget: '&cVous avez été mute pendant &4%time%&c pour &4%reason%&c.'
+   tempmuteannouncetotarget: '&cTu a été mute pendant &4%time%&c pour &4%reason%&c.'
    tempmuteannouncetoauthor: '&c%player% a été mute pendant &4%time%&c pour &4%reason%&c.'
-   youaremuted: '&cVous êtes mute pour &4%reason% &cpendant encore &4%expire%&c.'
+   youaremuted: '&cTu êtes mute pour &4%reason% &cpendant encore &4%expire%&c.'
    alreadymute: '&4%player% &cest déjà mute.'
    kicknotconnected: '&cLe joueur &4%player%&c n''est pas connecté.'
    kickannounce: '&2[&cKICK&2] &7%player% a été kick pour %reason%'
    kickannouncetoauthor: '&c%player% a été kick&c pour &4%reason%&c par &4%author%&c.'
    kickdisconnect: |-
-      &cVous avez été kick pour &4%reason%
+      &cTu a été kick pour &4%reason%
 
       &cID: &4%id%
    playerneverjoin: '&cLe joueur &4%player% &cn''a jamais rejoinds le serveur.'
    errordb: '&cUne erreur avec la base de donnés est survenu.'
-   cantbypassmaxbantime: '&cVous ne devez pas dépasser la durée minimal de ban qui est de &410 minutes.'
-   cantbypassmminbantime: '&cVous ne devez pas dépasser la durée maximal de ban qui est de &41 an.'
-   cantbypassmaxmutetime: '&cVous ne devez pas dépasser la durée minimal de mute qui est de &41 minute&c.'
-   cantbypassmminmutetime: '&cVous ne devez pas dépasser la durée maximal de mute qui est de &41 mois&c.'
-   cantbanstaffmembers: '&cVous ne devez pas bannir un membre du staff. En cas de problèmes, merci de contacter un &4Responsable
+   cantbypasstime: '&cTu ne dois pas dépasser la durée maximale de %sanction qui est de &4%duration.'
+   cantbanstaffmembers: '&cTu ne dois pas bannir un membre du staff. En cas de problèmes, merci de contacter un &4Responsable
       &cou un &4Admin&c.'
-   cantmutestaffmembers: '&cVous ne devez pas mute un membre du staff. En cas de problèmes, merci de contacter un &4Responsable
+   cantmutestaffmembers: '&cTu ne dois pas mute un membre du staff. En cas de problèmes, merci de contacter un &4Responsable
       &cou un &4Admin&c.'
-   cantkicktaffmembers: '&cVous ne devez pas kick un membre du staff. En cas de problèmes, merci de contacter un &4Responsable
+   cantkicktaffmembers: '&cTu ne dois pas kick un membre du staff. En cas de problèmes, merci de contacter un &4Responsable
       &cou un &4Admin&c.'
    idinvalid: '&4%id%&c n''est pas un Id de ban valide.'
    typeunknown: '&4%type% &cn''est ni un uuid, ni un joueur, ni une IP.'

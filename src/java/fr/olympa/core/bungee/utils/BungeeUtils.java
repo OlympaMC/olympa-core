@@ -1,10 +1,15 @@
 package fr.olympa.core.bungee.utils;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import net.md_5.bungee.api.ChatColor;
@@ -31,9 +36,8 @@ public class BungeeUtils {
 	public static TextComponent formatStringToJSON(String s) {
 		TextComponent textcomponent = new TextComponent();
 		BaseComponent[] msgs = TextComponent.fromLegacyText(BungeeUtils.color(s));
-		for (final BaseComponent msg : msgs) {
+		for (final BaseComponent msg : msgs)
 			textcomponent.addExtra(msg);
-		}
 		return textcomponent;
 	}
 
@@ -45,8 +49,19 @@ public class BungeeUtils {
 		return OlympaBungee.getInstance().getProxy().getPlayers().stream().filter(p -> !DataHandler.isUnlogged(p)).collect(Collectors.toSet());
 	}
 
-	public static String getPlayersNamesByIp(String ip) {
-		// TODO Auto-generated method stub
-		return null;
+	public static void getPlayers(OlympaPermission permission, Consumer<? super Set<ProxiedPlayer>> success, Consumer<? super Set<ProxiedPlayer>> noPerm) {
+		Set<ProxiedPlayer> playersWithNoPerm = new HashSet<>();
+		Set<ProxiedPlayer> playersWithPerm = new HashSet<>();
+		OlympaBungee.getInstance().getProxy().getPlayers().stream().forEach(p -> {
+			OlympaPlayer op = new AccountProvider(p.getUniqueId()).getFromRedis();
+			if (op != null && permission.hasPermission(op))
+				playersWithPerm.add(p);
+			else
+				playersWithNoPerm.add(p);
+		});
+		if (!playersWithPerm.isEmpty() && success != null)
+			success.accept(playersWithPerm);
+		if (!playersWithNoPerm.isEmpty() && noPerm != null)
+			noPerm.accept(playersWithPerm);
 	}
 }

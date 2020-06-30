@@ -1,14 +1,14 @@
 package fr.olympa.core.bungee.ban.commands.methods;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.UUID;
 
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.ban.BanMySQL;
+import fr.olympa.core.bungee.ban.SanctionManager;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
@@ -28,35 +28,34 @@ public class KickPlayer {
 		ProxiedPlayer target = null;
 		OlympaPlayer olympaTarget = null;
 
-		if (targetUUID != null) {
+		if (targetUUID != null)
 			target = ProxyServer.getInstance().getPlayer(targetUUID);
-
-		} else if (targetname != null) {
+		else if (targetname != null)
 			target = ProxyServer.getInstance().getPlayer(targetname);
-
-		} else {
+		else
 			throw new NullPointerException("The uuid or name must be specified");
-		}
 
 		Configuration config = OlympaBungee.getInstance().getConfig();
-		if (target != null) {
+		if (target != null)
 			olympaTarget = AccountProvider.get(target.getUniqueId());
-
-		} else {
-			sender.sendMessage(config.getString("bungee.ban.messages.kicknotconnected").replaceAll("%player%", args[0]));
+		else {
+			sender.sendMessage(config.getString("ban.kicknotconnected").replaceAll("%player%", args[0]));
 			return;
 		}
 
 		String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
 		if (olympaPlayer != null && OlympaCorePermissions.BAN_BYPASS_SANCTION_STAFF.hasPermission(olympaPlayer)) {
-			sender.sendMessage(config.getString("bungee.ban.messages.cantkicktaffmembers"));
+			sender.sendMessage(config.getString("ban.cantkicktaffmembers"));
 			return;
 		}
 
-		OlympaSanction kick = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.KICK, olympaTarget.getUniqueId(), author, reason, Utils.getCurrentTimeInSeconds(), 0, OlympaSanctionStatus.EXPIRE);
-		if (!BanMySQL.addSanction(kick)) {
-			sender.sendMessage(config.getString("bungee.ban.messages.errordb"));
+		OlympaSanction kick;
+		try {
+			kick = SanctionManager.add(OlympaSanctionType.KICK, author, olympaTarget.getUniqueId(), reason, 0, OlympaSanctionStatus.EXPIRE);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			sender.sendMessage(config.getString("ban.errordb"));
 			return;
 		}
 		// Envoyer un message à tous les joueurs du même serveur spigot
@@ -70,7 +69,7 @@ public class KickPlayer {
 		target.disconnect(
 				BungeeUtils.connectScreen(config.getString("bungee.ban.messages.kickdisconnect").replaceAll("%reason%", kick.getReason()).replaceAll("%id%", String.valueOf(kick.getId()))));
 
-		TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("bungee.ban.messages.kickannouncetoauthor")
+		TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("ban.kickannouncetoauthor")
 				.replaceAll("%player%", olympaTarget.getName())
 				.replaceAll("%reason%", reason)
 				.replaceAll("%author%", BungeeUtils.getName(author)));

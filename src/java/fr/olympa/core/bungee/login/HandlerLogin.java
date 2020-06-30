@@ -1,20 +1,15 @@
 package fr.olympa.core.bungee.login;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 public class HandlerLogin {
-
+	
 	public static List<String> command = new ArrayList<>();
-	public static Map<ProxiedPlayer, Integer> timesFails = new HashMap<>();
-
-	{
-		ProxyServer.getInstance().getLogger();
-	}
-
+	public static Cache<String, Integer> timesFails = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
+	
 }

@@ -3,26 +3,20 @@ package fr.olympa.core.bungee.ban.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
-import fr.olympa.api.player.OlympaConsole;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.utils.Matcher;
-import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.ban.BanUtils;
-import fr.olympa.core.bungee.ban.commands.methods.BanIp;
-import fr.olympa.core.bungee.ban.commands.methods.BanPlayer;
+import fr.olympa.core.bungee.ban.SanctionUtils;
+import fr.olympa.core.bungee.ban.objects.BanExecute;
+import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.TabExecutor;
-import net.md_5.bungee.config.Configuration;
 
 public class BanCommand extends BungeeCommand implements TabExecutor {
 
@@ -37,43 +31,11 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		UUID author;
-		OlympaPlayer olympaPlayer = getOlympaPlayer();
-		if (sender instanceof ProxiedPlayer) {
-			author = ((ProxiedPlayer) sender).getUniqueId();
-		} else {
-			author = OlympaConsole.getUniqueId();
-		}
-
-		String arg = args[0];
-
-		Configuration config = OlympaBungee.getInstance().getConfig();
-		if (Matcher.isUsername(arg)) {
-			BanPlayer.addBanPlayer(author, sender, arg, null, args, olympaPlayer);
-
-		} else if (Matcher.isFakeIP(arg)) {
-
-			if (Matcher.isIP(arg)) {
-				BanIp.addBanIP(author, sender, arg, args, olympaPlayer);
-			} else {
-				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.ipinvalid").replace("%ip%", arg));
-				return;
-			}
-
-		} else if (Matcher.isFakeUUID(arg)) {
-
-			if (Matcher.isUUID(arg)) {
-				BanPlayer.addBanPlayer(author, sender, null, UUID.fromString(arg), args, olympaPlayer);
-			} else {
-				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.uuidinvalid").replace("%uuid%", arg));
-				return;
-			}
-
-		} else {
-			this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replace("%type%", arg));
-			return;
-		}
-		return;
+		BanExecute banArg = SanctionUtils.formatArgs(args);
+		banArg.setSanctionType(OlympaSanctionType.BAN);
+		if (sender instanceof ProxiedPlayer)
+			banArg.setAuthor((ProxiedPlayer) sender);
+		banArg.execute();
 	}
 
 	@Override
@@ -88,12 +50,11 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 			 * matcher.group(); }
 			 */
 			List<String> units = new ArrayList<>();
-			for (List<String> unit : BanUtils.units) {
+			for (List<String> unit : SanctionUtils.units)
 				/*
 				 * for (String u : unit) { units.add( i + u); }
 				 */
 				units.addAll(unit);
-			}
 			System.out.println("Unit: " + String.join(", ", units));
 			return Utils.startWords(args[1], units);
 		} else if (args.length == 3) {

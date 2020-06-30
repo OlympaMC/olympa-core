@@ -3,10 +3,15 @@ package fr.olympa.core.bungee.login.commands;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 
+import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.provider.OlympaPlayerObject;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
+import fr.olympa.core.bungee.ban.SanctionManager;
+import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.HandlerLogin;
 import fr.olympa.core.bungee.login.Passwords;
@@ -17,7 +22,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class LoginCommand extends BungeeCommand {
-
+	
 	public LoginCommand(Plugin plugin) {
 		super(plugin, "login", "log", "l");
 		usageString = "<mot de passe>";
@@ -28,7 +33,7 @@ public class LoginCommand extends BungeeCommand {
 		for (String aliase : aliases)
 			HandlerLogin.command.add(aliase);
 	}
-
+	
 	public String get_SHA_512_SecurePassword(String passwordToHash, String salt) {
 		String generatedPassword = null;
 		try {
@@ -44,7 +49,7 @@ public class LoginCommand extends BungeeCommand {
 		}
 		return generatedPassword;
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
@@ -60,29 +65,35 @@ public class LoginCommand extends BungeeCommand {
 			sendError("Tu n'as pas de mot de passe. Pour le créer, fais &4/register <mot de passe>&c.");
 			return;
 		}
-
+		
 		if (args.length == 0 || args.length > 2) {
 			sendUsage();
 			return;
 		}
-
+		
 		String password = args[0];
 		String newPasswordHash = ((OlympaPlayerObject) olympaPlayer).hashPassword(password);
 		Passwords.getSHA512(password);
-
+		
 		System.out.println("playerPasswordHash: " + playerPasswordHash);
 		System.out.println("newPasswordHash: " + newPasswordHash);
 		System.out.println("newPasswordHash2: " + get_SHA_512_SecurePassword(password, "DYhG9guiRVoUubWwvn2G0Fg3b0qyJfIxfs2aC9mi"));
 		if (!newPasswordHash.equals(playerPasswordHash)) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Mot de passe incorrect, rééssaye.");
-			Integer timeFails = HandlerLogin.timesFails.get(proxiedPlayer);
+			String ip = proxiedPlayer.getAddress().getAddress().getHostAddress();
+			Integer timeFails = HandlerLogin.timesFails.getIfPresent(ip);
 			if (timeFails == null)
-				HandlerLogin.timesFails.put(proxiedPlayer, 1);
-			else if (timeFails <= 3)
-				HandlerLogin.timesFails.put(proxiedPlayer, ++timeFails);
+				HandlerLogin.timesFails.put(ip, 1);
+			else if (timeFails < 3)
+				HandlerLogin.timesFails.put(ip, ++timeFails);
+			else if (timeFails < 10)
+				proxiedPlayer.disconnect(BungeeUtils.connectScreen("Tu as fait trop de tentatives de mot de passe."));
 			else
-				proxiedPlayer.disconnect(BungeeUtils.connectScreen("Tu as fait trop de tentatives de connexion."));
-
+				try {
+					SanctionManager.addAndApply(OlympaSanctionType.BANIP, OlympaConsole.getUniqueId(), ip, "Trop de tentatives de mot de passe.", Utils.getCurrentTimeInSeconds() + 60 * 60 * 60);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			return;
 		}
 		OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, proxiedPlayer));
