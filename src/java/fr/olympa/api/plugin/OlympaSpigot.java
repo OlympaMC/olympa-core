@@ -17,48 +17,48 @@ import fr.olympa.core.spigot.redis.ServerNameListener;
 import redis.clients.jedis.JedisPubSub;
 
 public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCoreInterface {
-
+	
 	protected DbConnection database = null;
 	protected ServerStatus status;
 	private String serverNameIp = getServer().getIp() + ":" + getServer().getPort();
 	private String serverName;
 	private RedisAccess redisAccess;
-	
+
 	@Override
 	public Connection getDatabase() throws SQLException {
 		return database.getConnection();
 	}
-
+	
 	public abstract ProtocolAction getProtocolSupport();
-
+	
 	@Override
 	public String getServerName() {
 		return serverName != null ? serverName : serverNameIp;
 	}
-
+	
 	@Override
 	public boolean isServerName(String serverName) {
 		if (this.serverName != null)
-			return this.serverName.equalsIgnoreCase(serverName) || this.serverName.equalsIgnoreCase(serverNameIp);
-		return this.serverName.equalsIgnoreCase(serverNameIp);
+			return this.serverName.equalsIgnoreCase(serverName) || serverName.equalsIgnoreCase(serverNameIp);
+		return serverName.equalsIgnoreCase(serverNameIp);
 	}
-
+	
 	@Override
 	public ServerStatus getStatus() {
 		return status;
 	}
-
+	
 	public void registerRedisSub(JedisPubSub sub, String channel) {
 		new Thread(() -> redisAccess.newConnection().subscribe(sub, channel), "Redis sub " + channel).start();
 	}
-
+	
 	@Override
 	public void onDisable() {
 		super.onDisable();
 		if (database != null)
 			database.close();
 	}
-
+	
 	@Override
 	public void onEnable() {
 		super.onEnable();
@@ -73,17 +73,17 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 			setupRedis();
 		}
 	}
-	
+
 	@Override
 	public void setServerName(String serverName) {
 		this.serverName = serverName;
 	}
-
+	
 	@Override
 	public void setStatus(ServerStatus status) {
 		this.status = status;
 	}
-
+	
 	private void setupDatabase(int... is) {
 		int i1 = 0;
 		if (is != null && is.length != 0)
@@ -99,7 +99,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 			getTask().runTaskLater(() -> setupDatabase(i), 10 * 20);
 		}
 	}
-
+	
 	private void setupRedis(int... is) {
 		int i1 = 0;
 		if (is != null && is.length != 0)
@@ -115,7 +115,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 			registerRedisSub(new GiveToOlympaPlayerListener(), "giveToOlympaPlayer");
 			registerRedisSub(new OlympaPlayerSpigotListener(), "olympaPlayer");
 			RedisSpigotSend.askServerName();
-
+			
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)
