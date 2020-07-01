@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import fr.olympa.api.hook.ProtocolAction;
 import fr.olympa.api.provider.RedisAccess;
-import fr.olympa.api.redis.RedisTestListener;
+import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
@@ -108,12 +108,10 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		redisAccess = RedisAccess.init(getServerName());
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
-			// Test
-			registerRedisSub(new RedisTestListener(), "test");
-			registerRedisSub(new ServerNameListener(), "serverName");
-			registerRedisSub(new AskGiveOlympaPlayerReceiver(), "giveOlympaPlayer");
-			registerRedisSub(new GiveToOlympaPlayerListener(), "giveToOlympaPlayer");
-			registerRedisSub(new OlympaPlayerSpigotListener(), "olympaPlayer");
+			registerRedisSub(new ServerNameListener(), RedisChannel.BUNGEE_SEND_SERVERNAME.name());
+			registerRedisSub(new AskGiveOlympaPlayerReceiver(), RedisChannel.BUNGEE_ASK_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(new GiveToOlympaPlayerListener(), RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(new OlympaPlayerSpigotListener(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name());
 			RedisSpigotSend.askServerName();
 			
 			sendMessage("&aConnexion à &2Redis&a établie.");

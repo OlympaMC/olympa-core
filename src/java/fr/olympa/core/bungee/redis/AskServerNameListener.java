@@ -9,10 +9,6 @@ public class AskServerNameListener extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
-		String[] ipPort = message.split(":");
-		if (ipPort.length != 1) {
-			return;
-		}
 		ServerInfo serverInfo = ServersConnection.getServerByNameOrIpPort(message);
 		if (serverInfo != null) {
 			MonitorServers.updateServer(serverInfo, true);
