@@ -73,14 +73,28 @@ public class OlympaLoginListener implements Listener {
 	}
 	
 	@EventHandler
+	public void onServerConnected(ServerConnectEvent event) {
+		Reason reason = event.getReason();
+		if (reason != Reason.JOIN_PROXY)
+			return;
+		ProxiedPlayer player = event.getPlayer();
+		CachePlayer cache = DataHandler.get(player.getName());
+		if (cache != null) {
+			OlympaPlayer olympaPlayer = cache.getOlympaPlayer();
+			if (olympaPlayer != null && olympaPlayer.isConnected() && olympaPlayer.isPremium())
+				DataHandler.removePlayer(cache);
+		}
+	}
+	
+	@EventHandler
 	public void onServerConnect(ServerConnectEvent event) {
 		if (event.isCancelled())
 			return;
-		ProxiedPlayer player = event.getPlayer();
 		Reason reason = event.getReason();
 		if (reason != Reason.JOIN_PROXY)
 			return;
 		
+		ProxiedPlayer player = event.getPlayer();
 		boolean tryConnect = false;
 		CachePlayer cache = DataHandler.get(player.getName());
 		if (cache != null) {
