@@ -104,13 +104,13 @@ public class AuthListener implements Listener {
 				if (olympaPlayer != null) {
 					// Changement de nom + reconnection < 2 secs
 					if (wait.contains(olympaPlayer.getName())) {
-						event.setCancelReason(BungeeUtils.connectScreen("&eMerci de patienter secondes avant chaque reconnection."));
+						event.setCancelReason(BungeeUtils.connectScreen("&eMerci de patienter 2 secondes avant chaque reconnection."));
 						event.setCancelled(true);
 						return;
 					}
-					OlympaBungee.getInstance().sendMessage("&cChangement de pseudo  " + name + " HAS PREMIUM ? " + uuidPremium + " HIS PREMIUM ? " + connection.isOnlineMode());
+					OlympaBungee.getInstance().sendMessage("&cChangement de pseudo  " + name + " HAS PREMIUM ? " + uuidPremium + " IS PREMIUM ? " + connection.isOnlineMode());
 				} else
-					OlympaBungee.getInstance().sendMessage("&cNouveau Joueur  " + name + " HAS PREMIUM ? " + uuidPremium + " HIS PREMIUM ? " + connection.isOnlineMode());
+					OlympaBungee.getInstance().sendMessage("&cNouveau Joueur  " + name + " HAS PREMIUM ? " + uuidPremium + " IS PREMIUM ? " + connection.isOnlineMode());
 
 			} else
 				// Si la connection est premium
@@ -121,13 +121,13 @@ public class AuthListener implements Listener {
 				}*/
 				//				event.setCancelReason(BungeeUtils.connectScreen("&eLes cracks ne sont pas encore autoriser."));
 				//				event.setCancelled(true);
-				System.out.println("Crack with no data " + name);
+				OlympaBungee.getInstance().sendMessage("§7Joueur crack sans données §e" + name);
 		}
 
 		// Si le joueur s'est déjà connecté
 		if (olympaPlayer != null) {
 			cache.setOlympaPlayer(olympaPlayer);
-			OlympaBungee.getInstance().sendMessage("Connexion du joueur connu §e" + olympaPlayer.getName());
+			OlympaBungee.getInstance().sendMessage("§7Connexion du joueur connu §e" + olympaPlayer.getName());
 			if (olympaPlayer.getPremiumUniqueId() == null) {
 				/*if (connection.isOnlineMode()) {
 					event.setCancelReason(BungeeUtils.connectScreen(
