@@ -30,7 +30,7 @@ public class ServersListener implements Listener {
 		ServerInfo serverKicked = event.getKickedFrom();
 		String kickReason = ChatColor.stripColor(BaseComponent.toLegacyText(event.getKickReasonComponent()));
 		ProxiedPlayer player = event.getPlayer();
-		System.out.println("KICK " + player.getName() + " FOR " + kickReason + " " + event.getState());
+		OlympaBungee.getInstance().sendMessage("§6" + player.getName() + "§7 a été kick pour \"§e" + kickReason + "§7\" (état : " + event.getState() + ")");
 		if (kickReason.contains("whitelist")) {
 			event.setKickReasonComponent(TextComponent.fromLegacyText(BungeeUtils.connectScreen("&cTu n'a pas accès au serveur &4" + serverKicked.getName() + "&c.")));
 			return;
