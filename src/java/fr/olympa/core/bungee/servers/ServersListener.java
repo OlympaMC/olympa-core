@@ -18,13 +18,13 @@ import net.md_5.bungee.event.EventHandler;
 
 @SuppressWarnings("deprecation")
 public class ServersListener implements Listener {
-
+	
 	@EventHandler
 	public void onServerSwitch(ServerSwitchEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		ServerInfo from = event.getFrom();
 	}
-	
+
 	@EventHandler
 	public void onServerKick(ServerKickEvent event) {
 		ServerInfo serverKicked = event.getKickedFrom();
@@ -36,21 +36,24 @@ public class ServersListener implements Listener {
 			return;
 		}
 		if (kickReason.contains("restarting") || kickReason.contains("closed")) {
-			ServerInfo server = ServersConnection.getBestServer(OlympaServer.LOBBY, serverKicked);
-			if (server == null)
-				server = ServersConnection.getBestServer(OlympaServer.AUTH, serverKicked);
-			if (server == null) {
+			ServerInfo serverFallback = null;
+			OlympaServer olympaServer = MonitorInfo.getOlympaServer(serverKicked.getName()).getKey();
+			if (olympaServer != null && olympaServer.hasMultiServers())
+				serverFallback = ServersConnection.getBestServer(olympaServer, serverKicked);
+			if (serverFallback == null)
+				serverFallback = ServersConnection.getBestServer(OlympaServer.LOBBY, serverKicked);
+			if (serverFallback == null)
+				serverFallback = ServersConnection.getBestServer(OlympaServer.AUTH, serverKicked);
+			if (serverFallback == null) {
 				BaseComponent[] msg = TextComponent.fromLegacyText(BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e redémarre, merci de te reconnecter dans quelques secondes..."));
 				player.sendMessage(msg);
 				event.setKickReasonComponent(msg);
 				return;
 			}
 			event.setCancelled(true);
-			event.setCancelServer(server);
-			player.sendMessage(Prefix.DEFAULT_GOOD + ColorUtils.color("Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter avant d'être reconnecté automatiquement."));
-			OlympaServer olympaServer = MonitorInfo.getOlympaServer(serverKicked.getName()).getKey();
-			if (!olympaServer.hasMultiServers())
-				OlympaBungee.getInstance().getTask().runTaskLater(() -> ServersConnection.tryConnect(player, olympaServer), 5 * 20);
+			event.setCancelServer(serverFallback);
+			player.sendMessage(Prefix.DEFAULT_GOOD + ColorUtils.color("Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter au moins 10 secondes avant d'être reconnecté automatiquement."));
+			OlympaBungee.getInstance().getTask().runTaskLater(() -> ServersConnection.tryConnect(player, olympaServer), 10 * 20);
 			return;
 		}
 		if (!kickReason.contains("ban")) {

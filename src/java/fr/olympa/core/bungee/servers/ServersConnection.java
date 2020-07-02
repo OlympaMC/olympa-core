@@ -12,6 +12,9 @@ import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
@@ -26,11 +29,15 @@ public class ServersConnection {
 	}
 	
 	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except) {
-		if (!olympaServer.hasMultiServers()) return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(MonitorInfo::getServerInfo).orElse(null);
+		if (!olympaServer.hasMultiServers())
+			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(MonitorInfo::getServerInfo).orElse(null);
 
-		Map<ServerInfo, Integer> servers = MonitorServers.getServers(olympaServer).values().stream().filter(x -> x.isOpen() && (except == null || except.getName() != x.getName()) && (!olympaServer.hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0)).collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayers()));
+		Map<ServerInfo, Integer> servers = MonitorServers.getServers(olympaServer).values().stream()
+				.filter(x -> x.isOpen() && (except == null || except.getName() != x.getName()) && (!olympaServer.hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
+				.collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayers()));
 		Entry<ServerInfo, Integer> bestServer = servers.entrySet().stream().sorted(Map.Entry.comparingByValue()).findFirst().orElse(null);
-		if (bestServer != null) return bestServer.getKey();
+		if (bestServer != null)
+			return bestServer.getKey();
 		// TODO create new server
 		return null;
 	}
@@ -47,9 +54,13 @@ public class ServersConnection {
 		return server;
 	}
 	
-	public static void removeTryToConnect(ProxiedPlayer player) {
+	public static boolean removeTryToConnect(ProxiedPlayer player) {
 		ScheduledTask task = connect.remove(player);
-		if (task != null) task.cancel();
+		if (task != null) {
+			task.cancel();
+			return true;
+		}
+		return false;
 	}
 	
 	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer) {
@@ -66,12 +77,14 @@ public class ServersConnection {
 		}
 		String serverName = Utils.capitalize(server.getName());
 		if (!canPlayerConnect(server)) {
-			player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu es en file d'attente pour rejoindre le serveur &4" + serverName + "&c..."));
+			TextComponent text = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu es en file d'attente pour rejoindre le serveur &4" + serverName + "&c...")));
+			text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(BungeeUtils.color("&cClique ici pour sortir de la file d'attente"))));
+			text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "leavefile"));
+			player.sendMessage(text);
 			return;
 		}
 		player.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("Tentative de connexion au serveur &2" + serverName + "&a..."));
 		player.connect(server);
 		return;
-		
 	}
 }
