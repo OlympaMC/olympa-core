@@ -23,8 +23,10 @@ public class RedisSpigotSend {
 			}
 			RedisAccess.INSTANCE.disconnect();
 			OlympaCore core = OlympaCore.getInstance();
-			if (core.getServerName().contains(":"))
-				core.getTask().runTaskLater(() -> RedisSpigotSend.askServerName(), 5 * 20);
+			core.getTask().runTaskLater(() -> {
+				if (core.getServerName().contains(":"))
+					RedisSpigotSend.askServerName();
+			}, 5 * 20);
 		});
 	}
 	
