@@ -8,7 +8,6 @@ import org.bukkit.plugin.PluginManager;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
 import fr.olympa.api.command.CommandListener;
-import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.frame.ImageFrameManager;
 import fr.olympa.api.gui.Inventories;
 import fr.olympa.api.holograms.HologramsManager;
@@ -126,12 +125,12 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new MySQL(database);
 		new ReportMySQL(database);
 
-		try {
-			getCommand("tell").unregister(OlympaCommand.getCommandMap());
-			OlympaCommand.unRegisterCommand(getCommand("restart"), getCommand("tps"), getCommand("me"));
-		}catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		//		try {
+		//			getCommand("tell").unregister(OlympaCommand.getCommandMap());
+		//			OlympaCommand.unRegisterCommand(getCommand("restart"), getCommand("tps"), getCommand("me"));
+		//		}catch (Exception ex) {
+		//			ex.printStackTrace();
+		//		}
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();
 		new ReportCommand(this).register();
@@ -142,7 +141,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new UtilsCommand(this).register();
 		new GenderCommand(this).register();
 		new RestartCommand(this).registerPreProcess();
-		// new PasswdCommand(this).register();
 
 		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(new DataManagmentListener(), this);
