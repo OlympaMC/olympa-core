@@ -14,19 +14,20 @@ import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
 
 public class RedisSpigotSend {
-
+	
 	public static void askServerName() {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
 			try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 				String serverName = OlympaCore.getInstance().getServerName();
-				long l = jedis.publish(RedisChannel.SPIGOT_ASK_SERVERNAME.name(), serverName);
-				if (l == 0)
-					OlympaCore.getInstance().getTask().runTaskLater(RedisChannel.SPIGOT_ASK_SERVERNAME.name(), () -> RedisSpigotSend.askServerName(), 5 * 20);
+				jedis.publish(RedisChannel.SPIGOT_ASK_SERVERNAME.name(), serverName);
 			}
 			RedisAccess.INSTANCE.disconnect();
+			OlympaCore core = OlympaCore.getInstance();
+			if (core.getServerName().contains(":"))
+				core.getTask().runTaskLater(() -> RedisSpigotSend.askServerName(), 5 * 20);
 		});
 	}
-
+	
 	public static void giveOlympaPlayer(OlympaPlayer olympaPlayer, String serverTo) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 			String serverName = OlympaCore.getInstance().getServerName();
@@ -34,7 +35,7 @@ public class RedisSpigotSend {
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
-
+	
 	public static void sendOlympaGroupChange(OlympaPlayer olympaPlayer, OlympaGroup groupChanged, long timestamp, ChangeType state) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 			String serverName = OlympaCore.getInstance().getServerName();
@@ -42,7 +43,7 @@ public class RedisSpigotSend {
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
-
+	
 	public static void sendShutdown() {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 			String serverName = OlympaCore.getInstance().getServerName();
@@ -50,12 +51,12 @@ public class RedisSpigotSend {
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
-
+	
 	public static void sendServerSwitch(Player p, OlympaServer server) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 			jedis.publish(RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER.name(), p.getName() + ":" + server.name());
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
-
+	
 }
