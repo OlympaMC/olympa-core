@@ -48,7 +48,7 @@ public class ServersConnection {
 		if (server == null) {
 			String[] ipPort = nameOrIpPort.split(":");
 			if (ipPort.length >= 2) {
-				String ip = ipPort[0].replace("localhost", "172.0.0.1");
+				String ip = ipPort[0].replace("localhost", "127.0.0.1");
 				server = servers.values().stream().filter(sr -> {
 					return sr.getAddress().getAddress().getHostAddress().equals(ip) && sr.getAddress().getPort() == Integer.parseInt(ipPort[1]);
 				}).findFirst().orElse(null);
