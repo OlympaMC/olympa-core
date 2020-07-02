@@ -33,7 +33,7 @@ import net.md_5.bungee.event.EventPriority;
 
 @SuppressWarnings("deprecation")
 public class AuthListener implements Listener {
-	
+
 	// public static Cache<String, String> cacheServer =
 	// CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.SECONDS).build();
 	// private Cache<String, UUID> cachePremiumUUID =
@@ -41,7 +41,7 @@ public class AuthListener implements Listener {
 	// private Cache<String, OlympaPlayer> cachePlayer =
 	// CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.SECONDS).build();
 	private Set<String> wait = new HashSet<>();
-	
+
 	@EventHandler
 	public void on1PreLogin(PreLoginEvent event) {
 		if (event.isCancelled())
@@ -147,7 +147,7 @@ public class AuthListener implements Listener {
 		cache.setSubDomain(event.getConnection());
 		DataHandler.addPlayer(cache);
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on2PreLogin(PreLoginEvent event) {
 		PendingConnection connection = event.getConnection();
@@ -155,7 +155,7 @@ public class AuthListener implements Listener {
 		if (event.isCancelled())
 			DataHandler.removePlayer(name);
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on3Login(LoginEvent event) {
 		PendingConnection connection = event.getConnection();
@@ -216,7 +216,7 @@ public class AuthListener implements Listener {
 		olympaAccount.saveToRedis(olympaPlayer);
 		olympaAccount.accountPersist();
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on42Login(LoginEvent event) {
 		PendingConnection connection = event.getConnection();
@@ -224,18 +224,19 @@ public class AuthListener implements Listener {
 		if (event.isCancelled())
 			DataHandler.removePlayer(name);
 	}
-	
+
 	@EventHandler(priority = EventPriority.LOW)
 	public void on5PostLogin(PostLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		OlympaBungee.getInstance().sendMessage("§7PostLoginEvent §6" + (player.getPendingConnection().isOnlineMode() ? "online" : "offline/cracked"));
-		if (!player.getPendingConnection().isOnlineMode())
+		CachePlayer cache = DataHandler.get(player.getName());
+		OlympaPlayer olympaPlayer;
+		if (cache == null || (olympaPlayer = cache.getOlympaPlayer()) == null || !olympaPlayer.isPremium())
 			return;
-		OlympaPlayer olympaPlayer = DataHandler.get(player.getName()).getOlympaPlayer();
 		OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, player));
 		olympaPlayerLoginEvent.cancelIfNeeded();
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on6Disconnect(PlayerDisconnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
@@ -256,5 +257,5 @@ public class AuthListener implements Listener {
 			olympaAccount.saveToDb(olympaPlayer);
 		}, 2, TimeUnit.SECONDS);
 	}
-	
+
 }

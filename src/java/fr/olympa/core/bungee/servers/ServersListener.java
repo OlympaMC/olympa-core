@@ -18,7 +18,7 @@ import net.md_5.bungee.event.EventHandler;
 
 @SuppressWarnings("deprecation")
 public class ServersListener implements Listener {
-	
+
 	@EventHandler
 	public void onServerSwitch(ServerSwitchEvent event) {
 		ProxiedPlayer player = event.getPlayer();
@@ -28,6 +28,11 @@ public class ServersListener implements Listener {
 	@EventHandler
 	public void onServerKick(ServerKickEvent event) {
 		ServerInfo serverKicked = event.getKickedFrom();
+		OlympaServer olympaServer = MonitorInfo.getOlympaServer(serverKicked.getName()).getKey();
+		if (olympaServer == null || olympaServer == OlympaServer.AUTH) {
+			event.setCancelled(false);
+			return;
+		}
 		String kickReason = ChatColor.stripColor(BaseComponent.toLegacyText(event.getKickReasonComponent()));
 		ProxiedPlayer player = event.getPlayer();
 		OlympaBungee.getInstance().sendMessage("§6" + player.getName() + "§7 a été kick pour \"§e" + kickReason + "§7\" (état : " + event.getState() + ")");
@@ -37,7 +42,6 @@ public class ServersListener implements Listener {
 		}
 		if (kickReason.contains("restarting") || kickReason.contains("closed")) {
 			ServerInfo serverFallback = null;
-			OlympaServer olympaServer = MonitorInfo.getOlympaServer(serverKicked.getName()).getKey();
 			if (olympaServer != null && olympaServer.hasMultiServers())
 				serverFallback = ServersConnection.getBestServer(olympaServer, serverKicked);
 			if (serverFallback == null)

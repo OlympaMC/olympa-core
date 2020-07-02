@@ -8,6 +8,7 @@ import org.bukkit.plugin.PluginManager;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
 import fr.olympa.api.command.CommandListener;
+import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.frame.ImageFrameManager;
 import fr.olympa.api.gui.Inventories;
 import fr.olympa.api.holograms.HologramsManager;
@@ -83,7 +84,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	public ImageFrameManager getImageFrameManager() {
 		return imageFrameManager;
 	}
-	
+
 	public SwearHandler getSwearHandler() {
 		return swearHandler;
 	}
@@ -108,7 +109,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	public void onEnable() {
 		instance = this;
 		LinkSpigotBungee.Provider.link = this;
-		
+
 		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		super.onEnable();
@@ -119,12 +120,14 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
 			e.printStackTrace();
 		}
-		
+
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 		imageFrameManager = new ImageFrameManager(this, "maps.yml", "images");
 		new MySQL(database);
 		new ReportMySQL(database);
-		
+
+		getCommand("tell").unregister(OlympaCommand.getCommandMap());
+		OlympaCommand.unRegisterCommand(getCommand("restart"), getCommand("tps"), getCommand("me"));
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();
 		new ReportCommand(this).register();
@@ -136,7 +139,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new GenderCommand(this).register();
 		new RestartCommand(this).registerPreProcess();
 		// new PasswdCommand(this).register();
-		
+
 		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(new DataManagmentListener(), this);
 		pluginManager.registerEvents(new GroupListener(), this);
@@ -152,11 +155,11 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		pluginManager.registerEvents(new ScoreboardTeamListener(), this);
 		nameTagApi = new NametagAPI(new NametagManager());
 		((NametagAPI) nameTagApi).testCompat();
-		
+
 		new AntiWD(this);
 		if (getServer().getPluginManager().isPluginEnabled("ProtocolSupport"))
 			protocolSupportHook = new ProtocolSupportHook(this);
-		
+
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 	}
 }
