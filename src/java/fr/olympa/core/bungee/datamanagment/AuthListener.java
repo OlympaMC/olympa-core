@@ -82,11 +82,11 @@ public class AuthListener implements Listener {
 			// Si le pseudo est un compte premium
 			if (response != null) {
 				// Si la connection est crack
-				if (!connection.isOnlineMode()) {
-					event.setCancelReason(BungeeUtils.connectScreen("&cLe pseudo &4" + response.getName() + "&c est un compte premium.\n&c&nTu ne peux pas l'utiliser."));
-					event.setCancelled(true);
-					return;
-				}
+				//				if (!connection.isOnlineMode()) {
+				//					event.setCancelReason(BungeeUtils.connectScreen("&cLe pseudo &4" + response.getName() + "&c est un compte premium.\n&c&nTu ne peux pas l'utiliser."));
+				//					event.setCancelled(true);
+				//					return;
+				//				}
 				uuidPremium = response.getUuid();
 				// cachePremiumUUID.put(name, uuidPremium);
 				cache.setPremiumUUID(uuidPremium);
@@ -136,7 +136,7 @@ public class AuthListener implements Listener {
 					return;
 				}*/
 				if (!name.equals(olympaPlayer.getName())) {
-					event.setCancelReason(BungeeUtils.connectScreen("&aTu as mal écrit ton pseudo, connecte toi avec &2" + olympaPlayer.getName() + "&a.\n&eLa tu utilise le pseudo " + name + "."));
+					event.setCancelReason(BungeeUtils.connectScreen("&aTu as mal écrit ton pseudo, connecte toi avec &2" + olympaPlayer.getName() + "&a.\n&eLà tu utilise le pseudo " + name + "."));
 					event.setCancelled(true);
 					return;
 				}
