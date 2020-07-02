@@ -31,7 +31,7 @@ public class RedisBungeeSend {
 	public static void sendServerName(ServerInfo serverInfo) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 			InetSocketAddress adress = serverInfo.getAddress();
-			jedis.publish(RedisChannel.BUNGEE_SEND_SERVERNAME.name(), adress.getAddress().getHostAddress().replace("localhost", "127.0.0.1") + ";" + adress.getPort() + ";" + serverInfo.getName());
+			jedis.publish(RedisChannel.BUNGEE_SEND_SERVERNAME.name(), adress.getAddress().getHostAddress().replace("127.0.0.1", "localhost") + ";" + adress.getPort() + ";" + serverInfo.getName());
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}

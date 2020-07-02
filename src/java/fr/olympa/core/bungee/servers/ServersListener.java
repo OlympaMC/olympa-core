@@ -1,5 +1,7 @@
 package fr.olympa.core.bungee.servers;
 
+import java.util.Map.Entry;
+
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
@@ -21,7 +23,8 @@ public class ServersListener implements Listener {
 	@EventHandler
 	public void onServerKick(ServerKickEvent event) {
 		ServerInfo serverKicked = event.getKickedFrom();
-		OlympaServer olympaServer = MonitorInfo.getOlympaServer(serverKicked.getName()).getKey();
+		Entry<OlympaServer, Integer> entryOlympaServer = MonitorInfo.getOlympaServer(serverKicked.getName());
+		OlympaServer olympaServer = entryOlympaServer != null ? entryOlympaServer.getKey() : null;
 		if (olympaServer == null || olympaServer == OlympaServer.AUTH) {
 			event.setCancelled(false);
 			return;
