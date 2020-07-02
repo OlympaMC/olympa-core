@@ -1,6 +1,5 @@
 package fr.olympa.core.bungee.servers.commands;
 
-import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.servers.ServersConnection;
@@ -11,7 +10,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class LeaveLine extends BungeeCommand {
 	
 	public LeaveLine(Plugin plugin) {
-		super(plugin, "leaveline", OlympaCorePermissions.SERVER_LIST_COMMAND, "quitfile");
+		super(plugin, "leaveline", "quitfile");
 		allowConsole = false;
 	}
 	
