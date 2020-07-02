@@ -26,7 +26,7 @@ import net.md_5.bungee.event.EventPriority;
 
 @SuppressWarnings("deprecation")
 public class OlympaLoginListener implements Listener {
-	
+
 	@EventHandler
 	public void onOlympaGroupChange(OlympaGroupChangeEvent event) {
 		ProxiedPlayer player = event.getPlayer();
@@ -36,7 +36,7 @@ public class OlympaLoginListener implements Listener {
 		if (groupsNames.length > 0)
 			player.addGroups(groupsNames);
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onOlympaPlayerLogin(OlympaPlayerLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
@@ -49,29 +49,31 @@ public class OlympaLoginListener implements Listener {
 			olympaPlayer.addNewIp(ip);
 		CachePlayer cache = DataHandler.get(player.getName());
 		OlympaBungee.getInstance().getTask().runTaskLater(() -> {
-			if (cache != null && !olympaPlayer.isPremium()) {
-				String subdomain = cache.getSubDomain();
-				if (subdomain != null)
-					if (subdomain.equalsIgnoreCase("buildeur")) {
-						ServersConnection.tryConnect(player, OlympaServer.BUILDEUR);
-						return;
-					} else if (subdomain.equalsIgnoreCase("dev")) {
-						ServersConnection.tryConnect(player, OlympaServer.DEV);
-						return;
-					}
-				ServersConnection.tryConnect(player, OlympaServer.LOBBY);
+			if (cache != null) {
+				if (!olympaPlayer.isPremium()) {
+					String subdomain = cache.getSubDomain();
+					if (subdomain != null)
+						if (subdomain.equalsIgnoreCase("buildeur")) {
+							ServersConnection.tryConnect(player, OlympaServer.BUILDEUR);
+							return;
+						} else if (subdomain.equalsIgnoreCase("dev")) {
+							ServersConnection.tryConnect(player, OlympaServer.DEV);
+							return;
+						}
+					ServersConnection.tryConnect(player, OlympaServer.LOBBY);
+				}
 				DataHandler.removePlayer(cache);
 			}
 		}, 2, TimeUnit.SECONDS);
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerDisconnect(PlayerDisconnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		player.removeGroups(player.getGroups().toArray(new String[0]));
 		ServersConnection.removeTryToConnect(player);
 	}
-	
+
 	@EventHandler
 	public void onServerConnect(ServerConnectEvent event) {
 		if (event.isCancelled())
@@ -85,7 +87,6 @@ public class OlympaLoginListener implements Listener {
 		if (cache != null) {
 			OlympaPlayer olympaPlayer = cache.getOlympaPlayer();
 			if (olympaPlayer != null && olympaPlayer.isConnected() && olympaPlayer.isPremium()) {
-				DataHandler.removePlayer(cache);
 				String subdomain = cache.getSubDomain();
 				if (subdomain != null && !subdomain.equalsIgnoreCase("play")) {
 					OlympaServer olympaServer = null;
@@ -117,7 +118,7 @@ public class OlympaLoginListener implements Listener {
 		if (auth != null)
 			event.setTarget(auth);
 	}
-	
+
 	@EventHandler
 	public void onServerConnected(ServerConnectedEvent event) {
 		ProxiedPlayer player = event.getPlayer();
@@ -129,7 +130,7 @@ public class OlympaLoginListener implements Listener {
 				DataHandler.removePlayer(cache);
 		}
 	}
-	
+
 	@EventHandler
 	public void onServerSwitch(ServerSwitchEvent event) {
 		ProxiedPlayer player = event.getPlayer();

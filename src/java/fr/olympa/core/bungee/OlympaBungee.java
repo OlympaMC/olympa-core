@@ -25,6 +25,7 @@ import fr.olympa.core.bungee.ban.commands.UnbanCommand;
 import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
 import fr.olympa.core.bungee.commands.InfoCommand;
+import fr.olympa.core.bungee.connectionqueue.ConnectionQueueListener;
 import fr.olympa.core.bungee.connectionqueue.LeaveQueue;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
 import fr.olympa.core.bungee.datamanagment.GetUUIDCommand;
@@ -170,6 +171,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		pluginManager.registerListener(this, new ProtocolListener());
 		pluginManager.registerListener(this, new TabTextListener());
 		pluginManager.registerListener(this, new BungeeCommandListener());
+		pluginManager.registerListener(this, new ConnectionQueueListener());
 
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();

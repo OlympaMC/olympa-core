@@ -52,11 +52,15 @@ public class AuthListener implements Listener {
 		OlympaPlayer olympaPlayer;
 		//		UUID uuidCrack = null;
 
-		if (wait.contains(name)) {
-			event.setCancelReason(BungeeUtils.connectScreen("&eMerci de patienter avant chaque reconnection."));
-			event.setCancelled(true);
-			return;
-		}
+		if (wait.contains(name))
+			try {
+				Thread.sleep(2 * 1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		//			event.setCancelReason(BungeeUtils.connectScreen("&eMerci de patienter avant chaque reconnection."));
+		//			event.setCancelled(true);
+		//			return;
 		try {
 			olympaPlayer = AccountProvider.get(name);
 		} catch (Exception e) {
