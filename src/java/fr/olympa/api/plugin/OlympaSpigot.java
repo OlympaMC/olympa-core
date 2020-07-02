@@ -9,11 +9,11 @@ import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
-import fr.olympa.core.spigot.redis.SendOlympaPlayerReceiver;
 import fr.olympa.core.spigot.redis.BungeeSendOlympaPlayerReceiver;
-import fr.olympa.core.spigot.redis.SpigotSendOlympaPlayerReceiver;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
+import fr.olympa.core.spigot.redis.SendOlympaPlayerReceiver;
 import fr.olympa.core.spigot.redis.ServerNameReceiver;
+import fr.olympa.core.spigot.redis.SpigotSendOlympaPlayerReceiver;
 import redis.clients.jedis.JedisPubSub;
 
 public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCoreInterface {

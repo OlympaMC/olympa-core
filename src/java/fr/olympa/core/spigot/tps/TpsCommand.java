@@ -65,7 +65,7 @@ public class TpsCommand extends OlympaCommand {
 			Collection<Chunk> forceChunks = world.getForceLoadedChunks();
 			String fc = "";
 			if (!forceChunks.isEmpty())
-				fc = " (" + forceChunks.size() + " forcés)";
+				fc = "(" + forceChunks.size() + " forcés) ";
 			sb.add("&3Monde &b" + world.getName() + "&3: &b" + chunks.length + "&3 chunks " + fc + "&b" + livingEntities.size() + "/" + entities.size() + "&3 entités" + "&3.");
 		}
 

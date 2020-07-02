@@ -126,8 +126,12 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new MySQL(database);
 		new ReportMySQL(database);
 
-		getCommand("tell").unregister(OlympaCommand.getCommandMap());
-		OlympaCommand.unRegisterCommand(getCommand("restart"), getCommand("tps"), getCommand("me"));
+		try {
+			getCommand("tell").unregister(OlympaCommand.getCommandMap());
+			OlympaCommand.unRegisterCommand(getCommand("restart"), getCommand("tps"), getCommand("me"));
+		}catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();
 		new ReportCommand(this).register();

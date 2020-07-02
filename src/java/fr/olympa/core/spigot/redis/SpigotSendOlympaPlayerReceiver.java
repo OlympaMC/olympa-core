@@ -15,9 +15,12 @@ public class SpigotSendOlympaPlayerReceiver extends JedisPubSub {
 	@Override
 	public void onMessage(String channel, String message) {
 		String[] args = message.split(";");
-		if (!OlympaCore.getInstance().isServerName(args[0]))
+		String from = args[0];
+		String to = args[1];
+		String json = args[2];
+		if (!OlympaCore.getInstance().isServerName(to))
 			return;
-		OlympaPlayer olympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(args[1], OlympaPlayer.class);
+		OlympaPlayer olympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(json, OlympaPlayer.class);
 
 		Player player = olympaPlayer.getPlayer();
 		if (player == null)
