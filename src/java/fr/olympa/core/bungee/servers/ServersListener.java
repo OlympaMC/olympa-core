@@ -12,18 +12,11 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerKickEvent;
-import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 @SuppressWarnings("deprecation")
 public class ServersListener implements Listener {
-
-	@EventHandler
-	public void onServerSwitch(ServerSwitchEvent event) {
-		ProxiedPlayer player = event.getPlayer();
-		ServerInfo from = event.getFrom();
-	}
 
 	@EventHandler
 	public void onServerKick(ServerKickEvent event) {

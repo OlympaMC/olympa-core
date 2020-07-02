@@ -42,6 +42,7 @@ public class ServersConnection {
 		return null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static ServerInfo getServerByNameOrIpPort(String nameOrIpPort) {
 		Map<String, ServerInfo> servers = ProxyServer.getInstance().getServers();
 		ServerInfo server = servers.get(nameOrIpPort);

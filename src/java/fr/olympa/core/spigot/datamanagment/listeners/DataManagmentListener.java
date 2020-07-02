@@ -132,11 +132,10 @@ public class DataManagmentListener implements Listener {
 		Player player = event.getPlayer();
 		AccountProvider account = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = account.getFromCache();
-		if (olympaPlayer != null) {
+		if (olympaPlayer != null)
 			event.setQuitMessage(ColorUtils.color("&7[&c-&7] %prefix%name".replace("%group", olympaPlayer.getGroupName()).replace("%prefix", olympaPlayer.getGroupPrefix()).replace("%name", player.getDisplayName())));
-		} else {
+		else
 			event.setQuitMessage(null);
-		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -144,7 +143,7 @@ public class DataManagmentListener implements Listener {
 		Player player = event.getPlayer();
 		AccountProvider account = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = account.getFromCache();
-		if (olympaPlayer != null) {
+		if (olympaPlayer != null)
 			try {
 				MySQL.savePlayerPluginDatas(olympaPlayer);
 				account.saveToRedis(olympaPlayer);
@@ -152,6 +151,5 @@ public class DataManagmentListener implements Listener {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		}
 	}
 }
