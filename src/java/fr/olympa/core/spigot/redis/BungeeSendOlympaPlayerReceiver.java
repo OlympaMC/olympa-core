@@ -6,7 +6,7 @@ import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.JedisPubSub;
 
-public class GiveToOlympaPlayerListener extends JedisPubSub {
+public class BungeeSendOlympaPlayerReceiver extends JedisPubSub {
 	
 	@Override
 	public void onMessage(String channel, String message) {

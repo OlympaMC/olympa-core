@@ -7,7 +7,7 @@ import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.JedisPubSub;
 
-public class AskGiveOlympaPlayerReceiver extends JedisPubSub {
+public class SendOlympaPlayerReceiver extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {

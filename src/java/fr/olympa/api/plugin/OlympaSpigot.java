@@ -9,11 +9,11 @@ import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
-import fr.olympa.core.spigot.redis.AskGiveOlympaPlayerReceiver;
-import fr.olympa.core.spigot.redis.GiveToOlympaPlayerListener;
-import fr.olympa.core.spigot.redis.OlympaPlayerSpigotListener;
+import fr.olympa.core.spigot.redis.SendOlympaPlayerReceiver;
+import fr.olympa.core.spigot.redis.BungeeSendOlympaPlayerReceiver;
+import fr.olympa.core.spigot.redis.SpigotSendOlympaPlayerReceiver;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
-import fr.olympa.core.spigot.redis.ServerNameListener;
+import fr.olympa.core.spigot.redis.ServerNameReceiver;
 import redis.clients.jedis.JedisPubSub;
 
 public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCoreInterface {
@@ -108,10 +108,10 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		redisAccess = RedisAccess.init(getServerName());
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
-			registerRedisSub(new ServerNameListener(), RedisChannel.BUNGEE_SEND_SERVERNAME.name());
-			registerRedisSub(new AskGiveOlympaPlayerReceiver(), RedisChannel.BUNGEE_ASK_SEND_OLYMPAPLAYER.name());
-			registerRedisSub(new GiveToOlympaPlayerListener(), RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name());
-			registerRedisSub(new OlympaPlayerSpigotListener(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(new ServerNameReceiver(), RedisChannel.BUNGEE_SEND_SERVERNAME.name());
+			registerRedisSub(new SendOlympaPlayerReceiver(), RedisChannel.BUNGEE_ASK_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(new BungeeSendOlympaPlayerReceiver(), RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(new SpigotSendOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name());
 			RedisSpigotSend.askServerName();
 			
 			sendMessage("&aConnexion à &2Redis&a établie.");
