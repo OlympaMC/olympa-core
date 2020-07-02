@@ -20,18 +20,18 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 public class ServersConnection {
-	
+
 	private static Map<ProxiedPlayer, ScheduledTask> connect = new HashMap<>();
-	
+
 	public static boolean canPlayerConnect(ServerInfo server) {
 		MonitorInfo monitor = MonitorServers.getMonitor(server);
 		return monitor != null && monitor.getStatus().canConnect();
 	}
-	
+
 	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except) {
 		if (!olympaServer.hasMultiServers())
 			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(MonitorInfo::getServerInfo).orElse(null);
-		
+
 		Map<ServerInfo, Integer> servers = MonitorServers.getServers(olympaServer).values().stream()
 				.filter(x -> x.isOpen() && (except == null || except.getName() != x.getName()) && (!olympaServer.hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
 				.collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayers()));
@@ -41,19 +41,22 @@ public class ServersConnection {
 		// TODO create new server
 		return null;
 	}
-	
-	@SuppressWarnings("deprecation")
+
 	public static ServerInfo getServerByNameOrIpPort(String nameOrIpPort) {
 		Map<String, ServerInfo> servers = ProxyServer.getInstance().getServers();
 		ServerInfo server = servers.get(nameOrIpPort);
 		if (server == null) {
 			String[] ipPort = nameOrIpPort.split(":");
+			System.out.println("debug3: " + nameOrIpPort);
 			if (ipPort.length >= 2)
-				server = servers.values().stream().filter(sr -> sr.getAddress().getAddress().getHostAddress().equals(ipPort[0]) && sr.getAddress().getPort() == Integer.parseInt(ipPort[1])).findFirst().orElse(null);
+				server = servers.values().stream().filter(sr -> {
+					System.out.println("debug4: " + sr.getAddress().getAddress().getHostAddress() + " " + sr.getAddress().getPort());
+					return sr.getAddress().getAddress().getHostAddress().equals(ipPort[0]) && sr.getAddress().getPort() == Integer.parseInt(ipPort[1]);
+				}).findFirst().orElse(null);
 		}
 		return server;
 	}
-	
+
 	public static boolean removeTryToConnect(ProxiedPlayer player) {
 		ScheduledTask task = connect.remove(player);
 		if (task != null) {
@@ -62,12 +65,12 @@ public class ServersConnection {
 		}
 		return false;
 	}
-	
+
 	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer) {
 		ScheduledTask task = ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer), 0, 30, TimeUnit.SECONDS);
 		connect.put(player, task);
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	private static void tryConnectTo(ProxiedPlayer player, OlympaServer olympaServer) {
 		ServerInfo server = getBestServer(olympaServer, null);
