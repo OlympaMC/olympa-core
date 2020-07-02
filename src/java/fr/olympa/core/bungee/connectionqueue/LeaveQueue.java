@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.servers.commands;
+package fr.olympa.core.bungee.connectionqueue;
 
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
@@ -7,13 +7,13 @@ import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 
-public class LeaveLine extends BungeeCommand {
-	
-	public LeaveLine(Plugin plugin) {
-		super(plugin, "leaveline", "quitfile");
+public class LeaveQueue extends BungeeCommand {
+
+	public LeaveQueue(Plugin plugin) {
+		super(plugin, "leavequeue", "quitfile");
 		allowConsole = false;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
@@ -22,5 +22,5 @@ public class LeaveLine extends BungeeCommand {
 		else
 			proxiedPlayer.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu n'es dans aucune file d'attente."));
 	}
-	
+
 }

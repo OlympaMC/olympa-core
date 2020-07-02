@@ -8,7 +8,7 @@ public interface LinkSpigotBungee {
 	public static final class Provider {
 		public static LinkSpigotBungee link;
 	}
-
+	
 	Connection getDatabase() throws SQLException;
 
 	void launchAsync(Runnable run);

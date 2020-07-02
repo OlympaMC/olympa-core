@@ -3,7 +3,6 @@ package fr.olympa.core.bungee.redis;
 import java.net.InetSocketAddress;
 import java.util.UUID;
 
-import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
@@ -20,23 +19,22 @@ public class RedisBungeeSend {
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
-	
+
 	public static void sendOlympaPlayer(ServerInfo target, OlympaPlayer olympaPlayer) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 			jedis.publish(RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name(), target.getName() + ";" + olympaPlayer);
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public static void sendServerName(ServerInfo serverInfo) {
-		LinkSpigotBungee.Provider.link.launchAsync(() -> {
-			try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
-				InetSocketAddress adress = serverInfo.getAddress();
-				jedis.publish(RedisChannel.BUNGEE_SEND_SERVERNAME.name(), adress.getAddress().getHostAddress() + ";" + adress.getPort() + ";" + serverInfo.getName());
-			}
-			RedisAccess.INSTANCE.disconnect();
-		});
+		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
+			InetSocketAddress adress = serverInfo.getAddress();
+			System.out.println("debug2: " + adress.getAddress().getHostAddress() + ";" + adress.getPort() + ";" + serverInfo.getName());
+			jedis.publish(RedisChannel.BUNGEE_SEND_SERVERNAME.name(), adress.getAddress().getHostAddress() + ";" + adress.getPort() + ";" + serverInfo.getName());
+		}
+		RedisAccess.INSTANCE.disconnect();
 	}
 
 	public static void sendServerInfos(OlympaServer olympaServer, int players, ServerStatus status) {
