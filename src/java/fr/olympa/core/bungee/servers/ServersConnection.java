@@ -47,12 +47,12 @@ public class ServersConnection {
 		ServerInfo server = servers.get(nameOrIpPort);
 		if (server == null) {
 			String[] ipPort = nameOrIpPort.split(":");
-			System.out.println("debug3: " + nameOrIpPort);
-			if (ipPort.length >= 2)
+			if (ipPort.length >= 2) {
+				String ip = ipPort[0].replace("localhost", "172.0.0.1");
 				server = servers.values().stream().filter(sr -> {
-					System.out.println("debug4: " + sr.getAddress().getAddress().getHostAddress() + " " + sr.getAddress().getPort());
-					return sr.getAddress().getAddress().getHostAddress().equals(ipPort[0]) && sr.getAddress().getPort() == Integer.parseInt(ipPort[1]);
+					return sr.getAddress().getAddress().getHostAddress().equals(ip) && sr.getAddress().getPort() == Integer.parseInt(ipPort[1]);
 				}).findFirst().orElse(null);
+			}
 		}
 		return server;
 	}
