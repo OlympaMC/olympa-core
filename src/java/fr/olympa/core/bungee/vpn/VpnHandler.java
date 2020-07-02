@@ -29,7 +29,8 @@ public class VpnHandler {
 		OlympaVpn vpn = cache.getIfPresent(ip);
 		if (vpn == null) {
 			vpn = VpnSql.getIpInfo(ip);
-			cache.put(ip, vpn);
+			if (vpn != null)
+				cache.put(ip, vpn);
 		}
 		return vpn;
 	}

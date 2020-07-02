@@ -13,7 +13,6 @@ public class QueueTask implements Runnable {
 
 	public static void start() {
 		if (!isRunning())
-			// 1 joueur par 0.15 seconde
 			task = OlympaBungee.getInstance().getTask().runTaskLater(new QueueTask(), QueueHandler.TIME_BETWEEN_2 / 500);
 	}
 

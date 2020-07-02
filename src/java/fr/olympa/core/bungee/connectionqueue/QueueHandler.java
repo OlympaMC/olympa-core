@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 public class QueueHandler {
 
 	// 150 = 0.15 sec
-	public static int TIME_BETWEEN_2 = 1500;
+	public static int TIME_BETWEEN_2 = 150;
 	private static LinkedHashSet<String> queue = new LinkedHashSet<>();
 
 	public static int add(String playerName) {

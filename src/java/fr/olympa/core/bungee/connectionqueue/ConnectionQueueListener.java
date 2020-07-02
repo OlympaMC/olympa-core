@@ -16,16 +16,6 @@ public class ConnectionQueueListener implements Listener {
 		QueueHandler.remove(event.getPlayer().getName());
 	}
 
-	//	@EventHandler
-	//	public void onServerConnect(ServerConnectEvent event) {
-	//		if (event.getReason() == Reason.JOIN_PROXY)
-	//			return;
-	//		ProxiedPlayer player = event.getPlayer();
-	//		ServerInfo target = event.getTarget();
-	//		ServerConnectRequest request = event.getRequest();
-	//		//		request.setConnectTimeout(connectTimeout);
-	//	}
-
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPreLogin(PreLoginEvent event) {
 		PendingConnection connection = event.getConnection();
@@ -45,7 +35,7 @@ public class ConnectionQueueListener implements Listener {
 
 	public void blockThread(int i) {
 		try {
-			Thread.sleep(i * QueueHandler.TIME_BETWEEN_2);
+			Thread.sleep(i * QueueHandler.TIME_BETWEEN_2 + 1);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
