@@ -3,6 +3,7 @@ package fr.olympa.core.bungee.servers;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,7 @@ import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 public class ServersConnection {
 
-	private static Map<ProxiedPlayer, ScheduledTask> connect = new HashMap<>();
+	private static Map<UUID, ScheduledTask> connect = new HashMap<>();
 
 	public static boolean canPlayerConnect(ServerInfo server) {
 		MonitorInfo monitor = MonitorServers.getMonitor(server);
@@ -59,7 +60,7 @@ public class ServersConnection {
 	}
 
 	public static boolean removeTryToConnect(ProxiedPlayer player) {
-		ScheduledTask task = connect.remove(player);
+		ScheduledTask task = connect.remove(player.getUniqueId());
 		if (task != null) {
 			task.cancel();
 			return true;
@@ -68,8 +69,8 @@ public class ServersConnection {
 	}
 
 	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer) {
-		ScheduledTask task = ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer), 0, 30, TimeUnit.SECONDS);
-		connect.put(player, task);
+		removeTryToConnect(player);
+		connect.put(player.getUniqueId(), ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer), 0, 30, TimeUnit.SECONDS));
 	}
 
 	@SuppressWarnings("deprecation")
