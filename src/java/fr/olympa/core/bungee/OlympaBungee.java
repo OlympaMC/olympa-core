@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
+import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
@@ -24,6 +25,7 @@ import fr.olympa.core.bungee.ban.commands.MuteCommand;
 import fr.olympa.core.bungee.ban.commands.UnbanCommand;
 import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
+import fr.olympa.core.bungee.commands.BlagCommand;
 import fr.olympa.core.bungee.commands.InfoCommand;
 import fr.olympa.core.bungee.connectionqueue.ConnectionQueueListener;
 import fr.olympa.core.bungee.connectionqueue.LeaveQueue;
@@ -81,6 +83,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	protected BungeeCustomConfig defaultConfig;
 	protected BungeeCustomConfig maintConfig;
 	private BungeeTask bungeeTask;
+	private ServerStatus status;
 
 	public Configuration getConfig() {
 		return defaultConfig.getConfig();
@@ -107,6 +110,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		return "&f[&6" + getDescription().getName() + "&f] &e";
 	}
 
+	@Override
 	public String getServerName() {
 		return "bungee";
 	}
@@ -115,10 +119,12 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		return bungeeTask;
 	}
 
+	@Override
 	public String getUptime() {
 		return Utils.timestampToDuration(uptime);
 	}
 
+	@Override
 	public long getUptimeLong() {
 		return uptime;
 	}
@@ -141,6 +147,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		bungeeTask = new BungeeTask(this);
 		defaultConfig = new BungeeCustomConfig(this, "config");
 		defaultConfig.load();
+
+		status = ServerStatus.get(defaultConfig.getConfig().getString("settings.status"));
 		maintConfig = new BungeeCustomConfig(this, "maintenance");
 		maintConfig.load();
 		setupDatabase();
@@ -201,6 +209,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new RestartBungeeCommand(this).register();
 		new LobbyCommand(this).register();
 		new LeaveQueue(this).register();
+		new BlagCommand(this).register();
 
 		new MonitorServers(this);
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
@@ -265,5 +274,14 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 				sendMessage("&cConnexion à &4Redis&c impossible.");
 			getTask().runTaskLater("redis_setup", () -> setupRedis(i), 10, TimeUnit.SECONDS);
 		}
+	}
+
+	@Override
+	public ServerStatus getStatus() {
+		return status;
+	}
+
+	public ServerStatus setStatus(ServerStatus status) {
+		return this.status = status;
 	}
 }
