@@ -59,7 +59,9 @@ public class MonitorInfo {
 				tps = Float.valueOf(motd[1]);
 		} else {
 			status = ServerStatus.CLOSE;
-			this.error = error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "Connexion refusée");
+			String errorMsg = error.getMessage();
+			errorMsg = errorMsg == null ? "" : errorMsg.replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "Connexion refusée");
+
 		}
 	}
 
