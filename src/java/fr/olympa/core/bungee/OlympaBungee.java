@@ -284,4 +284,9 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	public ServerStatus setStatus(ServerStatus status) {
 		return this.status = status;
 	}
+
+	@Override
+	public boolean isSpigot() {
+		return false;
+	}
 }

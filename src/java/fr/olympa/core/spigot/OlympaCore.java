@@ -164,4 +164,9 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 	}
+
+	@Override
+	public boolean isSpigot() {
+		return true;
+	}
 }
