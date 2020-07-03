@@ -41,8 +41,8 @@ public class MonitorInfo {
 		serverName = server.getName();
 
 		Entry<OlympaServer, Integer> serverInfo = getOlympaServer(serverName);
-		this.olympaServer = serverInfo.getKey();
-		this.serverID = serverInfo.getValue();
+		olympaServer = serverInfo.getKey();
+		serverID = serverInfo.getValue();
 
 		ping = Math.round((System.nanoTime() - time) / 1000000);
 		if (error == null) {
@@ -59,7 +59,7 @@ public class MonitorInfo {
 				tps = Float.valueOf(motd[1]);
 		} else {
 			status = ServerStatus.CLOSE;
-			this.error = error.getMessage();
+			this.error = error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "Connexion refusée");
 		}
 	}
 
