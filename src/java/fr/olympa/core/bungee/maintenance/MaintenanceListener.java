@@ -15,8 +15,8 @@ import net.md_5.bungee.event.EventPriority;
 @SuppressWarnings("deprecation")
 public class MaintenanceListener implements Listener {
 
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void PreLoginEvent(PreLoginEvent event) {
+	@EventHandler(priority = EventPriority.LOW)
+	public void onLoginEvent(PreLoginEvent event) {
 		if (event.isCancelled())
 			return;
 		String playername = event.getConnection().getName();

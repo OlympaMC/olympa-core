@@ -13,7 +13,11 @@ public class QueueTask implements Runnable {
 
 	public static void start() {
 		if (!isRunning())
-			task = OlympaBungee.getInstance().getTask().runTaskLater(new QueueTask(), QueueHandler.TIME_BETWEEN_2 / 500);
+			s();
+	}
+
+	public static void s() {
+		task = OlympaBungee.getInstance().getTask().runTaskLater(new QueueTask(), QueueHandler.TIME_BETWEEN_2 / 500);
 	}
 
 	@Override
@@ -24,8 +28,7 @@ public class QueueTask implements Runnable {
 		}
 		String next = QueueHandler.getNext();
 		QueueHandler.remove(next);
-		task = null;
-		start();
+		s();
 	}
 
 }

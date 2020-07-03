@@ -9,12 +9,10 @@ public class QueueHandler {
 	private static LinkedHashSet<String> queue = new LinkedHashSet<>();
 
 	public static int add(String playerName) {
-		boolean notAlreadyIn = queue.add(playerName);
-		if (notAlreadyIn && !QueueTask.isRunning()) {
-			QueueTask.start();
-			return queue.size();
-		}
-		return -1;
+		queue.add(playerName);
+		System.out.println("§bTaille de la fille d'attente: " + queue.size());
+		QueueTask.start();
+		return queue.size();
 	}
 
 	public static boolean remove(String playerName) {
@@ -26,11 +24,12 @@ public class QueueHandler {
 	}
 
 	public static boolean isInQueue(String playerName) {
+		QueueTask.start();
 		return queue.contains(playerName);
 	}
 
 	public static String getNext() {
-		return (String) queue.toArray()[0];
+		return (String) queue.toArray()[queue.size() - 1];
 	}
 
 	public static int getQueueSize() {
