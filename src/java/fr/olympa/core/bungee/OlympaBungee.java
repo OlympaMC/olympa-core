@@ -148,9 +148,9 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		defaultConfig = new BungeeCustomConfig(this, "config");
 		defaultConfig.load();
 
-		status = ServerStatus.get(defaultConfig.getConfig().getString("settings.status"));
 		maintConfig = new BungeeCustomConfig(this, "maintenance");
 		maintConfig.load();
+		status = ServerStatus.get(maintConfig.getConfig().getString("settings.status"));
 		setupDatabase();
 		new MySQL(database);
 		new VpnSql(database);
