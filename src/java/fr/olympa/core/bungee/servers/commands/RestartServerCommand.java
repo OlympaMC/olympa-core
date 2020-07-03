@@ -6,7 +6,7 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.servers.ScriptBashMc;
+import fr.olympa.core.bungee.servers.OlympaRuntime;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.TabExecutor;
@@ -21,16 +21,15 @@ public class RestartServerCommand extends BungeeCommand implements TabExecutor {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		ScriptBashMc.action("restart", args[0], sender);
+		OlympaRuntime.action("restart", args[0], sender).start();
 	}
 
 	@Override
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-		if (args.length == 0) {
+		if (args.length == 0)
 			return OlympaBungee.getInstance().getProxy().getServers().keySet();
-		} else if (args.length == 1) {
+		else if (args.length == 1)
 			return Utils.startWords(args[0], OlympaBungee.getInstance().getProxy().getServers().keySet());
-		}
 		return null;
 	}
 }

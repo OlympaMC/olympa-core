@@ -15,6 +15,7 @@ import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.hook.IProtocolSupport;
+import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.machine.MachineInfo;
 import fr.olympa.api.utils.machine.MachineUtils;
@@ -26,7 +27,7 @@ import fr.olympa.core.spigot.OlympaCore;
 public class TpsCommand extends OlympaCommand {
 
 	public TpsCommand(Plugin plugin) {
-		super(plugin, "tps", "tpsold", "lag");
+		super(plugin, "tps", OlympaCorePermissions.SPIGOT_LAG_COMMAND_EXTRA, "tpsold", "lag");
 	}
 
 	@Override
@@ -34,7 +35,6 @@ public class TpsCommand extends OlympaCommand {
 		if (!label.equalsIgnoreCase("tpsold"))
 			sendComponents(MachineUtils.getInfos());
 		else {
-			// float[] tpsFloat = TPS.round(tps);
 			MachineInfo machine = new MachineInfo();
 			OlympaCore core = OlympaCore.getInstance();
 			StringJoiner sb = new StringJoiner("\n");
@@ -49,7 +49,7 @@ public class TpsCommand extends OlympaCommand {
 			sb.add("&3CPU: &b" + machine.getCPUUsage() + "&3 (" + machine.getCores() + " cores).");
 			sb.add("&3Threads: &b" + machine.getThreads() + "&3.");
 			sb.add("&3Version du serveur: &b" + Bukkit.getBukkitVersion() + "&3.");
-			IProtocolSupport protocolSupport = (IProtocolSupport) core.getProtocolSupport();
+			IProtocolSupport protocolSupport = core.getProtocolSupport();
 			if (protocolSupport != null) {
 				String unSupVer = protocolSupport.getVersionUnSupportedInRange();
 				if (!unSupVer.isBlank())

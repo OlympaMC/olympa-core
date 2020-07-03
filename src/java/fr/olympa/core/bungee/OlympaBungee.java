@@ -25,7 +25,7 @@ import fr.olympa.core.bungee.ban.commands.MuteCommand;
 import fr.olympa.core.bungee.ban.commands.UnbanCommand;
 import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
-import fr.olympa.core.bungee.commands.BlagCommand;
+import fr.olympa.core.bungee.commands.BungeelagCommand;
 import fr.olympa.core.bungee.commands.InfoCommand;
 import fr.olympa.core.bungee.connectionqueue.ConnectionQueueListener;
 import fr.olympa.core.bungee.connectionqueue.LeaveQueue;
@@ -209,7 +209,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new RestartBungeeCommand(this).register();
 		new LobbyCommand(this).register();
 		new LeaveQueue(this).register();
-		new BlagCommand(this).register();
+		new BungeelagCommand(this).register();
 
 		new MonitorServers(this);
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
