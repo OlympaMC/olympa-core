@@ -1,10 +1,11 @@
 package fr.olympa.core.spigot.protocolsupport;
 
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.bukkit.plugin.Plugin;
 
@@ -60,18 +61,27 @@ public class ProtocolSupportHook implements IProtocolSupport {
 		return protocolSupport;
 	}
 
+	class ProtocolVersionComparator implements Comparator<ProtocolVersion> {
+		@Override
+		public int compare(ProtocolVersion o1, ProtocolVersion o2) {
+			return o1.getId() - o2.getId();
+		}
+	}
+
 	public List<ProtocolVersion> getProtocolSupported() {
-		if (protocolSupport != null)
-			return (List<ProtocolVersion>) ProtocolSupportAPI.getEnabledProtocolVersions();
-		return null;
+		return protocolSupport == null ? null : getStreamProtocolSupported().collect(Collectors.toList());
+	}
+
+	public Stream<ProtocolVersion> getStreamProtocolSupported() {
+		return protocolSupport == null ? null : ProtocolSupportAPI.getEnabledProtocolVersions().stream().sorted(new ProtocolVersionComparator());
 	}
 
 	@Override
 	public String getRangeVersion() {
-		List<ProtocolVersion> proto = getProtocolSupported();
-		ProtocolVersion last = proto.get(0);
-		ProtocolVersion first = proto.get(proto.size() - 1);
-		return last.getName() + " à " + first.getName();
+		List<String> proto = getStreamProtocolSupported().map(ProtocolVersion::getName).collect(Collectors.toList());
+		String last = proto.get(0);
+		String first = proto.get(proto.size() - 1);
+		return last + " à " + first;
 	}
 
 	@Override
@@ -79,7 +89,7 @@ public class ProtocolSupportHook implements IProtocolSupport {
 		List<ProtocolVersion> proto = getProtocolSupported();
 		ProtocolVersion last = proto.get(0);
 		ProtocolVersion first = proto.get(proto.size() - 1);
-		List<String> protoAll = Arrays.stream(ProtocolVersion.getAllBeforeI(last)).filter(pv -> pv.getId() > first.getId() && !proto.contains(pv)).map(ProtocolVersion::getName).collect(Collectors.toList());
+		List<String> protoAll = proto.stream().filter(pv -> pv.getId() > first.getId() && pv.getId() < last.getId() && !proto.contains(pv)).map(ProtocolVersion::getName).collect(Collectors.toList());
 		return String.join(", ", protoAll);
 
 	}
