@@ -33,7 +33,7 @@ public class RedisSpigotSend {
 	public static void giveOlympaPlayer(OlympaPlayer olympaPlayer, String serverTo) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 			String serverName = OlympaCore.getInstance().getServerName();
-			jedis.publish(RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name(), serverName + ";" + serverTo + ";" + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer.toString()));
+			jedis.publish(RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name(), serverName + ";" + serverTo + ";" + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
@@ -41,7 +41,7 @@ public class RedisSpigotSend {
 	public static void sendOlympaGroupChange(OlympaPlayer olympaPlayer, OlympaGroup groupChanged, long timestamp, ChangeType state) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 			String serverName = OlympaCore.getInstance().getServerName();
-			jedis.publish(RedisChannel.SPIGOT_PLAYER_HAS_GROUP_CHANGED.name(), serverName + ";" + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer.toString()) + ";" + groupChanged.getId() + ":" + timestamp + ";" + state.getState());
+			jedis.publish(RedisChannel.SPIGOT_PLAYER_HAS_GROUP_CHANGED.name(), serverName + ";" + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer) + ";" + groupChanged.getId() + ":" + timestamp + ";" + state.getState());
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
