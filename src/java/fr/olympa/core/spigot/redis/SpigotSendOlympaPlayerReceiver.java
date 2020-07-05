@@ -10,16 +10,21 @@ import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.JedisPubSub;
 
-public class OlympaPlayerSpigotListener extends JedisPubSub {
+public class SpigotSendOlympaPlayerReceiver extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
-		OlympaPlayer olympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(message, OlympaPlayer.class);
+		String[] args = message.split(";");
+		String from = args[0];
+		String to = args[1];
+		String json = args[2];
+		if (!OlympaCore.getInstance().isServerName(to))
+			return;
+		OlympaPlayer olympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(json, OlympaPlayer.class);
 
 		Player player = olympaPlayer.getPlayer();
-		if (player == null) {
+		if (player == null)
 			return;
-		}
 		AccountProvider olympaAccount = new AccountProvider(olympaPlayer.getUniqueId());
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(player, ChangeType.ADD, olympaPlayer, olympaPlayer.getGroup()));
 		olympaAccount.saveToCache(olympaPlayer);

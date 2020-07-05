@@ -3,35 +3,44 @@ package fr.olympa.api.plugin;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import fr.olympa.api.hook.ProtocolAction;
+import fr.olympa.api.hook.IProtocolSupport;
 import fr.olympa.api.provider.RedisAccess;
-import fr.olympa.api.redis.RedisTestListener;
+import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
-import fr.olympa.core.spigot.redis.GiveOlympaPlayerListener;
-import fr.olympa.core.spigot.redis.GiveToOlympaPlayerListener;
+import fr.olympa.core.spigot.redis.BungeeSendOlympaPlayerReceiver;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
-import fr.olympa.core.spigot.redis.SendServerNameListener;
+import fr.olympa.core.spigot.redis.SendOlympaPlayerReceiver;
+import fr.olympa.core.spigot.redis.ServerNameReceiver;
+import fr.olympa.core.spigot.redis.SpigotSendOlympaPlayerReceiver;
 import redis.clients.jedis.JedisPubSub;
 
 public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCoreInterface {
 
 	protected DbConnection database = null;
 	protected ServerStatus status;
-	private String serverName = getServer().getIp() + ":" + getServer().getPort();
+	private String serverNameIp = getServer().getIp() + ":" + getServer().getPort();
+	private String serverName;
 	private RedisAccess redisAccess;
-	
+
 	@Override
 	public Connection getDatabase() throws SQLException {
 		return database.getConnection();
 	}
 
-	public abstract ProtocolAction getProtocolSupport();
+	public abstract IProtocolSupport getProtocolSupport();
 
 	@Override
 	public String getServerName() {
-		return serverName;
+		return serverName != null ? serverName : serverNameIp;
+	}
+
+	@Override
+	public boolean isServerName(String serverName) {
+		if (this.serverName != null)
+			return this.serverName.equalsIgnoreCase(serverName) || serverName.equalsIgnoreCase(serverNameIp);
+		return serverName.equalsIgnoreCase(serverNameIp);
 	}
 
 	@Override
@@ -64,7 +73,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 			setupRedis();
 		}
 	}
-	
+
 	@Override
 	public void setServerName(String serverName) {
 		this.serverName = serverName;
@@ -99,11 +108,10 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		redisAccess = RedisAccess.init(getServerName());
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
-			// Test
-			registerRedisSub(new RedisTestListener(), "test");
-			registerRedisSub(new SendServerNameListener(), "sendServerName");
-			registerRedisSub(new GiveOlympaPlayerListener(), "giveOlympaPlayer");
-			registerRedisSub(new GiveToOlympaPlayerListener(), "giveToOlympaPlayer");
+			registerRedisSub(new ServerNameReceiver(), RedisChannel.BUNGEE_SEND_SERVERNAME.name());
+			registerRedisSub(new SendOlympaPlayerReceiver(), RedisChannel.BUNGEE_ASK_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(new BungeeSendOlympaPlayerReceiver(), RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(new SpigotSendOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name());
 			RedisSpigotSend.askServerName();
 
 			sendMessage("&aConnexion à &2Redis&a établie.");

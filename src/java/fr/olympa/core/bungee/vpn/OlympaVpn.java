@@ -34,21 +34,18 @@ public class OlympaVpn {
 		this.city = city;
 		this.org = org;
 		this.as = as;
-		if (usersString != null && !usersString.isEmpty()) {
+		if (usersString != null && !usersString.isEmpty())
 			users = Arrays.stream(usersString.split(",")).collect(Collectors.toMap(entry -> entry.split(":")[0], entry -> {
 				String[] split = entry.split(":");
-				if (split.length > 1) {
+				if (split.length > 1)
 					return split[1].equals("1");
-				}
 				return false;
 			}));
-		}
 	}
 
 	public void addUser(String username, boolean onlineMode) {
-		if (users == null) {
+		if (users == null)
 			users = new HashMap<>();
-		}
 		users.put(username, onlineMode);
 	}
 

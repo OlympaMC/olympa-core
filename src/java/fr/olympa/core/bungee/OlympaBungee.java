@@ -6,11 +6,13 @@ import java.util.concurrent.TimeUnit;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.provider.RedisAccess;
-import fr.olympa.api.redis.RedisTestListener;
+import fr.olympa.api.redis.RedisChannel;
+import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.api.command.BungeeCommandListener;
 import fr.olympa.core.bungee.api.config.BungeeCustomConfig;
 import fr.olympa.core.bungee.api.task.BungeeTask;
 import fr.olympa.core.bungee.ban.commands.BanCommand;
@@ -23,7 +25,10 @@ import fr.olympa.core.bungee.ban.commands.MuteCommand;
 import fr.olympa.core.bungee.ban.commands.UnbanCommand;
 import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
+import fr.olympa.core.bungee.commands.BungeelagCommand;
 import fr.olympa.core.bungee.commands.InfoCommand;
+import fr.olympa.core.bungee.connectionqueue.ConnectionQueueListener;
+import fr.olympa.core.bungee.connectionqueue.LeaveQueue;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
 import fr.olympa.core.bungee.datamanagment.GetUUIDCommand;
 import fr.olympa.core.bungee.login.commands.EmailCommand;
@@ -78,6 +83,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	protected BungeeCustomConfig defaultConfig;
 	protected BungeeCustomConfig maintConfig;
 	private BungeeTask bungeeTask;
+	private ServerStatus status;
 
 	public Configuration getConfig() {
 		return defaultConfig.getConfig();
@@ -104,6 +110,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		return "&f[&6" + getDescription().getName() + "&f] &e";
 	}
 
+	@Override
 	public String getServerName() {
 		return "bungee";
 	}
@@ -112,10 +119,12 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		return bungeeTask;
 	}
 
+	@Override
 	public String getUptime() {
 		return Utils.timestampToDuration(uptime);
 	}
 
+	@Override
 	public long getUptimeLong() {
 		return uptime;
 	}
@@ -138,8 +147,10 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		bungeeTask = new BungeeTask(this);
 		defaultConfig = new BungeeCustomConfig(this, "config");
 		defaultConfig.load();
+
 		maintConfig = new BungeeCustomConfig(this, "maintenance");
 		maintConfig.load();
+		status = ServerStatus.get(maintConfig.getConfig().getString("settings.status"));
 		setupDatabase();
 		new MySQL(database);
 		new VpnSql(database);
@@ -167,6 +178,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		pluginManager.registerListener(this, new StaffChatListener());
 		pluginManager.registerListener(this, new ProtocolListener());
 		pluginManager.registerListener(this, new TabTextListener());
+		pluginManager.registerListener(this, new BungeeCommandListener());
+		pluginManager.registerListener(this, new ConnectionQueueListener());
 
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();
@@ -184,8 +197,12 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new PrivateMessageToggleCommand(this).register();
 		new ListServerCommand(this).register();
 		new MaintenanceCommand(this).register();
-		new LoginCommand(this).register();
-		new RegisterCommand(this).register();
+		LoginCommand loginCommand = new LoginCommand(this);
+		loginCommand.register();
+		loginCommand.registerPreProcess();
+		RegisterCommand registerCommand = new RegisterCommand(this);
+		registerCommand.register();
+		registerCommand.registerPreProcess();
 		new EmailCommand(this).register();
 		new ServerSwitchCommand(this).register();
 		new InfoCommand(this).register();
@@ -195,11 +212,14 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new RestartServerCommand(this).register();
 		new RestartBungeeCommand(this).register();
 		new LobbyCommand(this).register();
+		new LeaveQueue(this).register();
+		new BungeelagCommand(this).register();
 
 		new MonitorServers(this);
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
 	}
 
+	@Override
 	@SuppressWarnings("deprecation")
 	public void sendMessage(String message) {
 		getProxy().getConsole().sendMessage(BungeeUtils.color(getPrefixConsole() + message));
@@ -240,7 +260,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	public void registerRedisSub(RedisAccess redisAccess, JedisPubSub sub, String channel) {
 		new Thread(() -> redisAccess.newConnection().subscribe(sub, channel), "Redis sub " + channel).start();
 	}
-	
+
 	private void setupRedis(int... is) {
 		int i1 = 0;
 		if (is != null && is.length != 0)
@@ -249,16 +269,29 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		RedisAccess redisAccess = RedisAccess.init("bungee");
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
-			registerRedisSub(redisAccess, new AskServerNameListener(), "askServerName");
-			registerRedisSub(redisAccess, new PlayerGroupChangeListener(), "playerGroupChange");
-			registerRedisSub(redisAccess, new ShutdownListener(), "shutdown");
-			registerRedisSub(redisAccess, new ServerSwitchListener(), "switch");
-			registerRedisSub(redisAccess, new RedisTestListener(), "test");
+			registerRedisSub(redisAccess, new AskServerNameListener(), RedisChannel.SPIGOT_ASK_SERVERNAME.name());
+			registerRedisSub(redisAccess, new PlayerGroupChangeListener(), RedisChannel.SPIGOT_PLAYER_HAS_GROUP_CHANGED.name());
+			registerRedisSub(redisAccess, new ShutdownListener(), RedisChannel.SPIGOT_SERVER_SHUTDOWN.name());
+			registerRedisSub(redisAccess, new ServerSwitchListener(), RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER.name());
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)
 				sendMessage("&cConnexion à &4Redis&c impossible.");
 			getTask().runTaskLater("redis_setup", () -> setupRedis(i), 10, TimeUnit.SECONDS);
 		}
+	}
+
+	@Override
+	public ServerStatus getStatus() {
+		return status;
+	}
+
+	public ServerStatus setStatus(ServerStatus status) {
+		return this.status = status;
+	}
+
+	@Override
+	public boolean isSpigot() {
+		return false;
 	}
 }

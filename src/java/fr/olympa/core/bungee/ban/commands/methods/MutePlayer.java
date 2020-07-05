@@ -9,9 +9,9 @@ import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.ban.BanMySQL;
-import fr.olympa.core.bungee.ban.BanUtils;
 import fr.olympa.core.bungee.ban.MuteUtils;
+import fr.olympa.core.bungee.ban.SanctionManager;
+import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.bungee.utils.BungeeUtils;
@@ -29,15 +29,12 @@ public class MutePlayer {
 	public static void addMute(UUID author, CommandSender sender, String targetname, UUID targetUUID, String[] args, OlympaPlayer olymaPlayer) {
 		ProxiedPlayer target = null;
 		OlympaPlayer olympaTarget = null;
-		if (targetUUID != null) {
+		if (targetUUID != null)
 			target = ProxyServer.getInstance().getPlayer(targetUUID);
-
-		} else if (targetname != null) {
+		else if (targetname != null)
 			target = ProxyServer.getInstance().getPlayer(targetname);
-
-		} else {
+		else
 			throw new NullPointerException("The uuid or name must be specified");
-		}
 
 		Configuration config = OlympaBungee.getInstance().getConfig();
 		try {
@@ -47,11 +44,10 @@ public class MutePlayer {
 					sender.sendMessage(config.getString("ban.playerneverjoin").replace("%player%", args[0]));
 					return;
 				}
-			} else if (targetUUID != null) {
+			} else if (targetUUID != null)
 				olympaTarget = AccountProvider.getFromDatabase(targetUUID);
-			} else if (targetname != null) {
+			else if (targetname != null)
 				olympaTarget = AccountProvider.getFromDatabase(targetname);
-			}
 		} catch (SQLException e) {
 			sender.sendMessage(config.getString("ban.messages.errordb"));
 			e.printStackTrace();
@@ -68,8 +64,9 @@ public class MutePlayer {
 			sender.sendMessage(msg);
 			return;
 		}
-		java.util.regex.Matcher matcher1 = BanUtils.matchDuration(args[1]);
-		java.util.regex.Matcher matcher2 = BanUtils.matchUnit(args[1]);
+		java.util.regex.Matcher matcher1 = SanctionUtils.matchDuration(args[1]);
+		//		java.util.regex.Matcher matcher2 = SanctionUtils.matchUnit(args[1]);
+		java.util.regex.Matcher matcher2 = null;
 		// Si la command contient un temps et une unité valide
 		if (matcher1.find() && matcher2.find()) {
 			// Si la command contient un motif
@@ -77,7 +74,7 @@ public class MutePlayer {
 				String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
 				String time = matcher1.group();
 				String unit = matcher2.group();
-				long timestamp = BanUtils.toTimeStamp(Integer.parseInt(time), unit);
+				long timestamp = SanctionUtils.toTimeStamp(Integer.parseInt(time), unit);
 				long seconds = timestamp - Utils.getCurrentTimeInSeconds();
 
 				if (olymaPlayer != null && OlympaCorePermissions.STAFF.hasPermission(olympaTarget) && OlympaCorePermissions.BAN_BYPASS_SANCTION_STAFF.hasPermission(olymaPlayer)) {
@@ -96,8 +93,11 @@ public class MutePlayer {
 				}
 
 				String Stimestamp = Utils.timestampToDuration(timestamp);
-				OlympaSanction mute = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.MUTE, olympaTarget.getUniqueId(), author, reason, Utils.getCurrentTimeInSeconds(), timestamp);
-				if (!BanMySQL.addSanction(mute)) {
+				OlympaSanction mute;
+				try {
+					mute = SanctionManager.add(OlympaSanctionType.MUTE, author, olympaTarget.getUniqueId(), reason, timestamp);
+				} catch (SQLException e) {
+					e.printStackTrace();
 					sender.sendMessage(config.getString("bungee.ban.messages.errordb"));
 					return;
 				}
@@ -105,12 +105,11 @@ public class MutePlayer {
 				// Si Target est connecté
 				if (target != null) {
 					// Envoyer un message à tous les joueurs du même serveur spigot
-					for (ProxiedPlayer players : target.getServer().getInfo().getPlayers()) {
+					for (ProxiedPlayer players : target.getServer().getInfo().getPlayers())
 						players.sendMessage(config.getString("bungee.ban.messages.tempmuteannounce")
 								.replaceAll("%player%", olympaTarget.getName())
 								.replaceAll("%time%", Stimestamp)
 								.replaceAll("%reason%", reason));
-					}
 					target.sendMessage(config.getString("bungee.ban.messages.tempmuteannouncetotarget").replaceAll("%time%", Stimestamp).replaceAll("%reason%", reason));
 
 				}
@@ -124,24 +123,23 @@ public class MutePlayer {
 				msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + mute.getId()));
 				OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
 				ProxyServer.getInstance().getConsole().sendMessage(msg);
-			} else {
+			} else
 				sender.sendMessage(config.getString("bungee.ban.messages.usagemute"));
-			}
-			// Sinon: mute def
 		} else {
 			sender.sendMessage(config.getString("bungee.ban.messages.usagemute"));
 			String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-			OlympaSanction mute = new OlympaSanction(OlympaSanction.getNextId(), OlympaSanctionType.MUTE, olympaTarget.getUniqueId(), author, reason, Utils.getCurrentTimeInSeconds(), 0);
-			if (!BanMySQL.addSanction(mute)) {
+			OlympaSanction mute;
+			try {
+				mute = SanctionManager.add(OlympaSanctionType.MUTE, author, olympaTarget.getUniqueId(), reason, 0);
+			} catch (SQLException e) {
+				e.printStackTrace();
 				sender.sendMessage(config.getString("bungee.ban.messages.errordb"));
 				return;
 			}
-			if (target != null) {
-				for (ProxiedPlayer players : target.getServer().getInfo().getPlayers()) {
+			if (target != null)
+				for (ProxiedPlayer players : target.getServer().getInfo().getPlayers())
 					players.sendMessage(config.getString("bungee.ban.messages.muteannounce").replaceAll("%player%", olympaTarget.getName()).replaceAll("%reason%", reason));
-				}
-			}
 
 			TextComponent msg = BungeeUtils
 					.formatStringToJSON(config.getString("bungee.ban.messages.muteannouncetoauthor").replaceAll("%player%", olympaTarget.getName()).replaceAll("%reason%", reason));

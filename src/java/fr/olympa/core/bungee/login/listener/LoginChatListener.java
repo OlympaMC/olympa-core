@@ -21,15 +21,15 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
 public class LoginChatListener implements Listener {
-
+	
 	private TextComponent joinMessageCrackNew;
 	private TextComponent joinMessageCrackCreated;
 	private TextComponent joinMessagePremiumNew;
 	private TextComponent joinMessagePremiumCreated;
-
+	
 	public LoginChatListener() {
 		HoverEvent hoverTooltip = new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder("Clique pour avoir directement la commande").color(ChatColor.YELLOW).create());
-
+		
 		TextComponent base = new TextComponent();
 		addLegacyText(base, "§4§l§m-----------------§7 [§cLogin§7] §4§l§m-----------------\n"
 				+ "§bBienvenue sur §6§lOlympa§b§r.\n\n");
@@ -37,7 +37,7 @@ public class LoginChatListener implements Listener {
 		end.setColor(ChatColor.DARK_RED);
 		end.setBold(true);
 		end.setStrikethrough(true);
-
+		
 		joinMessageCrackNew = base.duplicate();
 		TextComponent link = new TextComponent();
 		addLegacyText(link, "§aCrée ton compte avec §2/register <mot de passe>§a ou §2clique ici §aet écris ton mot de passe.");
@@ -45,7 +45,7 @@ public class LoginChatListener implements Listener {
 		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/register "));
 		joinMessageCrackNew.addExtra(link);
 		joinMessageCrackNew.addExtra(end);
-
+		
 		joinMessageCrackCreated = base.duplicate();
 		link = new TextComponent();
 		addLegacyText(link, "§aTon mot de passe est le même sur le site et le forum.\n§aFait §2/login <mot de passe>§a ou §2clique ici §aet écris ton mot de passe.");
@@ -53,7 +53,7 @@ public class LoginChatListener implements Listener {
 		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/login "));
 		joinMessageCrackCreated.addExtra(link);
 		joinMessageCrackCreated.addExtra(end);
-
+		
 		joinMessagePremiumNew = base.duplicate();
 		link = new TextComponent();
 		addLegacyText(link, "§aCrée-toi un compte sur le site avec §2/register <mot de passe>§a ou §2clique ici §aet écris ton mot de passe.");
@@ -61,44 +61,41 @@ public class LoginChatListener implements Listener {
 		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/register "));
 		joinMessagePremiumNew.addExtra(link);
 		joinMessagePremiumNew.addExtra(end);
-
+		
 		joinMessagePremiumCreated = base.duplicate();
 		joinMessagePremiumCreated.addExtra(end);
 	}
-
+	
 	private void addLegacyText(TextComponent component, String legacyText) {
-		for (BaseComponent compo : TextComponent.fromLegacyText(legacyText)) {
+		for (BaseComponent compo : TextComponent.fromLegacyText(legacyText))
 			component.addExtra(compo);
-		}
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onChat(ChatEvent event) {
-		if (!(event.getSender() instanceof ProxiedPlayer)) {
+		if (!(event.getSender() instanceof ProxiedPlayer))
 			return;
-		}
 		String[] args = event.getMessage().split(" ");
 		String command = args[0].substring(1);
 		ProxiedPlayer player = (ProxiedPlayer) event.getSender();
 		if (DataHandler.isUnlogged(player) && (!event.isCommand() || !HandlerLogin.command.contains(command))) {
 			OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
-			if (olympaPlayer == null || olympaPlayer.getPassword() == null || olympaPlayer.getPassword().isEmpty()) {
+			if ((olympaPlayer == null || olympaPlayer.getPassword() == null || olympaPlayer.getPassword().isEmpty()) && !olympaPlayer.isPremium())
 				player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu dois t'enregistrer. Fais &4/register <mdp>&c."));
-			} else {
+			else
 				player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu dois être connecté. Fais &4/login <mdp>&c."));
-			}
 			event.setCancelled(true);
 		}
 	}
-
+	
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPostLogin(PostLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		OlympaPlayer olympaPlayer = DataHandler.get(player.getName()).getOlympaPlayer();
 		boolean hasPassword = olympaPlayer.getPassword() != null;
-		TextComponent message = hasPassword ? (olympaPlayer.isPremium() ? joinMessagePremiumCreated : joinMessageCrackCreated) : (olympaPlayer.isPremium() ? joinMessagePremiumNew : joinMessageCrackNew);
+		TextComponent message = hasPassword ? olympaPlayer.isPremium() ? joinMessagePremiumCreated : joinMessageCrackCreated : olympaPlayer.isPremium() ? joinMessagePremiumNew : joinMessageCrackNew;
 		player.sendMessage(message);
 	}
-
+	
 }

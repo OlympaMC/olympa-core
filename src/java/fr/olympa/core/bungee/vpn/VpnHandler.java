@@ -7,8 +7,12 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Charsets;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.io.CharStreams;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -18,6 +22,18 @@ import net.md_5.bungee.api.connection.Connection;
 
 @SuppressWarnings("deprecation")
 public class VpnHandler {
+
+	public static Cache<String, OlympaVpn> cache = CacheBuilder.newBuilder().expireAfterAccess(30, TimeUnit.MINUTES).build();
+
+	public static OlympaVpn get(String ip) throws SQLException {
+		OlympaVpn vpn = cache.getIfPresent(ip);
+		if (vpn == null) {
+			vpn = VpnSql.getIpInfo(ip);
+			if (vpn != null)
+				cache.put(ip, vpn);
+		}
+		return vpn;
+	}
 
 	public static OlympaVpn getInfo(Connection con) {
 		String ip = con.getAddress().getAddress().getHostAddress();
@@ -43,9 +59,8 @@ public class VpnHandler {
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getURL().openStream(), Charsets.UTF_8));
 			StringBuilder stringBuilder = new StringBuilder();
 			String lineNotFount;
-			while ((lineNotFount = in.readLine()) != null) {
+			while ((lineNotFount = in.readLine()) != null)
 				stringBuilder.append(lineNotFount + "\n");
-			}
 			in.close();
 
 			JsonParser jp = new JsonParser();

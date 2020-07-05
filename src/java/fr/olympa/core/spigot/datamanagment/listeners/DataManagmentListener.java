@@ -101,8 +101,7 @@ public class DataManagmentListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on3PlayerLogin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		AccountProvider olympaAccount = new AccountProvider(player.getUniqueId());
-		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
+		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
 
 		if (olympaPlayer == null) {
 			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur est impossible, contacte-vite le staff. \n§eCode d'erreur: §l#Nucléaire"));
@@ -132,11 +131,10 @@ public class DataManagmentListener implements Listener {
 		Player player = event.getPlayer();
 		AccountProvider account = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = account.getFromCache();
-		if (olympaPlayer != null) {
+		if (olympaPlayer != null)
 			event.setQuitMessage(ColorUtils.color("&7[&c-&7] %prefix%name".replace("%group", olympaPlayer.getGroupName()).replace("%prefix", olympaPlayer.getGroupPrefix()).replace("%name", player.getDisplayName())));
-		} else {
+		else
 			event.setQuitMessage(null);
-		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -144,7 +142,7 @@ public class DataManagmentListener implements Listener {
 		Player player = event.getPlayer();
 		AccountProvider account = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = account.getFromCache();
-		if (olympaPlayer != null) {
+		if (olympaPlayer != null)
 			try {
 				MySQL.savePlayerPluginDatas(olympaPlayer);
 				account.saveToRedis(olympaPlayer);
@@ -152,6 +150,5 @@ public class DataManagmentListener implements Listener {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		}
 	}
 }

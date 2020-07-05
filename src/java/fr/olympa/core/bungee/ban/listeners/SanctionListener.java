@@ -28,23 +28,23 @@ import net.md_5.bungee.event.EventPriority;
 
 // TODO mute + ban = 1 request (at this moment this = 2)
 public class SanctionListener implements Listener {
-	
+
 	private List<String> commandDisableWhenMuted = new ArrayList<>();
-	
+
 	public SanctionListener() {
 		commandDisableWhenMuted.addAll(PrivateMessage.privateMessageCommand);
 		commandDisableWhenMuted.addAll(PrivateMessage.replyCommand);
 	}
-	
+
 	@SuppressWarnings("deprecation")
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOW)
 	public void on1Login(LoginEvent event) {
 		if (event.isCancelled())
 			return;
 		PendingConnection connection = event.getConnection();
 		UUID playerUUID = connection.getUniqueId();
 		String playerIp = connection.getAddress().getAddress().getHostAddress();
-		
+
 		List<OlympaSanction> sanctions;
 		try {
 			sanctions = BanMySQL.getSanctionsActive(playerUUID, playerIp);
@@ -55,7 +55,7 @@ public class SanctionListener implements Listener {
 		}
 		if (sanctions.isEmpty())
 			return;
-		
+
 		List<OlympaSanction> bans = sanctions.stream().filter(sanction -> sanction.getType() == OlympaSanctionType.BAN || sanction.getType() == OlympaSanctionType.BANIP).collect(Collectors.toList());
 		if (!bans.isEmpty()) {
 			OlympaSanction permanant = bans.stream().filter(ban -> ban.isPermanent()).findFirst().orElse(null);
@@ -73,7 +73,7 @@ public class SanctionListener implements Listener {
 		}
 		sanctions.stream().filter(sanction -> sanction.getType() == OlympaSanctionType.MUTE).forEach(mute -> MuteUtils.addMute(mute));
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGH)
 	public void on2PostLogin(PostLoginEvent event) {
 		OlympaBungee.getInstance().getTask().runTaskAsynchronously(() -> {
@@ -86,12 +86,12 @@ public class SanctionListener implements Listener {
 			}
 		});
 	}
-	
+
 	@EventHandler
 	public void onBungeeNewPlayerEvent(BungeeNewPlayerEvent event) {
-		
+
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerChat(ChatEvent event) {
@@ -103,7 +103,7 @@ public class SanctionListener implements Listener {
 		if (event.getMessage().startsWith("/") && !commandDisableWhenMuted.contains(command))
 			return;
 		ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-		
+
 		OlympaSanction mute = MuteUtils.getMute(player.getUniqueId());
 		if (mute != null)
 			if (!MuteUtils.chechExpireBan(mute)) {
