@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -81,17 +80,15 @@ public class UtilsCommand extends ComplexCommand {
 		RegionManager regionManager = OlympaCore.getInstance().getRegionManager();
 		Collection<TrackedRegion> trackedRegions = regionManager.getTrackedRegions().values();
 
-		sendInfo("Régions trackées : " + trackedRegions.size());
-		sendInfo("Total de points : " + trackedRegions.stream().mapToInt(x -> x.getRegion().getLocations().size()).sum());
+		sendInfo("Régions trackées : %d", trackedRegions.size());
+		sendInfo("Total de points : %d", trackedRegions.stream().mapToInt(x -> x.getRegion().getLocations().size()).sum());
 
 		Set<TrackedRegion> playerRegions = regionManager.getCachedPlayerRegions(getPlayer());
-		StringJoiner joiner = new StringJoiner(", ", "Vous êtes actuellement dans les régions : [", "]");
 		if (playerRegions == null) playerRegions = Collections.EMPTY_SET;
-		playerRegions.forEach(x -> joiner.add(x.getID()));
-		sendInfo(joiner.toString());
+		sendInfo("Vous êtes actuellement dans les régions : §l%s", playerRegions.stream().map(x -> x.getID()).collect(Collectors.joining(", ", "[", "]")));
 
 		Set<TrackedRegion> applicable = trackedRegions.stream().filter(x -> x.getRegion().isIn(getPlayer())).collect(Collectors.toSet());
-		sendInfo("Différences entre les régions en cache et les régions calculées : §l" + Sets.symmetricDifference(playerRegions, applicable));
+		sendInfo("Différences entre les régions en cache et les régions calculées : §l%s", Sets.symmetricDifference(playerRegions, applicable).stream().map(x -> x.getID()).collect(Collectors.joining(", ", "[", "]")));
 	}
 
 	@Cmd (min = 4, args = { "", "INTEGER", "INTEGER", "INTEGER" })

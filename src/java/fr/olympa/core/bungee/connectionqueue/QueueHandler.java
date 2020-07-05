@@ -1,16 +1,16 @@
 package fr.olympa.core.bungee.connectionqueue;
 
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 public class QueueHandler {
 
 	// 150 = 0.15 sec
 	public static int TIME_BETWEEN_2 = 150;
-	private static LinkedHashSet<String> queue = new LinkedHashSet<>();
+	private static LinkedList<String> queue = new LinkedList<>();
 
 	public static int add(String playerName) {
 		queue.add(playerName);
-		System.out.println("§bTaille de la fille d'attente: " + queue.size());
+		System.out.println("§bTaille de la flle d'attente: " + queue.size());
 		QueueTask.start();
 		return queue.size();
 	}
@@ -29,7 +29,7 @@ public class QueueHandler {
 	}
 
 	public static String getNext() {
-		return (String) queue.toArray()[queue.size() - 1];
+		return queue.getFirst();
 	}
 
 	public static int getQueueSize() {

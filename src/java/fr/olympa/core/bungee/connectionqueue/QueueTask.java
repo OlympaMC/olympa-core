@@ -1,5 +1,7 @@
 package fr.olympa.core.bungee.connectionqueue;
 
+import java.util.concurrent.TimeUnit;
+
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 
@@ -17,7 +19,7 @@ public class QueueTask implements Runnable {
 	}
 
 	public static void s() {
-		task = OlympaBungee.getInstance().getTask().runTaskLater(new QueueTask(), QueueHandler.TIME_BETWEEN_2 / 500);
+		task = OlympaBungee.getInstance().getTask().runTaskLater(new QueueTask(), QueueHandler.TIME_BETWEEN_2, TimeUnit.MILLISECONDS);
 	}
 
 	@Override

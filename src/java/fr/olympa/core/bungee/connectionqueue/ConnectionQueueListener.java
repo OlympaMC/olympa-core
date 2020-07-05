@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.connectionqueue;
 
+import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
@@ -25,8 +26,15 @@ public class ConnectionQueueListener implements Listener {
 		//			return;
 		//		}
 		while (QueueHandler.isInQueue(name)) {
-			blockThread(timeToW8);
-			if (timeToW8 > 7)
+			try {
+				Thread.sleep(timeToW8 * QueueHandler.TIME_BETWEEN_2 + 1);
+			}catch (InterruptedException e) {
+				e.printStackTrace();
+				event.setCancelReason(BungeeUtils.connectScreen("§cUne erreur est survenue."));
+				event.setCancelled(true);
+				return;
+			}
+			//if (timeToW8 > 7)
 				timeToW8--;
 		}
 	}
