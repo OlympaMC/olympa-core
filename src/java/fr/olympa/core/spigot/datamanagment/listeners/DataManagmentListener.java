@@ -101,8 +101,7 @@ public class DataManagmentListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on3PlayerLogin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		AccountProvider olympaAccount = new AccountProvider(player.getUniqueId());
-		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
+		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
 
 		if (olympaPlayer == null) {
 			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur est impossible, contacte-vite le staff. \n§eCode d'erreur: §l#Nucléaire"));

@@ -39,7 +39,7 @@ public class StaffChatCommand extends BungeeCommand {
 					sendMessage(Prefix.DEFAULT_GOOD + "StaffChat mode activé.");
 				}
 			} else
-				StaffChatHandler.sendMessage(getOlympaPlayer(), sender, buildText(0, args));
+				StaffChatHandler.sendMessage(olympaPlayer, sender, buildText(0, args));
 		} else if (args.length == 0)
 			sendError("Un message doit être spécifié.");
 		else

@@ -197,8 +197,12 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new PrivateMessageToggleCommand(this).register();
 		new ListServerCommand(this).register();
 		new MaintenanceCommand(this).register();
-		new LoginCommand(this).registerPreProcess().register();
-		new RegisterCommand(this).registerPreProcess().register();
+		LoginCommand loginCommand = new LoginCommand(this);
+		loginCommand.register();
+		loginCommand.registerPreProcess();
+		RegisterCommand registerCommand = new RegisterCommand(this);
+		registerCommand.register();
+		registerCommand.registerPreProcess();
 		new EmailCommand(this).register();
 		new ServerSwitchCommand(this).register();
 		new InfoCommand(this).register();
@@ -215,6 +219,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
 	}
 
+	@Override
 	@SuppressWarnings("deprecation")
 	public void sendMessage(String message) {
 		getProxy().getConsole().sendMessage(BungeeUtils.color(getPrefixConsole() + message));
