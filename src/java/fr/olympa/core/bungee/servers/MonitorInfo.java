@@ -2,11 +2,11 @@ package fr.olympa.core.bungee.servers;
 
 import java.util.AbstractMap;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Utils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
@@ -18,7 +18,7 @@ public class MonitorInfo {
 	private static final Pattern ID_PATTERN = Pattern.compile("\\d*$");
 
 	public static Entry<OlympaServer, Integer> getOlympaServer(String serverName) {
-		Matcher matcher = ID_PATTERN.matcher(serverName);
+		java.util.regex.Matcher matcher = ID_PATTERN.matcher(serverName);
 		matcher.find();
 		String id = matcher.group();
 		int serverID = Utils.isEmpty(id) ? 0 : Integer.parseInt(id);
@@ -30,9 +30,7 @@ public class MonitorInfo {
 	private OlympaServer olympaServer;
 	private int serverID;
 
-	private Integer ping;
-	private Integer onlinePlayers;
-	private Integer maxPlayers;
+	private Integer ping, onlinePlayers, maxPlayers, ramUsage, threads;
 	private ServerStatus status = ServerStatus.UNKNOWN;
 	private String error;
 	private Float tps;
@@ -55,14 +53,30 @@ public class MonitorInfo {
 			String[] motd = allMotd.split(" ");
 			if (motd.length >= 1)
 				status = ServerStatus.get(motd[0]);
-			if (motd.length >= 2)
+			if (motd.length >= 2 && Matcher.isDouble(motd[1]))
 				tps = Float.valueOf(motd[1]);
+			if (motd.length >= 3 && Matcher.isInt(motd[2]))
+				ramUsage = Integer.valueOf(motd[2]);
+			if (motd.length >= 4 && Matcher.isInt(motd[3]))
+				threads = Integer.valueOf(motd[3]);
 		} else {
 			status = ServerStatus.CLOSE;
 			String errorMsg = error.getMessage();
 			errorMsg = errorMsg == null ? "" : errorMsg.replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "Connexion refusée");
 
 		}
+	}
+
+	public static Pattern getIdPattern() {
+		return ID_PATTERN;
+	}
+
+	public Integer getRamUsage() {
+		return ramUsage;
+	}
+
+	public Integer getThreads() {
+		return threads;
 	}
 
 	public OlympaServer getOlympaServer() {

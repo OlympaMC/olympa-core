@@ -7,7 +7,6 @@ import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.spigot.TPSUtils;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.servers.MonitorInfo;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -23,7 +22,7 @@ public class ListServerCommand extends BungeeCommand {
 	public void onCommand(CommandSender sender, String[] args) {
 		StringJoiner sj = new StringJoiner("\n");
 		sj.add("&6Liste des serveurs:");
-		for (MonitorInfo serverInfo : MonitorServers.getServers()) {
+		MonitorServers.getServers().stream().sorted((o1, o2) -> o1.getStatus().getId()).forEach(serverInfo -> {
 			ServerStatus status = serverInfo.getStatus();
 			StringJoiner sb = new StringJoiner(" ");
 			sb.add("&7[" + status.getNameColored() + "&7]");
@@ -34,10 +33,14 @@ public class ListServerCommand extends BungeeCommand {
 				sb.add(TPSUtils.getTpsColor(serverInfo.getTps()) + "tps");
 			if (serverInfo.getPing() != null)
 				sb.add(serverInfo.getPing() + "ms");
+			if (serverInfo.getRamUsage() != null)
+				sb.add(TPSUtils.getRamUsageColor(serverInfo.getRamUsage()) + "% RAM");
+			if (serverInfo.getThreads() != null)
+				sb.add(serverInfo.getThreads() + "thds");
 			if (serverInfo.getError() != null)
 				sb.add(status.getColor() + "Erreur: " + serverInfo.getError());
 			sj.add(sb.toString());
-		}
+		});
 		sender.sendMessage(ColorUtils.color(sj.toString()));
 	}
 

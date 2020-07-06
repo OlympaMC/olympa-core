@@ -17,9 +17,9 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class StaffChatHandler {
-	
+
 	private static final Set<UUID> staffChat = new HashSet<>();
-	
+
 	public static void sendMessage(OlympaPlayer olympaPlayer, CommandSender sender, String msg) {
 		String message = msg.replaceAll("( )\\1+", " ");
 		BaseComponent[] messageComponent = TextComponent.fromLegacyText(Prefix.STAFFCHAT +
@@ -27,6 +27,7 @@ public class StaffChatHandler {
 		ProxyServer.getInstance().getPlayers().stream().filter(p -> !DataHandler.isUnlogged(p) && OlympaCorePermissions.STAFF_CHAT.hasPermission(new AccountProvider(p.getUniqueId()).getFromRedis()))
 				.forEach(p -> p.sendMessage(messageComponent));
 		ProxyServer.getInstance().getConsole().sendMessage(messageComponent);
+		ProxyServer.getInstance().getPluginManager().callEvent(new StaffChatEvent(sender, olympaPlayer, msg));
 	}
 
 	public static Set<UUID> getStaffchat() {
