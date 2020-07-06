@@ -7,10 +7,10 @@ import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
+import fr.olympa.api.utils.OlympaJedisPubSub;
 import fr.olympa.core.spigot.OlympaCore;
-import redis.clients.jedis.JedisPubSub;
 
-public class SpigotSendOlympaPlayerReceiver extends JedisPubSub {
+public class SpigotSendOlympaPlayerReceiver extends OlympaJedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {

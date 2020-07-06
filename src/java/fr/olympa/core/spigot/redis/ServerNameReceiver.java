@@ -1,9 +1,9 @@
 package fr.olympa.core.spigot.redis;
 
+import fr.olympa.api.utils.OlympaJedisPubSub;
 import fr.olympa.core.spigot.OlympaCore;
-import redis.clients.jedis.JedisPubSub;
 
-public class ServerNameReceiver extends JedisPubSub {
+public class ServerNameReceiver extends OlympaJedisPubSub {
 	
 	@Override
 	public void onMessage(String channel, String message) {

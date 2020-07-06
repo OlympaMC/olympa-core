@@ -11,6 +11,7 @@ import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.OlympaJedisPubSub;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.api.command.BungeeCommandListener;
 import fr.olympa.core.bungee.api.config.BungeeCustomConfig;
@@ -68,7 +69,6 @@ import fr.olympa.core.bungee.vpn.VpnSql;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.config.Configuration;
-import redis.clients.jedis.JedisPubSub;
 
 public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 
@@ -257,7 +257,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		}
 	}
 
-	public void registerRedisSub(RedisAccess redisAccess, JedisPubSub sub, String channel) {
+	public void registerRedisSub(RedisAccess redisAccess, OlympaJedisPubSub sub, String channel) {
 		new Thread(() -> redisAccess.newConnection().subscribe(sub, channel), "Redis sub " + channel).start();
 	}
 

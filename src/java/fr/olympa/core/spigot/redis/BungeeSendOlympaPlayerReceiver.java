@@ -3,10 +3,10 @@ package fr.olympa.core.spigot.redis;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
+import fr.olympa.api.utils.OlympaJedisPubSub;
 import fr.olympa.core.spigot.OlympaCore;
-import redis.clients.jedis.JedisPubSub;
 
-public class BungeeSendOlympaPlayerReceiver extends JedisPubSub {
+public class BungeeSendOlympaPlayerReceiver extends OlympaJedisPubSub {
 	
 	@Override
 	public void onMessage(String channel, String message) {
