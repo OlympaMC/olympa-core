@@ -22,17 +22,27 @@ public class StaffChatHandler {
 
 	public static void sendMessage(OlympaPlayer olympaPlayer, CommandSender sender, String msg) {
 		String message = msg.replaceAll("( )\\1+", " ");
-		String senderName = "§eConsole";
+		String senderName;
+		ProxiedPlayer player = null;
+		boolean isDiscord = sender == null;
+		if (olympaPlayer != null) {
+			player = ProxyServer.getInstance().getPlayer(olympaPlayer.getName());
+			if (player != null)
+				sender = player;
+		}
 		if (sender == null)
 			senderName = "Discord " + olympaPlayer.getGroupNameColored() + " " + olympaPlayer.getName();
 		else if (sender instanceof ProxiedPlayer)
 			senderName = Utils.capitalize(((ProxiedPlayer) sender).getServer().getInfo().getName()) + " " + olympaPlayer.getGroupNameColored() + " " + sender.getName();
+		else
+			senderName = "§e" + sender.getName();
 
 		BaseComponent[] messageComponent = TextComponent.fromLegacyText(Prefix.STAFFCHAT + senderName + " §7: " + message);
 		ProxyServer.getInstance().getPlayers().stream().filter(p -> !DataHandler.isUnlogged(p) && OlympaCorePermissions.STAFF_CHAT.hasPermission(new AccountProvider(p.getUniqueId()).getFromRedis()))
 				.forEach(p -> p.sendMessage(messageComponent));
 		ProxyServer.getInstance().getConsole().sendMessage(messageComponent);
-		ProxyServer.getInstance().getPluginManager().callEvent(new StaffChatEvent(sender, olympaPlayer, msg));
+		if (!isDiscord)
+			ProxyServer.getInstance().getPluginManager().callEvent(new StaffChatEvent(sender, olympaPlayer, msg));
 	}
 
 	public static Set<UUID> getStaffchat() {
