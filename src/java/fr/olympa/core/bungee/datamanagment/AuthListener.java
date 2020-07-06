@@ -54,10 +54,10 @@ public class AuthListener implements Listener {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		DataHandler.get(name);
+		CachePlayer oldCache = DataHandler.get(name);
+		if (oldCache != null)
+			DataHandler.removePlayer(oldCache);
 		CachePlayer cache = new CachePlayer(name);
-		if (cache != null)
-			DataHandler.removePlayer(cache);
 		OlympaPlayer olympaPlayer;
 		//		UUID uuidCrack = null;
 
