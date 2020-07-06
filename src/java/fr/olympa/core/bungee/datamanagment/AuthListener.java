@@ -48,7 +48,10 @@ public class AuthListener implements Listener {
 			return;
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
+		DataHandler.get(name);
 		CachePlayer cache = new CachePlayer(name);
+		if (cache != null)
+			DataHandler.removePlayer(cache);
 		OlympaPlayer olympaPlayer;
 		//		UUID uuidCrack = null;
 
@@ -164,6 +167,8 @@ public class AuthListener implements Listener {
 	public void on3Login(LoginEvent event) {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
+		if (event.isCancelled())
+			DataHandler.removePlayer(name);
 		CachePlayer cache = DataHandler.get(name);
 		if (cache == null) {
 			// à ajouter à la liste des erreurs
@@ -219,14 +224,6 @@ public class AuthListener implements Listener {
 		olympaPlayer.setConnected(true);
 		olympaAccount.saveToRedis(olympaPlayer);
 		olympaAccount.accountPersist();
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void on42Login(LoginEvent event) {
-		PendingConnection connection = event.getConnection();
-		String name = connection.getName();
-		if (event.isCancelled())
-			DataHandler.removePlayer(name);
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
