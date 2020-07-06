@@ -48,7 +48,7 @@ public class OlympaLoginListener implements Listener {
 		if (!olympaPlayer.getIp().equals(ip))
 			olympaPlayer.addNewIp(ip);
 		CachePlayer cache = DataHandler.get(player.getName());
-		OlympaBungee.getInstance().getTask().runTaskLater(() -> {
+		OlympaBungee.getInstance().getTask().runTaskLater("connect_player_" + player.getUniqueId(), () -> {
 			if (cache != null) {
 				if (!olympaPlayer.isPremium()) {
 					String subdomain = cache.getSubDomain();
@@ -72,6 +72,7 @@ public class OlympaLoginListener implements Listener {
 		ProxiedPlayer player = event.getPlayer();
 		player.removeGroups(player.getGroups().toArray(new String[0]));
 		ServersConnection.removeTryToConnect(player);
+		OlympaBungee.getInstance().getTask().cancelTaskByName("connect_player_" + player.getUniqueId());
 	}
 
 	@EventHandler

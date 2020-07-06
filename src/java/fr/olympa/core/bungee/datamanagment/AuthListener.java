@@ -48,6 +48,12 @@ public class AuthListener implements Listener {
 			return;
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
+		if (wait.contains(name))
+			try {
+				Thread.sleep(2 * 1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		DataHandler.get(name);
 		CachePlayer cache = new CachePlayer(name);
 		if (cache != null)
@@ -55,12 +61,6 @@ public class AuthListener implements Listener {
 		OlympaPlayer olympaPlayer;
 		//		UUID uuidCrack = null;
 
-		if (wait.contains(name))
-			try {
-				Thread.sleep(2 * 1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		//			event.setCancelReason(BungeeUtils.connectScreen("&eMerci de patienter avant chaque reconnection."));
 		//			event.setCancelled(true);
 		//			return;
