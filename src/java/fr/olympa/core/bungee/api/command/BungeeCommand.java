@@ -78,7 +78,6 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 		this.usageString = usageString;
 		this.allowConsole = allowConsole;
 		this.minArg = minArg;
-		register();
 	}
 
 	public BungeeCommand(Plugin plugin, String command, String... aliases) {
