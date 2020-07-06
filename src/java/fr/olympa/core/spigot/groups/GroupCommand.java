@@ -35,9 +35,9 @@ public class GroupCommand extends OlympaCommand {
 
 	public GroupCommand(Plugin plugin) {
 		super(plugin, "group", "Permet la gestion des groupes de Olympa.", OlympaCorePermissions.GROUP_COMMAND, "groupe", "rank");
-		addArgs(true, "joueur");
+		addArgs(false, "joueur");
 		addArgs(false, "group");
-		addArgs(false, "until");
+		addArgs(false, "time");
 		addArgs(false, "add", "remove");
 		isAsynchronous = true;
 	}
@@ -56,45 +56,43 @@ public class GroupCommand extends OlympaCommand {
 				olympaTarget = MySQL.getPlayer(args[0]);
 				if (olympaTarget == null) {
 					Collection<String> pentialsPlayers = UtilsCore.similarWords(args[0], MySQL.getAllPlayersNames());
-					if (pentialsPlayers.isEmpty()) {
+					if (pentialsPlayers.isEmpty())
 						this.sendError("Le joueur &4%s&c ne s'est jamais connecté.", args[0]);
-					} else {
+					else
 						this.sendError("Le joueur %s ne s'est jamais connecté. Essayez avec &4%s&c.", args[0], String.join(", ", pentialsPlayers));
-					}
 					return true;
-				} else {
+				} else
 					olympaAccount = new AccountProvider(olympaTarget.getUniqueId());
-				}
 			} else {
 				olympaAccount = new AccountProvider(target.getUniqueId());
 				olympaTarget = olympaAccount.getFromCache();
 			}
 		} else {
-			this.sendUsage(label);
+			sendUsage(label);
 			return true;
 		}
 		if (args.length <= 1) {
 			TreeMap<OlympaGroup, Long> groups = olympaTarget.getGroups();
 			String targetNamePrefix = groups.firstKey().getPrefix() + olympaTarget.getName() + Prefix.INFO.getColor();
 			String groupString = olympaTarget.getGroupsToHumainString();
-			this.sendInfo("%player est dans le%s groupe%s %group."
+			sendInfo("%player est dans le%s groupe%s %group."
 					.replace("%player", targetNamePrefix)
 					.replaceAll("%s", groups.size() > 1 ? "s" : "")
 					.replace("%group", Prefix.INFO.getColor2() + groupString + Prefix.INFO.getColor()));
 		} else {
-			OlympaGroup newGroup = OlympaGroup.getByName(args[1]);
+			String arg1 = args[1];
+			OlympaGroup newGroup = OlympaGroup.getByName(arg1);
 			if (newGroup == null) {
-				Collection<String> pentialsGroup = UtilsCore.similarWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toSet()));
-				if (pentialsGroup.isEmpty()) {
-					this.sendError("Le groupe &4%s&c n'existe pas.", args[1]);
-				} else {
-					this.sendError("Le groupe &4%s&c n'existe pas. Essayez plutôt avec &4%s&c.", args[1], String.join(", ", pentialsGroup));
-				}
+				Collection<String> pentialsGroup = UtilsCore.similarWords(arg1, Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toSet()));
+				if (pentialsGroup.isEmpty())
+					this.sendError("Le groupe &4%s&c n'existe pas.", arg1);
+				else
+					this.sendError("Le groupe &4%s&c n'existe pas. Essayez plutôt avec &4%s&c.", arg1, String.join(", ", pentialsGroup));
 				return true;
 			}
 
 			long timestamp = 0;
-			if (args.length >= 3) {
+			if (args.length >= 3)
 				if (Matcher.isInt(args[2])) {
 					timestamp = Long.parseLong(args[2]);
 					if (timestamp != 0 && timestamp < Utils.getCurrentTimeInSeconds()) {
@@ -105,14 +103,12 @@ public class GroupCommand extends OlympaCommand {
 					this.sendError("&4%s&c doit être un timestamp tel que &4%d&c.", args[2], Utils.getCurrentTimeInSeconds());
 					return true;
 				}
-			}
 
 			TreeMap<OlympaGroup, Long> oldGroups = olympaTarget.getGroups();
 			OlympaPlayer oldOlympaTarget = olympaTarget.clone();
 			String timestampString = new String();
-			if (timestamp != 0) {
+			if (timestamp != 0)
 				timestampString = "pendant &2" + Utils.timestampToDuration(timestamp) + "&a";
-			}
 
 			ChangeType state;
 			String msg = "&aTu es désormais dans le groupe &2%group&a%time.";
@@ -129,9 +125,8 @@ public class GroupCommand extends OlympaCommand {
 					OlympaGroup principalGroup = entry.getKey();
 					Long timestamp2 = entry.getValue();
 					String timestampString2 = new String();
-					if (timestamp2 != 0) {
+					if (timestamp2 != 0)
 						timestampString2 = "pendant &2" + Utils.timestampToDuration(timestamp2) + "&a";
-					}
 					msg = "&aTu es désormais en plus dans le groupe &2%group&a%time. Ton grade principale est &2%group2&a%time2.".replace("%time2", timestampString2).replace("%group2", principalGroup.getName());
 				} else if (args[3].equalsIgnoreCase("remove")) {
 					if (!oldGroups.containsKey(newGroup)) {
@@ -158,11 +153,10 @@ public class GroupCommand extends OlympaCommand {
 				olympaAccount.saveToDb(olympaTarget);
 
 				Consumer<? super Boolean> done = b -> {
-					if (b) {
-						this.sendInfo("&aLe nouveau grade du joueur &2%s&a bien été reçu sur un autre serveur.", olympaTarget.getName());
-					} else {
-						this.sendInfo("&aLe joueur &2%s&a n'est pas connecté, la modification a bien été prise en compte.", olympaTarget.getName());
-					}
+					if (b)
+						sendInfo("&aLe nouveau grade du joueur &2%s&a bien été reçu sur un autre serveur.", olympaTarget.getName());
+					else
+						sendInfo("&aLe joueur &2%s&a n'est pas connecté, la modification a bien été prise en compte.", olympaTarget.getName());
 				};
 				olympaAccount.sendModifications(olympaTarget, done);
 			} else {
@@ -173,33 +167,30 @@ public class GroupCommand extends OlympaCommand {
 				Prefix.DEFAULT.sendMessage(target, msg.replace("%group", newGroup.getName()).replace("%time", timestampString));
 			}
 
-			if (player != null && (target == null || !SpigotUtils.isSamePlayer(player, target))) {
-				if (msg == null) {
-					this.sendSuccess("&cLe joueur &4%player&a n'est plus dans le groupe &4%group&c."
+			if (player != null && (target == null || !SpigotUtils.isSamePlayer(player, target)))
+				if (msg == null)
+					sendSuccess("&cLe joueur &4%player&a n'est plus dans le groupe &4%group&c."
 							.replace("%player", olympaTarget.getName())
 							.replace("%group", newGroup.getName()));
-				} else {
-					this.sendSuccess("&aLe joueur &2%player&a est désormais dans le groupe &2%group&a%time."
+				else
+					sendSuccess("&aLe joueur &2%player&a est désormais dans le groupe &2%group&a%time."
 							.replace("%player", olympaTarget.getName())
 							.replace("%group", newGroup.getName())
 							.replace("%time", timestampString));
-				}
-			}
 		}
 		return true;
 	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (args.length == 1) {
-			return Utils.startWords(args[0], Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
-		} else if (args.length == 2) {
+		if (args.length == 1)
+			return Utils.startWords(args[0], MySQL.getAllPlayersNames().stream().collect(Collectors.toList()));
+		else if (args.length == 2)
 			return Utils.startWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toList()));
-		} else if (args.length == 3) {
+		else if (args.length == 3)
 			return Utils.startWords(args[2], Arrays.asList(String.valueOf(Utils.getCurrentTimeInSeconds() + 2628000), "0"));
-		} else if (args.length == 4) {
+		else if (args.length == 4)
 			return Utils.startWords(args[3], Arrays.asList("add", "remove"));
-		}
 		return null;
 	}
 }

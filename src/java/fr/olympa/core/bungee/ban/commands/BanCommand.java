@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.objects.BanExecute;
@@ -41,7 +41,7 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 	@Override
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		if (args.length == 1) {
-			List<String> postentielNames = Utils.startWords(args[0], OlympaBungee.getInstance().getProxy().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toSet()));
+			List<String> postentielNames = Utils.startWords(args[0], MySQL.getAllPlayersNames().stream().collect(Collectors.toList()));
 			return postentielNames;
 		} else if (args.length == 2) {
 			/*

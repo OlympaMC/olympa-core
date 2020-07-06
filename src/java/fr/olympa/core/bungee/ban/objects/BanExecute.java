@@ -15,24 +15,24 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 @SuppressWarnings("deprecation")
 public class BanExecute {
-	
+
 	List<Object> targets;
 	long expire = 0;
 	String reason;
 	OlympaSanctionType sanctionType;
 	ProxiedPlayer author;
-	
+
 	public BanExecute() {
 	}
-	
+
 	public boolean isPermanant() {
 		return expire == 0;
 	}
-	
+
 	public void setTargets(List<Object> targets) {
 		this.targets = targets;
 	}
-	
+
 	public void setExpire(long expire) {
 		this.expire = expire;
 	}
@@ -44,7 +44,7 @@ public class BanExecute {
 	public void setSanctionType(OlympaSanctionType sanctionType) {
 		this.sanctionType = sanctionType;
 	}
-	
+
 	public CommandSender getAuthor() {
 		return author != null ? author : ProxyServer.getInstance().getConsole();
 	}
@@ -52,13 +52,13 @@ public class BanExecute {
 	public UUID getAuthorUuid() {
 		return author != null ? author.getUniqueId() : OlympaConsole.getUniqueId();
 	}
-	
+
 	public void setAuthor(ProxiedPlayer author) {
 		this.author = author;
 	}
-	
+
 	public void execute() {
-		if (!printfErrorIfAny())
+		if (printfErrorIfAny())
 			return;
 		for (Object t : targets) {
 			boolean hasWork;
@@ -78,7 +78,7 @@ public class BanExecute {
 			}
 		}
 	}
-	
+
 	private boolean printfErrorIfAny() {
 		if (reason == null)
 			getAuthor().sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color("Chaques sanctions doit contenir une raison."));
