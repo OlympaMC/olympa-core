@@ -11,7 +11,6 @@ import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.utils.OlympaJedisPubSub;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.api.command.BungeeCommandListener;
 import fr.olympa.core.bungee.api.config.BungeeCustomConfig;
@@ -28,6 +27,7 @@ import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
 import fr.olympa.core.bungee.commands.BungeelagCommand;
 import fr.olympa.core.bungee.commands.InfoCommand;
+import fr.olympa.core.bungee.commands.RedisCommand;
 import fr.olympa.core.bungee.connectionqueue.ConnectionQueueListener;
 import fr.olympa.core.bungee.connectionqueue.LeaveQueue;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
@@ -69,6 +69,7 @@ import fr.olympa.core.bungee.vpn.VpnSql;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.config.Configuration;
+import redis.clients.jedis.JedisPubSub;
 
 public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 
@@ -84,6 +85,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	protected BungeeCustomConfig maintConfig;
 	private BungeeTask bungeeTask;
 	private ServerStatus status;
+	public RedisAccess redisAccess;
 
 	public Configuration getConfig() {
 		return defaultConfig.getConfig();
@@ -214,6 +216,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new LobbyCommand(this).register();
 		new LeaveQueue(this).register();
 		new BungeelagCommand(this).register();
+		new RedisCommand(this).register();
 
 		new MonitorServers(this);
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
@@ -257,7 +260,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		}
 	}
 
-	public void registerRedisSub(RedisAccess redisAccess, OlympaJedisPubSub sub, String channel) {
+	public void registerRedisSub(RedisAccess redisAccess, JedisPubSub sub, String channel) {
 		new Thread(() -> redisAccess.newConnection().subscribe(sub, channel), "Redis sub " + channel).start();
 	}
 
@@ -266,7 +269,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		if (is != null && is.length != 0)
 			i1 = is[0] + 1;
 		int i = i1;
-		RedisAccess redisAccess = RedisAccess.init("bungee");
+		redisAccess = RedisAccess.init("bungee");
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
 			registerRedisSub(redisAccess, new AskServerNameListener(), RedisChannel.SPIGOT_ASK_SERVERNAME.name());

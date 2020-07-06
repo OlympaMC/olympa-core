@@ -1,12 +1,13 @@
 package fr.olympa.core.spigot.redis;
 
-import fr.olympa.api.utils.OlympaJedisPubSub;
 import fr.olympa.core.spigot.OlympaCore;
+import redis.clients.jedis.JedisPubSub;
 
-public class ServerNameReceiver extends OlympaJedisPubSub {
+public class ServerNameReceiver extends JedisPubSub {
 	
 	@Override
 	public void onMessage(String channel, String message) {
+		super.onMessage(channel, message);
 		String[] info = message.split(";");
 		String ip = info[0];
 		int port = Integer.valueOf(info[1]);

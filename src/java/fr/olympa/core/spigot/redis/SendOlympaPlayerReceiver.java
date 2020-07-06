@@ -4,13 +4,14 @@ import java.util.UUID;
 
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.utils.OlympaJedisPubSub;
 import fr.olympa.core.spigot.OlympaCore;
+import redis.clients.jedis.JedisPubSub;
 
-public class SendOlympaPlayerReceiver extends OlympaJedisPubSub {
+public class SendOlympaPlayerReceiver extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
+		super.onMessage(channel, message);
 		String[] args = message.split(";");
 		String serverFrom = args[0];
 		if (!OlympaCore.getInstance().isServerName(serverFrom))

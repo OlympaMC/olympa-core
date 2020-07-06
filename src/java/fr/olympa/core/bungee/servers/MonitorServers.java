@@ -42,7 +42,7 @@ public class MonitorServers {
 			MonitorInfo previous = olympaServers.get(info.getOlympaServer()).put(info.getServerID(), info);
 			ServerStatus previousStatus = previous == null ? ServerStatus.CLOSE : previous.getStatus();
 			if (previousStatus != info.getStatus()) {
-				OlympaBungee.getInstance().sendMessage("§7Serveur §e" + info.getName() + "§7 : " + previousStatus.getNameColored() + " §7-> " + info.getStatus().getNameColored() + (info.getError() != null ? "(" + info.getError() + ")" : ""));
+				OlympaBungee.getInstance().sendMessage("§7Serveur §e" + info.getName() + "§7 : " + previousStatus.getNameColored() + " §7-> " + info.getStatus().getNameColored() + (info.getError() != null ? " (" + info.getError() + ")" : ""));
 				if (instantUpdate) updateOlympaServer(info.getOlympaServer());
 			}
 		});
