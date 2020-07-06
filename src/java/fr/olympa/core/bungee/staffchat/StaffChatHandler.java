@@ -22,8 +22,13 @@ public class StaffChatHandler {
 
 	public static void sendMessage(OlympaPlayer olympaPlayer, CommandSender sender, String msg) {
 		String message = msg.replaceAll("( )\\1+", " ");
-		BaseComponent[] messageComponent = TextComponent.fromLegacyText(Prefix.STAFFCHAT +
-				(sender instanceof ProxiedPlayer ? Utils.capitalize(((ProxiedPlayer) sender).getServer().getInfo().getName()) + " " + olympaPlayer.getGroupNameColored() + " " : "§e") + "§l" + sender.getName() + " §7: " + message);
+		String senderName = "§eConsole";
+		if (sender == null)
+			senderName = "Discord " + olympaPlayer.getGroupNameColored() + " " + olympaPlayer.getName();
+		else if (sender instanceof ProxiedPlayer)
+			senderName = Utils.capitalize(((ProxiedPlayer) sender).getServer().getInfo().getName()) + " " + olympaPlayer.getGroupNameColored() + " " + sender.getName();
+
+		BaseComponent[] messageComponent = TextComponent.fromLegacyText(Prefix.STAFFCHAT + senderName + " §7: " + message);
 		ProxyServer.getInstance().getPlayers().stream().filter(p -> !DataHandler.isUnlogged(p) && OlympaCorePermissions.STAFF_CHAT.hasPermission(new AccountProvider(p.getUniqueId()).getFromRedis()))
 				.forEach(p -> p.sendMessage(messageComponent));
 		ProxyServer.getInstance().getConsole().sendMessage(messageComponent);
