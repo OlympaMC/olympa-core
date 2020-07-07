@@ -22,7 +22,7 @@ public class RedisCommand extends BungeeCommand {
 			return;
 		}
 		if (sub != null) {
-			sub.unsubscribe();
+			sub.punsubscribe();
 			sub = null;
 			sendSuccess("Le mode écoute redis est désormais désactivé.");
 		}else {
