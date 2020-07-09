@@ -1,7 +1,9 @@
 package fr.olympa.core.bungee.servers;
 
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
@@ -31,6 +33,9 @@ public class ServersListener implements Listener {
 		}
 		String kickReason = ChatColor.stripColor(BaseComponent.toLegacyText(event.getKickReasonComponent()));
 		ProxiedPlayer player = event.getPlayer();
+		
+		if (AccountProvider.get(player.getUniqueId()) == null) return; // il est pas dans le cache = il a quitté le serveur de lui-même
+		
 		OlympaBungee.getInstance().sendMessage("§6" + player.getName() + "§7 a été kick pour \"§e" + kickReason + "§7\" (état : " + event.getState() + ")");
 		if (kickReason.contains("whitelist")) {
 			event.setKickReasonComponent(TextComponent.fromLegacyText(BungeeUtils.connectScreen("&cTu n'a pas accès au serveur &4" + serverKicked.getName() + "&c.")));
@@ -53,7 +58,7 @@ public class ServersListener implements Listener {
 			event.setCancelled(true);
 			event.setCancelServer(serverFallback);
 			player.sendMessage(Prefix.DEFAULT_GOOD + ColorUtils.color("Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter au moins 10 secondes avant d'être reconnecté automatiquement."));
-			OlympaBungee.getInstance().getTask().runTaskLater(() -> ServersConnection.tryConnect(player, olympaServer), 10 * 20);
+			OlympaBungee.getInstance().getTask().runTaskLater(() -> ServersConnection.tryConnect(player, olympaServer), 10, TimeUnit.SECONDS);
 			return;
 		}
 		if (!kickReason.contains("ban")) {

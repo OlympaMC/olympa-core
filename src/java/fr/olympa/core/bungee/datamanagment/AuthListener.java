@@ -241,6 +241,7 @@ public class AuthListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on6Disconnect(PlayerDisconnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
+		OlympaBungee.getInstance().sendMessage("§7Déconnexion du joueur §e" + player.getName() + "§7." + (event.getPlayer().getServer() == null ? "" : "serveur §6" + event.getPlayer().getServer().getInfo().getName() + "§7)"));
 		AccountProvider olympaAccount = new AccountProvider(player.getUniqueId());
 		olympaAccount.removeFromCache();
 		wait.add(player.getName());

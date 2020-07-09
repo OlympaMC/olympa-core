@@ -98,11 +98,11 @@ public class BungeeTask {
 	}
 
 	public ScheduledTask runTaskLater(String taskName, Runnable task, long tick) {
-		return runTaskLater(taskName, task, tick / 20L, TimeUnit.SECONDS);
+		return runTaskLater(taskName, task, tick * 50, TimeUnit.MILLISECONDS);
 	}
 
 	public ScheduledTask runTaskLater(Runnable runnable, long tick) {
-		return getScheduler().schedule(plugin, runnable, tick / 20L, TimeUnit.SECONDS);
+		return getScheduler().schedule(plugin, runnable, tick * 50, TimeUnit.MILLISECONDS);
 	}
 	
 	public ScheduledTask runTaskLater(Runnable runnable, long delay, TimeUnit timeUnit) {
@@ -124,7 +124,7 @@ public class BungeeTask {
 	}
 	
 	public ScheduledTask scheduleSyncRepeatingTask(String taskName, Runnable runnable, long delay, long refresh) {
-		return getScheduler().schedule(plugin, runnable, delay / 20L, refresh / 20L, TimeUnit.SECONDS);
+		return getScheduler().schedule(plugin, runnable, delay * 50, refresh * 50, TimeUnit.MILLISECONDS);
 	}
 
 	public ScheduledTask scheduleSyncRepeatingTask(String taskName, Runnable runnable, long delay, long refresh, TimeUnit timeUnit) {
