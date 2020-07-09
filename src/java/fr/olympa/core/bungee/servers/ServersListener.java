@@ -3,12 +3,12 @@ package fr.olympa.core.bungee.servers;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.datamanagment.AuthListener;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -34,7 +34,7 @@ public class ServersListener implements Listener {
 		String kickReason = ChatColor.stripColor(BaseComponent.toLegacyText(event.getKickReasonComponent()));
 		ProxiedPlayer player = event.getPlayer();
 		
-		if (AccountProvider.get(player.getUniqueId()) == null) return; // il est pas dans le cache = il a quitté le serveur de lui-même
+		if (AuthListener.wait.contains(player.getName())) return; // il est en cours de suppression = il a quitté le serveur de lui-même
 		
 		OlympaBungee.getInstance().sendMessage("§6" + player.getName() + "§7 a été kick pour \"§e" + kickReason + "§7\" (état : " + event.getState() + ")");
 		if (kickReason.contains("whitelist")) {
