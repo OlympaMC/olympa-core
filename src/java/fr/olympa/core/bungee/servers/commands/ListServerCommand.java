@@ -22,7 +22,7 @@ public class ListServerCommand extends BungeeCommand {
 	public void onCommand(CommandSender sender, String[] args) {
 		StringJoiner sj = new StringJoiner("\n");
 		sj.add("&6Liste des serveurs:");
-		MonitorServers.getServers().stream().sorted((o1, o2) -> o1.getStatus().getId()).forEach(serverInfo -> {
+		MonitorServers.getServers().stream().sorted((o1, o2) -> Integer.compare(o1.getStatus().getId(), o2.getStatus().getId())).forEach(serverInfo -> {
 			ServerStatus status = serverInfo.getStatus();
 			StringJoiner sb = new StringJoiner(" ");
 			sb.add("&7[" + status.getNameColored() + "&7]");
@@ -36,7 +36,7 @@ public class ListServerCommand extends BungeeCommand {
 			if (serverInfo.getRamUsage() != null)
 				sb.add(TPSUtils.getRamUsageColor(serverInfo.getRamUsage()) + "% RAM");
 			if (serverInfo.getThreads() != null)
-				sb.add(serverInfo.getThreads() + "thds");
+				sb.add(serverInfo.getThreads() + " threads");
 			if (serverInfo.getError() != null)
 				sb.add(status.getColor() + "Erreur: " + serverInfo.getError());
 			sj.add(sb.toString());
