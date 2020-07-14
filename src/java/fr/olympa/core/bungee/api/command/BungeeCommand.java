@@ -34,7 +34,6 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 	protected String command;
 	protected String description;
 	protected boolean bypassAuth = false;
-	public OlympaPlayer olympaPlayer;
 	protected OlympaPermission permission;
 	protected LinkedHashMap<Boolean, List<CommandArgument>> args = new LinkedHashMap<>();
 
@@ -44,8 +43,9 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 	public Integer minArg = 0;
 
 	protected Plugin plugin;
-	public ProxiedPlayer proxiedPlayer;
 	private CommandSender sender;
+	protected ProxiedPlayer proxiedPlayer;
+	protected OlympaPlayer olympaPlayer;
 
 	/**
 	 * Format: Usage » %command% <%obligatory%|%obligatory%> [%optional%] Variable
@@ -98,13 +98,13 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 			this.sender = sender;
 			if (sender instanceof ProxiedPlayer) {
 				proxiedPlayer = (ProxiedPlayer) sender;
+				olympaPlayer = new AccountProvider(proxiedPlayer.getUniqueId()).getFromRedis();
 				if (!bypassAuth && DataHandler.isUnlogged(proxiedPlayer)) {
 					sendError("Tu dois être connecté. Fait &4/login <mdp>&c.");
 					return;
 				}
 
 				if (permission != null) {
-					olympaPlayer = getOlympaPlayer();
 					if (olympaPlayer == null) {
 						sendImpossibleWithOlympaPlayer();
 						return;
@@ -114,9 +114,13 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 						return;
 					}
 				}
-			} else if (!allowConsole) {
-				sendImpossibleWithConsole();
-				return;
+			}else {
+				proxiedPlayer = null;
+				olympaPlayer = null;
+				if (!allowConsole) {
+					sendImpossibleWithConsole();
+					return;
+				}
 			}
 
 			if (args.length < minArg) {
@@ -132,12 +136,9 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 		return command;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public OlympaPlayer getOlympaPlayer() {
-		if (proxiedPlayer == null)
-			return null;
-		return olympaPlayer == null ? olympaPlayer = new AccountProvider(proxiedPlayer.getUniqueId()).getFromRedis() : olympaPlayer;
+		return olympaPlayer;
 	}
 
 	public OlympaPermission getPerm() {

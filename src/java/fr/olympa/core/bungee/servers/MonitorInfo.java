@@ -61,9 +61,7 @@ public class MonitorInfo {
 				threads = Integer.valueOf(motd[3]);
 		} else {
 			status = ServerStatus.CLOSE;
-			String errorMsg = error.getMessage();
-			errorMsg = errorMsg == null ? "" : errorMsg.replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "Connexion refusée");
-
+			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "Connexion refusée");
 		}
 	}
 

@@ -15,6 +15,7 @@ public class PlayerGroupChangeListener extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
+		super.onMessage(channel, message);
 		String[] args = message.split(";");
 		if (args.length < 4) {
 			return;

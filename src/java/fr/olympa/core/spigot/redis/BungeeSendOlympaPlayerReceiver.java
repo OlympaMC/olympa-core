@@ -10,6 +10,7 @@ public class BungeeSendOlympaPlayerReceiver extends JedisPubSub {
 	
 	@Override
 	public void onMessage(String channel, String message) {
+		super.onMessage(channel, message);
 		String[] args = message.split(";");
 		String serverFrom = args[0];
 		String serverTo = args[1];

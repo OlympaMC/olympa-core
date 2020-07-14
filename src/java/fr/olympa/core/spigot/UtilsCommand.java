@@ -14,6 +14,7 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_15_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import com.google.common.collect.Sets;
@@ -21,10 +22,12 @@ import com.google.common.collect.Sets;
 import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.command.complex.ComplexCommand;
+import fr.olympa.api.editor.RegionEditor;
 import fr.olympa.api.item.ItemUtils;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.region.tracking.TrackedRegion;
+import fr.olympa.api.utils.Prefix;
 import net.minecraft.server.v1_15_R1.BlockPosition;
 import net.minecraft.server.v1_15_R1.TileEntity;
 import net.minecraft.server.v1_15_R1.TileEntityTypes;
@@ -52,12 +55,14 @@ public class UtilsCommand extends ComplexCommand {
 						//world.tileEntityList.remove(tile.getValue());
 						world.tileEntityListTick.remove(tile.getValue());
 						iterator.remove();
+						world.getTileEntity(tile.getKey()); // permet de créer la tile entity si elle existe
 					}
 
 				}
 				//chunk.getTileEntities().clear();
 			}
 		}
+		sendSuccess("Fin de l'opération.");
 	}
 
 	@Cmd (player = true)
@@ -73,6 +78,22 @@ public class UtilsCommand extends ComplexCommand {
 			sendInfo("Tile entity type : %s", TileEntityTypes.a(tileEntity.getTileType()).getKey());
 			sendInfo("Tile entity valid : %b", tileEntity.getTileType().isValidBlock(nms));
 		}
+	}
+	
+	@Cmd (player = true)
+	public void fixTileEntities(CommandContext cmd) {
+		net.minecraft.server.v1_15_R1.World world = ((CraftPlayer) sender).getHandle().world;
+		sendInfo("Sélectionnez la région.");
+		Player p = player;
+		new RegionEditor(player, (region) -> {
+			if (region == null) return;
+			int tileEntities = 0;
+			for (Iterator<Block> iterator = region.blockList(); iterator.hasNext();) {
+				Block block = iterator.next();
+				if (world.getTileEntity(((CraftBlock) block).getPosition()) != null) tileEntities++;
+			}
+			Prefix.DEFAULT_GOOD.sendMessage(p, "%d tile entities trouvées !", tileEntities);
+		}).enterOrLeave();
 	}
 
 	@Cmd (player = true)

@@ -9,6 +9,7 @@ public class OlympaCorePermissions {
 	public static OlympaPermission MAINTENANCE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 	// TODO change to OlympaGroup.MODP
 	public static OlympaPermission GROUP_COMMAND = new OlympaPermission(OlympaGroup.FONDA, OlympaGroup.ADMIN, OlympaGroup.RESP_STAFF, OlympaGroup.RESP_TECH);
+	public static OlympaPermission BUNGEE_REDIS_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 
 	public static OlympaPermission CHAT_COMMAND = new OlympaPermission(OlympaGroup.ASSISTANT);
 	public static OlympaPermission CHAT_SEEINSULTS = new OlympaPermission(OlympaGroup.ASSISTANT);

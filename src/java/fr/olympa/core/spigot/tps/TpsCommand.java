@@ -47,7 +47,7 @@ public class TpsCommand extends OlympaCommand {
 			sb.add("&3Moyenne: &b" + TPSUtils.getTpsColor(average) + "&3.");
 			sb.add("&3RAM: &b" + machine.getMemUsage() + "&3 (" + machine.getMemUse() + ").");
 			sb.add("&3CPU: &b" + machine.getCPUUsage() + "&3 (" + machine.getCores() + " cores).");
-			sb.add("&3Threads: &b" + machine.getThreads() + "&3.");
+			sb.add("&3Threads: &b" + machine.getThreads() + "&3 (" + machine.getAllThreadsCreated() + " créés).");
 			sb.add("&3Version du serveur: &b" + Bukkit.getBukkitVersion() + "&3.");
 			IProtocolSupport protocolSupport = core.getProtocolSupport();
 			if (protocolSupport != null) {

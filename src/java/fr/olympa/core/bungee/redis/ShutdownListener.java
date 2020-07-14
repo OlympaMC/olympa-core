@@ -9,6 +9,7 @@ public class ShutdownListener extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
+		super.onMessage(channel, message);
 		ServerInfo serverInfo = ServersConnection.getServerByNameOrIpPort(message);
 		if (serverInfo != null) {
 			MonitorServers.updateServer(serverInfo, true);

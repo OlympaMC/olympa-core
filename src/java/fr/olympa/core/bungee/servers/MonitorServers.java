@@ -42,7 +42,7 @@ public class MonitorServers {
 			MonitorInfo previous = olympaServers.get(info.getOlympaServer()).put(info.getServerID(), info);
 			ServerStatus previousStatus = previous == null ? ServerStatus.CLOSE : previous.getStatus();
 			if (previousStatus != info.getStatus()) {
-				OlympaBungee.getInstance().sendMessage("§7Serveur §e" + info.getName() + "§7 : " + previousStatus.getNameColored() + " §7-> " + info.getStatus().getNameColored() + (info.getError() != null ? "(" + info.getError() + ")" : ""));
+				OlympaBungee.getInstance().sendMessage("§7Serveur §e" + info.getName() + "§7 : " + previousStatus.getNameColored() + " §7-> " + info.getStatus().getNameColored() + (info.getError() != null ? " (" + info.getError() + ")" : ""));
 				if (instantUpdate) updateOlympaServer(info.getOlympaServer());
 			}
 		});
@@ -51,9 +51,9 @@ public class MonitorServers {
 	private static void updateOlympaServer(OlympaServer olympaServer) {
 		Collection<MonitorInfo> servers = olympaServers.get(olympaServer).values();
 		if (servers.isEmpty()) return;
-		MonitorInfo upper = servers.stream().sorted((x, y) -> Integer.compare(y.getStatus().getId(), x.getStatus().getId())).findFirst().orElse(null);
+		MonitorInfo upper = servers.stream().sorted((x, y) -> Integer.compare(x.getStatus().getId(), y.getStatus().getId())).findFirst().orElse(null);
 		int online = servers.stream().filter(x -> x.getStatus().canConnect()).mapToInt(x -> x.getOnlinePlayers()).sum();
-		RedisBungeeSend.sendServerInfos(olympaServer, online, upper == null ? ServerStatus.CLOSE : upper.getStatus());
+		RedisBungeeSend.sendServerInfos(olympaServer, online, upper == null ? ServerStatus.UNKNOWN : upper.getStatus());
 	}
 
 	public MonitorServers(Plugin plugin) {

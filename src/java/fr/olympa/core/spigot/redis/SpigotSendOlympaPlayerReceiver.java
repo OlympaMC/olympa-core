@@ -14,6 +14,7 @@ public class SpigotSendOlympaPlayerReceiver extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
+		super.onMessage(channel, message);
 		String[] args = message.split(";");
 		String from = args[0];
 		String to = args[1];

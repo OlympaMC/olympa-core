@@ -10,6 +10,7 @@ public class ServerSwitchListener extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
+		super.onMessage(channel, message);
 		String[] args = message.split(":");
 		ProxiedPlayer player = OlympaBungee.getInstance().getProxy().getPlayer(args[0]);
 		OlympaServer server = OlympaServer.valueOf(args[1]);

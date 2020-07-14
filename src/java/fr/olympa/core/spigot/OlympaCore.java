@@ -113,13 +113,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 		super.onEnable();
 
-		try {
-			hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml"));
-		} catch (IOException e) {
-			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
-			e.printStackTrace();
-		}
-
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 		imageFrameManager = new ImageFrameManager(this, "maps.yml", "images");
 		new MySQL(database);
@@ -150,11 +143,19 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		pluginManager.registerEvents(new Inventories(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
 		pluginManager.registerEvents(new ChatListener(), this);
-		pluginManager.registerEvents(regionManager = new RegionManager(), this);
 		pluginManager.registerEvents(new CommandListener(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
 		pluginManager.registerEvents(new NameTagListener(), this);
 		pluginManager.registerEvents(new ScoreboardTeamListener(), this);
+		pluginManager.registerEvents(regionManager = new RegionManager(), this);
+		
+		try {
+			pluginManager.registerEvents(hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml")), this);
+		}catch (IOException e) {
+			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
+			e.printStackTrace();
+		}
+		
 		nameTagApi = new NametagAPI(new NametagManager());
 		((NametagAPI) nameTagApi).testCompat();
 

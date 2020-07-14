@@ -11,6 +11,7 @@ public class SendOlympaPlayerReceiver extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
+		super.onMessage(channel, message);
 		String[] args = message.split(";");
 		String serverFrom = args[0];
 		if (!OlympaCore.getInstance().isServerName(serverFrom))
