@@ -4,7 +4,7 @@ import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.JedisPubSub;
 
 public class ServerNameReceiver extends JedisPubSub {
-	
+
 	@Override
 	public void onMessage(String channel, String message) {
 		String[] info = message.split(";");

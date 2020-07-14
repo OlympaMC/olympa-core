@@ -12,11 +12,11 @@ public class OlympaCorePermissions {
 
 	public static OlympaPermission CHAT_COMMAND = new OlympaPermission(OlympaGroup.ASSISTANT);
 	public static OlympaPermission CHAT_SEEINSULTS = new OlympaPermission(OlympaGroup.ASSISTANT);
-	public static OlympaPermission CHAT_BYPASS = new OlympaPermission(OlympaGroup.MODP);
+	public static OlympaPermission CHAT_BYPASS = new OlympaPermission(OlympaGroup.RESP_TECH);
 	public static OlympaPermission CHAT_MUTEDBYPASS = new OlympaPermission(OlympaGroup.GRAPHISTE);
 
 	public static OlympaPermission BAN_BYPASS_MAXTIME = new OlympaBungeePermission(OlympaGroup.FONDA);
-	public static OlympaPermission BAN_BYPASS_SANCTION_STAFF = new OlympaBungeePermission(OlympaGroup.MODP);
+	public static OlympaPermission BAN_BYPASS_SANCTION_STAFF = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
 	public static OlympaPermission BAN_FORCEKICK_COMMAND = new OlympaPermission(OlympaGroup.ASSISTANT);
 	public static OlympaPermission BAN_DEF = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
 	public static OlympaPermission BAN_BANIP_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
@@ -47,7 +47,7 @@ public class OlympaCorePermissions {
 	public static OlympaPermission PRIVATEMESSAGE_TOGGLE = new OlympaPermission(OlympaGroup.MINI_YOUTUBER);
 	public static OlympaPermission SETSTATUS_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 	public static OlympaPermission VPN_BYPASS = new OlympaPermission(OlympaGroup.FONDA);
-	public static OlympaPermission INFO_COMMAND = new OlympaPermission(OlympaGroup.ASSISTANT);
+	public static OlympaPermission INFO_COMMAND = new OlympaPermission(OlympaGroup.GRAPHISTE);
 	public static OlympaPermission INFO_COMMAND_EXTRA = new OlympaPermission(OlympaGroup.RESP_TECH);
 	public static OlympaPermission STAFF_CHAT = new OlympaPermission(OlympaGroup.GRAPHISTE);
 
