@@ -31,12 +31,10 @@ public class AccountProvider implements OlympaAccount {
 
 	public static <T extends OlympaPlayer> T get(String name) throws SQLException {
 		OlympaPlayer olympaPlayer = AccountProvider.getFromCache(name);
-		if (olympaPlayer == null) {
-			// olympaPlayer = AccountProvider.getFromRedis(name);
-			// if (olympaPlayer == null) {
+		if (olympaPlayer == null)
+			olympaPlayer = AccountProvider.getFromRedis(name);
+		if (olympaPlayer == null)
 			olympaPlayer = AccountProvider.getFromDatabase(name);
-			// }
-		}
 		return (T) olympaPlayer;
 	}
 
@@ -56,21 +54,15 @@ public class AccountProvider implements OlympaAccount {
 		return MySQL.getPlayer(uuid);
 	}
 
-	/*
-	 * public static OlympaPlayer getFromRedis(String name) { return
-	 * getFromRedis(name, false); }
-	 *
-	 * public static OlympaPlayer getFromRedis(String name, boolean cachePersist) {
-	 * OlympaPlayer olympaPlayer = null;
-	 *
-	 * try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) { olympaPlayer =
-	 * jedis.hgetAll(name).entrySet().stream().map(entry ->
-	 * GsonCustomizedObjectTypeAdapter.GSON.fromJson(entry.getValue(),
-	 * playerClass)).filter(p ->
-	 * p.getName().equalsIgnoreCase(name)).findFirst().orElse(null); if
-	 * (cachePersist) { jedis.persist(REDIS_KEY + olympaPlayer.getUniqueId()); } }
-	 * RedisAccess.INSTANCE.closeResource(); return olympaPlayer; }
-	 */
+	public static OlympaPlayer getFromRedis(String name) {
+		OlympaPlayer olympaPlayer = null;
+		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
+			olympaPlayer = jedis.hgetAll(name).entrySet().stream().map(entry -> GsonCustomizedObjectTypeAdapter.GSON.fromJson(entry.getValue(), playerClass))
+					.filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+		}
+		RedisAccess.INSTANCE.closeResource();
+		return olympaPlayer;
+	}
 
 	public synchronized static OlympaPlayerInformations getPlayerInformations(long id) {
 		OlympaPlayerInformations info = cachedInformations.get(id);
@@ -149,9 +141,8 @@ public class AccountProvider implements OlympaAccount {
 		OlympaPlayer olympaPlayer = this.getFromCache();
 		if (olympaPlayer == null) {
 			olympaPlayer = getFromRedis();
-			if (olympaPlayer == null) {
+			if (olympaPlayer == null)
 				return fromDb();
-			}
 		}
 		return olympaPlayer;
 	}
@@ -167,9 +158,8 @@ public class AccountProvider implements OlympaAccount {
 		}
 		redisAccesss.closeResource();
 
-		if (json == null || json.isEmpty()) {
+		if (json == null || json.isEmpty())
 			return null;
-		}
 		return GsonCustomizedObjectTypeAdapter.GSON.fromJson(json, playerClass);
 	}
 

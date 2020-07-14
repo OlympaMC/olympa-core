@@ -3,7 +3,6 @@ package fr.olympa.core.bungee.ban.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
@@ -41,7 +40,7 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 	@Override
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		if (args.length == 1) {
-			List<String> postentielNames = Utils.startWords(args[0], MySQL.getAllPlayersNames().stream().collect(Collectors.toList()));
+			List<String> postentielNames = Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
 			return postentielNames;
 		} else if (args.length == 2) {
 			/*
@@ -51,11 +50,9 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 			 */
 			List<String> units = new ArrayList<>();
 			for (List<String> unit : SanctionUtils.units)
-				/*
-				 * for (String u : unit) { units.add( i + u); }
-				 */
-				units.addAll(unit);
-			System.out.println("Unit: " + String.join(", ", units));
+				for (String u : unit)
+					for (int i = 0; i < 20; i++)
+						units.add(i + u);
 			return Utils.startWords(args[1], units);
 		} else if (args.length == 3) {
 			List<String> reasons = Arrays.asList("Cheat", "Insulte", "Provocation", "Spam", "Harcèlement");

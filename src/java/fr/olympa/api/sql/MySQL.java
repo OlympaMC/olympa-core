@@ -58,11 +58,12 @@ public class MySQL {
 		return id;
 	}
 
-	public static OlympaStatement getPlayerNamesStatement = new OlympaStatement("SELECT `pseudo` FROM " + tableName);
+	/* Idée bof TODO
+	 private static OlympaStatement getPlayerNamesStatement = new OlympaStatement("SELECT `pseudo` FROM " + tableName);
 	// Pour pas surcharger les requettes MySQL
 	// TODO -> cache redis pour le cache multi-server
 	static Set<String> allPlayersNamesCache = null;
-
+	
 	public static Set<String> getAllPlayersNames() {
 		if (allPlayersNamesCache != null)
 			return allPlayersNamesCache;
@@ -75,14 +76,14 @@ public class MySQL {
 			e.printStackTrace();
 			return null;
 		}
-		if (!names.isEmpty()) {
-			OlympaCore.getInstance().getTask().runTaskLater("clearAllPlayersNamesCache", () -> allPlayersNamesCache = null, 10 * 60 * 20);
+		if (!names.isEmpty())
+			//			Only Spigot
+			//			OlympaCore.getInstance().getTask().runTaskLater("clearAllPlayersNamesCache", () -> allPlayersNamesCache = null, 10 * 60 * 20);
 			allPlayersNamesCache = names;
-		}
 		return names;
-	}
+	}*/
 
-	public static OlympaStatement getNameFromUUIDStatement = new OlympaStatement("SELECT `pseudo` FROM " + tableName + " WHERE `uuid_server` = ?");
+	private static OlympaStatement getNameFromUUIDStatement = new OlympaStatement("SELECT `pseudo` FROM " + tableName + " WHERE `uuid_server` = ?");
 
 	/**
 	 * Récupère le nom exacte d'un joueur dans la base de données à l'aide de son
@@ -328,7 +329,13 @@ public class MySQL {
 
 	private static OlympaStatement getPlayersBySimilarNameStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `pseudo` LIKE ?");
 
+	public static Set<String> getPlayersBySimilarChars(String name) {
+		return getNamesBySimilarName(Utils.insertChar(name, "%"));
+	}
+
 	public static Set<OlympaPlayer> getPlayersBySimilarName(String name) {
+		if (name.charAt(name.length() - 1) != '%')
+			name += "%";
 		Set<OlympaPlayer> olympaPlayers = new HashSet<>();
 		try {
 			PreparedStatement statement = getPlayersBySimilarNameStatement.getStatement();
@@ -342,17 +349,22 @@ public class MySQL {
 		return olympaPlayers;
 	}
 
-	private static OlympaStatement getPlayersNamesByIPStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `pseudo` LIKE ?");
+	private static OlympaStatement getNamesBySimilarName = new OlympaStatement("SELECT pseudo FROM " + tableName + " WHERE `pseudo` LIKE ?");
 
-	public static Set<String> getPlayersNamesBySimilarName(String name) {
-		name = Utils.insertChar(name, "%");
+	public static Set<String> getNamesBySimilarChars(String name) {
+		return getNamesBySimilarName(Utils.insertChar(name, "%"));
+	}
+
+	public static Set<String> getNamesBySimilarName(String name) {
+		if (name.charAt(name.length() - 1) != '%')
+			name += "%";
 		Set<String> names = new HashSet<>();
 		try {
-			PreparedStatement statement = getPlayersNamesByIPStatement.getStatement();
+			PreparedStatement statement = getNamesBySimilarName.getStatement();
 			statement.setString(1, name);
 			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next())
-				names.add(resultSet.getString(1));
+				names.add(resultSet.getString("pseudo"));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

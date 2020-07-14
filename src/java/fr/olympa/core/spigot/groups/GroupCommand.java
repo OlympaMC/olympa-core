@@ -55,11 +55,7 @@ public class GroupCommand extends OlympaCommand {
 			if (target == null) {
 				olympaTarget = MySQL.getPlayer(args[0]);
 				if (olympaTarget == null) {
-					Collection<String> pentialsPlayers = UtilsCore.similarWords(args[0], MySQL.getAllPlayersNames());
-					if (pentialsPlayers.isEmpty())
-						this.sendError("Le joueur &4%s&c ne s'est jamais connecté.", args[0]);
-					else
-						this.sendError("Le joueur %s ne s'est jamais connecté. Essayez avec &4%s&c.", args[0], String.join(", ", pentialsPlayers));
+					this.sendUnknownPlayer(args[0], MySQL.getNamesBySimilarName(args[0]));
 					return true;
 				} else
 					olympaAccount = new AccountProvider(olympaTarget.getUniqueId());
@@ -184,7 +180,7 @@ public class GroupCommand extends OlympaCommand {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		if (args.length == 1)
-			return Utils.startWords(args[0], MySQL.getAllPlayersNames().stream().collect(Collectors.toList()));
+			return Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
 		else if (args.length == 2)
 			return Utils.startWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toList()));
 		else if (args.length == 3)

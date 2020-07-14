@@ -69,8 +69,8 @@ public class BanExecute {
 			}
 			try {
 				hasWork = SanctionManager.addAndApply(tSanctionType, getAuthorUuid(), t, reason, expire);
-				if (hasWork)
-					continue;
+				if (!hasWork)
+					getAuthor().sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color("'" + t + "' est inconnu dans la base de donnés."));
 			} catch (SQLException e) {
 				e.printStackTrace();
 				getAuthor().sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color("Une erreur SQL est survenue lors de la sanction de '" + t + "'."));

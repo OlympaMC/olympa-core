@@ -1,6 +1,7 @@
 package fr.olympa.core.bungee.commands;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -8,6 +9,7 @@ import java.util.TreeMap;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.BanMySQL;
@@ -19,8 +21,9 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class InfoCommand extends BungeeCommand {
+public class InfoCommand extends BungeeCommand implements TabExecutor {
 
 	public InfoCommand(Plugin plugin) {
 		super(plugin, "info", OlympaCorePermissions.INFO_COMMAND);
@@ -35,7 +38,7 @@ public class InfoCommand extends BungeeCommand {
 			try {
 				target = AccountProvider.get(args[0]);
 				if (target == null) {
-					sendUnknownPlayer(args[0]);
+					sendUnknownPlayer(args[0], MySQL.getNamesBySimilarChars(args[0]));
 					return;
 				}
 				targetProxied = ProxyServer.getInstance().getPlayer(target.getUniqueId());
@@ -53,10 +56,11 @@ public class InfoCommand extends BungeeCommand {
 		TextComponent out = new TextComponent();
 		TextComponent out2 = new TextComponent(TextComponent.fromLegacyText("§6Info " + target.getName()));
 		out.addExtra(out2);
-		out2 = new TextComponent(TextComponent.fromLegacyText("§3Première connexion: §b" + Utils.timestampToDuration(target.getFirstConnection())));
 		out.addExtra("\n");
+		out2 = new TextComponent(TextComponent.fromLegacyText("§3Première connexion: §b" + Utils.timestampToDuration(target.getFirstConnection())));
 		out.addExtra(out2);
-		if (targetProxied != null)
+		out.addExtra("\n");
+		if (targetProxied == null)
 			out2 = new TextComponent(TextComponent.fromLegacyText("§3Dernière connexion: §b" + Utils.timestampToDuration(target.getLastConnection())));
 		else
 			out2 = new TextComponent(TextComponent.fromLegacyText("§3Connecté depuis: §b" + Utils.timestampToDuration(target.getLastConnection())));
@@ -73,7 +77,7 @@ public class InfoCommand extends BungeeCommand {
 			out.addExtra(out2);
 			for (Entry<Long, String> entry : histName.entrySet()) {
 				out2 = new TextComponent(TextComponent.fromLegacyText("§b" + entry.getValue()));
-				out2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("Changé depuis " + Utils.timestampToDuration(entry.getKey()))));
+				out2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§cChangé depuis " + Utils.timestampToDuration(entry.getKey()))));
 				out.addExtra(out2);
 				if (--size != 0)
 					out.addExtra(new TextComponent(TextComponent.fromLegacyText("§3, §b")));
@@ -81,9 +85,9 @@ public class InfoCommand extends BungeeCommand {
 			out.addExtra("\n");
 		}
 		out2 = new TextComponent(TextComponent.fromLegacyText("§3Premium: §b" + (target.isPremium() ? "oui" : "non")));
-		out.addExtra(out2);
-		out.addExtra("\n");
-		out2 = new TextComponent(TextComponent.fromLegacyText("§3Link Discord: §b" + (target.getDiscordId() != 0 ? "oui" : "non")));
+		//		out.addExtra(out2);
+		//		out.addExtra("\n");
+		//		out2 = new TextComponent(TextComponent.fromLegacyText("§3Link Discord: §b" + (target.getDiscordId() != 0 ? "oui" : "non")));
 		out.addExtra(out2);
 		out.addExtra("\n");
 		if (hasPermission(OlympaCorePermissions.INFO_COMMAND_EXTRA)) {
@@ -96,9 +100,15 @@ public class InfoCommand extends BungeeCommand {
 		List<OlympaSanction> sanctions = BanMySQL.getSanctions(target.getUniqueId());
 		out2 = new TextComponent(TextComponent.fromLegacyText("§3Sanctions: §b" + sanctions.size()));
 		out.addExtra(out2);
-		out.addExtra("\n");
-		out.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("")));
 		sendMessage(out);
 	}
 
+	@Override
+	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+		if (args.length == 1) {
+			List<String> postentielNames = Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
+			return postentielNames;
+		}
+		return new ArrayList<>();
+	}
 }

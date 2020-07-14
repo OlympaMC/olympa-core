@@ -34,7 +34,7 @@ public class BanMySQL {
 	`status_id` INT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
-
+	
 	 */
 	/**
 	 * Ajoute un sanction/mute
@@ -46,7 +46,6 @@ public class BanMySQL {
 		PreparedStatement pstate = OlympaBungee.getInstance().getDatabase()
 				.prepareStatement("INSERT INTO sanctions (type_id, target, reason, author_uuid, expires, created, status_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
 		int i = 1;
-		pstate.setLong(i++, olympaban.getId());
 		pstate.setInt(i++, olympaban.getType().getId());
 		pstate.setString(i++, olympaban.getPlayer().toString());
 		pstate.setString(i++, olympaban.getReason());
