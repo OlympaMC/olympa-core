@@ -31,7 +31,7 @@ public class LoginChatListener implements Listener {
 		HoverEvent hoverTooltip = new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder("Clique pour avoir directement la commande").color(ChatColor.YELLOW).create());
 		
 		TextComponent base = new TextComponent();
-		addLegacyText(base, "§4§l§m-----------------§7 [§cLogin§7] §4§l§m-----------------\n"
+		addLegacyText(base, "§4§l§m----------------§7 [§cLogin§7] §4§l§m----------------\n"
 				+ "§bBienvenue sur §6§lOlympa§b§r.\n\n");
 		TextComponent end = new TextComponent("\n\n--------------------------------------");
 		end.setColor(ChatColor.DARK_RED);

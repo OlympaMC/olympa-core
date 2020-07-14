@@ -450,7 +450,7 @@ public class MySQL {
 			olympaPlayer.saveDatas(statement);
 			statement.setLong(updatePlayerPluginDatasID, olympaPlayer.getId());
 			statement.executeUpdate();
-			System.out.println("Created plugin datas");
+			OlympaCore.getInstance().sendMessage("Données créées pour le joueur " + olympaPlayer.getName());
 		}
 		pluginSet.close();
 	}
