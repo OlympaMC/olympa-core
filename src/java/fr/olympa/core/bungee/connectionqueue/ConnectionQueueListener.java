@@ -1,6 +1,7 @@
 package fr.olympa.core.bungee.connectionqueue;
 
 import fr.olympa.core.bungee.utils.BungeeUtils;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
@@ -20,31 +21,17 @@ public class ConnectionQueueListener implements Listener {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
 		int timeToW8 = QueueHandler.add(name);
-		//		if ((timeToW8 = QueueHandler.add(name)) == -1) {
-		//			event.setCancelReason(BungeeUtils.connectScreen("&cMerci de ne pas spammer le déco/reco."));
-		//			event.setCancelled(true);
-		//			return;
-		//		}
 		while (QueueHandler.isInQueue(name)) {
 			try {
-				Thread.sleep(timeToW8 * QueueHandler.TIME_BETWEEN_2 + 1);
-			}catch (InterruptedException e) {
+				Thread.sleep(timeToW8 * QueueHandler.TIME_BETWEEN_2);
+			} catch (Exception e) {
 				e.printStackTrace();
-				event.setCancelReason(BungeeUtils.connectScreen("§cUne erreur est survenue."));
+				event.setCancelReason(TextComponent.fromLegacyText(BungeeUtils.connectScreen("§cUne erreur est survenue.")));
 				event.setCancelled(true);
 				return;
 			}
-			//if (timeToW8 > 7)
+			if (timeToW8 > 1)
 				timeToW8--;
 		}
 	}
-
-	public void blockThread(int i) {
-		try {
-			Thread.sleep(i * QueueHandler.TIME_BETWEEN_2 + 1);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
 }

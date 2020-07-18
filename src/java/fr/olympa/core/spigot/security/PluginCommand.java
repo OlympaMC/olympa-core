@@ -1,8 +1,7 @@
 package fr.olympa.core.spigot.security;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -21,7 +20,17 @@ public class PluginCommand extends OlympaCommand {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		sendMessage(Prefix.DEFAULT, "Les plugins de notre serveur sont développés par nos soins.");
-		sendMessage(Prefix.DEFAULT, "Plugins externes utilisés : §a%s", Arrays.stream(Bukkit.getPluginManager().getPlugins()).filter(x -> !x.getName().contains("Olympa")).map(x -> x.getName()).collect(Collectors.joining(", ")));
+		List<String> pluginsOlympa = new ArrayList<>();
+		List<String> plugins = new ArrayList<>();
+		for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
+			String name = p.getName();
+			if (name.contains("Olympa"))
+				pluginsOlympa.add(name);
+			else
+				plugins.add(name);
+		}
+		pluginsOlympa.addAll(plugins);
+		Prefix.NONE.sendMessage(sender, "&fPlugins (%s): %s", pluginsOlympa.size(), String.join("&7, &a", pluginsOlympa));
 		return false;
 	}
 

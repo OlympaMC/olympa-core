@@ -12,6 +12,7 @@ import fr.olympa.api.player.OlympaAccount;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.player.OlympaPlayerProvider;
+import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;
@@ -197,10 +198,10 @@ public class AccountProvider implements OlympaAccount {
 		});
 	}
 
-	public void sendModifications(OlympaPlayer olympaPlayer) {
+	public void sendGroupChanged(OlympaPlayer olympaPlayer) {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
 			try (Jedis jedis = redisAccesss.newConnection()) {
-				jedis.publish("OlympaPlayer", GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
+				jedis.publish(RedisChannel.SPIGOT_CHANGE_GROUP.toString(), GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 			}
 			redisAccesss.closeResource();
 		});
@@ -210,7 +211,7 @@ public class AccountProvider implements OlympaAccount {
 	 * Only Spigot
 	 */
 	public void sendModifications(OlympaPlayer olympaPlayer, Consumer<? super Boolean> done) {
-		this.sendModifications(olympaPlayer);
+		sendGroupChanged(olympaPlayer);
 		modificationReceive.put(olympaPlayer.getUniqueId(), done);
 		OlympaCore.getInstance().getTask().runTaskLater("waitModifications" + uuid.toString(), () -> {
 			Consumer<? super Boolean> callable = modificationReceive.get(uuid);
@@ -222,7 +223,7 @@ public class AccountProvider implements OlympaAccount {
 	public void sendModificationsReceive() {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
 			try (Jedis jedis = redisAccesss.newConnection()) {
-				jedis.publish("OlympaPlayerReceive", uuid.toString());
+				jedis.publish(RedisChannel.SPIGOT_CHANGE_GROUP_RECEIVE.toString(), uuid.toString());
 			}
 			redisAccesss.closeResource();
 		});

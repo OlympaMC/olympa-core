@@ -7,8 +7,7 @@ public class OlympaCorePermissions {
 
 	public static OlympaPermission DEV = new OlympaPermission(OlympaGroup.RESP_TECH);
 	public static OlympaPermission MAINTENANCE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
-	// TODO change to OlympaGroup.MODP
-	public static OlympaPermission GROUP_COMMAND = new OlympaPermission(OlympaGroup.FONDA, OlympaGroup.ADMIN, OlympaGroup.RESP_STAFF, OlympaGroup.RESP_TECH);
+	public static OlympaPermission GROUP_COMMAND = new OlympaPermission(OlympaGroup.FONDA, OlympaGroup.ADMIN, OlympaGroup.RESP_STAFF, OlympaGroup.RESP_TECH, OlympaGroup.MODP);
 	public static OlympaPermission BUNGEE_REDIS_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 
 	public static OlympaPermission CHAT_COMMAND = new OlympaPermission(OlympaGroup.ASSISTANT);
@@ -58,10 +57,15 @@ public class OlympaCorePermissions {
 	// TODO change to OlympaGroup.GRAPHISTE, change to OlympaGroup.ASSISTANT later
 	//public static OlympaPermission SERVER_BYPASS_MAITENANCE_SPIGOT = new OlympaPermission(OlympaGroup.PLAYER);
 
+	// USLESS PERMISSION
 	public static OlympaPermission LOBBY_COMMAND = new OlympaPermission(OlympaGroup.PLAYER);
 	public static OlympaPermission GENDER_COMMAND = new OlympaPermission(OlympaGroup.PLAYER);
 
 	public static OlympaPermission BUNGEE_LAG_COMMAND_EXTRA = new OlympaPermission(OlympaGroup.FRIEND);
 	public static OlympaPermission SPIGOT_LAG_COMMAND_EXTRA = new OlympaPermission(OlympaGroup.FRIEND);
+
+	public static OlympaPermission GAMEMODE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
+	public static OlympaPermission GAMEMODE_COMMAND_CREATIVE = new OlympaPermission(OlympaGroup.MODP);
+	public static OlympaPermission FLY_COMMAND = new OlympaPermission(OlympaGroup.MODP);
 
 }

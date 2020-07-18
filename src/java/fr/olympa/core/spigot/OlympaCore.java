@@ -24,6 +24,8 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
+import fr.olympa.core.spigot.commands.FlyCommand;
+import fr.olympa.core.spigot.commands.GamemodeCommand;
 import fr.olympa.core.spigot.commands.GenderCommand;
 import fr.olympa.core.spigot.commands.RestartCommand;
 import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
@@ -134,6 +136,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new UtilsCommand(this).register();
 		new GenderCommand(this).register();
 		new RestartCommand(this).registerPreProcess();
+		new GamemodeCommand(this).registerPreProcess();
+		new FlyCommand(this).register();
 
 		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(new DataManagmentListener(), this);
@@ -148,14 +152,14 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		pluginManager.registerEvents(new NameTagListener(), this);
 		pluginManager.registerEvents(new ScoreboardTeamListener(), this);
 		pluginManager.registerEvents(regionManager = new RegionManager(), this);
-		
+
 		try {
 			pluginManager.registerEvents(hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml")), this);
-		}catch (IOException e) {
+		} catch (IOException e) {
 			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
 			e.printStackTrace();
 		}
-		
+
 		nameTagApi = new NametagAPI(new NametagManager());
 		((NametagAPI) nameTagApi).testCompat();
 

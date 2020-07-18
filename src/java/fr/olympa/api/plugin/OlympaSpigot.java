@@ -13,7 +13,8 @@ import fr.olympa.core.spigot.redis.BungeeSendOlympaPlayerReceiver;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.redis.SendOlympaPlayerReceiver;
 import fr.olympa.core.spigot.redis.ServerNameReceiver;
-import fr.olympa.core.spigot.redis.SpigotSendOlympaPlayerReceiver;
+import fr.olympa.core.spigot.redis.SpigotGroupChangedReceiveReceiver;
+import fr.olympa.core.spigot.redis.SpigotGroupChangedReceiver;
 import redis.clients.jedis.JedisPubSub;
 
 public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCoreInterface {
@@ -108,11 +109,12 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		redisAccess = RedisAccess.init(getServerName());
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
+			RedisSpigotSend.askServerName();
 			registerRedisSub(new ServerNameReceiver(), RedisChannel.BUNGEE_SEND_SERVERNAME.name());
 			registerRedisSub(new SendOlympaPlayerReceiver(), RedisChannel.BUNGEE_ASK_SEND_OLYMPAPLAYER.name());
 			registerRedisSub(new BungeeSendOlympaPlayerReceiver(), RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name());
-			registerRedisSub(new SpigotSendOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name());
-			RedisSpigotSend.askServerName();
+			registerRedisSub(new SpigotGroupChangedReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP.name());
+			registerRedisSub(new SpigotGroupChangedReceiveReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP_RECEIVE.name());
 
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {

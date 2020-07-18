@@ -69,7 +69,7 @@ public class GroupCommand extends OlympaCommand {
 		}
 		if (args.length <= 1) {
 			TreeMap<OlympaGroup, Long> groups = olympaTarget.getGroups();
-			String targetNamePrefix = groups.firstKey().getPrefix() + olympaTarget.getName() + Prefix.INFO.getColor();
+			String targetNamePrefix = olympaTarget.getGroupPrefix() + olympaTarget.getName() + Prefix.INFO.getColor();
 			String groupString = olympaTarget.getGroupsToHumainString();
 			sendInfo("%player est dans le%s groupe%s %group."
 					.replace("%player", targetNamePrefix)
@@ -147,7 +147,6 @@ public class GroupCommand extends OlympaCommand {
 
 			if (target == null) {
 				olympaAccount.saveToDb(olympaTarget);
-
 				Consumer<? super Boolean> done = b -> {
 					if (b)
 						sendInfo("&aLe nouveau grade du joueur &2%s&a bien été reçu sur un autre serveur.", olympaTarget.getName());
