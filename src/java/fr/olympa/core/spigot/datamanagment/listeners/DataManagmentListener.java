@@ -54,6 +54,9 @@ public class DataManagmentListener implements Listener {
 		UUID uuid = event.getUniqueId();
 
 		AccountProvider olympaAccount = new AccountProvider(uuid);
+		OlympaPlayer olympa = olympaAccount.getFromCache();
+		if (olympa != null)
+			System.out.println("[REDIS] I have already data for " + olympa.getName());
 		OlympaPlayer olympaPlayer;
 		try {
 			olympaPlayer = olympaAccount.get();

@@ -46,10 +46,11 @@ import fr.olympa.core.bungee.privatemessage.PrivateMessageListener;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageToggleCommand;
 import fr.olympa.core.bungee.privatemessage.ReplyCommand;
 import fr.olympa.core.bungee.protocol.ProtocolListener;
-import fr.olympa.core.bungee.redis.AskServerNameListener;
-import fr.olympa.core.bungee.redis.PlayerGroupChangeListener;
-import fr.olympa.core.bungee.redis.ServerSwitchListener;
-import fr.olympa.core.bungee.redis.ShutdownListener;
+import fr.olympa.core.bungee.redis.receiver.SpigotOlympaPlayerReceiver;
+import fr.olympa.core.bungee.redis.receiver.SpigotGroupChangeReceiverOnBungee;
+import fr.olympa.core.bungee.redis.receiver.SpigotServerNameReceiver;
+import fr.olympa.core.bungee.redis.receiver.SpigotServerSwitchReceiver;
+import fr.olympa.core.bungee.redis.receiver.SpigotShutdownReceiver;
 import fr.olympa.core.bungee.security.BasicSecurityListener;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersListener;
@@ -272,10 +273,11 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		redisAccess = RedisAccess.init("bungee");
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
-			registerRedisSub(redisAccess, new AskServerNameListener(), RedisChannel.SPIGOT_ASK_SERVERNAME.name());
-			registerRedisSub(redisAccess, new PlayerGroupChangeListener(), RedisChannel.SPIGOT_PLAYER_HAS_GROUP_CHANGED.name());
-			registerRedisSub(redisAccess, new ShutdownListener(), RedisChannel.SPIGOT_SERVER_SHUTDOWN.name());
-			registerRedisSub(redisAccess, new ServerSwitchListener(), RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER.name());
+			registerRedisSub(redisAccess, new SpigotServerNameReceiver(), RedisChannel.SPIGOT_ASK_SERVERNAME.name());
+			registerRedisSub(redisAccess, new SpigotGroupChangeReceiverOnBungee(), RedisChannel.SPIGOT_CHANGE_GROUP.name());
+			registerRedisSub(redisAccess, new SpigotShutdownReceiver(), RedisChannel.SPIGOT_SERVER_SHUTDOWN.name());
+			registerRedisSub(redisAccess, new SpigotServerSwitchReceiver(), RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER.name());
+			registerRedisSub(redisAccess, new SpigotOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER_TO_BUNGEE.name());
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)

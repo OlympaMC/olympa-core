@@ -1,5 +1,10 @@
 package fr.olympa.core.spigot.redis;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Consumer;
+
 import org.bukkit.entity.Player;
 
 import fr.olympa.api.LinkSpigotBungee;
@@ -14,6 +19,8 @@ import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
 
 public class RedisSpigotSend {
+
+	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
 
 	public static void askServerName() {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
@@ -30,7 +37,7 @@ public class RedisSpigotSend {
 		});
 	}
 
-	public static void giveOlympaPlayer(OlympaPlayer olympaPlayer, String serverTo) {
+	public static void sendOlympaPlayerToOtherSpigot(OlympaPlayer olympaPlayer, String serverTo) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 			String serverName = OlympaCore.getInstance().getServerName();
 			jedis.publish(RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name(), serverName + ";" + serverTo + ";" + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
@@ -38,12 +45,36 @@ public class RedisSpigotSend {
 		RedisAccess.INSTANCE.disconnect();
 	}
 
-	public static void sendOlympaGroupChange(OlympaPlayer olympaPlayer, OlympaGroup groupChanged, long timestamp, ChangeType state) {
+	public static void sendOlympaPlayerToBungee(OlympaPlayer olympaPlayer, String serverTo) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
-			String serverName = OlympaCore.getInstance().getServerName();
-			jedis.publish(RedisChannel.SPIGOT_PLAYER_HAS_GROUP_CHANGED.name(), serverName + ";" + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer) + ";" + groupChanged.getId() + ":" + timestamp + ";" + state.getState());
+			jedis.publish(RedisChannel.SPIGOT_SEND_OLYMPAPLAYER_TO_BUNGEE.name(), GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 		}
 		RedisAccess.INSTANCE.disconnect();
+	}
+
+	public static void sendOlympaGroupChange(OlympaPlayer olympaPlayer, OlympaGroup groupChanged, long timestamp, ChangeType state, Consumer<? super Boolean> callable) {
+		UUID uuid = olympaPlayer.getUniqueId();
+		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
+			String serverName = OlympaCore.getInstance().getServerName();
+			jedis.publish(RedisChannel.SPIGOT_CHANGE_GROUP.name(), serverName + ";" + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer) + ";" + groupChanged.getId() + ":" + timestamp + ";" + state.getState());
+		}
+		if (callable != null) {
+			modificationReceive.put(uuid, callable);
+			OlympaCore.getInstance().getTask().runTaskLater("waitModifications" + uuid.toString(), () -> {
+				callable.accept(false);
+				modificationReceive.remove(uuid);
+			}, 3 * 20);
+		}
+		RedisAccess.INSTANCE.disconnect();
+	}
+
+	public static void sendModificationsReceive(UUID uuid) {
+		LinkSpigotBungee.Provider.link.launchAsync(() -> {
+			try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
+				jedis.publish(RedisChannel.SPIGOT_CHANGE_GROUP_RECEIVE.toString(), uuid.toString());
+			}
+			RedisAccess.INSTANCE.closeResource();
+		});
 	}
 
 	public static void sendShutdown() {

@@ -136,7 +136,9 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new UtilsCommand(this).register();
 		new GenderCommand(this).register();
 		new RestartCommand(this).registerPreProcess();
-		new GamemodeCommand(this).registerPreProcess();
+		GamemodeCommand gm = new GamemodeCommand(this);
+		gm.register();
+		gm.registerPreProcess();
 		new FlyCommand(this).register();
 
 		PluginManager pluginManager = getServer().getPluginManager();

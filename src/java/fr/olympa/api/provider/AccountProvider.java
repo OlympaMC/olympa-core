@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.groups.OlympaGroup;
@@ -12,10 +11,8 @@ import fr.olympa.api.player.OlympaAccount;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.player.OlympaPlayerProvider;
-import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
-import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
 
 public class AccountProvider implements OlympaAccount {
@@ -23,7 +20,6 @@ public class AccountProvider implements OlympaAccount {
 	private static String REDIS_KEY = "player:";
 	private static int cachePlayer = 60;
 	private static Map<UUID, OlympaPlayer> cache = new HashMap<>();
-	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
 	private static Map<Long, OlympaPlayerInformations> cachedInformations = new HashMap<>();
 
 	public static Class<? extends OlympaPlayer> playerClass = OlympaPlayerObject.class;
@@ -193,37 +189,6 @@ public class AccountProvider implements OlympaAccount {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
 			try (Jedis jedis = redisAccesss.newConnection()) {
 				jedis.set(getKey(), GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
-			}
-			redisAccesss.closeResource();
-		});
-	}
-
-	public void sendGroupChanged(OlympaPlayer olympaPlayer) {
-		LinkSpigotBungee.Provider.link.launchAsync(() -> {
-			try (Jedis jedis = redisAccesss.newConnection()) {
-				jedis.publish(RedisChannel.SPIGOT_CHANGE_GROUP.toString(), GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
-			}
-			redisAccesss.closeResource();
-		});
-	}
-
-	/*
-	 * Only Spigot
-	 */
-	public void sendModifications(OlympaPlayer olympaPlayer, Consumer<? super Boolean> done) {
-		sendGroupChanged(olympaPlayer);
-		modificationReceive.put(olympaPlayer.getUniqueId(), done);
-		OlympaCore.getInstance().getTask().runTaskLater("waitModifications" + uuid.toString(), () -> {
-			Consumer<? super Boolean> callable = modificationReceive.get(uuid);
-			callable.accept(false);
-			modificationReceive.remove(uuid);
-		}, 3 * 20);
-	}
-
-	public void sendModificationsReceive() {
-		LinkSpigotBungee.Provider.link.launchAsync(() -> {
-			try (Jedis jedis = redisAccesss.newConnection()) {
-				jedis.publish(RedisChannel.SPIGOT_CHANGE_GROUP_RECEIVE.toString(), uuid.toString());
 			}
 			redisAccesss.closeResource();
 		});

@@ -146,16 +146,16 @@ public class GroupCommand extends OlympaCommand {
 			}
 
 			if (target == null) {
-				olympaAccount.saveToDb(olympaTarget);
 				Consumer<? super Boolean> done = b -> {
 					if (b)
 						sendInfo("&aLe nouveau grade du joueur &2%s&a bien été reçu sur un autre serveur.", olympaTarget.getName());
-					else
+					else {
 						sendInfo("&aLe joueur &2%s&a n'est pas connecté, la modification a bien été prise en compte.", olympaTarget.getName());
+						MySQL.savePlayer(olympaTarget);
+					}
 				};
-				olympaAccount.sendModifications(olympaTarget, done);
+				RedisSpigotSend.sendOlympaGroupChange(oldOlympaTarget, newGroup, timestamp, state, done);
 			} else {
-				RedisSpigotSend.sendOlympaGroupChange(oldOlympaTarget, newGroup, timestamp, state);
 				OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, ChangeType.ADD, olympaTarget, newGroup));
 				olympaAccount.saveToRedis(olympaTarget);
 				olympaAccount.saveToDb(olympaTarget);

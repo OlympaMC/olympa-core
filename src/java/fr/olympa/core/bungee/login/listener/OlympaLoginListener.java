@@ -10,7 +10,6 @@ import fr.olympa.core.bungee.api.customevent.OlympaGroupChangeEvent;
 import fr.olympa.core.bungee.datamanagment.CachePlayer;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
-import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -19,7 +18,6 @@ import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent.Reason;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
-import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
@@ -115,7 +113,6 @@ public class OlympaLoginListener implements Listener {
 			}
 		}
 		ServerInfo auth = ServersConnection.getBestServer(OlympaServer.AUTH, null);
-		System.out.println("ok " + auth);
 		if (auth != null)
 			event.setTarget(auth);
 	}
@@ -130,12 +127,5 @@ public class OlympaLoginListener implements Listener {
 			if (olympaPlayer != null && olympaPlayer.isConnected() && olympaPlayer.isPremium())
 				DataHandler.removePlayer(cache);
 		}
-	}
-
-	@EventHandler
-	public void onServerSwitch(ServerSwitchEvent event) {
-		ProxiedPlayer player = event.getPlayer();
-		if (event.getFrom() != null)
-			RedisBungeeSend.askGiveOlympaPlayer(event.getFrom(), player.getServer().getInfo(), player.getUniqueId());
 	}
 }
