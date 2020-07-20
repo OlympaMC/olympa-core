@@ -67,5 +67,6 @@ public class OlympaCorePermissions {
 	public static OlympaPermission GAMEMODE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 	public static OlympaPermission GAMEMODE_COMMAND_CREATIVE = new OlympaPermission(OlympaGroup.MODP);
 	public static OlympaPermission FLY_COMMAND = new OlympaPermission(OlympaGroup.MODP);
+	public static OlympaPermission CONFIG_COMMAND = new OlympaPermission(OlympaGroup.DEV, OlympaGroup.RESP_TECH, OlympaGroup.ADMIN, OlympaGroup.FONDA);
 
 }
