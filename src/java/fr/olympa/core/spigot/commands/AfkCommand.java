@@ -28,7 +28,7 @@ public class AfkCommand extends OlympaCommand {
 		if (olympaPlayer.isAfk()) {
 			sendMessage(Prefix.DEFAULT_GOOD, "Tu es désormais &2AFK&a.");
 			NametagAPI api = (NametagAPI) OlympaCore.getInstance().getNameTagApi();
-			OlympaCore.getInstance().getNameTagApi().setSuffix(player.getName(), "&4[&cAFK&4]");
+			OlympaCore.getInstance().getNameTagApi().setSuffix(player.getName(), " §4[§cAFK§4]");
 		} else {
 			OlympaCore.getInstance().getNameTagApi().setSuffix(player.getName(), "");
 			sendMessage(Prefix.DEFAULT_GOOD, "Tu n'es plus &2AFK&a.");
