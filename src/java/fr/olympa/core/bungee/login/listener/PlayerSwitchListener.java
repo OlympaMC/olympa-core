@@ -1,8 +1,10 @@
 package fr.olympa.core.bungee.login.listener;
 
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -12,11 +14,15 @@ public class PlayerSwitchListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onServerConnect(ServerConnectEvent event) {
+		ProxiedPlayer player = event.getPlayer();
+		OlympaBungee.getInstance().sendMessage("§7ServerConnect §6" + player.getName());
 		if (event.isCancelled())
 			return;
-		ProxiedPlayer player = event.getPlayer();
-		ServerInfo server = player.getServer().getInfo();
+		Server server = player.getServer();
+		if (server == null)
+			return;
+		ServerInfo serverInfo = server.getInfo();
 		ServerInfo targetServer = event.getTarget();
-		RedisBungeeSend.askGiveOlympaPlayer(server, targetServer, player.getUniqueId());
+		RedisBungeeSend.askGiveOlympaPlayer(serverInfo, targetServer, player.getUniqueId());
 	}
 }

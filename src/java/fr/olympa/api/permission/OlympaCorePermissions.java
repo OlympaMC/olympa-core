@@ -62,7 +62,7 @@ public class OlympaCorePermissions {
 	public static OlympaPermission GENDER_COMMAND = new OlympaPermission(OlympaGroup.PLAYER);
 
 	public static OlympaPermission BUNGEE_LAG_COMMAND_EXTRA = new OlympaPermission(OlympaGroup.FRIEND);
-	public static OlympaPermission SPIGOT_LAG_COMMAND_EXTRA = new OlympaPermission(OlympaGroup.FRIEND);
+	public static OlympaPermission SPIGOT_LAG_COMMAND = new OlympaPermission(OlympaGroup.FRIEND);
 
 	public static OlympaPermission GAMEMODE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 	public static OlympaPermission GAMEMODE_COMMAND_CREATIVE = new OlympaPermission(OlympaGroup.MODP);

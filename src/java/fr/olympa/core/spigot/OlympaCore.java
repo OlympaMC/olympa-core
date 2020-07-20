@@ -28,6 +28,7 @@ import fr.olympa.core.spigot.commands.FlyCommand;
 import fr.olympa.core.spigot.commands.GamemodeCommand;
 import fr.olympa.core.spigot.commands.GenderCommand;
 import fr.olympa.core.spigot.commands.RestartCommand;
+import fr.olympa.core.spigot.commands.TpsCommand;
 import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
@@ -44,7 +45,6 @@ import fr.olympa.core.spigot.security.HelpCommand;
 import fr.olympa.core.spigot.security.PluginCommand;
 import fr.olympa.core.spigot.status.SetStatusCommand;
 import fr.olympa.core.spigot.status.StatusMotdListener;
-import fr.olympa.core.spigot.tps.TpsCommand;
 
 public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
@@ -120,12 +120,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new MySQL(database);
 		new ReportMySQL(database);
 
-		//		try {
-		//			getCommand("tell").unregister(OlympaCommand.getCommandMap());
-		//			OlympaCommand.unRegisterCommand(getCommand("restart"), getCommand("tps"), getCommand("me"));
-		//		}catch (Exception ex) {
-		//			ex.printStackTrace();
-		//		}
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();
 		new ReportCommand(this).register();

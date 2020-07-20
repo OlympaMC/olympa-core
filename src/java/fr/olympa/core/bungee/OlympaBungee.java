@@ -38,6 +38,7 @@ import fr.olympa.core.bungee.login.commands.RegisterCommand;
 import fr.olympa.core.bungee.login.listener.FailsPasswordEvent;
 import fr.olympa.core.bungee.login.listener.LoginChatListener;
 import fr.olympa.core.bungee.login.listener.OlympaLoginListener;
+import fr.olympa.core.bungee.login.listener.PlayerSwitchListener;
 import fr.olympa.core.bungee.maintenance.MaintenanceCommand;
 import fr.olympa.core.bungee.maintenance.MaintenanceListener;
 import fr.olympa.core.bungee.motd.MotdListener;
@@ -46,8 +47,8 @@ import fr.olympa.core.bungee.privatemessage.PrivateMessageListener;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageToggleCommand;
 import fr.olympa.core.bungee.privatemessage.ReplyCommand;
 import fr.olympa.core.bungee.protocol.ProtocolListener;
-import fr.olympa.core.bungee.redis.receiver.SpigotOlympaPlayerReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotGroupChangeReceiverOnBungee;
+import fr.olympa.core.bungee.redis.receiver.SpigotOlympaPlayerReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotServerNameReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotServerSwitchReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotShutdownReceiver;
@@ -183,6 +184,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		pluginManager.registerListener(this, new TabTextListener());
 		pluginManager.registerListener(this, new BungeeCommandListener());
 		pluginManager.registerListener(this, new ConnectionQueueListener());
+		pluginManager.registerListener(this, new PlayerSwitchListener());
 
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();
