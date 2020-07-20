@@ -70,7 +70,7 @@ public class ServersConnection {
 
 	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer) {
 		removeTryToConnect(player);
-		connect.put(player.getUniqueId(), ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer), 0, 30, TimeUnit.SECONDS));
+		connect.put(player.getUniqueId(), ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer), 0, 20, TimeUnit.SECONDS));
 	}
 
 	@SuppressWarnings("deprecation")

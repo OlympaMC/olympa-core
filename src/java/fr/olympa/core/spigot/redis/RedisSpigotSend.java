@@ -38,11 +38,13 @@ public class RedisSpigotSend {
 	}
 
 	public static void sendOlympaPlayerToOtherSpigot(OlympaPlayer olympaPlayer, String serverTo) {
-		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
-			String serverName = OlympaCore.getInstance().getServerName();
-			jedis.publish(RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name(), serverName + ";" + serverTo + ";" + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
-		}
-		RedisAccess.INSTANCE.disconnect();
+		LinkSpigotBungee.Provider.link.launchAsync(() -> {
+			try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
+				String serverName = OlympaCore.getInstance().getServerName();
+				jedis.publish(RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name(), serverName + ";" + serverTo + ";" + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
+			}
+			RedisAccess.INSTANCE.disconnect();
+		});
 	}
 
 	public static void sendOlympaPlayerToBungee(OlympaPlayer olympaPlayer, String serverTo) {

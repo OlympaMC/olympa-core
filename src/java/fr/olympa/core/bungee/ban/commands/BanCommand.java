@@ -39,10 +39,11 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 
 	@Override
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-		if (args.length == 1) {
+		switch (args.length) {
+		case 1:
 			List<String> postentielNames = Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
 			return postentielNames;
-		} else if (args.length == 2) {
+		case 2:
 			/*
 			 * String i = new String(); java.util.regex.Matcher matcher =
 			 * Pattern.compile("[0-9]+").matcher(args[1]); if (matcher.find()) { i =
@@ -54,10 +55,11 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 					for (int i = 0; i < 20; i++)
 						units.add(i + u);
 			return Utils.startWords(args[1], units);
-		} else if (args.length == 3) {
+		case 3:
 			List<String> reasons = Arrays.asList("Cheat", "Insulte", "Provocation", "Spam", "Harcèlement");
 			return Utils.startWords(args[2], reasons);
+		default:
+			return new ArrayList<>();
 		}
-		return new ArrayList<>();
 	}
 }

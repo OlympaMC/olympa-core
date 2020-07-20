@@ -24,6 +24,8 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
+import fr.olympa.core.spigot.commands.AfkCommand;
+import fr.olympa.core.spigot.commands.ConfigCommand;
 import fr.olympa.core.spigot.commands.FlyCommand;
 import fr.olympa.core.spigot.commands.GamemodeCommand;
 import fr.olympa.core.spigot.commands.GenderCommand;
@@ -134,6 +136,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		gm.register();
 		gm.registerPreProcess();
 		new FlyCommand(this).register();
+		new AfkCommand(this).register();
+		new ConfigCommand(this).register();
 
 		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(new DataManagmentListener(), this);

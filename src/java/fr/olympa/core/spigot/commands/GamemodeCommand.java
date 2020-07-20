@@ -84,7 +84,7 @@ public class GamemodeCommand extends OlympaCommand {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		Player target = player;
 		Gm gm = null;
-		if (label.startsWith("gm"))
+		if (!label.equals("gm") && label.startsWith("gm"))
 			gm = Gm.getByStartWith(label.substring(2));
 		if (gm == null)
 			if (args.length == 0 || (gm = Gm.get(args[0])) == null) {
