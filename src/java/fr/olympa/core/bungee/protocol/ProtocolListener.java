@@ -18,8 +18,8 @@ public class ProtocolListener implements Listener {
 		}
 		PendingConnection connection = event.getConnection();
 		ProtocolAPI protocolApi = ProtocolAPI.get(connection.getVersion());
-		if (protocolApi == null || !protocolApi.isAllow()) {
-			event.setCancelReason(BungeeUtils.connectScreen("&cLa version que tu utilise n'est pas compatible avec le serveur.\n&4Utilise la &lversion 1.9 à 1.15.2&4."));
+		if (protocolApi == null || !protocolApi.isAllowed()) {
+			event.setCancelReason(BungeeUtils.connectScreen("&cLa version que tu utilise n'est pas compatible avec le serveur.\n&4Utilise la &lversion " + ProtocolAPI.getFirstVersion().getName() + " à " + ProtocolAPI.getLastVersion().getName() + "&4."));
 			event.setCancelled(true);
 		}
 	}

@@ -35,7 +35,7 @@ public class TabText {
 	private static String getHeader() {
 		StringJoiner sj = new StringJoiner("\n");
 		sj.add("&e&lOlympa &eΩ");
-		sj.add("&6Versions 1.9 à 1.15");
+		sj.add("&6Versions 1.9 à 1.16");
 		return ColorUtils.color(sj.toString());
 
 	}
