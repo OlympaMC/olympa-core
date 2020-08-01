@@ -10,7 +10,6 @@ import fr.olympa.core.bungee.ban.SanctionManager;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.HandlerLogin;
-import fr.olympa.core.bungee.login.Passwords;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
@@ -19,7 +18,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 @SuppressWarnings("deprecation")
 public class LoginCommand extends BungeeCommand {
-	
+
 	public LoginCommand(Plugin plugin) {
 		super(plugin, "login", "log", "l");
 		usageString = "<mot de passe>";
@@ -30,7 +29,7 @@ public class LoginCommand extends BungeeCommand {
 		for (String aliase : aliases)
 			HandlerLogin.command.add(aliase);
 	}
-	
+
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		if (!DataHandler.isUnlogged(proxiedPlayer)) {
@@ -45,7 +44,7 @@ public class LoginCommand extends BungeeCommand {
 			sendError("Tu n'as pas de mot de passe. Pour le créer, fais &4/register <mot de passe>&c.");
 			return;
 		}
-		
+
 		if (args.length == 0 || args.length > 2) {
 			sendUsage();
 			return;
@@ -55,9 +54,6 @@ public class LoginCommand extends BungeeCommand {
 			sendUsage();
 			return;
 		}
-
-		System.out.println("playerPasswordHash: " + olympaPlayer.getPassword());
-		System.out.println("tryPasswordHash: " + Passwords.getSHA512(args[0]));
 		if (!olympaPlayer.isSamePassword(args[0])) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Mot de passe incorrect, rééssaye.");
 			String ip = proxiedPlayer.getAddress().getAddress().getHostAddress();
