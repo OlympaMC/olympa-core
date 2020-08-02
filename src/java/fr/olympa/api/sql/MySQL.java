@@ -220,6 +220,7 @@ public class MySQL {
 	 * @throws SQLException
 	 */
 	public static OlympaPlayer getPlayer(UUID playerUUID) throws SQLException {
+
 		OlympaPlayer olympaPlayer = null;
 		PreparedStatement statement = getPlayerByUUIDServerStatement.getStatement();
 		statement.setString(1, playerUUID.toString());
