@@ -187,7 +187,7 @@ database:
       host: localhost
       port: 3306
       user: minecraft
-      password: xANlb20FmQCkofyZ4oPLgKFIX1CYuy8n7nmP9tGUkZu95M11HD
+      password: AaYRqyRSrI2MLUs9L7Rv
       database: server
 default:
    noperm: '&cTu n''as pas la permission &l(◑_◑)'
