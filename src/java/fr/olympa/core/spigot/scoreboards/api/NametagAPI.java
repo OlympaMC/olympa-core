@@ -91,14 +91,13 @@ public final class NametagAPI implements INametagApi {
 	public boolean testCompat() {
 		PacketWrapper wrapper = new PacketWrapper("TEST", "&f", "", 0, new ArrayList<>());
 		wrapper.send();
-		if (wrapper.error == null) {
+		if (wrapper.error == null)
 			return true;
-		}
 		Bukkit.getLogger().severe(new StringBuilder()
 				.append("\n------------------------------------------------------\n")
 				.append("[WARNING] ScoreboardTeam").append(" Failed to load! [WARNING]")
 				.append("\n------------------------------------------------------")
-				.append("\nThis might be an issue with reflection. REPORT this:\n> ")
+				.append("\nThis might be an issue with reflection:\n> ")
 				.append(wrapper.error)
 				.append("\n\n------------------------------------------------------")
 				.toString());
