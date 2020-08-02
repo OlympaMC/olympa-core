@@ -63,7 +63,7 @@ public class LoginCommand extends BungeeCommand {
 			else if (timeFails < 3)
 				HandlerLogin.timesFails.put(ip, ++timeFails);
 			else if (timeFails < 10)
-				proxiedPlayer.disconnect(BungeeUtils.connectScreen("Tu as fait trop de tentatives de mot de passe."));
+				proxiedPlayer.disconnect(BungeeUtils.connectScreen("Tu as fais trop de tentatives de mot de passe."));
 			else
 				try {
 					SanctionManager.addAndApply(OlympaSanctionType.BANIP, OlympaConsole.getUniqueId(), ip, "Trop de tentatives de mot de passe.", Utils.getCurrentTimeInSeconds() + 60 * 60 * 60);

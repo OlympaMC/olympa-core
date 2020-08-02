@@ -100,7 +100,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 				proxiedPlayer = (ProxiedPlayer) sender;
 				olympaPlayer = new AccountProvider(proxiedPlayer.getUniqueId()).getFromRedis();
 				if (!bypassAuth && DataHandler.isUnlogged(proxiedPlayer)) {
-					sendError("Tu dois être connecté. Fait &4/login <mdp>&c.");
+					sendError("Tu dois être connecté. Fais &4/login <mdp>&c.");
 					return;
 				}
 
@@ -114,7 +114,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 						return;
 					}
 				}
-			}else {
+			} else {
 				proxiedPlayer = null;
 				olympaPlayer = null;
 				if (!allowConsole) {

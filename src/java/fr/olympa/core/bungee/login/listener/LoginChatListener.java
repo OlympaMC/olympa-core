@@ -48,7 +48,7 @@ public class LoginChatListener implements Listener {
 
 		joinMessageCrackCreated = base.duplicate();
 		link = new TextComponent();
-		addLegacyText(link, "§aTon mot de passe est le même sur le site et le forum.\n§aFait §2/login <mot de passe>§a ou §2clique ici §aet écris ton mot de passe.");
+		addLegacyText(link, "§aTon mot de passe est le même sur le site et le forum.\n§aFais §2/login <mot de passe>§a ou §2clique ici §aet écris ton mot de passe.");
 		link.setHoverEvent(hoverTooltip);
 		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/login "));
 		joinMessageCrackCreated.addExtra(link);

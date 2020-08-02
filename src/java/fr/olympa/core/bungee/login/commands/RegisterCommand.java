@@ -18,7 +18,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class RegisterCommand extends BungeeCommand {
-	
+
 	public RegisterCommand(Plugin plugin) {
 		super(plugin, "register", "reg", "enregistrement");
 		usageString = "<mot de passe>";
@@ -29,7 +29,7 @@ public class RegisterCommand extends BungeeCommand {
 		for (String aliase : aliases)
 			HandlerLogin.command.add(aliase);
 	}
-	
+
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		olympaPlayer = getOlympaPlayer();
@@ -37,10 +37,10 @@ public class RegisterCommand extends BungeeCommand {
 			sendImpossibleWithOlympaPlayer();
 		String playerPasswordHash = olympaPlayer.getPassword();
 		if (playerPasswordHash != null) {
-			sendError("Tu as déjà un mot de passe. Pour le changer, fait &4/passwd <ancien mot de passe> <nouveau mot de passe>&c.");
+			sendError("Tu as déjà un mot de passe. Pour le changer, fais &4/passwd <ancien mot de passe> <nouveau mot de passe>&c.");
 			return;
 		}
-		
+
 		if (args.length == 0) {
 			this.sendMessage(Prefix.DEFAULT_GOOD, "Cette commande permet de choisir un mot de passe pour son compte Olympa. Valable sur notre site, forum, et minecraft (obligatoire si version non premium).");
 			return;
@@ -85,8 +85,8 @@ public class RegisterCommand extends BungeeCommand {
 			if (olympaPlayerLoginEvent.cancelIfNeeded())
 				return;
 			this.sendMessage(Prefix.DEFAULT_GOOD, "Bravo ! Tu peux désormais utiliser ce mot de passe sur notre site et forum.");
-			
+
 		}
 	}
-	
+
 }
