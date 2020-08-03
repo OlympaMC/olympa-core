@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import fr.olympa.api.sql.DbConnection;
 
 public class VpnSql {
-	private static String tableName = "vpn";
+	private static String tableName = "commun.vpn";
 	private static DbConnection dbConnection;
 
 	public static boolean addIp(OlympaVpn olympaVpn) throws SQLException {
@@ -23,11 +23,10 @@ public class VpnSql {
 			pstate.setInt(i++, olympaVpn.isMobile() ? 1 : 0);
 			pstate.setInt(i++, olympaVpn.isHosting() ? 1 : 0);
 			Map<String, Boolean> users = olympaVpn.getUsers();
-			if (users.isEmpty()) {
+			if (users.isEmpty())
 				pstate.setString(i++, null);
-			} else {
+			else
 				pstate.setString(i++, users.entrySet().stream().map(entry -> entry.getKey() + (entry.getValue() == true ? ":1" : "")).collect(Collectors.joining("")));
-			}
 			pstate.setString(i++, olympaVpn.getCountry());
 			pstate.setString(i++, olympaVpn.getCity());
 			pstate.setString(i++, olympaVpn.getOrg());
@@ -70,9 +69,8 @@ public class VpnSql {
 		OlympaVpn info = null;
 		Statement state = dbConnection.getConnection().createStatement();
 		ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE ip = '" + ip + "';");
-		if (resultSet.next()) {
+		if (resultSet.next())
 			info = getInfo(resultSet);
-		}
 		state.close();
 		return info;
 	}
@@ -85,11 +83,10 @@ public class VpnSql {
 		pstate.setInt(i++, olympaVpn.isMobile() ? 1 : 0);
 		pstate.setInt(i++, olympaVpn.isHosting() ? 1 : 0);
 		Map<String, Boolean> users = olympaVpn.getUsers();
-		if (users.isEmpty()) {
+		if (users.isEmpty())
 			pstate.setString(i++, null);
-		} else {
+		else
 			pstate.setString(i++, users.entrySet().stream().map(entry -> entry.getKey() + (entry.getValue() == true ? ":1" : "")).collect(Collectors.joining("")));
-		}
 		pstate.setString(i++, olympaVpn.getCountry());
 		pstate.setString(i++, olympaVpn.getCity());
 		pstate.setString(i++, olympaVpn.getOrg());

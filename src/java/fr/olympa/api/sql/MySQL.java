@@ -63,7 +63,7 @@ public class MySQL {
 	// Pour pas surcharger les requettes MySQL
 	// TODO -> cache redis pour le cache multi-server
 	static Set<String> allPlayersNamesCache = null;
-
+	
 	public static Set<String> getAllPlayersNames() {
 		if (allPlayersNamesCache != null)
 			return allPlayersNamesCache;
@@ -104,29 +104,24 @@ public class MySQL {
 	private static OlympaStatement updatePlayerPluginDatas;
 	private static int updatePlayerPluginDatasID;
 
-	public static OlympaPlayer getOlympaPlayer(ResultSet resultSet) {
-		try {
-			String uuidPremiumString = resultSet.getString("uuid_premium");
-			UUID uuidPremium = null;
-			if (uuidPremiumString != null)
-				uuidPremium = Utils.getUUID(uuidPremiumString);
-			OlympaPlayer player = AccountProvider.playerProvider.create(Utils.getUUID(resultSet.getString("uuid_server")), resultSet.getString("pseudo"), resultSet.getString("ip"));
-			player.loadSavedDatas(
-					resultSet.getLong("id"),
-					uuidPremium,
-					resultSet.getString("groups"),
-					resultSet.getDate("created").getTime() / 1000L,
-					resultSet.getTimestamp("last_connection").getTime() / 1000L,
-					resultSet.getString("password"),
-					resultSet.getString("email"),
-					Gender.get(resultSet.getInt("gender")),
-					resultSet.getString("name_history"),
-					resultSet.getString("ip_history"));
-			return player;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public static OlympaPlayer getOlympaPlayer(ResultSet resultSet) throws SQLException {
+		String uuidPremiumString = resultSet.getString("uuid_premium");
+		UUID uuidPremium = null;
+		if (uuidPremiumString != null)
+			uuidPremium = Utils.getUUID(uuidPremiumString);
+		OlympaPlayer player = AccountProvider.playerProvider.create(Utils.getUUID(resultSet.getString("uuid_server")), resultSet.getString("pseudo"), resultSet.getString("ip"));
+		player.loadSavedDatas(
+				resultSet.getLong("id"),
+				uuidPremium,
+				resultSet.getString("groups"),
+				resultSet.getDate("created").getTime() / 1000L,
+				resultSet.getTimestamp("last_connection").getTime() / 1000L,
+				resultSet.getString("password"),
+				resultSet.getString("email"),
+				Gender.get(resultSet.getInt("gender")),
+				resultSet.getString("name_history"),
+				resultSet.getString("ip_history"));
+		return player;
 	}
 
 	public static void setDatasTable(String tableName, Map<String, String> columns) throws SQLException {
