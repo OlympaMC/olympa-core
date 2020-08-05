@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -125,15 +126,34 @@ public class MySQL {
 	}
 
 	public static void setDatasTable(String tableName, Map<String, String> columns) throws SQLException {
-		StringJoiner creationJoiner = new StringJoiner(", ", "CREATE TABLE IF NOT EXISTS " + tableName + " (", ")");
-		creationJoiner.add("`player_id` BIGINT NOT NULL");
-		for (Entry<String, String> column : columns.entrySet())
-			creationJoiner.add("`" + column.getKey() + "` " + column.getValue());
-		creationJoiner.add("PRIMARY KEY (`player_id`)");
-		OlympaCore.getInstance().getDatabase().createStatement().executeUpdate(creationJoiner.toString());
+		Statement statement = OlympaCore.getInstance().getDatabase().createStatement();
+		
+		ResultSet columnsSet = OlympaCore.getInstance().getDatabase().getMetaData().getColumns(null, null, tableName, "%");
+		if (columnsSet.first()) { // la table existe : il faut vérifier si toutes les colonnes sont présentes
+			Map<String, String> missingColumns = new HashMap<>(columns);
+			while (columnsSet.next()) {
+				String columnName = columnsSet.getString(4);
+				if (missingColumns.remove(columnName) == null) {
+					OlympaCore.getInstance().sendMessage("§cColonne " + columnName + " présente dans la table " + tableName + " mais pas dans la déclaration des données joueurs.");
+				}
+			}
+			for (Entry<String, String> column : missingColumns.entrySet()) {
+				String columnValue = "`" + column.getKey() + "` " + column.getValue();
+				statement.executeUpdate("ALTER TABLE `" + tableName + "` ADD " + columnValue);
+				OlympaCore.getInstance().sendMessage("La colonne §6" + columnValue + " §ea été créée dans la table de données joueurs §6" + tableName + "§e.");
+			}
+		}else { // la table n'existe pas : il faut la créer
+			StringJoiner creationJoiner = new StringJoiner(", ", "CREATE TABLE IF NOT EXISTS `" + tableName + "` (", ")");
+			creationJoiner.add("`player_id` BIGINT NOT NULL");
+			for (Entry<String, String> column : columns.entrySet())
+				creationJoiner.add("`" + column.getKey() + "` " + column.getValue());
+			creationJoiner.add("PRIMARY KEY (`player_id`)");
+			statement.executeUpdate(creationJoiner.toString());
+			OlympaCore.getInstance().sendMessage("Table des données joueurs §6" + tableName + " §ecréée !");
+		}
 
-		StringJoiner updateJoiner = new StringJoiner(", ", "UPDATE " + tableName + " SET ", " WHERE `player_id` = ?");
-		StringJoiner insertJoinerKeys = new StringJoiner(", ", "INSERT INTO " + tableName + " (", " )");
+		StringJoiner updateJoiner = new StringJoiner(", ", "UPDATE `" + tableName + "` SET ", " WHERE `player_id` = ?");
+		StringJoiner insertJoinerKeys = new StringJoiner(", ", "INSERT INTO `" + tableName + "` (", " )");
 		StringJoiner insertJoinerValues = new StringJoiner(", ", " VALUES (", " )");
 		for (String columnName : columns.keySet()) {
 			updateJoiner.add("`" + columnName + "` = ?");
@@ -146,7 +166,10 @@ public class MySQL {
 		updatePlayerPluginDatasID = columns.size() + 1;
 		insertPlayerPluginDatas = new OlympaStatement(insertJoinerKeys.toString() + insertJoinerValues.toString());
 
-		getPlayerPluginDatas = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `player_id` = ?");
+		getPlayerPluginDatas = new OlympaStatement("SELECT * FROM `" + tableName + "` WHERE `player_id` = ?");
+		
+		statement.close();
+		OlympaCore.getInstance().sendMessage("La table §6" + tableName + " §egère les données joueurs.");
 	}
 
 	private static OlympaStatement getPlayerInformationsByIdStatement = new OlympaStatement("SELECT `pseudo`, `uuid_server` FROM " + tableName + " WHERE `id` = ?");
