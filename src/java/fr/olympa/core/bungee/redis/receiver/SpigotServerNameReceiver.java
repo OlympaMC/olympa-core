@@ -13,8 +13,18 @@ public class SpigotServerNameReceiver extends JedisPubSub {
 		super.onMessage(channel, message);
 		ServerInfo serverInfo = ServersConnection.getServerByNameOrIpPort(message);
 		if (serverInfo != null) {
-			MonitorServers.updateServer(serverInfo, true);
 			RedisBungeeSend.sendServerName(serverInfo);
+			MonitorServers.updateServer(serverInfo, true/*, t -> {
+														
+														J'ai essayé de connecter directement les joueurs qui sont en file d'attente
+														ServersConnection.connect.entrySet().stream().filter(r -> MonitorServers.getServers(((QueueSpigotTask) r.getValue()).getOlympaServer())
+														.values().stream().anyMatch(o -> o.getServerInfo().getName().equals(serverInfo.getName()))).forEach(entry -> {
+														ProxiedPlayer player = ProxyServer.getInstance().getPlayer(entry.getKey());
+														player.connect(serverInfo);
+														ServersConnection.removeTryToConnect(player);
+														});
+														
+														}*/);
 		}
 	}
 }

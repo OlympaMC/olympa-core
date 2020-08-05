@@ -1,7 +1,6 @@
 package fr.olympa.core.bungee.datamanagment;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -189,6 +188,15 @@ public class AuthListener implements Listener {
 			// Si le joueur ne s'est jamais connecté
 			try {
 				UUID uuidCrack = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes("UTF-8"));
+
+				// Vérifie que l'uuid n'est pas déjà utiliser
+				OlympaPlayer uuidAlreadyExist = MySQL.getPlayer(uuidCrack);
+				if (uuidAlreadyExist != null)
+					do {
+						uuidCrack = UUID.randomUUID();
+						uuidAlreadyExist = MySQL.getPlayer(uuidCrack);
+					} while (uuidAlreadyExist != null);
+
 				olympaAccount = new AccountProvider(uuidCrack);
 				olympaPlayer = olympaAccount.createOlympaPlayer(name, ip);
 				BungeeNewPlayerEvent newPlayerEvent = ProxyServer.getInstance().getPluginManager().callEvent(new BungeeNewPlayerEvent(connection, olympaPlayer));
@@ -202,7 +210,7 @@ public class AuthListener implements Listener {
 					olympaPlayer.setPremiumUniqueId(uuidPremium);
 				olympaPlayer = olympaAccount.createNew(olympaPlayer);
 				cache.setOlympaPlayer(olympaPlayer);
-			} catch (SQLException | UnsupportedEncodingException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#UTF8BungeeCantCreateNew"));
 				event.setCancelled(true);

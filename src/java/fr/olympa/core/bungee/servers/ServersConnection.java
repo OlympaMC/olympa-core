@@ -22,7 +22,7 @@ import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 public class ServersConnection {
 
-	private static Map<UUID, ScheduledTask> connect = new HashMap<>();
+	public static Map<UUID, ScheduledTask> connect = new HashMap<>();
 
 	public static boolean canPlayerConnect(ServerInfo server) {
 		MonitorInfo monitor = MonitorServers.getMonitor(server);
@@ -70,7 +70,7 @@ public class ServersConnection {
 
 	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer) {
 		removeTryToConnect(player);
-		connect.put(player.getUniqueId(), ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> tryConnectTo(player, olympaServer), 0, 20, TimeUnit.SECONDS));
+		connect.put(player.getUniqueId(), ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), new QueueSpigotTask(player, olympaServer), 0, 20, TimeUnit.SECONDS));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -85,7 +85,7 @@ public class ServersConnection {
 		}
 		String serverName = Utils.capitalize(server.getName());
 		if (!canPlayerConnect(server)) {
-			TextComponent text = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu es en file d'attente pour rejoindre le serveur &4" + serverName + "&c...")));
+			TextComponent text = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu dans la file d'attente du &4" + serverName + "&c...")));
 			text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(BungeeUtils.color("&cClique ici pour sortir de la file d'attente"))));
 			text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/leavequeue"));
 			player.sendMessage(text);
