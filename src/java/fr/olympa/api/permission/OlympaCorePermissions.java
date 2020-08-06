@@ -7,7 +7,7 @@ public class OlympaCorePermissions {
 
 	public static OlympaPermission DEV = new OlympaPermission(OlympaGroup.RESP_TECH);
 	public static OlympaPermission MAINTENANCE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
-	public static OlympaPermission GROUP_COMMAND = new OlympaPermission(OlympaGroup.FONDA, OlympaGroup.ADMIN, OlympaGroup.RESP_STAFF, OlympaGroup.RESP_TECH, OlympaGroup.MODP);
+	public static OlympaPermission GROUP_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.RESP_STAFF });
 	public static OlympaPermission BUNGEE_REDIS_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 
 	public static OlympaPermission CHAT_COMMAND = new OlympaPermission(OlympaGroup.ASSISTANT);
@@ -51,9 +51,9 @@ public class OlympaCorePermissions {
 	public static OlympaPermission INFO_COMMAND_EXTRA = new OlympaPermission(OlympaGroup.RESP_TECH);
 	public static OlympaPermission STAFF_CHAT = new OlympaPermission(OlympaGroup.GRAPHISTE);
 
-	public static OlympaPermission SERVER_LIST_COMMAND = new OlympaPermission(OlympaGroup.DEV, OlympaGroup.RESP_TECH, OlympaGroup.ADMIN, OlympaGroup.FONDA);
-	public static OlympaPermission SERVER_START_COMMAND = new OlympaPermission(OlympaGroup.DEV, OlympaGroup.RESP_TECH, OlympaGroup.ADMIN, OlympaGroup.FONDA);
-	public static OlympaPermission SERVER_RESTART_COMMAND = new OlympaPermission(OlympaGroup.DEV, OlympaGroup.RESP_TECH, OlympaGroup.ADMIN, OlympaGroup.FONDA);
+	public static OlympaPermission SERVER_LIST_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
+	public static OlympaPermission SERVER_START_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
+	public static OlympaPermission SERVER_RESTART_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	// TODO change to OlympaGroup.GRAPHISTE, change to OlympaGroup.ASSISTANT later
 	//public static OlympaPermission SERVER_BYPASS_MAITENANCE_SPIGOT = new OlympaPermission(OlympaGroup.PLAYER);
 
@@ -67,6 +67,6 @@ public class OlympaCorePermissions {
 	public static OlympaPermission GAMEMODE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 	public static OlympaPermission GAMEMODE_COMMAND_CREATIVE = new OlympaPermission(OlympaGroup.MODP);
 	public static OlympaPermission FLY_COMMAND = new OlympaPermission(OlympaGroup.MODP);
-	public static OlympaPermission CONFIG_COMMAND = new OlympaPermission(OlympaGroup.DEV, OlympaGroup.RESP_TECH, OlympaGroup.ADMIN, OlympaGroup.FONDA);
+	public static OlympaPermission CONFIG_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 
 }
