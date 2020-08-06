@@ -5,7 +5,8 @@ import fr.olympa.core.bungee.api.permission.OlympaBungeePermission;
 
 public class OlympaCorePermissions {
 
-	public static final OlympaPermission DEV = new OlympaPermission(OlympaGroup.RESP_TECH);
+	public static final OlympaPermission DISCORD_BOT = new OlympaPermission(OlympaGroup.RESP_TECH, true);
+	public static final OlympaPermission PERMISSION_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV }, true);
 	public static final OlympaPermission MAINTENANCE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 	public static final OlympaPermission GROUP_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.RESP_STAFF });
 	public static final OlympaPermission BUNGEE_REDIS_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
@@ -33,6 +34,7 @@ public class OlympaCorePermissions {
 	public static final OlympaPermission BAN_BYPASS_BAN = new OlympaBungeePermission(OlympaGroup.BUILDER);
 
 	public static final OlympaPermission UTILS_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
+	public static final OlympaPermission GETUUID_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 
 	public static final OlympaPermission SERVER_SWITCH_COMMAND = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 

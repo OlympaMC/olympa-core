@@ -15,7 +15,7 @@ import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
 public class AfkCommand extends OlympaCommand {
 
 	public AfkCommand(Plugin plugin) {
-		super(plugin, "afk", "Permet de se mettre AFK");
+		super(plugin, "afk", "Permet de se mettre AFK", null, new String[] {});
 		allowConsole = false;
 	}
 

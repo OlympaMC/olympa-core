@@ -12,11 +12,11 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class GetUUIDCommand extends BungeeCommand {
 
 	public GetUUIDCommand(Plugin plugin) {
-		super(plugin, "getuuid", OlympaCorePermissions.DEV);
-		this.minArg = 1;
-		this.usageString = "[joueur]";
-		this.description = "Donne l'uuid serveur d'un pseudo";
-		this.allowConsole = true;
+		super(plugin, "getuuid", OlympaCorePermissions.GETUUID_COMMAND);
+		minArg = 1;
+		usageString = "[joueur]";
+		description = "Donne l'uuid serveur d'un pseudo";
+		allowConsole = true;
 	}
 
 	@Override

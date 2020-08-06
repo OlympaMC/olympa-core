@@ -29,6 +29,7 @@ import fr.olympa.core.spigot.commands.ConfigCommand;
 import fr.olympa.core.spigot.commands.FlyCommand;
 import fr.olympa.core.spigot.commands.GamemodeCommand;
 import fr.olympa.core.spigot.commands.GenderCommand;
+import fr.olympa.core.spigot.commands.PermissionCommand;
 import fr.olympa.core.spigot.commands.RestartCommand;
 import fr.olympa.core.spigot.commands.TpsCommand;
 import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
@@ -138,6 +139,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new FlyCommand(this).register();
 		new AfkCommand(this).register();
 		new ConfigCommand(this).register();
+		new PermissionCommand(this).register();
 
 		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(new DataManagmentListener(), this);
