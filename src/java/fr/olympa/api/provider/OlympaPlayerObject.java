@@ -29,7 +29,7 @@ import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.login.Passwords;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings("unchecked") 
 public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	public static class OlympaPlayerDeserializer implements JsonDeserializer<OlympaPlayer> {
