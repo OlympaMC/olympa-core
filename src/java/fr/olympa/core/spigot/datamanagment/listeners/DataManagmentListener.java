@@ -116,6 +116,8 @@ public class DataManagmentListener implements Listener {
 			try {
 				MySQL.loadPlayerPluginDatas(olympaPlayer);
 
+				olympaPlayer.getGroups().keySet().forEach(group -> group.giveBukkitPermissions(player));
+				
 				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
 				Bukkit.getPluginManager().callEvent(loginevent);
 			} catch (SQLException e) {
