@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.complex.Cmd;
@@ -41,6 +43,20 @@ public class PermissionCommand extends ComplexCommand {
 			sendError("Le groupe &4%s&c n'existe pas", arg);
 			return null;
 		});
+	}
+
+	@Override
+	public boolean noArguments(CommandSender sender) {
+		if (sender instanceof Player) {
+			Collection<OlympaPermission> allPerms = OlympaPermission.permissions.values();
+			List<String> noPermission = OlympaPermission.permissions.entrySet().stream().filter(entry -> !hasPermission(entry.getValue())).map(Entry::getKey).collect(Collectors.toList());
+
+			sendMessage(Prefix.DEFAULT_GOOD, "Tu as %s permission%s sur %s.", allPerms.size() - noPermission.size(), noPermission.size() > 1 ? "s" : "", allPerms.size());
+			if (!noPermission.isEmpty())
+				sendMessage(Prefix.DEFAULT_BAD, "Il te manque l%s permission%s :\n&6%s", noPermission.size() > 1 ? "es" : "a", noPermission.size() > 1 ? "s" : "", String.join("&e, &6", noPermission));
+			return true;
+		}
+		return false;
 	}
 
 	@Cmd(args = { "PERMISSION" })

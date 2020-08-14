@@ -1,5 +1,6 @@
 package fr.olympa.core.spigot.redis.receiver;
 
+import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.JedisPubSub;
 
@@ -18,6 +19,8 @@ public class BungeeServerNameReceiver extends JedisPubSub {
 		if (ip.equals(serverIp) && port == serverPort) {
 			core.setServerName(serverName);
 			this.unsubscribe();
+			RedisAccess.INSTANCE.getConnection().clientSetname("Olympa_" + serverName);
+			//			RedisAccess.INSTANCE.disconnect();
 		}
 	}
 }
