@@ -29,7 +29,7 @@ import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.login.Passwords;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings("unchecked") 
 public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	public static class OlympaPlayerDeserializer implements JsonDeserializer<OlympaPlayer> {
@@ -38,36 +38,48 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		public OlympaPlayerObject deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 			JsonObject object = json.getAsJsonObject();
 			OlympaPlayerObject player = (OlympaPlayerObject) AccountProvider.playerProvider.create(context.deserialize(object.get("uuid"), UUID.class), object.get("name").getAsString(), object.get("ip").getAsString());
-			if (object.has("afk"))
+			if (object.has("afk")) {
 				player.afk = object.get("afk").getAsBoolean();
-			if (object.has("email"))
+			}
+			if (object.has("email")) {
 				player.email = object.get("email").getAsString();
-			if (object.has("firstConnection"))
+			}
+			if (object.has("firstConnection")) {
 				player.firstConnection = object.get("firstConnection").getAsLong();
-			if (object.has("gender"))
+			}
+			if (object.has("gender")) {
 				player.gender = context.deserialize(object.get("gender"), Gender.class);
-			if (object.has("groups"))
+			}
+			if (object.has("groups")) {
 				((Map<String, Long>) context.deserialize(object.get("groups"), Map.class)).forEach((name, time) -> player.groups.put(OlympaGroup.valueOf(name), time));
-			if (object.has("histIp"))
+			}
+			if (object.has("histIp")) {
 				player.histIp = context.deserialize(object.get("histIp"), TreeMap.class);
-			if (object.has("histName"))
+			}
+			if (object.has("histName")) {
 				player.histName = context.deserialize(object.get("histName"), TreeMap.class);
-			if (object.has("id"))
+			}
+			if (object.has("id")) {
 				player.id = object.get("id").getAsLong();
-			if (object.has("lastConnection"))
+			}
+			if (object.has("lastConnection")) {
 				player.lastConnection = object.get("lastConnection").getAsLong();
-			if (object.has("password"))
+			}
+			if (object.has("password")) {
 				player.password = object.get("password").getAsString();
-			if (object.has("premiumUuid"))
+			}
+			if (object.has("premiumUuid")) {
 				player.premiumUuid = context.deserialize(object.get("premiumUuid"), UUID.class);
-			if (object.has("vanish"))
+			}
+			if (object.has("vanish")) {
 				player.vanish = object.get("vanish").getAsBoolean();
-			if (object.has("verifMode"))
+			}
+			if (object.has("verifMode")) {
 				player.verifMode = object.get("verifMode").getAsBoolean();
-			if (object.has("discordId"))
-				player.discordId = object.get("discordId").getAsLong();
-			if (object.has("teamspeakId"))
+			}
+			if (object.has("teamspeakId")) {
 				player.teamspeakId = object.get("teamspeakId").getAsLong();
+			}
 			return player;
 		}
 
@@ -108,8 +120,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Expose
 	Boolean connected;
 	@Expose
-	private long discordId;
-	@Expose
 	private long teamspeakId;
 	private Object cachedPlayer = null;
 	private OlympaPlayerInformations cachedInformations = null;
@@ -130,8 +140,9 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void addGroup(OlympaGroup group, long time) {
 		groups.put(group, time);
-		if (groups.size() > 1 && groups.containsKey(OlympaGroup.PLAYER))
+		if (groups.size() > 1 && groups.containsKey(OlympaGroup.PLAYER)) {
 			removeGroup(OlympaGroup.PLAYER);
+		}
 	}
 
 	@Override
@@ -156,11 +167,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			e.printStackTrace();
 			return null;
 		}
-	}
-
-	@Override
-	public long getDiscordId() {
-		return discordId;
 	}
 
 	@Override
@@ -207,8 +213,9 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	public String getGroupsToHumainString() {
 		return groups.entrySet().stream().map(entry -> {
 			String time = new String();
-			if (entry.getValue() != 0)
+			if (entry.getValue() != 0) {
 				time = " (" + Utils.timestampToDateAndHour(entry.getValue()) + ")";
+			}
 			return entry.getKey().getName(gender) + time;
 		}).collect(Collectors.joining(", "));
 	}
@@ -235,8 +242,9 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public OlympaPlayerInformations getInformation() {
-		if (cachedInformations == null)
+		if (cachedInformations == null) {
 			cachedInformations = AccountProvider.getPlayerInformations(this);
+		}
 		return cachedInformations;
 	}
 
@@ -262,8 +270,9 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public Player getPlayer() {
-		if (cachedPlayer == null)
+		if (cachedPlayer == null) {
 			cachedPlayer = Bukkit.getPlayer(uuid);
+		}
 		return (Player) cachedPlayer;
 	}
 
@@ -335,10 +344,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			String[] groupInfo = groupInfos.split(":");
 			OlympaGroup olympaGroup = OlympaGroup.getById(Integer.parseInt(groupInfo[0]));
 			Long until;
-			if (groupInfo.length > 1)
+			if (groupInfo.length > 1) {
 				until = Long.parseLong(groupInfo[1]);
-			else
+			} else {
 				until = 0l;
+			}
 			groups.put(olympaGroup, until);
 		}
 		this.firstConnection = firstConnection;
@@ -375,11 +385,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void setConnected(boolean connected) {
 		this.connected = connected;
-	}
-
-	@Override
-	public void setDiscordId(long discordId) {
-		this.discordId = discordId;
 	}
 
 	@Override
