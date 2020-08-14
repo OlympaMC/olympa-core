@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.OlympaAccount;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.player.OlympaPlayerInformations;
@@ -119,7 +118,6 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	public OlympaPlayer createNew(OlympaPlayer olympaPlayer) throws SQLException {
-		olympaPlayer.addGroup(OlympaGroup.PLAYER);
 		olympaPlayer.setId(MySQL.createPlayer(olympaPlayer));
 		return olympaPlayer;
 	}

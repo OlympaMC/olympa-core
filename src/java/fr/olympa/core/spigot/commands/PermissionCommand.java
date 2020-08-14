@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.complex.Cmd;
@@ -20,6 +22,7 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.spigot.OlympaCore;
 
 public class PermissionCommand extends ComplexCommand {
 
@@ -82,6 +85,16 @@ public class PermissionCommand extends ComplexCommand {
 		Gender gender = player != null ? getOlympaPlayer().getGender() : Gender.UNSPECIFIED;
 		sj.add(String.format("&eGroups: &6%s", Arrays.stream(perm.getAllGroupsAllowed()).map(g -> g.getName(gender)).collect(Collectors.joining("&e, &6"))));
 		sendMessage(Prefix.NONE, sj.toString());
+		if (player != null) {
+			sendSuccess("Tu as les permissions Bukkit suivantes : §6%s", player.getEffectivePermissions().stream().map(PermissionAttachmentInfo::getPermission).collect(Collectors.joining(", ")));
+		}
+	}
+	
+	@Cmd (player = true, min = 1, syntax = "<bukkit permission>")
+	public void giveBukkitPerm(CommandContext cmd) {
+		PermissionAttachment attachment = player.addAttachment(OlympaCore.getInstance());
+		attachment.setPermission(cmd.<String>getArgument(0), true);
+		player.recalculatePermissions();
 	}
 
 	@Cmd(args = { "PERMISSION", "GROUPS" }, min = 2)

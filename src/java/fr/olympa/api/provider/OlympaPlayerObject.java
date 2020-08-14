@@ -130,6 +130,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		this.ip = ip;
 		firstConnection = Utils.getCurrentTimeInSeconds();
 		lastConnection = Utils.getCurrentTimeInSeconds();
+		groups.put(OlympaGroup.PLAYER, 0L);
 	}
 
 	@Override
@@ -140,9 +141,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void addGroup(OlympaGroup group, long time) {
 		groups.put(group, time);
-		if (groups.size() > 1 && groups.containsKey(OlympaGroup.PLAYER)) {
-			removeGroup(OlympaGroup.PLAYER);
-		}
 	}
 
 	@Override
@@ -186,7 +184,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public OlympaGroup getGroup() {
-		return groups.isEmpty() ? OlympaGroup.PLAYER : groups.firstKey();
+		return groups.firstKey();
 	}
 
 	@Override
