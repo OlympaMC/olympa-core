@@ -18,6 +18,7 @@ public class SpigotGroupChangedReceiver extends JedisPubSub {
 	public void onMessage(String channel, String message) {
 		String[] args = message.split(";");
 		String from = args[0];
+		if (from.equals(OlympaCore.getInstance().getServerName())) return;
 		OlympaPlayer olympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(args[1], OlympaPlayer.class);
 		String[] infoGroup = args[2].split(":");
 		OlympaGroup groupChanged = OlympaGroup.getById(Integer.parseInt(infoGroup[0]));

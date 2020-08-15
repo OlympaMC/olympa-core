@@ -1,5 +1,10 @@
 package fr.olympa.core.spigot;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -11,11 +16,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.craftbukkit.v1_15_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
 
 import com.google.common.collect.Sets;
 
@@ -36,6 +45,8 @@ public class UtilsCommand extends ComplexCommand {
 
 	public UtilsCommand(Plugin plugin) {
 		super(plugin, "utils", "Commandes diverses", OlympaCorePermissions.UTILS_COMMAND);
+		
+		super.addArgumentParser("FILE", sender -> Arrays.stream(OlympaCore.getInstance().getDataFolder().listFiles()).map(File::getName).collect(Collectors.toList()), x -> new File(OlympaCore.getInstance().getDataFolder(), x));
 	}
 
 	@Cmd (player = true)
@@ -133,6 +144,46 @@ public class UtilsCommand extends ComplexCommand {
 	@Cmd (player = true, min = 1, syntax = "<head value>")
 	public void giveCustomHead(CommandContext cmd) {
 		player.getInventory().addItem(ItemUtils.skullCustom("item custom tête", cmd.getArgument(0)));
+	}
+	
+	@Cmd (min = 1, args = "FILE")
+	public void deserializeBinary(CommandContext cmd) {
+		File file = cmd.getArgument(0);
+		ConfigurationSerializable serializable;
+		try (BukkitObjectInputStream stream = new BukkitObjectInputStream(new FileInputStream(file))) {
+			int bytes = stream.available();
+			serializable = (ConfigurationSerializable) stream.readObject();
+			sendSuccess("Object de type %s lu depuis %d bytes.", serializable.getClass().getName(), bytes);
+		}catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+			sendError();
+			return;
+		}
+		YamlConfiguration yaml = new YamlConfiguration();
+		yaml.set("object", serializable);
+		try {
+			yaml.save(file);
+			sendSuccess("Fichier YAML écrit.");
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Cmd (min = 1, args = "FILE")
+	public void serializeBinary(CommandContext cmd) {
+		File file = cmd.getArgument(0);
+		YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+		Object object = config.get("object");
+		sendSuccess("Object de type %s lu.", object.getClass().getName());
+		
+		try (BukkitObjectOutputStream stream = new BukkitObjectOutputStream(new FileOutputStream(file))) {
+			stream.writeObject(object);
+			sendSuccess("Fichier écrit.");
+		}catch (IOException e) {
+			e.printStackTrace();
+			sendError();
+			return;
+		}
 	}
 
 }
