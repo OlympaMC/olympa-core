@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,6 +24,7 @@ import org.bukkit.craftbukkit.v1_15_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Shulker;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
@@ -47,6 +50,11 @@ public class UtilsCommand extends ComplexCommand {
 		super(plugin, "utils", "Commandes diverses", OlympaCorePermissions.UTILS_COMMAND);
 		
 		super.addArgumentParser("FILE", sender -> Arrays.stream(OlympaCore.getInstance().getDataFolder().listFiles()).map(File::getName).collect(Collectors.toList()), x -> new File(OlympaCore.getInstance().getDataFolder(), x));
+		super.addArgumentParser("REGION", sender -> new ArrayList<>(OlympaCore.getInstance().getRegionManager().getTrackedRegions().keySet()), x -> {
+			TrackedRegion region = OlympaCore.getInstance().getRegionManager().getTrackedRegions().get(x);
+			if (region == null) sendError("Cette région n'existe pas !");
+			return region;
+		});
 	}
 
 	@Cmd (player = true)
@@ -134,6 +142,21 @@ public class UtilsCommand extends ComplexCommand {
 				sendInfo("Is in " + trackedRegion.getID());
 			}else sendInfo("Not in " + trackedRegion.getID());
 		}
+	}
+	
+	@Cmd (min = 1, args = "REGION", syntax = "<region id>")
+	public void displayRegion(CommandContext cmd) {
+		TrackedRegion region = cmd.getArgument(0);
+		for (Location location : region.getRegion().getLocations()) {
+			Shulker shulker = location.getWorld().spawn(location, Shulker.class);
+			shulker.setPersistent(false);
+			shulker.setAI(false);
+			shulker.setGravity(false);
+			shulker.setInvulnerable(true);
+			shulker.setSilent(true);
+			shulker.setGlowing(true);
+		}
+		sendSuccess("La région %s a été affichée.", region.getID());
 	}
 
 	@Cmd (player = true, min = 1, syntax = "<player name>")
