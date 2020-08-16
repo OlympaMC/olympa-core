@@ -24,13 +24,14 @@ public class PluginCommand extends OlympaCommand {
 		List<String> plugins = new ArrayList<>();
 		for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
 			String name = p.getName();
-			if (name.contains("Olympa"))
+			if (name.contains("Olympa")) {
+				plugins.add("§o*redacted*");
 				pluginsOlympa.add(name);
-			else
+			}else {
 				plugins.add(name);
+			}
 		}
-		pluginsOlympa.addAll(plugins);
-		Prefix.NONE.sendMessage(sender, "&fPlugins (%s): &a%s", pluginsOlympa.size(), String.join("&7, &a", pluginsOlympa));
+		Prefix.NONE.sendMessage(sender, "&fPlugins (%s): &a%s", plugins.size(), String.join("&7, &a", plugins));
 		return false;
 	}
 

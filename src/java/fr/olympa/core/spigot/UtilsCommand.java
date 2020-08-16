@@ -37,9 +37,11 @@ import fr.olympa.api.command.complex.ComplexCommand;
 import fr.olympa.api.editor.RegionEditor;
 import fr.olympa.api.item.ItemUtils;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.region.Region;
 import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.region.tracking.TrackedRegion;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.api.utils.spigot.SpigotUtils;
 import net.minecraft.server.v1_15_R1.BlockPosition;
 import net.minecraft.server.v1_15_R1.TileEntity;
 import net.minecraft.server.v1_15_R1.TileEntityTypes;
@@ -159,6 +161,21 @@ public class UtilsCommand extends ComplexCommand {
 		sendSuccess("La région %s a été affichée.", region.getID());
 	}
 
+	@Cmd (min = 1, args = "REGION", syntax = "<region id>")
+	public void regionInfo(CommandContext cmd) {
+		TrackedRegion trackedRegion = cmd.getArgument(0);
+		Region region = trackedRegion.getRegion();
+		sendSuccess("Région §e%s §a(%s)", trackedRegion.getID(), region.getWorld().getName());
+		sendSuccess("Type: §e%s", region.getClass().getSimpleName());
+		sendSuccess("Min: §e%s §a| Max: §e%s", SpigotUtils.convertLocationToString(region.getMin()), SpigotUtils.convertLocationToString(region.getMax()));
+		sendSuccess("%d points:", region.getLocations().size());
+		for (Location location : region.getLocations()) {
+			sendMessage(Prefix.DEFAULT, "- " + SpigotUtils.convertLocationToString(location));
+		}
+		sendSuccess("%d flag(s): §e%s", trackedRegion.getFlags().size(), trackedRegion.getFlags().stream().map(flag -> flag.getClass().getSimpleName()).collect(Collectors.joining(",", "[", "]")));
+		sendSuccess("Priorité: §e%s", trackedRegion.getPriority().name());
+	}
+	
 	@Cmd (player = true, min = 1, syntax = "<player name>")
 	public void givePlayerHead(CommandContext cmd) {
 		ItemUtils.skull(x -> player.getInventory().addItem(x), "item tête", cmd.getArgument(0));
