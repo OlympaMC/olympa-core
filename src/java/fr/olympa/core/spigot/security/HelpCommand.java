@@ -1,18 +1,23 @@
 package fr.olympa.core.spigot.security;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
+import fr.olympa.api.player.OlympaPlayer;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class HelpCommand extends OlympaCommand {
 
 	public HelpCommand(Plugin plugin) {
-		super(plugin, "?", "help");
+		super(plugin, "help", "?");
+		super.description = "Affiche l'aide.";
 	}
 
 	@Override
@@ -21,23 +26,38 @@ public class HelpCommand extends OlympaCommand {
 			sendMessage(Prefix.NONE, cmdLabel.getName() + " | " + cmdLabel.getShortText() + " | " + cmdLabel.getFullText(sender));
 		}*/
 		if (args.length == 0) {
-			// TODO components click help
-			StringJoiner joiner = new StringJoiner("\n");
-			joiner.add("§e---------- §6Aide §lOlympa§e ----------");
+			OlympaPlayer olympaPlayer = getOlympaPlayer();
+			TextComponent compo = new TextComponent(TextComponent.fromLegacyText("§e---------- §6Aide §lOlympa§e ----------"));
 			for (OlympaCommand command : OlympaCommand.commands) {
-				joiner.add("§6/" + command.getCommand() + ": §e" + command.getDescription());
+				if (!(command.getPermission() == null ? true : command.getPermission().hasPermission(olympaPlayer))) continue;
+				TextComponent commandCompo = new TextComponent(TextComponent.fromLegacyText("\n§7➤ §6/" + command.getCommand() + (command.getDescription() == null ? "" : ": §e" + command.getDescription())));
+				commandCompo.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§bClique pour afficher l'aide de cette commande !")));
+				commandCompo.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/help " + command.getCommand()));
+				compo.addExtra(commandCompo);
 			}
-			joiner.add("§e--------------------------------------------");
-			sender.sendMessage(joiner.toString());
+			compo.addExtra("\n§e--------------------------------------------");
+			sender.spigot().sendMessage(compo);
 		}else {
-			// TODO command specific help
+			for (OlympaCommand command : OlympaCommand.commands) {
+				if (command.getAllCommands().contains(args[0])) {
+					command.sendHelp(sender);
+					break;
+				}
+			}
 		}
 		return false;
 	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		return null;
+		OlympaPlayer olympaPlayer = getOlympaPlayer();
+		
+		List<String> commands = new ArrayList<>();
+		for (OlympaCommand command : OlympaCommand.commands) {
+			if (!(command.getPermission() == null ? true : command.getPermission().hasPermission(olympaPlayer))) continue;
+			commands.addAll(command.getAllCommands());
+		}
+		return commands;
 	}
 
 }

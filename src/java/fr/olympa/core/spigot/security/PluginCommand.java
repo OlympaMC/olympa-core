@@ -15,6 +15,7 @@ public class PluginCommand extends OlympaCommand {
 
 	public PluginCommand(Plugin plugin) {
 		super(plugin, "plugin", "pl", "plugins");
+		super.description = "Affiche la liste des plugins présents sur le serveur.";
 	}
 
 	@Override
