@@ -12,6 +12,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.permissions.PermissionAttachment;
 
 import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.player.OlympaPlayer;
@@ -116,7 +117,9 @@ public class DataManagmentListener implements Listener {
 			try {
 				MySQL.loadPlayerPluginDatas(olympaPlayer);
 
-				olympaPlayer.getGroups().keySet().forEach(group -> group.giveBukkitPermissions(player));
+				PermissionAttachment attachment = player.addAttachment(OlympaCore.getInstance());
+				olympaPlayer.getGroups().keySet().forEach(group -> group.runtimePermissions.forEach(perm -> attachment.setPermission(perm, true)));
+				player.recalculatePermissions();
 				
 				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
 				Bukkit.getPluginManager().callEvent(loginevent);

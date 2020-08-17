@@ -33,7 +33,7 @@ public class PluginCommand extends OlympaCommand {
 			}
 		}
 		//Prefix.NONE.sendMessage(sender, "&fPlugins (%s): &a%s", plugins.size(), String.join("&7, &a", plugins));
-		sendMessage(Prefix.DEFAULT, "Plugins externes (%d): %s", plugins.size(), String.join("§7, §a", plugins));
+		sendMessage(Prefix.DEFAULT, "Plugins externes (%d): §a%s", plugins.size(), String.join("§7, §a", plugins));
 		return false;
 	}
 
