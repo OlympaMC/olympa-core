@@ -40,7 +40,7 @@ public class QueueSpigotTask implements Runnable {
 		}
 		String serverName = Utils.capitalize(server.getName());
 		if (!ServersConnection.canPlayerConnect(server)) {
-			TextComponent text = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu dans la file d'attente du &4" + serverName + "&c...")));
+			TextComponent text = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu es dans la file d'attente du &4" + serverName + "&c...")));
 			text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(BungeeUtils.color("&cClique ici pour sortir de la file d'attente"))));
 			text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/leavequeue"));
 			player.sendMessage(text);

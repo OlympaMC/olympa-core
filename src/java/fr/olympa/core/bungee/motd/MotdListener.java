@@ -24,14 +24,14 @@ import net.md_5.bungee.event.EventHandler;
 public class MotdListener implements Listener {
 	
 	String prefix = "§e-------------§6 Olympa §e-------------";
-	String motd_base = "§3⬣ §e§lOlympa §6§n1.9 à 1.16.2+§3 ⬣\n";
+	String motd_base = "§3⬣ §e§lOlympa §6§n1.9 à 1.16+§3 ⬣\n";
 	// §6Fun \u2606 Tryhard \u2606 Ranked
 	String teamspeak = "§6Teamspeak: §e§nts.olympa.fr";
 	String site = "§6Site: §e§nwww.olympa.fr";
 	String twitter = "§6Twitter: §e@Olympa_fr";
 	String discord = "§6Discord: §e§nwww.discord.olympa.fr";
 	String games = "§b§mZTA§c \u00a4§b PvPFaction §c\u00a4 §b§mPvPBox";
-	String version = "§cUtilise 1.9 à 1.15+§l✖";
+	String version = "§cUtilise 1.9 à 1.16+§l✖";
 	String reason = "§6Raison de la maintenance :";
 	String separator = "§7|";
 	String suffix = "§e---------------------------------";

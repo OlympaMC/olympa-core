@@ -7,10 +7,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.hook.IProtocolSupport;
 import fr.olympa.api.utils.VersionNameComparator;
+import fr.olympa.api.utils.spigot.ProtocolAPI;
 import protocolsupport.ProtocolSupport;
 import protocolsupport.api.ProtocolSupportAPI;
 import protocolsupport.api.ProtocolType;
@@ -105,5 +107,11 @@ public class ProtocolSupportHook implements IProtocolSupport {
 				return p.getName();
 			return name;
 		}).distinct().sorted(new VersionNameComparator()).collect(Collectors.joining(", "));
+	}
+	
+	@Override
+	public ProtocolAPI getPlayerVersion(Player p) {
+		if (protocolSupport != null) return ProtocolAPI.get(ProtocolSupportAPI.getProtocolVersion(p).getId());
+		return ProtocolAPI.getDefaultProtocol();
 	}
 }
