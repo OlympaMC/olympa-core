@@ -1,8 +1,10 @@
 package fr.olympa.core.bungee.staffchat;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
@@ -20,7 +22,7 @@ public class StaffChatHandler {
 
 	private static final Set<UUID> staffChat = new HashSet<>();
 
-	public static void sendMessage(OlympaPlayer olympaPlayer, CommandSender sender, String msg) {
+	public static int sendMessage(OlympaPlayer olympaPlayer, CommandSender sender, String msg) {
 		String message = msg.replaceAll("( )\\1+", " ");
 		String senderName;
 		ProxiedPlayer player = null;
@@ -38,11 +40,15 @@ public class StaffChatHandler {
 			senderName = "§e" + sender.getName();
 
 		BaseComponent[] messageComponent = TextComponent.fromLegacyText(Prefix.STAFFCHAT + senderName + " §7: " + message);
-		ProxyServer.getInstance().getPlayers().stream().filter(p -> !DataHandler.isUnlogged(p) && OlympaCorePermissions.STAFF_CHAT.hasPermission(new AccountProvider(p.getUniqueId()).getFromRedis()))
-				.forEach(p -> p.sendMessage(messageComponent));
+		List<ProxiedPlayer> staff = ProxyServer.getInstance().getPlayers().stream().filter(p -> !DataHandler.isUnlogged(p) && OlympaCorePermissions.STAFF_CHAT.hasPermission(new AccountProvider(p.getUniqueId()).getFromRedis()))
+				.collect(Collectors.toList());
+		staff.forEach(p -> p.sendMessage(messageComponent));
 		ProxyServer.getInstance().getConsole().sendMessage(messageComponent);
 		if (!isDiscord)
 			ProxyServer.getInstance().getPluginManager().callEvent(new StaffChatEvent(sender, olympaPlayer, msg));
+		else
+			return staff.size();
+		return -1;
 	}
 
 	public static Set<UUID> getStaffchat() {

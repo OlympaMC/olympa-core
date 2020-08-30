@@ -64,7 +64,7 @@ public class MySQL {
 	// Pour pas surcharger les requettes MySQL
 	// TODO -> cache redis pour le cache multi-server
 	static Set<String> allPlayersNamesCache = null;
-	
+
 	public static Set<String> getAllPlayersNames() {
 		if (allPlayersNamesCache != null)
 			return allPlayersNamesCache;
@@ -127,22 +127,21 @@ public class MySQL {
 
 	public static void setDatasTable(String tableName, Map<String, String> columns) throws SQLException {
 		Statement statement = OlympaCore.getInstance().getDatabase().createStatement();
-		
+
 		ResultSet columnsSet = OlympaCore.getInstance().getDatabase().getMetaData().getColumns(null, null, tableName, "%");
 		if (columnsSet.first()) { // la table existe : il faut vérifier si toutes les colonnes sont présentes
 			Map<String, String> missingColumns = new HashMap<>(columns);
 			while (columnsSet.next()) {
 				String columnName = columnsSet.getString(4);
-				if (missingColumns.remove(columnName) == null) {
+				if (missingColumns.remove(columnName) == null)
 					OlympaCore.getInstance().sendMessage("§cColonne " + columnName + " présente dans la table " + tableName + " mais pas dans la déclaration des données joueurs.");
-				}
 			}
 			for (Entry<String, String> column : missingColumns.entrySet()) {
 				String columnValue = "`" + column.getKey() + "` " + column.getValue();
 				statement.executeUpdate("ALTER TABLE `" + tableName + "` ADD " + columnValue);
 				OlympaCore.getInstance().sendMessage("La colonne §6" + columnValue + " §ea été créée dans la table de données joueurs §6" + tableName + "§e.");
 			}
-		}else { // la table n'existe pas : il faut la créer
+		} else { // la table n'existe pas : il faut la créer
 			StringJoiner creationJoiner = new StringJoiner(", ", "CREATE TABLE IF NOT EXISTS `" + tableName + "` (", ")");
 			creationJoiner.add("`player_id` BIGINT NOT NULL");
 			for (Entry<String, String> column : columns.entrySet())
@@ -167,7 +166,7 @@ public class MySQL {
 		insertPlayerPluginDatas = new OlympaStatement(insertJoinerKeys.toString() + insertJoinerValues.toString());
 
 		getPlayerPluginDatas = new OlympaStatement("SELECT * FROM `" + tableName + "` WHERE `player_id` = ?");
-		
+
 		statement.close();
 		OlympaCore.getInstance().sendMessage("La table §6" + tableName + " §egère les données joueurs.");
 	}
@@ -196,17 +195,14 @@ public class MySQL {
 	/**
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son id
+	 * @throws SQLException
 	 */
-	public static OlympaPlayer getPlayer(long id) {
-		try {
-			PreparedStatement statement = getPlayerByIdStatement.getStatement();
-			statement.setLong(1, id);
-			ResultSet resultSet = statement.executeQuery();
-			if (resultSet.next())
-				return getOlympaPlayer(resultSet);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public static OlympaPlayer getPlayer(long id) throws SQLException {
+		PreparedStatement statement = getPlayerByIdStatement.getStatement();
+		statement.setLong(1, id);
+		ResultSet resultSet = statement.executeQuery();
+		if (resultSet.next())
+			return getOlympaPlayer(resultSet);
 		return null;
 	}
 

@@ -31,7 +31,7 @@ public class RedisBungeeSend {
 	public static void sendServerName(ServerInfo serverInfo) {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 			InetSocketAddress adress = serverInfo.getAddress();
-			jedis.publish(RedisChannel.BUNGEE_SEND_SERVERNAME.name(), adress.getAddress().getHostAddress().replace("127.0.0.1", "localhost") + ";" + adress.getPort() + ";" + serverInfo.getName());
+			jedis.publish(RedisChannel.BUNGEE_ASK_SEND_SERVERNAME.name(), adress.getAddress().getHostAddress().replace("127.0.0.1", "localhost") + ";" + adress.getPort() + ";" + serverInfo.getName());
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
@@ -40,5 +40,12 @@ public class RedisBungeeSend {
 		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
 			jedis.publish(RedisChannel.BUNGEE_SEND_SERVERSINFOS.name(), olympaServer.name() + ":" + players + ":" + status.getId());
 		}
+	}
+
+	public static void sendPlayerServer(String serverName, String playerUUID, String playerServer) {
+		try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
+			jedis.publish(RedisChannel.BUNGEE_SEND_PLAYERSERVER.name(), serverName + ";" + playerUUID + ";" + playerServer);
+		}
+		RedisAccess.INSTANCE.disconnect();
 	}
 }

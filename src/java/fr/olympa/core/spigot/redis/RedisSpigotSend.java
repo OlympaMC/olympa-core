@@ -16,6 +16,7 @@ import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;
+import fr.olympa.core.spigot.redis.receiver.BungeeAskPlayerServer;
 import redis.clients.jedis.Jedis;
 
 public class RedisSpigotSend {
@@ -34,6 +35,17 @@ public class RedisSpigotSend {
 				if (core.getServerName().contains(":"))
 					RedisSpigotSend.askServerName();
 			}, 5 * 20);
+		});
+	}
+
+	public static void askPlayerServer(UUID uuid, Consumer<String> result) {
+		BungeeAskPlayerServer.data.put(uuid, result);
+		LinkSpigotBungee.Provider.link.launchAsync(() -> {
+			try (Jedis jedis = RedisAccess.INSTANCE.newConnection()) {
+				String serverName = OlympaCore.getInstance().getServerName();
+				jedis.publish(RedisChannel.SPIGOT_ASK_PLAYERSERVER.name(), serverName + ";" + uuid);
+			}
+			RedisAccess.INSTANCE.disconnect();
 		});
 	}
 
