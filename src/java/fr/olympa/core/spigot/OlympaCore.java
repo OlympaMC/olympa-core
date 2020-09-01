@@ -21,6 +21,7 @@ import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.ErrorOutputStream;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
@@ -37,6 +38,7 @@ import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
 import fr.olympa.core.spigot.protocolsupport.ProtocolSupportHook;
 import fr.olympa.core.spigot.protocolsupport.ViaVersionHook;
+import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.report.commands.ReportCommand;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
 import fr.olympa.core.spigot.scoreboards.NameTagListener;
@@ -103,7 +105,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	public void launchAsync(Runnable run) {
 		getTask().runTaskAsynchronously(run);
 	}
-
+	
 	@Override
 	public void onDisable() {
 		setStatus(ServerStatus.CLOSE);
@@ -112,6 +114,12 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		hologramsManager.unload();
 		super.onDisable();
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
+	}
+	
+	@Override
+	public void onLoad() {
+		super.onLoad();
+		System.setErr(new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(instance, run, 20)));
 	}
 
 	@Override
