@@ -10,8 +10,8 @@ public class SpigotAskServerNameReceiver extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
-		super.onMessage(channel, message);
-		ServerInfo serverInfo = ServersConnection.getServerByNameOrIpPort(message);
+		String[] args = message.split(";");
+		ServerInfo serverInfo = ServersConnection.getServerByNameOrIpPort(args[0]);
 		if (serverInfo != null) {
 			RedisBungeeSend.sendServerName(serverInfo);
 			MonitorServers.updateServer(serverInfo, true/*, t -> {

@@ -10,12 +10,13 @@ import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
-import fr.olympa.core.spigot.redis.receiver.BungeeAskPlayerServer;
+import fr.olympa.core.spigot.redis.receiver.BungeeAskPlayerServerReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeSendOlympaPlayerReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeServerNameReceiver;
 import fr.olympa.core.spigot.redis.receiver.SpigotGroupChangedReceiveReceiver;
 import fr.olympa.core.spigot.redis.receiver.SpigotGroupChangedReceiver;
 import fr.olympa.core.spigot.redis.receiver.SpigotReceiveOlympaPlayerReceiver;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
 public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCoreInterface {
@@ -24,7 +25,6 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 	protected ServerStatus status;
 	private String serverNameIp = getServer().getIp() + ":" + getServer().getPort();
 	private String serverName;
-	private RedisAccess redisAccess;
 
 	@Override
 	public Connection getDatabase() throws SQLException {
@@ -50,8 +50,8 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		return status;
 	}
 
-	public void registerRedisSub(JedisPubSub sub, String channel) {
-		new Thread(() -> redisAccess.newConnection().subscribe(sub, channel), "Redis sub " + channel).start();
+	public void registerRedisSub(Jedis jedis, JedisPubSub sub, String channel) {
+		new Thread(() -> jedis.subscribe(sub, channel), "Redis sub " + channel).start();
 	}
 
 	@Override
@@ -69,8 +69,9 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 			if (statusString != null && !statusString.isEmpty()) {
 				ServerStatus status2 = ServerStatus.get(statusString);
 				if (status2 != null)
-					setStatus(status2);
-			}
+					status = status2;
+			} else
+				setStatus(ServerStatus.UNKNOWN);
 			setupDatabase();
 			setupRedis();
 		}
@@ -83,6 +84,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 
 	@Override
 	public void setStatus(ServerStatus status) {
+		RedisSpigotSend.changeStatus(status);
 		this.status = status;
 	}
 
@@ -107,19 +109,18 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		if (is != null && is.length != 0)
 			i1 = is[0] + 1;
 		int i = i1;
-		redisAccess = RedisAccess.init(getServerName());
+		RedisAccess redisAccess = RedisAccess.init(getServerName());
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
-			registerRedisSub(new BungeeServerNameReceiver(), RedisChannel.BUNGEE_ASK_SEND_SERVERNAME.name());
+			registerRedisSub(redisAccess.getConnection(), new BungeeServerNameReceiver(), RedisChannel.BUNGEE_ASK_SEND_SERVERNAME.name());
 			// BUG blocked thread
 			//			registerRedisSub(new SpigotSendOlympaPlayerReceiver(), RedisChannel.BUNGEE_ASK_SEND_OLYMPAPLAYER.name());
-			registerRedisSub(new SpigotReceiveOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name());
-			registerRedisSub(new BungeeSendOlympaPlayerReceiver(), RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name());
-			registerRedisSub(new SpigotGroupChangedReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP.name());
-			registerRedisSub(new SpigotGroupChangedReceiveReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP_RECEIVE.name());
-			registerRedisSub(new BungeeAskPlayerServer(), RedisChannel.BUNGEE_ASK_SEND_SERVERNAME.name());
+			registerRedisSub(redisAccess.connect(), new SpigotReceiveOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(redisAccess.connect(), new BungeeSendOlympaPlayerReceiver(), RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(redisAccess.connect(), new SpigotGroupChangedReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP.name());
+			registerRedisSub(redisAccess.connect(), new SpigotGroupChangedReceiveReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP_RECEIVE.name());
+			registerRedisSub(redisAccess.connect(), new BungeeAskPlayerServerReceiver(), RedisChannel.BUNGEE_SEND_PLAYERSERVER.name());
 			RedisSpigotSend.askServerName();
-
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)

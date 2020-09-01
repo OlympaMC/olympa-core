@@ -288,6 +288,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 			List<CommandArgument> ca = entry.getValue();
 			return (isMandatory ? "<" : "[") + ca.stream().map(c -> c.getArgName()).collect(Collectors.joining("|")) + (isMandatory ? ">" : "]");
 		}).collect(Collectors.joining(" "));
-		minArg = (int) args.entrySet().stream().count();
+		if (minArg == 0)
+			minArg = (int) args.entrySet().stream().count();
 	}
 }

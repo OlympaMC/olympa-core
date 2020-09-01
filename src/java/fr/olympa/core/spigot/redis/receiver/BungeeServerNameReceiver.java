@@ -1,6 +1,5 @@
 package fr.olympa.core.spigot.redis.receiver;
 
-import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.JedisPubSub;
 
@@ -17,10 +16,15 @@ public class BungeeServerNameReceiver extends JedisPubSub {
 		String serverIp = core.getServer().getIp();
 		int serverPort = core.getServer().getPort();
 		if (ip.equals(serverIp) && port == serverPort) {
+			if (core.getServerName().equals(serverName)) {
+				OlympaCore.getInstance().sendMessage("&4Nom du serveur déjà reçu : &c" + serverName + "&4.");
+				return;
+			}
 			core.setServerName(serverName);
+			//			RedisAccess.INSTANCE.updateClientName(serverName);
+			OlympaCore.getInstance().sendMessage("&2Nom du serveur reçu : &a" + serverName + "&2.");
 			this.unsubscribe();
-			RedisAccess.INSTANCE.getConnection().clientSetname("Olympa_" + serverName);
-			//			RedisAccess.INSTANCE.disconnect();
 		}
+		OlympaCore.getInstance().sendMessage("&4Mauvais nom du serveur reçu : &c" + serverName + "&4.");
 	}
 }

@@ -11,12 +11,13 @@ import com.google.common.collect.ImmutableMap;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.api.task.BungeeTask;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue.Consumer;
+import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.scheduler.TaskScheduler;
 
 public class MonitorServers {
 
@@ -40,21 +41,30 @@ public class MonitorServers {
 	}
 
 	public static void updateServer(ServerInfo serverInfo, boolean instantUpdate, Consumer<ServerInfo> sucess) {
-		long nano = System.nanoTime();
-		serverInfo.ping((result, error) -> {
-			MonitorInfo info = new MonitorInfo(serverInfo, nano, result, error);
-			bungeeServers.put(serverInfo, info);
-			MonitorInfo previous = olympaServers.get(info.getOlympaServer()).put(info.getServerID(), info);
-			ServerStatus previousStatus = previous == null ? ServerStatus.CLOSE : previous.getStatus();
-			if (previousStatus != info.getStatus()) {
-				OlympaBungee.getInstance()
-						.sendMessage("§7Serveur §e" + info.getName() + "§7 : " + previousStatus.getNameColored() + " §7-> " + info.getStatus().getNameColored() + (info.getError() != null ? " (" + info.getError() + ")" : ""));
-				if (instantUpdate)
-					updateOlympaServer(info.getOlympaServer());
+		serverInfo.ping(new Callback<ServerPing>() {
+			private long nano = System.nanoTime();
+
+			@Override
+			public void done(ServerPing result, Throwable error) {
+				MonitorInfo info = new MonitorInfo(serverInfo, nano, result, error);
+				bungeeServers.put(serverInfo, info);
+				MonitorInfo previous = olympaServers.get(info.getOlympaServer()).put(info.getServerID(), info);
+				ServerStatus previousStatus = previous == null ? ServerStatus.UNKNOWN : previous.getStatus();
+				if (previousStatus != info.getStatus()) {
+					OlympaBungee.getInstance()
+							.sendMessage("§7Serveur §e" + info.getName() + "§7 : " + previousStatus.getNameColored() + " §7-> " + info.getStatus().getNameColored() + (info.getError() != null ? " (" + info.getError() + ")" : ""));
+					if (instantUpdate)
+						updateOlympaServer(info.getOlympaServer());
+				}
+				if (sucess != null)
+					sucess.accept(serverInfo);
 			}
-			if (sucess != null)
-				sucess.accept(serverInfo);
 		});
+	}
+
+	public static void updateServer(ServerInfo serverInfo, OlympaServer olympaServer, MonitorInfo info) {
+		bungeeServers.put(serverInfo, info);
+		updateOlympaServer(olympaServer);
 	}
 
 	private static void updateOlympaServer(OlympaServer olympaServer) {
@@ -66,13 +76,16 @@ public class MonitorServers {
 		RedisBungeeSend.sendServerInfos(olympaServer, online, upper == null ? ServerStatus.UNKNOWN : upper.getStatus());
 	}
 
-	public MonitorServers(Plugin plugin) {
-		TaskScheduler schuduler = plugin.getProxy().getScheduler();
-		schuduler.schedule(plugin, () -> {
-			for (ServerInfo serverInfo : ProxyServer.getInstance().getServers().values())
-				updateServer(serverInfo, false);
-			for (OlympaServer olympaServer : olympaServers.keySet())
-				updateOlympaServer(olympaServer);
-		}, 1, 10, TimeUnit.SECONDS);
+	private void updateAllServeurs(BungeeTask task) {
+		for (ServerInfo serverInfo : ProxyServer.getInstance().getServers().values())
+			updateServer(serverInfo, false);
+		for (OlympaServer olympaServer : olympaServers.keySet())
+			updateOlympaServer(olympaServer);
+		task.runTaskLater(() -> updateAllServeurs(task), 10, TimeUnit.SECONDS);
+	}
+
+	public MonitorServers(OlympaBungee plugin) {
+		BungeeTask task = plugin.getTask();
+		task.runTaskAsynchronously(() -> updateAllServeurs(task));
 	}
 }

@@ -49,6 +49,11 @@ public class GroupCommand extends OlympaCommand {
 		AccountProvider olympaAccount = null;
 		if (args.length == 0) {
 			target = player;
+			if (isConsole()) {
+				sendImpossibleWithConsole();
+				sendUsage(label);
+				return true;
+			}
 			olympaTarget = this.getOlympaPlayer();
 		} else if (args.length <= 4) {
 			target = Bukkit.getPlayer(args[0]);

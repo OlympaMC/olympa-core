@@ -4,9 +4,9 @@ import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.customevent.OlympaGroupChangeEvent;
 import fr.olympa.core.bungee.servers.ServersConnection;
-import fr.olympa.core.spigot.OlympaCore;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -24,7 +24,7 @@ public class SpigotGroupChangeReceiverOnBungee extends JedisPubSub {
 		long timestamp = Integer.parseInt(infoGroup[1]);
 		ChangeType state = ChangeType.get(Integer.parseInt(args[3]));
 		ProxiedPlayer player = ProxyServer.getInstance().getPlayer(olympaPlayer.getUniqueId());
+		OlympaBungee.getInstance().sendMessage("&a[DEBUG] PLAYER CHANGE GROUPE from Redis for " + olympaPlayer.getName() + " from server " + serverInfo.getName());
 		ProxyServer.getInstance().getPluginManager().callEvent(new OlympaGroupChangeEvent(player, olympaPlayer, groupChanged, timestamp, state));
-		OlympaCore.getInstance().sendMessage("&a[DEBUG] PLAYER CHANGE GROUPE from Redis for " + olympaPlayer.getName() + " from server " + serverInfo.getName());
 	}
 }

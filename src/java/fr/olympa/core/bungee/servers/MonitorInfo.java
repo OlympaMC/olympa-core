@@ -113,6 +113,10 @@ public class MonitorInfo {
 		return status;
 	}
 
+	public void setStatus(ServerStatus status) {
+		this.status = status;
+	}
+
 	public Float getTps() {
 		return tps;
 	}

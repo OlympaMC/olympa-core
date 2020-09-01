@@ -11,33 +11,37 @@ public class RedisCredentials {
 		this.ip = ip;
 		this.password = password;
 		this.port = port;
-		this.clientName = "Olympa_Default";
+		setClientName("Default");
 	}
 
 	public RedisCredentials(String ip, String password, int port, String clientName) {
 		this.ip = ip;
 		this.password = password;
 		this.port = port;
-		this.clientName = "Olympa_" + clientName;
+		setClientName(clientName);
 	}
 
 	public String getClientName() {
-		return this.clientName;
+		return clientName;
+	}
+
+	public void setClientName(String clientName) {
+		this.clientName = "Olympa_" + clientName;
 	}
 
 	public String getIp() {
-		return this.ip;
+		return ip;
 	}
 
 	public String getPassword() {
-		return this.password;
+		return password;
 	}
 
 	public int getPort() {
-		return this.port;
+		return port;
 	}
 
 	public String toRedisURL() {
-		return this.ip + ":" + this.port;
+		return ip + ":" + port;
 	}
 }

@@ -50,8 +50,8 @@ import fr.olympa.core.bungee.protocol.ProtocolListener;
 import fr.olympa.core.bungee.redis.receiver.SpigotAskServerNameReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotGroupChangeReceiverOnBungee;
 import fr.olympa.core.bungee.redis.receiver.SpigotOlympaPlayerReceiver;
+import fr.olympa.core.bungee.redis.receiver.SpigotServerChangeStatusReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotServerSwitchReceiver;
-import fr.olympa.core.bungee.redis.receiver.SpigotShutdownReceiver;
 import fr.olympa.core.bungee.security.BasicSecurityListener;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersListener;
@@ -71,6 +71,7 @@ import fr.olympa.core.bungee.vpn.VpnSql;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.config.Configuration;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
 public class OlympaBungee extends Plugin implements LinkSpigotBungee {
@@ -87,7 +88,6 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	protected BungeeCustomConfig maintConfig;
 	private BungeeTask bungeeTask;
 	private ServerStatus status;
-	public RedisAccess redisAccess;
 
 	public Configuration getConfig() {
 		return defaultConfig.getConfig();
@@ -140,6 +140,9 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 
 	@Override
 	public void onDisable() {
+		RedisAccess.close();
+		if (database != null)
+			database.close();
 		sendMessage("&4" + getDescription().getName() + "&c (" + getDescription().getVersion() + ") est désactivé.");
 	}
 
@@ -263,8 +266,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		}
 	}
 
-	public void registerRedisSub(RedisAccess redisAccess, JedisPubSub sub, String channel) {
-		new Thread(() -> redisAccess.newConnection().subscribe(sub, channel), "Redis sub " + channel).start();
+	private void registerRedisSub(Jedis jedis, JedisPubSub sub, String channel) {
+		new Thread(() -> jedis.subscribe(sub, channel), "Redis sub " + channel).start();
 	}
 
 	private void setupRedis(int... is) {
@@ -272,15 +275,15 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		if (is != null && is.length != 0)
 			i1 = is[0] + 1;
 		int i = i1;
-		redisAccess = RedisAccess.init("bungee");
+		RedisAccess redisAccess = RedisAccess.init("bungee");
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
-			registerRedisSub(redisAccess, new SpigotAskServerNameReceiver(), RedisChannel.SPIGOT_ASK_SERVERNAME.name());
-			registerRedisSub(redisAccess, new SpigotGroupChangeReceiverOnBungee(), RedisChannel.SPIGOT_CHANGE_GROUP.name());
-			registerRedisSub(redisAccess, new SpigotShutdownReceiver(), RedisChannel.SPIGOT_SERVER_SHUTDOWN.name());
-			registerRedisSub(redisAccess, new SpigotServerSwitchReceiver(), RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER.name());
-			registerRedisSub(redisAccess, new SpigotOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER_TO_BUNGEE.name());
-			registerRedisSub(redisAccess, new SpigotAskServerNameReceiver(), RedisChannel.SPIGOT_ASK_SERVERNAME.name());
+			registerRedisSub(redisAccess.getConnection(), new SpigotAskServerNameReceiver(), RedisChannel.SPIGOT_ASK_SERVERNAME.name());
+			registerRedisSub(redisAccess.connect(), new SpigotGroupChangeReceiverOnBungee(), RedisChannel.SPIGOT_CHANGE_GROUP.name());
+			registerRedisSub(redisAccess.connect(), new SpigotServerChangeStatusReceiver(), RedisChannel.SPIGOT_SERVER_CHANGE_STATUS.name());
+			registerRedisSub(redisAccess.connect(), new SpigotServerSwitchReceiver(), RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER.name());
+			registerRedisSub(redisAccess.connect(), new SpigotOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER_TO_BUNGEE.name());
+			registerRedisSub(redisAccess.connect(), new SpigotAskServerNameReceiver(), RedisChannel.SPIGOT_ASK_SERVERNAME.name());
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)

@@ -28,6 +28,8 @@ public class OlympaLoginListener implements Listener {
 	@EventHandler
 	public void onOlympaGroupChange(OlympaGroupChangeEvent event) {
 		ProxiedPlayer player = event.getPlayer();
+		if (player == null)
+			return;
 		player.removeGroups(player.getGroups().toArray(new String[0]));
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
 		String[] groupsNames = olympaPlayer.getGroups().keySet().stream().map(OlympaGroup::name).toArray(String[]::new);

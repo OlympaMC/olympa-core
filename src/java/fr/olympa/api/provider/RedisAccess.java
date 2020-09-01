@@ -1,5 +1,8 @@
 package fr.olympa.api.provider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -8,9 +11,8 @@ public class RedisAccess {
 	public static RedisAccess INSTANCE;
 
 	public static void close() {
-		if (INSTANCE != null) {
+		if (INSTANCE != null)
 			INSTANCE.closeResource();
-		}
 	}
 
 	public static RedisAccess init(String clientName) {
@@ -20,6 +22,7 @@ public class RedisAccess {
 	private RedisCredentials redisCredentials;
 	private JedisPool pool;
 	private Jedis jedis;
+	private List<Jedis> allJedis = new ArrayList<>();
 
 	public RedisAccess(RedisCredentials redisCredentials) {
 		INSTANCE = this;
@@ -28,33 +31,34 @@ public class RedisAccess {
 
 	public void closeResource() {
 		if (isPoolOpen()) {
-			disconnect();
+			allJedis.clear();
+			allJedis.forEach(j -> j.disconnect());
 			pool.close();
 		}
 	}
 
 	public Jedis connect() {
 		jedis = newConnection();
+		allJedis.add(jedis);
 		return jedis;
 	}
 
 	public void disconnect() {
-		if (isConnected()) {
-			jedis.disconnect();
-		}
+		allJedis.remove(jedis);
+		if (!isConnected())
+			return;
+		jedis.disconnect();
 	}
 
 	public Jedis getConnection() {
-		if (!isConnected()) {
-			connect();
-		}
+		if (!isConnected())
+			newConnection();
 		return jedis;
 	}
 
 	public JedisPool getJedisPool() {
-		if (!isPoolOpen()) {
+		if (!isPoolOpen())
 			initJedis();
-		}
 		return pool;
 	}
 
@@ -73,7 +77,14 @@ public class RedisAccess {
 		return pool != null && !pool.isClosed();
 	}
 
-	public Jedis newConnection() {
+	public void updateClientName(String clientName) {
+		redisCredentials.setClientName(clientName);
+		allJedis.removeIf(j -> !j.isConnected());
+		for (Jedis j : allJedis)
+			j.clientSetname(clientName);
+	}
+
+	private Jedis newConnection() {
 		Jedis jedis = getJedisPool().getResource();
 		jedis.auth(redisCredentials.getPassword());
 		jedis.clientSetname(redisCredentials.getClientName());

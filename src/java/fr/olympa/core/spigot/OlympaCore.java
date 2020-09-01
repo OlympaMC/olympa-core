@@ -36,7 +36,7 @@ import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
 import fr.olympa.core.spigot.protocolsupport.ProtocolSupportHook;
-import fr.olympa.core.spigot.redis.RedisSpigotSend;
+import fr.olympa.core.spigot.protocolsupport.ViaVersionHook;
 import fr.olympa.core.spigot.report.commands.ReportCommand;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
 import fr.olympa.core.spigot.scoreboards.NameTagListener;
@@ -62,6 +62,12 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	private HologramsManager hologramsManager;
 	private ImageFrameManager imageFrameManager;
 	private IProtocolSupport protocolSupportHook;
+	private ViaVersionHook viaVersionHook;
+
+	public ViaVersionHook getViaVersionHook() {
+		return viaVersionHook;
+	}
+
 	private INametagApi nameTagApi;
 
 	@Override
@@ -100,9 +106,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
 	@Override
 	public void onDisable() {
-		RedisSpigotSend.sendShutdown();
+		setStatus(ServerStatus.CLOSE);
 		RedisAccess.close();
-		status = ServerStatus.CLOSE;
 		nameTagApi.reset();
 		hologramsManager.unload();
 		super.onDisable();
@@ -166,8 +171,10 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		((NametagAPI) nameTagApi).testCompat();
 
 		new AntiWD(this);
-		if (getServer().getPluginManager().isPluginEnabled("ProtocolSupport"))
+		if (pluginManager.isPluginEnabled("ProtocolSupport"))
 			protocolSupportHook = new ProtocolSupportHook(this);
+		if (pluginManager.isPluginEnabled("ViaVersion"))
+			viaVersionHook = new ViaVersionHook(this);
 
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 	}

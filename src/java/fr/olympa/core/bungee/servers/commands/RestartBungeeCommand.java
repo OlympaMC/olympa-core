@@ -12,7 +12,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class RestartBungeeCommand extends BungeeCommand {
 
 	public RestartBungeeCommand(Plugin plugin) {
-		super(plugin, "restartbungee", OlympaCorePermissions.SERVER_RESTART_COMMAND, "restartb");
+		super(plugin, "bungeerestart", OlympaCorePermissions.SERVER_RESTART_COMMAND, "brestart");
 		allowConsole = true;
 	}
 

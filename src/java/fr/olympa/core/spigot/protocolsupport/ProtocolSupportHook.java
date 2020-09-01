@@ -13,6 +13,7 @@ import org.bukkit.plugin.Plugin;
 import fr.olympa.api.hook.IProtocolSupport;
 import fr.olympa.api.utils.VersionNameComparator;
 import fr.olympa.api.utils.spigot.ProtocolAPI;
+import fr.olympa.core.spigot.OlympaCore;
 import protocolsupport.ProtocolSupport;
 import protocolsupport.api.ProtocolSupportAPI;
 import protocolsupport.api.ProtocolType;
@@ -82,7 +83,11 @@ public class ProtocolSupportHook implements IProtocolSupport {
 	public String getRangeVersion() {
 		List<String> proto = getStreamProtocolSupported().map(ProtocolVersion::getName).collect(Collectors.toList());
 		String last = proto.get(0);
-		String first = proto.get(proto.size() - 1);
+		String first;
+		if (OlympaCore.getInstance().getViaVersionHook() == null)
+			first = proto.get(proto.size() - 1);
+		else
+			first = OlympaCore.getInstance().getViaVersionHook().getHighVersion();
 		return last + " à " + first;
 	}
 
@@ -108,10 +113,11 @@ public class ProtocolSupportHook implements IProtocolSupport {
 			return name;
 		}).distinct().sorted(new VersionNameComparator()).collect(Collectors.joining(", "));
 	}
-	
+
 	@Override
 	public ProtocolAPI getPlayerVersion(Player p) {
-		if (protocolSupport != null) return ProtocolAPI.get(ProtocolSupportAPI.getProtocolVersion(p).getId());
+		if (protocolSupport != null)
+			return ProtocolAPI.get(ProtocolSupportAPI.getProtocolVersion(p).getId());
 		return ProtocolAPI.getDefaultProtocol();
 	}
 }
