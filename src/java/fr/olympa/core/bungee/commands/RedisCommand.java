@@ -27,7 +27,7 @@ public class RedisCommand extends BungeeCommand {
 			sub = null;
 			sendSuccess("Le mode écoute redis est désormais désactivé.");
 		} else {
-			new Thread(() -> RedisAccess.INSTANCE.connect().psubscribe(sub = new RedisSub(), "*"), "Redis listen sub").start();
+			new Thread(() -> RedisAccess.INSTANCE.connect().psubscribe(sub == null ? sub = new RedisSub() : sub, "*"), "Redis listen sub").start();
 			sendSuccess("Le mode écoute redis est désormais activé.");
 		}
 	}
