@@ -3,5 +3,5 @@ website: https://olympa.fr
 main: fr.olympa.core.spigot.OlympaCore
 authors: [Tristiisch, SkytAsul]
 version: 0.1
-softdepend: [ProtocolSupport]
+softdepend: [ProtocolSupport, ViaVersion]
 api-version: 1.15

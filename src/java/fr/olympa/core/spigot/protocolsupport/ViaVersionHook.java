@@ -39,7 +39,7 @@ public class ViaVersionHook {
 		Integer version = null;
 		while (iterator.hasNext())
 			version = iterator.next();
-		return ProtocolAPI.getAll(version).stream().map(p -> p.name()).collect(Collectors.joining(", "));
+		return ProtocolAPI.getAll(version).stream().map(p -> p.getName()).collect(Collectors.joining(", "));
 	}
 
 	public String getVersionSupported() {
