@@ -22,7 +22,6 @@ import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
-@SuppressWarnings("deprecation")
 public class ServersListener implements Listener {
 
 	@EventHandler
@@ -47,8 +46,17 @@ public class ServersListener implements Listener {
 		}
 		if (kickReason.contains("restarting") || kickReason.contains("closed")) {
 			ServerInfo serverFallback = null;
-			if (olympaServer != null && olympaServer.hasMultiServers())
+			if (olympaServer != null && olympaServer.hasMultiServers()) {
 				serverFallback = ServersConnection.getBestServer(olympaServer, serverKicked);
+				if (serverFallback != null) {
+					event.setCancelled(true);
+					event.setCancelServer(serverFallback);
+					player.sendMessage(TextComponent
+							.fromLegacyText(Prefix.DEFAULT_GOOD + ColorUtils.color(
+									"Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, tu es désormais au serveur &2" + Utils.capitalize(serverFallback.getName()) + "&a.")));
+					return;
+				}
+			}
 			if (serverFallback == null)
 				serverFallback = ServersConnection.getBestServer(OlympaServer.LOBBY, serverKicked);
 			if (serverFallback == null)
@@ -62,8 +70,8 @@ public class ServersListener implements Listener {
 
 			event.setCancelled(true);
 			event.setCancelServer(serverFallback);
-			player.sendMessage(TextComponent
-					.fromLegacyText(Prefix.DEFAULT_GOOD + ColorUtils.color("Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter au moins 10 secondes avant d'être reconnecté automatiquement.")));
+			player.sendMessage(TextComponent.fromLegacyText(Prefix.DEFAULT_GOOD + ColorUtils.color(
+					"Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter au moins 10 secondes avant d'être reconnecté automatiquement.")));
 			OlympaBungee.getInstance().getTask().runTaskLater(() -> ServersConnection.tryConnect(player, olympaServer), 10, TimeUnit.SECONDS);
 			return;
 		}

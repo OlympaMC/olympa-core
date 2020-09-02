@@ -62,12 +62,15 @@ public class OlympaCorePermissions {
 	// USLESS PERMISSION
 	public static final OlympaPermission LOBBY_COMMAND = new OlympaPermission(OlympaGroup.PLAYER);
 	public static final OlympaPermission GENDER_COMMAND = new OlympaPermission(OlympaGroup.PLAYER);
+	// USLESS PERMISSION
 
 	public static final OlympaPermission BUNGEE_LAG_COMMAND_EXTRA = new OlympaPermission(OlympaGroup.FRIEND);
 	public static final OlympaPermission SPIGOT_LAG_COMMAND = new OlympaPermission(OlympaGroup.FRIEND);
 
-	public static final OlympaPermission GAMEMODE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
-	public static final OlympaPermission GAMEMODE_COMMAND_CREATIVE = new OlympaPermission(OlympaGroup.MODP);
+	// TODO change to OlympaGroup.RESP_TECH in serveur PvP Faction & ZTA
+	public static final OlympaPermission GAMEMODE_COMMAND = new OlympaPermission(OlympaGroup.BUILDER);
+	// TODO change to OlympaGroup.MODP in serveur PvP Faction & ZTA
+	public static final OlympaPermission GAMEMODE_COMMAND_CREATIVE = new OlympaPermission(OlympaGroup.BUILDER);
 	public static final OlympaPermission FLY_COMMAND = new OlympaPermission(OlympaGroup.MODP);
 	public static final OlympaPermission CONFIG_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 

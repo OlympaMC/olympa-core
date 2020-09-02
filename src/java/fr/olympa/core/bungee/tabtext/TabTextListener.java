@@ -1,12 +1,13 @@
 package fr.olympa.core.bungee.tabtext;
 
+import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 public class TabTextListener implements Listener {
-	
+
 	//	private static long time = Utils.getCurrentTimeInSeconds();
 
 	@EventHandler
@@ -15,11 +16,11 @@ public class TabTextListener implements Listener {
 		//		if (t - time < 10)
 		//			return;
 		//		time = t;
-		TabText.sendAll();
+		OlympaBungee.getInstance().getTask().runTask(() -> TabText.sendAll());
 	}
-	
+
 	@EventHandler
-	public void onServerConnected(PostLoginEvent event) {
+	public void onPostLogin(PostLoginEvent event) {
 		//		long t = Utils.getCurrentTimeInSeconds();
 		//		if (t - time < 10) {
 		//		event.getPlayer().setTabHeader(header, footer);
@@ -29,5 +30,5 @@ public class TabTextListener implements Listener {
 		TabText.sendAll();
 		TabText.send(event.getPlayer());
 	}
-	
+
 }

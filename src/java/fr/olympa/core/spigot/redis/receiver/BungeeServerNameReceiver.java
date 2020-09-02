@@ -24,7 +24,7 @@ public class BungeeServerNameReceiver extends JedisPubSub {
 			//			RedisAccess.INSTANCE.updateClientName(serverName);
 			OlympaCore.getInstance().sendMessage("&2Nom du serveur reçu : &a" + serverName + "&2.");
 			this.unsubscribe();
-		}
+		} else 
 		OlympaCore.getInstance().sendMessage("&4Mauvais nom du serveur reçu : &c" + serverName + "&4.");
 	}
 }

@@ -29,7 +29,7 @@ import fr.olympa.core.bungee.commands.BungeelagCommand;
 import fr.olympa.core.bungee.commands.InfoCommand;
 import fr.olympa.core.bungee.commands.RedisCommand;
 import fr.olympa.core.bungee.connectionqueue.ConnectionQueueListener;
-import fr.olympa.core.bungee.connectionqueue.LeaveQueue;
+import fr.olympa.core.bungee.connectionqueue.LeaveQueueCommand;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
 import fr.olympa.core.bungee.datamanagment.GetUUIDCommand;
 import fr.olympa.core.bungee.login.commands.EmailCommand;
@@ -220,7 +220,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new RestartServerCommand(this).register();
 		new RestartBungeeCommand(this).register();
 		new LobbyCommand(this).register();
-		new LeaveQueue(this).register();
+		new LeaveQueueCommand(this).register();
 		new BungeelagCommand(this).register();
 		new RedisCommand(this).register();
 
@@ -283,7 +283,6 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 			registerRedisSub(redisAccess.connect(), new SpigotServerChangeStatusReceiver(), RedisChannel.SPIGOT_SERVER_CHANGE_STATUS.name());
 			registerRedisSub(redisAccess.connect(), new SpigotServerSwitchReceiver(), RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER.name());
 			registerRedisSub(redisAccess.connect(), new SpigotOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER_TO_BUNGEE.name());
-			registerRedisSub(redisAccess.connect(), new SpigotAskServerNameReceiver(), RedisChannel.SPIGOT_ASK_SERVERNAME.name());
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)

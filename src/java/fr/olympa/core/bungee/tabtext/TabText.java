@@ -21,17 +21,17 @@ public class TabText {
 		String footer = getFooter();
 		collection.forEach(p -> send(p, header, footer));
 	}
-	
+
 	public static void send(ProxiedPlayer player) {
 		String header = getHeader();
 		String footer = getFooter();
 		send(player, header, footer);
 	}
-	
+
 	public static void send(ProxiedPlayer player, String header, String footer) {
 		player.setTabHeader(TextComponent.fromLegacyText(header), TextComponent.fromLegacyText(footer));
 	}
-	
+
 	private static String getHeader() {
 		StringJoiner sj = new StringJoiner("\n");
 		sj.add("&e&lOlympa &eΩ");
@@ -39,7 +39,7 @@ public class TabText {
 		return ColorUtils.color(sj.toString());
 
 	}
-	
+
 	private static String getFooter() {
 		StringJoiner sj = new StringJoiner("\n");
 		//		sj.add("&6Serveur &e%n");

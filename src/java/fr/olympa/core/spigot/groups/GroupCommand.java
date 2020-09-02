@@ -1,5 +1,6 @@
 package fr.olympa.core.spigot.groups;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -57,14 +58,20 @@ public class GroupCommand extends OlympaCommand {
 			olympaTarget = this.getOlympaPlayer();
 		} else if (args.length <= 4) {
 			target = Bukkit.getPlayer(args[0]);
-			if (target == null) {
-				olympaTarget = MySQL.getPlayer(args[0]);
-				if (olympaTarget == null) {
-					this.sendUnknownPlayer(args[0], MySQL.getNamesBySimilarName(args[0]));
+			if (target == null)
+				try {
+					olympaTarget = AccountProvider.get(args[0]);
+					if (olympaTarget == null) {
+						this.sendUnknownPlayer(args[0], MySQL.getNamesBySimilarName(args[0]));
+						return true;
+					} else
+						olympaAccount = new AccountProvider(olympaTarget.getUniqueId());
+				} catch (SQLException e) {
+					e.printStackTrace();
+					sendError(e.getMessage());
 					return true;
-				} else
-					olympaAccount = new AccountProvider(olympaTarget.getUniqueId());
-			} else {
+				}
+			else {
 				olympaAccount = new AccountProvider(target.getUniqueId());
 				olympaTarget = olympaAccount.getFromCache();
 			}
@@ -165,6 +172,7 @@ public class GroupCommand extends OlympaCommand {
 				olympaAccount.saveToRedis(olympaTarget);
 				olympaAccount.saveToDb(olympaTarget);
 				Prefix.DEFAULT.sendMessage(target, msg.replace("%group", newGroup.getName()).replace("%time", timestampString));
+				RedisSpigotSend.sendOlympaGroupChange(oldOlympaTarget, newGroup, timestamp, state, null);
 			}
 
 			if (player != null && (target == null || !SpigotUtils.isSamePlayer(player, target)))

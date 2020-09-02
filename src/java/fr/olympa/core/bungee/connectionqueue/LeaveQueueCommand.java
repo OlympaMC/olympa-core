@@ -7,9 +7,9 @@ import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 
-public class LeaveQueue extends BungeeCommand {
+public class LeaveQueueCommand extends BungeeCommand {
 
-	public LeaveQueue(Plugin plugin) {
+	public LeaveQueueCommand(Plugin plugin) {
 		super(plugin, "leavequeue", "quitfile");
 		allowConsole = false;
 	}
