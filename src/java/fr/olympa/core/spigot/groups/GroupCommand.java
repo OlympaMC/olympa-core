@@ -29,7 +29,6 @@ import fr.olympa.api.utils.Utils;
 import fr.olympa.api.utils.UtilsCore;
 import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.spigot.OlympaCore;
-import fr.olympa.core.spigot.redis.RedisSpigotSend;
 
 @SuppressWarnings("deprecation")
 public class GroupCommand extends OlympaCommand {
@@ -113,7 +112,6 @@ public class GroupCommand extends OlympaCommand {
 				}
 
 			TreeMap<OlympaGroup, Long> oldGroups = olympaTarget.getGroups();
-			OlympaPlayer oldOlympaTarget = olympaTarget.clone();
 			String timestampString = new String();
 			if (timestamp != 0)
 				timestampString = "pendant &2" + Utils.timestampToDuration(timestamp) + "&a";
@@ -156,35 +154,31 @@ public class GroupCommand extends OlympaCommand {
 				state = ChangeType.SET;
 				olympaTarget.setGroup(newGroup, timestamp);
 			}
-
-			if (target == null) {
-				Consumer<? super Boolean> done = b -> {
+			Consumer<? super Boolean> done;
+			if (target == null)
+				done = b -> {
 					if (b)
-						sendInfo("&aLe nouveau grade du joueur &2%s&a bien été reçu sur un autre serveur.", olympaTarget.getName());
+						sendInfo("&aLe changement de grade de &2%s&a bien été reçu sur l'infrastructure (dont discord).", olympaTarget.getName());
 					else {
-						sendInfo("&aLe joueur &2%s&a n'est pas connecté, la modification a bien été prise en compte.", olympaTarget.getName());
-						MySQL.savePlayer(olympaTarget);
+						sendInfo("&aLe joueur &2%s&a n'est pas connecté, le changement de grade a bien été reçu sur l'infrastructure (dont discord).", olympaTarget.getName());
+						AccountProvider olympaAccount2 = new AccountProvider(olympaTarget.getUniqueId());
+						olympaAccount2.saveToRedis(olympaTarget);
+						olympaAccount2.saveToDb(olympaTarget);
 					}
 				};
-				RedisSpigotSend.sendOlympaGroupChange(oldOlympaTarget, newGroup, timestamp, state, done);
-			} else {
-				OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, ChangeType.ADD, olympaTarget, newGroup));
+			else {
+				done = b -> {
+				};
+				Prefix.DEFAULT.sendMessage(target, msg.replace("%group", newGroup.getName()).replace("%time", timestampString));
 				olympaAccount.saveToRedis(olympaTarget);
 				olympaAccount.saveToDb(olympaTarget);
-				Prefix.DEFAULT.sendMessage(target, msg.replace("%group", newGroup.getName()).replace("%time", timestampString));
-				RedisSpigotSend.sendOlympaGroupChange(oldOlympaTarget, newGroup, timestamp, state, null);
 			}
-
+			OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, state, olympaTarget, done, timestamp, newGroup));
 			if (player != null && (target == null || !SpigotUtils.isSamePlayer(player, target)))
 				if (msg == null)
-					sendSuccess("&cLe joueur &4%player&a n'est plus dans le groupe &4%group&c."
-							.replace("%player", olympaTarget.getName())
-							.replace("%group", newGroup.getName()));
+					sendSuccess("&cLe joueur &4%s&c n'est plus dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName());
 				else
-					sendSuccess("&aLe joueur &2%player&a est désormais dans le groupe &2%group&a%time."
-							.replace("%player", olympaTarget.getName())
-							.replace("%group", newGroup.getName())
-							.replace("%time", timestampString));
+					sendSuccess("&aLe joueur &2%s&a est désormais dans le groupe &2%s&a%s.", olympaTarget.getName(), newGroup.getName(), timestampString);
 		}
 		return true;
 	}

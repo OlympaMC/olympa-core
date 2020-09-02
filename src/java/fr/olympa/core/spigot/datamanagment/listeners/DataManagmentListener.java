@@ -56,6 +56,12 @@ public class DataManagmentListener implements Listener {
 
 		AccountProvider olympaAccount = new AccountProvider(uuid);
 		OlympaPlayer olympa = olympaAccount.getFromCache();
+		try {
+			Thread.sleep(1000);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
 		if (olympa != null)
 			System.out.println("[REDIS] I have already data for " + olympa.getName());
 		OlympaPlayer olympaPlayer;
@@ -74,7 +80,7 @@ public class DataManagmentListener implements Listener {
 		OlympaCore core = OlympaCore.getInstance();
 		ServerStatus status = core.getStatus();
 		if (status == ServerStatus.CLOSE) {
-			event.disallow(Result.KICK_OTHER, ColorUtils.color("&cLe serveur &4" + core.getName() + "&c est fermé, réessaye dans quelques instants..."));
+			event.disallow(Result.KICK_OTHER, ColorUtils.color("&cLe serveur &4" + core.getServerName() + "&c est fermé, réessaye dans quelques instants..."));
 			return;
 		}
 		if (status == ServerStatus.UNKNOWN) {
@@ -120,7 +126,7 @@ public class DataManagmentListener implements Listener {
 				PermissionAttachment attachment = player.addAttachment(OlympaCore.getInstance());
 				olympaPlayer.getGroups().keySet().forEach(group -> group.runtimePermissions.forEach(perm -> attachment.setPermission(perm, true)));
 				player.recalculatePermissions();
-				
+
 				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
 				Bukkit.getPluginManager().callEvent(loginevent);
 			} catch (SQLException e) {
