@@ -266,7 +266,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		}
 	}
 
-	private void registerRedisSub(Jedis jedis, JedisPubSub sub, String channel) {
+	public void registerRedisSub(Jedis jedis, JedisPubSub sub, String channel) {
 		new Thread(() -> jedis.subscribe(sub, channel), "Redis sub " + channel).start();
 	}
 

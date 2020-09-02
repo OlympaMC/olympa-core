@@ -110,5 +110,13 @@ public class RedisSpigotSend {
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
+	
+	public static void sendError(String stackTrace) {
+		String serverName = OlympaCore.getInstance().getServerName();
+		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
+			jedis.publish(RedisChannel.SPIGOT_RECEIVE_ERROR.name(), serverName + ":" + stackTrace);
+		}
+		RedisAccess.INSTANCE.disconnect();
+	}
 
 }
