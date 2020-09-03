@@ -140,7 +140,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 
 	@Override
 	public void onDisable() {
-		RedisAccess.close();
+		//		RedisAccess.close();
 		if (database != null)
 			database.close();
 		sendMessage("&4" + getDescription().getName() + "&c (" + getDescription().getVersion() + ") est désactivé.");

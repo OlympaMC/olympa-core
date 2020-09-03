@@ -67,11 +67,11 @@ public class OlympaCorePermissions {
 	public static final OlympaPermission BUNGEE_LAG_COMMAND_EXTRA = new OlympaPermission(OlympaGroup.FRIEND);
 	public static final OlympaPermission SPIGOT_LAG_COMMAND = new OlympaPermission(OlympaGroup.FRIEND);
 
-	// TODO change to OlympaGroup.RESP_TECH in serveur PvP Faction & ZTA
+	// Don't fogot to change it in ZTA
 	public static final OlympaPermission GAMEMODE_COMMAND = new OlympaPermission(OlympaGroup.BUILDER);
-	// TODO change to OlympaGroup.MODP in serveur PvP Faction & ZTA
 	public static final OlympaPermission GAMEMODE_COMMAND_CREATIVE = new OlympaPermission(OlympaGroup.BUILDER);
-	public static final OlympaPermission FLY_COMMAND = new OlympaPermission(OlympaGroup.MODP);
+	public static final OlympaPermission FLY_COMMAND = new OlympaPermission(OlympaGroup.BUILDER);
+
 	public static final OlympaPermission CONFIG_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 
 }

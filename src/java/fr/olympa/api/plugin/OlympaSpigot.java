@@ -51,7 +51,10 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 	}
 
 	public void registerRedisSub(Jedis jedis, JedisPubSub sub, String channel) {
+		System.out.println("registerRedisSub " + channel);
 		new Thread(() -> jedis.subscribe(sub, channel), "Redis sub " + channel).start();
+		System.out.println("registerRedisSub " + channel + " done");
+
 	}
 
 	@Override
@@ -114,7 +117,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		if (redisAccess.isConnected()) {
 			registerRedisSub(redisAccess.getConnection(), new BungeeServerNameReceiver(), RedisChannel.BUNGEE_ASK_SEND_SERVERNAME.name());
 			// BUG blocked thread
-			//			registerRedisSub(new SpigotSendOlympaPlayerReceiver(), RedisChannel.BUNGEE_ASK_SEND_OLYMPAPLAYER.name());
+			//			registerRedisSub(redisAccess.connect(), new SpigotOlympaPlayerReceiver(), RedisChannel.BUNGEE_ASK_SEND_OLYMPAPLAYER.name());
 			registerRedisSub(redisAccess.connect(), new SpigotReceiveOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name());
 			registerRedisSub(redisAccess.connect(), new BungeeSendOlympaPlayerReceiver(), RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name());
 			registerRedisSub(redisAccess.connect(), new SpigotGroupChangedReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP.name());

@@ -105,7 +105,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	public void launchAsync(Runnable run) {
 		getTask().runTaskAsynchronously(run);
 	}
-	
+
 	@Override
 	public void onDisable() {
 		setStatus(ServerStatus.CLOSE);
@@ -115,7 +115,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		super.onDisable();
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
 	}
-	
+
 	@Override
 	public void onLoad() {
 		super.onLoad();
