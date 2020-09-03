@@ -102,22 +102,21 @@ public class PermissionCommand extends ComplexCommand {
 		Entry<String, OlympaPermission> entry = cmd.getArgument(0);
 		String permName = entry.getKey();
 		OlympaPermission perm = entry.getValue();
-		Object arg1 = cmd.getArgument(1);
 		OlympaGroup olympaGroup = null;
 		Player player = null;
-		if (arg1 instanceof OlympaGroup) {
+		if (cmd.getArgument(1) instanceof OlympaGroup) {
 			olympaGroup = cmd.getArgument(1);
 			if (perm.hasPermission(olympaGroup)) {
 				sendError("Le groupe &4%s&c a déjà la permission &4%s&c.", olympaGroup.getName(), permName);
 				return;
 			}
-		} else if (arg1 instanceof Player) {
+		} else if (cmd.getArgument(1) instanceof Player) {
 			player = cmd.getArgument(1);
 			if (perm.hasPermission(player.getUniqueId())) {
 				sendError("Le joueur &4%s&c a déjà la permission &4%s&c.", player.getName(), permName);
 				return;
 			}
-		} else if (arg1 instanceof String) {
+		} else if (cmd.getArgument(1) instanceof String) {
 			String all = cmd.getArgument(1);
 			if (!all.equals("ALL"))
 				return;
