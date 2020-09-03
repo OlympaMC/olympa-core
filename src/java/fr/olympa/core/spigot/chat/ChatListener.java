@@ -21,12 +21,12 @@ import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Matcher;
 
 public class ChatListener implements Listener {
-	
+
 	public String getChatColor(String format) {
 		int index = format.lastIndexOf("%s");
 		return format.substring(index - 3, index - 1);
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
@@ -35,7 +35,7 @@ public class ChatListener implements Listener {
 			event.setFormat(ColorUtils.color("&cERREUR &7") + "%s : %s");
 			return;
 		}
-		
+
 		OlympaGroup group = olympaPlayer.getGroup();
 		if (group != null) {
 			if (OlympaCorePermissions.CHAT_COLOR.hasPermission(olympaPlayer))
@@ -44,14 +44,14 @@ public class ChatListener implements Listener {
 		} else
 			event.setFormat(ColorUtils.color("&cGRADE ERREUR &7") + "%s : %s");
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerChatEvent(AsyncPlayerChatEvent event) {
 		if (event.isCancelled())
 			return;
 		Player player = event.getPlayer();
 		String message = event.getMessage();
-		
+
 		Map<Player, String> mentionned = new HashMap<>();
 		for (String arg : message.split(" ")) {
 			arg = ChatColor.stripColor(arg);

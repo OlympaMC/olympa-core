@@ -5,14 +5,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
+
+import com.google.common.collect.Sets;
 
 import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
@@ -21,7 +25,9 @@ import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.player.Gender;
+import fr.olympa.api.server.ServerType;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
 
 @SuppressWarnings("deprecation")
@@ -63,6 +69,16 @@ public class PermissionCommand extends ComplexCommand {
 		return false;
 	}
 
+	@Cmd()
+	public void bukkit(CommandContext cmd) {
+		Set<Permission> allPerms = Bukkit.getPluginManager().getPermissions();
+		Set<Permission> noPermission = Sets.difference(allPerms, player.getEffectivePermissions());
+		sendMessage(Prefix.DEFAULT_GOOD, "Tu as %s permission%s bukkit sur %s. %s", allPerms.size() - noPermission.size(), noPermission.size() > 1 ? "s" : "", allPerms.size(), player.isOp() ? "&a[&2OP]" : "");
+		//		if (!noPermission.isEmpty())
+		//			sendMessage(Prefix.DEFAULT_BAD, "Il te manque l%s permission%s :\n&6%s", noPermission.size() > 1 ? "es" : "a", noPermission.size() > 1 ? "s" : "",
+		//					noPermission.stream().map(Permission::getName).collect(Collectors.joining("&e, &6")));
+	}
+
 	@Cmd(args = { "PERMISSION" })
 	public void info(CommandContext cmd) {
 		if (cmd.getArgumentsLength() == 0) {
@@ -85,9 +101,9 @@ public class PermissionCommand extends ComplexCommand {
 			sj.add(String.format("&aTu n'as pas cette permission."));
 		Gender gender = player != null ? getOlympaPlayer().getGender() : Gender.UNSPECIFIED;
 		sj.add(String.format("&eGroups: &6%s", Arrays.stream(perm.getAllGroupsAllowed()).map(g -> g.getName(gender)).collect(Collectors.joining("&e, &6"))));
+		if (perm.getAllowedBypass() != null && perm.getAllowedBypass().length != 0)
+			sj.add(String.format("&eExtra Permission: &6%s", Arrays.stream(perm.getAllowedBypass()).map(uuid -> Bukkit.getOfflinePlayer(uuid).getName()).collect(Collectors.joining("&e, &6"))));
 		sendMessage(Prefix.NONE, sj.toString());
-		if (player != null)
-			sendSuccess("Tu as les permissions Bukkit suivantes : §6%s", player.getEffectivePermissions().stream().map(PermissionAttachmentInfo::getPermission).collect(Collectors.joining(", ")));
 	}
 
 	@Cmd(player = true, min = 1, syntax = "<bukkit permission>")
@@ -95,6 +111,15 @@ public class PermissionCommand extends ComplexCommand {
 		PermissionAttachment attachment = player.addAttachment(OlympaCore.getInstance());
 		attachment.setPermission(cmd.<String>getArgument(0), true);
 		player.recalculatePermissions();
+		sendMessage(Prefix.DEFAULT_GOOD, "Le joueur &2%s&a a désormais la permission bukkit &2%s&a.", player.getName(), cmd.<String>getArgument(0));
+	}
+
+	@Cmd(player = true, min = 1, syntax = "<bukkit permission>")
+	public void removeBukkitPerm(CommandContext cmd) {
+		PermissionAttachment attachment = player.addAttachment(OlympaCore.getInstance());
+		attachment.setPermission(cmd.<String>getArgument(0), false);
+		player.recalculatePermissions();
+		sendMessage(Prefix.DEFAULT_GOOD, "Le joueur &2%s&a n'a plus la permission bukkit &2%s&a.", player.getName(), cmd.<String>getArgument(0));
 	}
 
 	@Cmd(args = { "PERMISSION", "GROUPS|PLAYERS", }, min = 2)
@@ -104,6 +129,10 @@ public class PermissionCommand extends ComplexCommand {
 		OlympaPermission perm = entry.getValue();
 		OlympaGroup olympaGroup = null;
 		Player player = null;
+		if (perm.getServerType() != ServerType.SPIGOT) {
+			sendError("La permission &4%s&c est une permission &4%s&c.", permName, Utils.capitalize(perm.getServerType().name()));
+			return;
+		}
 		if (cmd.getArgument(1) instanceof OlympaGroup) {
 			olympaGroup = cmd.getArgument(1);
 			if (perm.hasPermission(olympaGroup)) {
@@ -123,6 +152,9 @@ public class PermissionCommand extends ComplexCommand {
 			perm.enable();
 			sendMessage(Prefix.DEFAULT_GOOD, "La permission &2%s&a a été réactiver.", permName);
 			return;
+		} else {
+			sendError("Le type de &4%s&c n'est pas connu par la commande.", cmd.getArgument(1));
+			return;
 		}
 		if (perm.isLocked()) {
 			sendError("La permission &4%s&c est verrouiller. Impossible de la modifier.", permName);
@@ -139,27 +171,29 @@ public class PermissionCommand extends ComplexCommand {
 
 	@Cmd(args = { "GROUPS|PLAYERS" }, min = 1)
 	public void see(CommandContext cmd) {
-		Object arg1 = cmd.getArgument(1);
 		OlympaGroup olympaGroup = null;
 		Player player = null;
 		Collection<OlympaPermission> allPerms = OlympaPermission.permissions.values();
-		if (arg1 instanceof OlympaGroup) {
-			olympaGroup = cmd.getArgument(1);
+		if (cmd.getArgument(0) instanceof OlympaGroup) {
+			olympaGroup = cmd.getArgument(0);
 			OlympaGroup olympaGroup2 = olympaGroup;
 			List<String> noPermission = OlympaPermission.permissions.entrySet().stream().filter(entry -> !entry.getValue().hasPermission(olympaGroup2)).map(Entry::getKey).collect(Collectors.toList());
 			sendMessage(Prefix.DEFAULT_GOOD, "&2%s&a a %s permission%s sur %s.", olympaGroup.getPrefix(), allPerms.size() - noPermission.size(), noPermission.size() > 1 ? "s" : "", allPerms.size());
 			if (!noPermission.isEmpty())
 				sendMessage(Prefix.DEFAULT_BAD, "Il manque l%s permission%s :\n&6%s", noPermission.size() > 1 ? "es" : "a", noPermission.size() > 1 ? "s" : "", String.join("&e, &6", noPermission));
-		} else {
-			player = cmd.getArgument(1);
+		} else if (cmd.getArgument(0) instanceof Player) {
+			player = cmd.getArgument(0);
 			Player player2 = player;
 			List<String> extraPermission = OlympaPermission.permissions.entrySet().stream().filter(entry -> !entry.getValue().isInAllowedBypass(player2.getUniqueId())).map(Entry::getKey).collect(Collectors.toList());
 			List<String> noPermission = OlympaPermission.permissions.entrySet().stream().filter(entry -> !entry.getValue().hasPermission(player2.getUniqueId())).map(Entry::getKey).collect(Collectors.toList());
-			sendMessage(Prefix.DEFAULT_GOOD, "&2%s&a a %s permission%s sur %s.", player.getName(), allPerms.size() - noPermission.size(), noPermission.size() > 1 ? "s" : "", allPerms.size());
+			sendMessage(Prefix.DEFAULT_GOOD, "&2%s&a a %s permission%s sur %s. %s", player.getName(), allPerms.size() - noPermission.size(), noPermission.size() > 1 ? "s" : "", allPerms.size(), player.isOp() ? "&a[&2OP]" : "");
 			if (!noPermission.isEmpty())
 				sendMessage(Prefix.NONE, "&cIl manque l%s permission%s :\n&6%s", noPermission.size() > 1 ? "es" : "a", noPermission.size() > 1 ? "s" : "", String.join("&e, &6", noPermission));
 			if (!extraPermission.isEmpty())
 				sendMessage(Prefix.ERROR, "Extra permission%s :\n&6%s", noPermission.size() > 1 ? "es" : "a", noPermission.size() > 1 ? "s" : "", String.join("&e, &6", noPermission));
+		} else {
+			sendError("Le type de &4%s&c n'est pas connu par la commande.", cmd.getArgument(1));
+			return;
 		}
 	}
 

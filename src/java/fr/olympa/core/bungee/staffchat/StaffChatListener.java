@@ -30,20 +30,20 @@ public class StaffChatListener implements Listener {
 		if (StaffChatHandler.getStaffchat().contains(uuid)) {
 			if (message.charAt(0) == '$')
 				message = message.substring(1);
-			olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
-			if (!OlympaCorePermissions.STAFF_CHAT.hasPermission(olympaPlayer)) {
-				player.sendMessage(TextComponent.fromLegacyText(Prefix.ERROR.formatMessage("Tu n'as plus la permission d'écrire dans le chat du staff.")));
-				StaffChatHandler.getStaffchat().remove(uuid);
-				return;
-			}
-		} else {
-			if (message.charAt(0) != '$')
-				return;
+		} else if (message.charAt(0) == '$')
 			message = message.substring(1);
-			olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
+		else
+			return;
+		olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
+
+		if (!OlympaCorePermissions.STAFF_CHAT.hasPermission(olympaPlayer)) {
+			player.sendMessage(TextComponent.fromLegacyText(Prefix.ERROR.formatMessage("Tu n'as pas la permission d'écrire dans le chat du staff.")));
+			StaffChatHandler.getStaffchat().remove(uuid);
+			return;
 		}
 
 		StaffChatHandler.sendMessage(olympaPlayer, player, message);
 		event.setCancelled(true);
+
 	}
 }

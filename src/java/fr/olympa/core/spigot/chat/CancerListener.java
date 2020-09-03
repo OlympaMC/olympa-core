@@ -24,7 +24,7 @@ import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.chat.Chat.OlympaChat;
 
 public class CancerListener implements Listener {
- 
+
 	// private Pattern matchIpv6 = Pattern.compile(
 	// "^(?>(?>([a-f0-9]{1,4})(?>:(?1)){7}|(?!(?:.*[a-f0-9](?>:|$)){8,})((?1)(?>:(?1)){0,6})?::(?2)?)|(?>(?>(?1)(?>:(?1)){5}:|(?!(?:.*[a-f0-9]:){6,})(?3)?::(?>((?1)(?>:(?1)){0,4}):)?)?(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(?>.(?4)){3}))$");
 	private Pattern matchIpv4 = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
@@ -35,9 +35,8 @@ public class CancerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerChatEvent(AsyncPlayerChatEvent event) {
-		if (event.isCancelled()) {
+		if (event.isCancelled())
 			return;
-		}
 
 		Player player = event.getPlayer();
 		OlympaServerSettings serverSettings = OlympaServerSettings.getInstance();
@@ -57,9 +56,8 @@ public class CancerListener implements Listener {
 			return;
 		}
 
-		if (OlympaCorePermissions.CHAT_BYPASS.hasPermission(olympaPlayer)) {
+		if (OlympaCorePermissions.CHAT_BYPASS.hasPermission(olympaPlayer))
 			return;
-		}
 
 		String message = event.getMessage();
 		String msgNFD = Normalizer.normalize(message, Form.NFD);
@@ -86,11 +84,10 @@ public class CancerListener implements Listener {
 		Matcher matcher2 = matchLink2.matcher(msgNFD);
 		if (matcher.find() || matcher2.find()) {
 			String link;
-			if (matcher.find()) {
+			if (matcher.find())
 				link = matcher.group();
-			} else {
+			else
 				link = matcher2.group();
-			}
 			Set<String> linkWhitelist = new HashSet<>(OlympaCore.getInstance().getConfig().getStringList("chat.linkwhitelist"));
 			if (!linkWhitelist.stream().filter(l -> link.contains(l)).findFirst().isPresent()) {
 				event.setCancelled(true);
@@ -168,7 +165,7 @@ public class CancerListener implements Listener {
 						find = true;
 					}
 					if (++i > 50) {
-						Bukkit.getConsoleSender().sendMessage(ColorUtils.color("&4ERROR &cBoucle infini dans la gestion de chat pour le flood."));
+						OlympaCore.getInstance().sendMessage("&4ERROR &cBoucle infini dans la gestion de chat pour le flood.");
 						break;
 					}
 					matcher = matchFlood.matcher(message);
@@ -188,7 +185,7 @@ public class CancerListener implements Listener {
 					String chars = matcher.group();
 					message = message.replace(chars, "");
 					if (++i > 100) {
-						Bukkit.getConsoleSender().sendMessage(ColorUtils.color("&4ERROR &cBoucle infini dans la gestion de chat pour les symboles interdits."));
+						OlympaCore.getInstance().sendMessage("&4ERROR &cBoucle infini dans la gestion de chat pour les symboles interdits.");
 						break;
 					}
 					matcher = matchNoWord.matcher(message);

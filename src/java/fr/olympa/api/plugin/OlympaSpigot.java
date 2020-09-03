@@ -51,9 +51,9 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 	}
 
 	public void registerRedisSub(Jedis jedis, JedisPubSub sub, String channel) {
-		System.out.println("registerRedisSub " + channel);
+		//		System.out.println("registerRedisSub " + channel);
 		new Thread(() -> jedis.subscribe(sub, channel), "Redis sub " + channel).start();
-		System.out.println("registerRedisSub " + channel + " done");
+		//		System.out.println("registerRedisSub " + channel + " done");
 
 	}
 
