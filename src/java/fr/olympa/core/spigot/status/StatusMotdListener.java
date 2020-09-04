@@ -15,6 +15,7 @@ public class StatusMotdListener implements Listener {
 	public void onPing(ServerListPingEvent event) {
 		ServerStatus status = OlympaCore.getInstance().getStatus();
 		MachineInfo machineInfo = new MachineInfo();
-		event.setMotd(status.getName() + " " + TPS.getTPS() + " " + machineInfo.getMemUsage() + " " + machineInfo.getThreads());
+		OlympaCore core = OlympaCore.getInstance();
+		event.setMotd(status.getName() + " " + TPS.getTPS() + " " + machineInfo.getMemUsage() + " " + machineInfo.getThreads() + " " + core.getFirstVersion() + " " + core.getLastVersion());
 	}
 }

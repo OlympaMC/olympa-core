@@ -1,6 +1,7 @@
 package fr.olympa.core.bungee.servers;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -16,7 +17,30 @@ import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 public class ServersConnection {
 
-	public static Map<UUID, ScheduledTask> connect = new HashMap<>();
+	//	public static Map<UUID, ScheduledTask> connect = new HashMap<>();
+	private static List<WaitingConnection> connect = new ArrayList<>();
+
+	public static void addConnection(WaitingConnection wc) {
+		connect.add(wc);
+	}
+
+	public static boolean removeConnection(WaitingConnection wc) {
+		return connect.remove(wc);
+	}
+
+	public static WaitingConnection removeConnection(ProxiedPlayer player) {
+		WaitingConnection wc = getConnection(player.getUniqueId());
+		connect.remove(wc);
+		return wc;
+	}
+
+	public static List<WaitingConnection> getConnections(OlympaServer olympaServer) {
+		return connect.stream().filter(wc -> wc.olympaServer.isSame(olympaServer)).collect(Collectors.toList());
+	}
+
+	public static WaitingConnection getConnection(UUID uuid) {
+		return connect.stream().filter(wc -> wc.uuid.equals(uuid)).findFirst().orElse(null);
+	}
 
 	public static boolean canPlayerConnect(ServerInfo server) {
 		MonitorInfo monitor = MonitorServers.getMonitor(server);
@@ -54,8 +78,9 @@ public class ServersConnection {
 	}
 
 	public static boolean removeTryToConnect(ProxiedPlayer player) {
-		ScheduledTask task = connect.remove(player.getUniqueId());
-		if (task != null) {
+		WaitingConnection wc = removeConnection(player);
+		if (wc != null) {
+			ScheduledTask task = wc.task;
 			task.cancel();
 			return true;
 		}
@@ -64,7 +89,8 @@ public class ServersConnection {
 
 	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer) {
 		removeTryToConnect(player);
-		connect.put(player.getUniqueId(), ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), new QueueSpigotTask(player, olympaServer), 0, 20, TimeUnit.SECONDS));
+		//		connect.put(player.getUniqueId(), );
+		addConnection(new WaitingConnection(player.getUniqueId(), olympaServer, ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), new QueueSpigotTask(player, olympaServer), 0, 20, TimeUnit.SECONDS)));
 	}
 	// Move to QueueSpigotTask
 	//	@SuppressWarnings("deprecation")

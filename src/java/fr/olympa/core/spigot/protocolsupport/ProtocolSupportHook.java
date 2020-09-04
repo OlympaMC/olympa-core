@@ -80,15 +80,15 @@ public class ProtocolSupportHook implements IProtocolSupport {
 	}
 
 	@Override
-	public String getRangeVersion() {
+	public String[] getRangeVersionArray() {
 		List<String> proto = getStreamProtocolSupported().map(ProtocolVersion::getName).collect(Collectors.toList());
-		String last = proto.get(0);
-		String first;
+		String first = proto.get(0);
+		String last;
 		if (OlympaCore.getInstance().getViaVersionHook() == null)
-			first = proto.get(proto.size() - 1);
+			last = proto.get(proto.size() - 1);
 		else
-			first = OlympaCore.getInstance().getViaVersionHook().getHighVersion();
-		return last + " à " + first;
+			last = OlympaCore.getInstance().getViaVersionHook().getHighVersion();
+		return new String[] { first, last };
 	}
 
 	@Override

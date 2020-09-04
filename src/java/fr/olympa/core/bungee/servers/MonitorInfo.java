@@ -34,6 +34,8 @@ public class MonitorInfo {
 	private ServerStatus status = ServerStatus.UNKNOWN;
 	private String error;
 	private Float tps;
+	private String lastVersion = "unknown";
+	private String firstVersion = "unknown";
 
 	public MonitorInfo(ServerInfo server, long time, ServerPing serverPing, Throwable error) {
 		serverName = server.getName();
@@ -59,6 +61,10 @@ public class MonitorInfo {
 				ramUsage = Integer.valueOf(motd[2]);
 			if (motd.length >= 4 && Matcher.isInt(motd[3]))
 				threads = Integer.valueOf(motd[3]);
+			if (motd.length >= 5)
+				firstVersion = motd[4];
+			if (motd.length >= 6)
+				lastVersion = motd[5];
 		} else {
 			status = ServerStatus.CLOSE;
 			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "Connexion refusée");
@@ -123,6 +129,14 @@ public class MonitorInfo {
 
 	public boolean isOpen() {
 		return error == null;
+	}
+
+	public String getLastVersion() {
+		return lastVersion;
+	}
+
+	public String getFirstVersion() {
+		return firstVersion;
 	}
 
 }

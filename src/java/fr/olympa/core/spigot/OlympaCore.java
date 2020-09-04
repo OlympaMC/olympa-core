@@ -22,6 +22,7 @@ import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.ErrorOutputStream;
+import fr.olympa.api.utils.spigot.ProtocolAPI;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
@@ -65,6 +66,28 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	private ImageFrameManager imageFrameManager;
 	private IProtocolSupport protocolSupportHook;
 	private ViaVersionHook viaVersionHook;
+	private String lastVersion = "unknown";
+	private String firstVersion = "unknown";
+
+	public String getLastVersion() {
+		return lastVersion;
+	}
+
+	public void setLastVersion(String lastVersion) {
+		this.lastVersion = lastVersion;
+	}
+
+	public String getFirstVersion() {
+		return firstVersion;
+	}
+
+	public String getRangeVersion() {
+		return firstVersion + " à " + lastVersion;
+	}
+
+	public void setFirstVersion(String firstVersion) {
+		this.firstVersion = firstVersion;
+	}
 
 	public ViaVersionHook getViaVersionHook() {
 		return viaVersionHook;
@@ -179,10 +202,21 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		((NametagAPI) nameTagApi).testCompat();
 
 		new AntiWD(this);
-		if (pluginManager.isPluginEnabled("ProtocolSupport"))
-			protocolSupportHook = new ProtocolSupportHook(this);
 		if (pluginManager.isPluginEnabled("ViaVersion"))
 			viaVersionHook = new ViaVersionHook(this);
+		if (pluginManager.isPluginEnabled("ProtocolSupport")) {
+			protocolSupportHook = new ProtocolSupportHook(this);
+			String[] versions = protocolSupportHook.getRangeVersionArray();
+			setFirstVersion(versions[0]);
+			setLastVersion(versions[1]);
+		} else
+			try {
+				String[] versions = ProtocolAPI.getVersionSupportedArray();
+				setFirstVersion(versions[0]);
+				setLastVersion(versions[1]);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 	}

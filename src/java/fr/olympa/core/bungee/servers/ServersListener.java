@@ -71,7 +71,7 @@ public class ServersListener implements Listener {
 			event.setCancelled(true);
 			event.setCancelServer(serverFallback);
 			player.sendMessage(TextComponent.fromLegacyText(Prefix.DEFAULT_GOOD + ColorUtils.color(
-					"Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter au moins 10 secondes avant d'être reconnecté automatiquement.")));
+					"Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter environ 30 secondes avant d'être reconnecté automatiquement.")));
 			OlympaBungee.getInstance().getTask().runTaskLater(() -> ServersConnection.tryConnect(player, olympaServer), 10, TimeUnit.SECONDS);
 			return;
 		}
