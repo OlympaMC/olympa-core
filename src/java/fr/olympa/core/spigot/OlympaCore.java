@@ -202,22 +202,23 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		((NametagAPI) nameTagApi).testCompat();
 
 		new AntiWD(this);
-		if (pluginManager.isPluginEnabled("ViaVersion"))
-			viaVersionHook = new ViaVersionHook(this);
-		if (pluginManager.isPluginEnabled("ProtocolSupport")) {
-			protocolSupportHook = new ProtocolSupportHook(this);
-			String[] versions = protocolSupportHook.getRangeVersionArray();
-			setFirstVersion(versions[0]);
-			setLastVersion(versions[1]);
-		} else
-			try {
-				String[] versions = ProtocolAPI.getVersionSupportedArray();
+		getTask().runTaskLater(() -> {
+			if (pluginManager.isPluginEnabled("ViaVersion"))
+				viaVersionHook = new ViaVersionHook(this);
+			if (pluginManager.isPluginEnabled("ProtocolSupport")) {
+				protocolSupportHook = new ProtocolSupportHook(this);
+				String[] versions = protocolSupportHook.getRangeVersionArray();
 				setFirstVersion(versions[0]);
 				setLastVersion(versions[1]);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
+			} else
+				try {
+					String[] versions = ProtocolAPI.getVersionSupportedArray();
+					setFirstVersion(versions[0]);
+					setLastVersion(versions[1]);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+		}, 100);
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 	}
 

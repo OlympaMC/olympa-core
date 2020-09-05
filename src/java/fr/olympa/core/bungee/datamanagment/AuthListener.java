@@ -114,9 +114,9 @@ public class AuthListener implements Listener {
 						event.setCancelled(true);
 						return;
 					}
-					OlympaBungee.getInstance().sendMessage("&cChangement de pseudo  " + name + " HAS PREMIUM ? " + uuidPremium + " IS PREMIUM ? " + connection.isOnlineMode());
+					OlympaBungee.getInstance().sendMessage("&cChangement de pseudo  " + name + " HAS PREMIUM ? " + uuidPremium);
 				} else
-					OlympaBungee.getInstance().sendMessage("&cNouveau Joueur  " + name + " HAS PREMIUM ? " + uuidPremium + " IS PREMIUM ? " + connection.isOnlineMode());
+					OlympaBungee.getInstance().sendMessage("&cNouveau Joueur  " + name + " HAS PREMIUM ? " + uuidPremium);
 
 			} else
 				// Si la connection est premium

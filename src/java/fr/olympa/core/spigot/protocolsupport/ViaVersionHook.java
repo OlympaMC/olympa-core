@@ -33,16 +33,20 @@ public class ViaVersionHook {
 	}
 
 	public String getHighVersion() {
+		if (viaVersion == null)
+			return null;
 		ViaAPI<?> api = Via.getAPI();
 		SortedSet<Integer> versions = api.getSupportedVersions();
 		Iterator<Integer> iterator = versions.iterator();
 		Integer version = null;
 		while (iterator.hasNext())
 			version = iterator.next();
-		return ProtocolAPI.getAll(version).stream().map(p -> p.getName()).collect(Collectors.joining(", "));
+		return version == null ? "unknown" : ProtocolAPI.getAll(version).stream().map(p -> p.getName()).collect(Collectors.joining(", "));
 	}
 
 	public String getVersionSupported() {
+		if (viaVersion == null)
+			return null;
 		ViaAPI<?> api = Via.getAPI();
 		return api.getSupportedVersions().stream().map(ver -> ProtocolAPI.getAll(ver).stream().map(p -> p.name()).collect(Collectors.joining(", "))).distinct().collect(Collectors.joining(", "));
 	}
