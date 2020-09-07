@@ -82,6 +82,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	}
 
 	public String getRangeVersion() {
+		if (firstVersion.equals(lastVersion))
+			return firstVersion;
 		return firstVersion + " à " + lastVersion;
 	}
 

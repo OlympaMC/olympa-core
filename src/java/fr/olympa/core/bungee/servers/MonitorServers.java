@@ -34,6 +34,10 @@ public class MonitorServers {
 		return bungeeServers.values();
 	}
 
+	public static Map<ServerInfo, MonitorInfo> getServersMap() {
+		return bungeeServers;
+	}
+
 	public static void updateServer(ServerInfo serverInfo, boolean instantUpdate) {
 		updateServer(serverInfo, instantUpdate, null);
 	}

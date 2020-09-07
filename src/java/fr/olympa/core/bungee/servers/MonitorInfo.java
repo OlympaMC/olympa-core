@@ -139,4 +139,9 @@ public class MonitorInfo {
 		return firstVersion;
 	}
 
+	public String getRangeVersion() {
+		if (firstVersion.equals(lastVersion))
+			return firstVersion;
+		return firstVersion + " à " + lastVersion;
+	}
 }

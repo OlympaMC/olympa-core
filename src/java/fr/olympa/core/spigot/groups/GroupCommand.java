@@ -20,6 +20,7 @@ import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
@@ -111,6 +112,7 @@ public class GroupCommand extends OlympaCommand {
 					return true;
 				}
 
+			Gender gender = olympaTarget.getGender();
 			TreeMap<OlympaGroup, Long> oldGroups = olympaTarget.getGroups();
 			String timestampString = new String();
 			if (timestamp != 0)
@@ -122,7 +124,7 @@ public class GroupCommand extends OlympaCommand {
 				if (args[3].equalsIgnoreCase("add")) {
 					Entry<OlympaGroup, Long> oldGroup = oldGroups.entrySet().stream().filter(entry -> entry.getKey().getId() == newGroup.getId()).findFirst().orElse(null);
 					if (oldGroup != null && oldGroup.getValue() == timestamp) {
-						this.sendError("%s&c est déjà dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName());
+						this.sendError("%s&c est déjà dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName(gender));
 						return true;
 					}
 					state = ChangeType.ADD;
@@ -133,10 +135,10 @@ public class GroupCommand extends OlympaCommand {
 					String timestampString2 = new String();
 					if (timestamp2 != 0)
 						timestampString2 = "pendant &2" + Utils.timestampToDuration(timestamp2) + "&a";
-					msg = "&aTu es désormais en plus dans le groupe &2%group&a%time. Ton grade principale est &2%group2&a%time2.".replace("%time2", timestampString2).replace("%group2", principalGroup.getName());
+					msg = "&aTu es désormais en plus dans le groupe &2%group&a%time. Ton grade principale est &2%group2&a%time2.".replace("%time2", timestampString2).replace("%group2", principalGroup.getName(gender));
 				} else if (args[3].equalsIgnoreCase("remove")) {
 					if (!oldGroups.containsKey(newGroup)) {
-						this.sendError("%s&c n'est pas dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName());
+						this.sendError("%s&c n'est pas dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName(gender));
 						return true;
 					}
 					msg = null;
@@ -148,7 +150,7 @@ public class GroupCommand extends OlympaCommand {
 				}
 			} else {
 				if (oldGroups.containsKey(newGroup)) {
-					this.sendError("%s&c est déjà dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName());
+					this.sendError("%s&c est déjà dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName(gender));
 					return true;
 				}
 				state = ChangeType.SET;
@@ -176,9 +178,9 @@ public class GroupCommand extends OlympaCommand {
 			OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, state, olympaTarget, done, timestamp, newGroup));
 			if (player != null && (target == null || !SpigotUtils.isSamePlayer(player, target)))
 				if (msg == null)
-					sendSuccess("&cLe joueur &4%s&c n'est plus dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName());
+					sendSuccess("&cLe joueur &4%s&c n'est plus dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName(gender));
 				else
-					sendSuccess("&aLe joueur &2%s&a est désormais dans le groupe &2%s&a%s.", olympaTarget.getName(), newGroup.getName(), timestampString);
+					sendSuccess("&aLe joueur &2%s&a est désormais dans le groupe &2%s&a%s.", olympaTarget.getName(), newGroup.getName(gender), timestampString);
 		}
 		return true;
 	}

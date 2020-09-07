@@ -79,9 +79,9 @@ public class RedisAccess {
 
 	public void updateClientName(String clientName) {
 		redisCredentials.setClientName(clientName);
-		allJedis.removeIf(j -> !j.isConnected());
-		for (Jedis j : allJedis)
-			j.clientSetname(clientName);
+		//		allJedis.removeIf(j -> !j.isConnected());
+		//		for (Jedis j : allJedis)
+		//			j.clientSetname(clientName);
 	}
 
 	private Jedis newConnection() {
