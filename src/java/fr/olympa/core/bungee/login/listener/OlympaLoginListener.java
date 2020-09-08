@@ -12,6 +12,7 @@ import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersConnection;
+import fr.olympa.core.bungee.servers.WaitingConnection;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -99,7 +100,8 @@ public class OlympaLoginListener implements Listener {
 						ServerInfo server = ServersConnection.getBestServer(olympaServer, null);
 						if (server == null || !MonitorServers.getMonitor(server).isOpen()) {
 							tryConnect = true;
-							ServersConnection.tryConnect(player, olympaServer);
+							OlympaServer olympaServer2 = olympaServer;
+							OlympaBungee.getInstance().getTask().runTaskLater(() -> ServersConnection.tryConnect(player, olympaServer2), 5, TimeUnit.SECONDS);
 						} else {
 							event.setTarget(server);
 							return;
@@ -111,7 +113,7 @@ public class OlympaLoginListener implements Listener {
 					event.setTarget(lobby);
 					return;
 				} else if (!tryConnect)
-					ServersConnection.tryConnect(player, OlympaServer.LOBBY);
+					OlympaBungee.getInstance().getTask().runTaskLater(() -> ServersConnection.tryConnect(player, OlympaServer.LOBBY), 5, TimeUnit.SECONDS);
 			}
 		}
 		ServerInfo auth = ServersConnection.getBestServer(OlympaServer.AUTH, null);
@@ -122,7 +124,9 @@ public class OlympaLoginListener implements Listener {
 	@EventHandler
 	public void onServerConnected(ServerConnectedEvent event) {
 		ProxiedPlayer player = event.getPlayer();
-		ServersConnection.removeTryToConnect(player);
+		WaitingConnection wc = ServersConnection.getConnection(player.getUniqueId());
+		if (wc != null)
+			ServersConnection.removeTryToConnect(player);
 		CachePlayer cache = DataHandler.get(player.getName());
 		if (cache != null) {
 			OlympaPlayer olympaPlayer = cache.getOlympaPlayer();

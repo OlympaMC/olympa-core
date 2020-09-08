@@ -25,6 +25,7 @@ import fr.olympa.core.bungee.ban.commands.MuteCommand;
 import fr.olympa.core.bungee.ban.commands.UnbanCommand;
 import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
+import fr.olympa.core.bungee.commands.BPingCommand;
 import fr.olympa.core.bungee.commands.BungeelagCommand;
 import fr.olympa.core.bungee.commands.InfoCommand;
 import fr.olympa.core.bungee.commands.RedisCommand;
@@ -50,6 +51,7 @@ import fr.olympa.core.bungee.protocol.ProtocolListener;
 import fr.olympa.core.bungee.redis.receiver.SpigotAskServerNameReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotGroupChangeReceiverOnBungee;
 import fr.olympa.core.bungee.redis.receiver.SpigotOlympaPlayerReceiver;
+import fr.olympa.core.bungee.redis.receiver.SpigotReportReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotServerChangeStatusReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotServerSwitchReceiver;
 import fr.olympa.core.bungee.security.BasicSecurityListener;
@@ -223,6 +225,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new LeaveQueueCommand(this).register();
 		new BungeelagCommand(this).register();
 		new RedisCommand(this).register();
+		new BPingCommand(this).register();
 
 		new MonitorServers(this);
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
@@ -283,6 +286,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 			registerRedisSub(redisAccess.connect(), new SpigotServerChangeStatusReceiver(), RedisChannel.SPIGOT_SERVER_CHANGE_STATUS.name());
 			registerRedisSub(redisAccess.connect(), new SpigotServerSwitchReceiver(), RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER.name());
 			registerRedisSub(redisAccess.connect(), new SpigotOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER_TO_BUNGEE.name());
+			registerRedisSub(redisAccess.connect(), new SpigotReportReceiver(), RedisChannel.SPIGOT_REPORT_SEND.name());
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)

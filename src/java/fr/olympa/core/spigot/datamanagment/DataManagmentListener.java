@@ -1,4 +1,4 @@
-package fr.olympa.core.spigot.datamanagment.listeners;
+package fr.olympa.core.spigot.datamanagment;
 
 import java.sql.SQLException;
 import java.util.UUID;

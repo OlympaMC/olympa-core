@@ -1,11 +1,13 @@
 package fr.olympa.core.bungee.api.permission;
 
+import java.sql.SQLException;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.server.ServerType;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -64,7 +66,14 @@ public class OlympaBungeePermission extends OlympaPermission {
 	}
 
 	public void getPlayersBungee(Consumer<? super Set<ProxiedPlayer>> success) {
-		Set<ProxiedPlayer> players = ProxyServer.getInstance().getPlayers().stream().filter(player -> this.hasPermission(player.getUniqueId())).collect(Collectors.toSet());
+		Set<ProxiedPlayer> players = ProxyServer.getInstance().getPlayers().stream().filter(p -> {
+			try {
+				return this.hasPermission(new AccountProvider(p.getUniqueId()).get());
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}).collect(Collectors.toSet());
 		if (!players.isEmpty())
 			success.accept(players);
 	}

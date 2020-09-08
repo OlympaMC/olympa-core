@@ -10,10 +10,10 @@ import net.md_5.bungee.api.scheduler.ScheduledTask;
 import net.md_5.bungee.api.scheduler.TaskScheduler;
 
 public class BungeeTask {
-	
+
 	protected Plugin plugin;
 	private HashMap<String, ScheduledTask> taskList = new HashMap<>();
-	
+
 	public BungeeTask(Plugin plugin) {
 		this.plugin = plugin;
 	}
@@ -44,7 +44,7 @@ public class BungeeTask {
 		if (taskExist(taskName))
 			cancelTaskByName(taskName);
 	}
-	
+
 	public ScheduledTask getTask(int id) {
 		ScheduledTask task = null;
 		if (id > 0)
@@ -53,25 +53,25 @@ public class BungeeTask {
 					return task;
 		return null;
 	}
-	
+
 	public ScheduledTask getTask(String taskName) {
 		return taskList.get(taskName);
 	}
-	
+
 	public String getTaskName(String string) {
 		String taskName;
 		for (taskName = string + "_" + new Random().nextInt(99999); taskExist(taskName); taskName = string + "_" + new Random().nextInt(99999)) {
 		}
 		return taskName;
 	}
-	
+
 	public String getTaskNameById(int id) {
 		for (Entry<String, ScheduledTask> entry : taskList.entrySet())
 			if (entry.getValue().getId() == id)
 				return entry.getKey();
 		return null;
 	}
-	
+
 	private void removeTaskByName(String taskName) {
 		taskList.remove(taskName);
 	}
@@ -104,7 +104,7 @@ public class BungeeTask {
 	public ScheduledTask runTaskLater(Runnable runnable, long tick) {
 		return getScheduler().schedule(plugin, runnable, tick * 50, TimeUnit.MILLISECONDS);
 	}
-	
+
 	public ScheduledTask runTaskLater(Runnable runnable, long delay, TimeUnit timeUnit) {
 		return getScheduler().schedule(plugin, runnable, delay, timeUnit);
 	}
@@ -122,9 +122,13 @@ public class BungeeTask {
 		}, delay);
 		return schTask;
 	}
-	
+
 	public ScheduledTask scheduleSyncRepeatingTask(String taskName, Runnable runnable, long delay, long refresh) {
 		return getScheduler().schedule(plugin, runnable, delay * 50, refresh * 50, TimeUnit.MILLISECONDS);
+	}
+
+	public ScheduledTask scheduleSyncRepeatingTask(Runnable runnable, long delay, long refresh, TimeUnit timeUnit) {
+		return getScheduler().schedule(plugin, runnable, delay, refresh, timeUnit);
 	}
 
 	public ScheduledTask scheduleSyncRepeatingTask(String taskName, Runnable runnable, long delay, long refresh, TimeUnit timeUnit) {

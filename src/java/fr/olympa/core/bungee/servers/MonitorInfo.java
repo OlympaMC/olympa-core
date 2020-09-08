@@ -67,7 +67,7 @@ public class MonitorInfo {
 				lastVersion = motd[5];
 		} else {
 			status = ServerStatus.CLOSE;
-			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "Connexion refusée");
+			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "Connexion ✕ ");
 		}
 	}
 

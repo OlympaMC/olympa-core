@@ -12,11 +12,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
+import fr.olympa.api.report.ReportReason;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.report.gui.ReportGui;
 import fr.olympa.core.spigot.report.gui.ReportGuiChoose;
 import fr.olympa.core.spigot.report.gui.ReportGuiConfirm;
-import fr.olympa.core.spigot.report.items.ReportReason;
 
 public class ReportCommand extends OlympaCommand {
 

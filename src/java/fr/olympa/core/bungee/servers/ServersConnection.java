@@ -90,7 +90,7 @@ public class ServersConnection {
 	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer) {
 		removeTryToConnect(player);
 		//		connect.put(player.getUniqueId(), );
-		addConnection(new WaitingConnection(player.getUniqueId(), olympaServer, ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), new QueueSpigotTask(player, olympaServer), 0, 20, TimeUnit.SECONDS)));
+		addConnection(new WaitingConnection(player.getUniqueId(), olympaServer, OlympaBungee.getInstance().getTask().scheduleSyncRepeatingTask(new QueueSpigotTask(player, olympaServer), 0, 20, TimeUnit.SECONDS)));
 	}
 	// Move to QueueSpigotTask
 	//	@SuppressWarnings("deprecation")

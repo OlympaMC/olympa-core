@@ -17,11 +17,13 @@ import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
+import fr.olympa.api.report.OlympaReport;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
+import us.myles.viaversion.libs.gson.Gson;
 
 public class RedisSpigotSend {
 
@@ -110,7 +112,7 @@ public class RedisSpigotSend {
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
-	
+
 	public static void sendError(String stackTrace) {
 		String serverName = OlympaCore.getInstance().getServerName();
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
@@ -119,4 +121,12 @@ public class RedisSpigotSend {
 		RedisAccess.INSTANCE.disconnect();
 	}
 
+	public static boolean sendReport(OlympaReport report) {
+		long i;
+		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
+			i = jedis.publish(RedisChannel.SPIGOT_REPORT_SEND.name(), new Gson().toJson(report));
+		}
+		RedisAccess.INSTANCE.disconnect();
+		return i != 0;
+	}
 }

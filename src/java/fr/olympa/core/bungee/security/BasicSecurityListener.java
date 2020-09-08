@@ -8,6 +8,7 @@ import com.google.common.cache.CacheBuilder;
 
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.utils.BungeeUtils;
@@ -41,9 +42,8 @@ public class BasicSecurityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on1PreLogin(PreLoginEvent event) {
-		if (event.isCancelled()) {
+		if (event.isCancelled())
 			return;
-		}
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
 		String ip = connection.getAddress().getAddress().getHostAddress();
@@ -86,8 +86,12 @@ public class BasicSecurityListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}
-			event.setCancelReason(BungeeUtils.connectScreen("&cTon compte est déjà connecté."));
-			event.setCancelled(true);
+			String turne = new String();
+			OlympaPlayer olympaPlayer = AccountProvider.get(target.getUniqueId());
+			if (olympaPlayer != null)
+				turne = olympaPlayer.getGender().getTurne();
+			target.disconnect(BungeeUtils.connectScreen("&cTu t'es connecté" + turne + " depuis une autre fenêtre sur ton reseau."));
+			event.setCancelled(false);
 		}
 
 		/*
@@ -100,9 +104,8 @@ public class BasicSecurityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on2Login(LoginEvent event) {
-		if (event.isCancelled()) {
+		if (event.isCancelled())
 			return;
-		}
 		UUID playerUUID = event.getConnection().getUniqueId();
 		String playername = event.getConnection().getName();
 		if (playerUUID == OlympaConsole.getUniqueId() || playername.equalsIgnoreCase(OlympaConsole.getName())) {
@@ -116,9 +119,8 @@ public class BasicSecurityListener implements Listener {
 	public void on3OlympaPlayerLogin(OlympaPlayerLoginEvent event) {
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
 		String ip = event.getIp();
-		if (!olympaPlayer.getIp().equals(ip)) {
+		if (!olympaPlayer.getIp().equals(ip))
 			olympaPlayer.addNewIp(ip);
-		}
 		cache.invalidate(ip);
 	}
 

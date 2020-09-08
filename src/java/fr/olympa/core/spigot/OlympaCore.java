@@ -32,9 +32,11 @@ import fr.olympa.core.spigot.commands.FlyCommand;
 import fr.olympa.core.spigot.commands.GamemodeCommand;
 import fr.olympa.core.spigot.commands.GenderCommand;
 import fr.olympa.core.spigot.commands.PermissionCommand;
+import fr.olympa.core.spigot.commands.PingCommand;
 import fr.olympa.core.spigot.commands.RestartCommand;
 import fr.olympa.core.spigot.commands.TpsCommand;
-import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
+import fr.olympa.core.spigot.datamanagment.DataManagmentListener;
+import fr.olympa.core.spigot.datamanagment.OnLoadListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
 import fr.olympa.core.spigot.protocolsupport.ProtocolSupportHook;
@@ -144,6 +146,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	@Override
 	public void onLoad() {
 		super.onLoad();
+		sendMessage("§6" + getDescription().getName() + "§e (" + getDescription().getVersion() + ") est chargé.");
 		System.setErr(new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(instance, run, 20)));
 	}
 
@@ -151,6 +154,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	public void onEnable() {
 		instance = this;
 		LinkSpigotBungee.Provider.link = this;
+		PluginManager pluginManager = getServer().getPluginManager();
+		pluginManager.registerEvents(new OnLoadListener(), this);
 
 		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
@@ -178,8 +183,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new AfkCommand(this).register();
 		new ConfigCommand(this).register();
 		new PermissionCommand(this).register();
+		new PingCommand(this).register();
 
-		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(new DataManagmentListener(), this);
 		pluginManager.registerEvents(new GroupListener(), this);
 		pluginManager.registerEvents(new CancerListener(), this);

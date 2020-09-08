@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import fr.olympa.api.gui.OlympaGUI;
 import fr.olympa.api.item.OlympaItemBuild;
-import fr.olympa.core.spigot.report.items.ReportReason;
+import fr.olympa.api.report.ReportReason;
 
 public class ReportGui extends OlympaGUI {
 
@@ -37,10 +37,11 @@ public class ReportGui extends OlympaGUI {
 	@Override
 	public boolean onClick(Player player, ItemStack current, int slot, ClickType click) {
 		if (current == null)
-			return false;
+			return true;
 
-		ReportReason reason = ReportReason.get(current);
+		//		ReportReason reason = ReportReason.get(current);
+		ReportReason reason = Arrays.stream(ReportReason.values()).filter(itemGui -> itemGui.getItem().build().isSimilar(current)).findFirst().orElse(null);
 		ReportGuiConfirm.open(player, target, reason, note);
-		return false;
+		return true;
 	}
 }

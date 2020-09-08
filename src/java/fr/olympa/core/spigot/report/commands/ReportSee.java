@@ -14,9 +14,9 @@ import com.google.gson.Gson;
 
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.report.OlympaReport;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.spigot.report.OlympaReport;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
 
 // TODO
