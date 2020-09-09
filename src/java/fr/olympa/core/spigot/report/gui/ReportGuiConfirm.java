@@ -17,8 +17,8 @@ import fr.olympa.core.spigot.report.ReportHandler;
 
 public class ReportGuiConfirm extends OlympaGUI {
 
-	static OlympaItemBuild ITEM_CONFIRM_YES = new OlympaItemBuild(Material.GREEN_STAINED_GLASS_PANE, "&aConfirmer").lore(
-			"", "&4[&c!&4] &cVous devez être sûr de votre report", "   &cIl sera enregistrer et vous pouvez", "   &cêtre sanctionner si vous en abusez");
+	//	static OlympaItemBuild ITEM_CONFIRM_YES = new OlympaItemBuild(Material.GREEN_STAINED_GLASS_PANE, "&aConfirmer").lore(
+	//			"", "&4[&c!&4] &cVous devez être sûr de votre report", "   &cIl sera enregistrer et vous pouvez", "   &cêtre sanctionner si vous en abusez");
 
 	static OlympaItemBuild ITEM_CONFIRM_NO = new OlympaItemBuild(Material.RED_STAINED_GLASS_PANE, "&cAnnuler").lore("&4et revenir en arrière");
 
@@ -28,7 +28,9 @@ public class ReportGuiConfirm extends OlympaGUI {
 		ReportGuiConfirm gui = new ReportGuiConfirm(signalName + " " + signalReason, 3, target, reason, note);
 		Inventory guiIventory = gui.getInventory();
 		int slot = guiIventory.getSize() / 2 - 1;
-		OlympaItemBuild yesBuild = ITEM_CONFIRM_YES.clone();
+		OlympaItemBuild yesBuild = new OlympaItemBuild(Material.GREEN_STAINED_GLASS_PANE, "&aConfirmer")
+				.lore("", "&4[&c!&4] &cVous devez être sûr de votre report", "   &cIl sera enregistrer et vous pouvez", "   &cêtre sanctionner si vous en abusez")
+				.clone();
 		if (note != null)
 			yesBuild.addLoreBefore("&cNote: &4" + note);
 		yesBuild.addLoreBefore("&cRaison: &4" + reason.getReason());

@@ -44,9 +44,11 @@ public class OlympaCorePermissions {
 
 	public static final OlympaPermission CHAT_COLOR = new OlympaPermission(OlympaGroup.RESP_TECH);
 
-	public static final OlympaPermission REPORT_SEEREPORT = new OlympaPermission(OlympaGroup.ASSISTANT);
-	public static final OlympaBungeePermission REPORT_SEEREPORT_OTHERSERV = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
+	public static final OlympaPermission REPORT_SEEREPORT = new OlympaPermission(OlympaGroup.MOD);
+	public static final OlympaBungeePermission REPORT_SEEREPORT_OTHERSERV = new OlympaBungeePermission(OlympaGroup.MOD);
+	public static final OlympaPermission REPORT_COMMAND = new OlympaPermission(OlympaGroup.PLAYER);
 	public static final OlympaPermission REPORT_SEE_COMMAND = new OlympaPermission(OlympaGroup.ASSISTANT);
+	public static final OlympaPermission REPORT_CHANGE_COMMAND = new OlympaPermission(OlympaGroup.MOD);
 
 	public static final OlympaPermission STAFF = new OlympaPermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaPermission PRIVATEMESSAGE_TOGGLE = new OlympaBungeePermission(OlympaGroup.MINI_YOUTUBER);

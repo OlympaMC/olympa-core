@@ -18,7 +18,7 @@ public class ReportMySQL {
 	static DbConnection dbConnection;
 
 	static String tableName = "reports";
-	private static OlympaStatement insertPlayerStatement = new OlympaStatement(StatementType.INSERT, tableName, "target_id", "author_id", "reason", "time", "server", "note");
+	private static OlympaStatement insertPlayerStatement = new OlympaStatement(StatementType.INSERT, tableName, "target_id", "author_id", "reason", "time", "server", "note", "status_info");
 
 	public static void createReport(OlympaReport report) throws SQLException {
 		PreparedStatement statement = insertPlayerStatement.getStatement();
@@ -30,6 +30,11 @@ public class ReportMySQL {
 		statement.setString(i++, report.getServerName());
 		if (report.getNote() != null)
 			statement.setString(i++, report.getNote());
+		else
+			statement.setObject(i++, null);
+		List<ReportStatusInfo> statusInfo = report.getStatusInfo();
+		if (statusInfo != null && statusInfo.isEmpty())
+			statement.setString(i++, report.getStatusInfoToJson());
 		else
 			statement.setObject(i++, null);
 		insertPlayerStatement.execute(statement);
@@ -59,40 +64,39 @@ public class ReportMySQL {
 		insertPlayerStatement.execute(statement);
 	}
 
-	private static OlympaStatement selectStatement = new OlympaStatement(StatementType.SELECT, tableName, null, "id");
+	private static OlympaStatement selectStatement = new OlympaStatement(StatementType.SELECT, tableName, "id", null);
 
 	public static OlympaReport getReport(long id) throws SQLException {
 		OlympaReport report = null;
 		PreparedStatement statement = selectStatement.getStatement();
 		statement.setLong(1, id);
-		insertPlayerStatement.execute(statement);
-		ResultSet resultSet = statement.getGeneratedKeys();
+		ResultSet resultSet = insertPlayerStatement.executeQuery(statement);
 		if (resultSet.next())
 			report = get(resultSet);
 		resultSet.close();
 		return report;
 	}
 
-	private static OlympaStatement selectPlayerStatement = new OlympaStatement(StatementType.SELECT, tableName, null, "target_id");
+	private static OlympaStatement selectPlayerStatement = new OlympaStatement(StatementType.SELECT, tableName, "target_id", null);
 
 	public static List<OlympaReport> getReportByTarget(long idTarget) throws SQLException {
 		List<OlympaReport> report = new ArrayList<>();
 		PreparedStatement statement = selectPlayerStatement.getStatement();
 		statement.setLong(1, idTarget);
-		ResultSet resultSet = statement.executeQuery();
+		ResultSet resultSet = selectPlayerStatement.executeQuery(statement);
 		while (resultSet.next())
 			report.add(get(resultSet));
 		resultSet.close();
 		return report;
 	}
 
-	private static OlympaStatement selectTargetStatement = new OlympaStatement(StatementType.SELECT, tableName, null, "author_id");
+	private static OlympaStatement selectTargetStatement = new OlympaStatement(StatementType.SELECT, tableName, "author_id", null);
 
 	public static List<OlympaReport> getReportsByAuthor(long idAuthor) throws SQLException {
 		List<OlympaReport> report = new ArrayList<>();
 		PreparedStatement statement = selectTargetStatement.getStatement();
 		statement.setLong(1, idAuthor);
-		ResultSet resultSet = statement.executeQuery();
+		ResultSet resultSet = selectTargetStatement.executeQuery(statement);
 		while (resultSet.next())
 			report.add(get(resultSet));
 		resultSet.close();
@@ -100,14 +104,7 @@ public class ReportMySQL {
 	}
 
 	private static OlympaReport get(ResultSet resultSet) throws SQLException {
-		return new OlympaReport(resultSet.getLong("id"),
-				resultSet.getLong("target_id"),
-				resultSet.getLong("author_id"),
-				resultSet.getInt("reason"),
-				resultSet.getString("server"),
-				resultSet.getTimestamp("time").getTime(),
-				resultSet.getString("status_info"),
-				resultSet.getString("note"));
+		return new OlympaReport(resultSet);
 	}
 
 	public ReportMySQL(DbConnection dbConnection) {
