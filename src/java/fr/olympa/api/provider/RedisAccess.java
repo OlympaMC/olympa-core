@@ -5,6 +5,7 @@ import java.util.List;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 public class RedisAccess {
 
@@ -84,11 +85,24 @@ public class RedisAccess {
 		//			j.clientSetname(clientName);
 	}
 
-	private Jedis newConnection() {
+	private Jedis newConnection(int... iA) {
+		int i;
+		if (iA == null || iA.length == 0)
+			i = 0;
+		else
+			i = iA[0];
 		Jedis jedis = getJedisPool().getResource();
-		jedis.auth(redisCredentials.getPassword());
-		jedis.clientSetname(redisCredentials.getClientName());
-		jedis.select(1);
+		try {
+			jedis.auth(redisCredentials.getPassword());
+			jedis.clientSetname(redisCredentials.getClientName());
+			jedis.select(1);
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
+			if (i >= 2)
+				return null;
+			initJedis();
+			return newConnection(++i);
+		}
 		return jedis;
 	}
 }

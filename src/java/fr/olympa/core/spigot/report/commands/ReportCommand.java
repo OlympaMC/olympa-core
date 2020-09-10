@@ -33,21 +33,14 @@ import us.myles.viaversion.libs.gson.Gson;
 public class ReportCommand extends ComplexCommand {
 
 	public ReportCommand(Plugin plugin) {
-		super(plugin, "report", "Signale un joueur", OlympaCorePermissions.REPORT_SEE_COMMAND, "reports", "signale", "signaler");
+		super(plugin, "report", "Signale un joueur", OlympaCorePermissions.REPORT_SEE_COMMAND, "signale");
 		addArgumentParser("REPORTREASON", sender -> Arrays.asList(ReportReason.values()).stream().map(ReportReason::getReasonClear).collect(Collectors.toList()), x -> {
-			ReportReason reason = ReportReason.getByReason(x.replace("_", " "));
-			if (reason != null)
-				return reason;
-			sendError(x + " doit être une raison tel que &4%s&c.", Arrays.asList(ReportReason.values()).stream().map(ReportReason::getReasonClear).collect(Collectors.joining(", ")));
-			return null;
-		});
+			return ReportReason.getByReason(x.replace("_", " "));
+		}, x -> String.format("&4%s&c doit être une raison tel que &4%s&c", x, Arrays.asList(ReportReason.values()).stream().map(ReportReason::getReasonClear).collect(Collectors.joining(", "))));
+
 		addArgumentParser("REPORTSTATUS", sender -> Arrays.asList(ReportStatus.values()).stream().map(ReportStatus::getName).collect(Collectors.toList()), x -> {
-			ReportStatus status = ReportStatus.get(x);
-			if (status != null)
-				return status;
-			sendError(x + " doit être un status tel que &4%s&c.", Arrays.asList(ReportStatus.values()).stream().map(ReportStatus::getName).collect(Collectors.joining(", ")));
-			return null;
-		});
+			return ReportStatus.get(x);
+		}, x -> String.format("&4%s&c doit être un status tel que &4%s&c", x, Arrays.asList(ReportStatus.values()).stream().map(ReportStatus::getName).collect(Collectors.joining(", "))));
 	}
 
 	@Override
@@ -59,10 +52,9 @@ public class ReportCommand extends ComplexCommand {
 		return false;
 	}
 
-	@Cmd(args = { "PLAYERS", "REPORTREASON", "note" }, min = 1, syntax = "<joueur> [status] [note]")
-	public void player(CommandContext cmd) {
+	@Cmd(args = { "PLAYERS", "REPORTREASON", "Informations complémentaire du report" }, min = 1, syntax = "<joueur> [status] [note]", otherArg = true)
+	public void wrongArg(CommandContext cmd) {
 		Player player = this.player;
-
 		OfflinePlayer target = cmd.getArgument(0);
 		if (target.getUniqueId().equals(player.getUniqueId()))
 			sendError("Tu ne peux pas te report toi même.");
@@ -73,14 +65,13 @@ public class ReportCommand extends ComplexCommand {
 			reportReason = cmd.getArgument(1);
 		if (cmd.getArgumentsLength() > 2)
 			note = cmd.getFrom(2);
-
 		if (reportReason != null)
 			ReportGuiConfirm.open(player, target, reportReason, note);
 		else
 			ReportGui.open(player, target, note);
 	}
 
-	@Cmd(args = { "INTEGER", "REPORTSTATUS", "note" }, min = 2, permissionName = "REPORT_CHANGE_COMMAND", syntax = "<idReport> <status> [note]")
+	@Cmd(args = { "INTEGER", "REPORTSTATUS", "Observation ou motif de changement" }, min = 2, permissionName = "REPORT_CHANGE_COMMAND", syntax = "<idReport> <status> [note]")
 	public void change(CommandContext cmd) {
 		long idP = 0;
 		if (player != null)
@@ -113,7 +104,7 @@ public class ReportCommand extends ComplexCommand {
 		}
 	}
 
-	@Cmd(args = "PLAYERS|UUID|INTEGER", aliases = { "seeauthor" }, permissionName = "REPORT_SEE_COMMAND", syntax = "<joueur|uuid|idReport>")
+	@Cmd(args = "PLAYERS|INTEGER|UUID", aliases = { "seeauthor" }, permissionName = "REPORT_SEE_COMMAND", syntax = "<joueur | uuid | idReport>")
 	public void see(CommandContext cmd) {
 		List<OlympaReport> reports = new ArrayList<>();
 		OlympaPlayer op = null;
