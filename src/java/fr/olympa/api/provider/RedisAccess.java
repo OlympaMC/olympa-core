@@ -1,11 +1,7 @@
 package fr.olympa.api.provider;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.exceptions.JedisConnectionException;
 
 public class RedisAccess {
 
@@ -13,7 +9,7 @@ public class RedisAccess {
 
 	public static void close() {
 		if (INSTANCE != null)
-			INSTANCE.closeResource();
+			INSTANCE.disconnect();
 	}
 
 	public static RedisAccess init(String clientName) {
@@ -23,32 +19,23 @@ public class RedisAccess {
 	private RedisCredentials redisCredentials;
 	private JedisPool pool;
 	private Jedis jedis;
-	private List<Jedis> allJedis = new ArrayList<>();
+	//	private List<Jedis> allJedis = new ArrayList<>();
 
 	public RedisAccess(RedisCredentials redisCredentials) {
 		INSTANCE = this;
 		this.redisCredentials = redisCredentials;
 	}
 
-	public void closeResource() {
-		if (isPoolOpen()) {
-			allJedis.clear();
-			allJedis.forEach(j -> j.disconnect());
-			pool.close();
-		}
-	}
-
 	public Jedis connect() {
 		jedis = newConnection();
-		allJedis.add(jedis);
+		//		allJedis.add(jedis);
 		return jedis;
 	}
 
 	public void disconnect() {
-		allJedis.remove(jedis);
-		if (!isConnected())
-			return;
-		jedis.disconnect();
+		//		allJedis.remove(jedis);
+		if (isPoolOpen())
+			pool.close();
 	}
 
 	public Jedis getConnection() {
@@ -85,24 +72,11 @@ public class RedisAccess {
 		//			j.clientSetname(clientName);
 	}
 
-	private Jedis newConnection(int... iA) {
-		int i;
-		if (iA == null || iA.length == 0)
-			i = 0;
-		else
-			i = iA[0];
+	private Jedis newConnection() {
 		Jedis jedis = getJedisPool().getResource();
-		try {
-			jedis.auth(redisCredentials.getPassword());
-			jedis.clientSetname(redisCredentials.getClientName());
-			jedis.select(1);
-		} catch (JedisConnectionException e) {
-			e.printStackTrace();
-			if (i >= 2)
-				return null;
-			initJedis();
-			return newConnection(++i);
-		}
+		jedis.auth(redisCredentials.getPassword());
+		jedis.clientSetname(redisCredentials.getClientName());
+		jedis.select(1);
 		return jedis;
 	}
 }
