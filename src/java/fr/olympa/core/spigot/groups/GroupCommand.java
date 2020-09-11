@@ -19,12 +19,12 @@ import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.groups.OlympaGroup;
+import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.api.utils.UtilsCore;
@@ -101,7 +101,7 @@ public class GroupCommand extends OlympaCommand {
 
 			long timestamp = 0;
 			if (args.length >= 3)
-				if (Matcher.isInt(args[2])) {
+				if (RegexMatcher.INT.is(args[2])) {
 					timestamp = Long.parseLong(args[2]);
 					if (timestamp != 0 && timestamp < Utils.getCurrentTimeInSeconds()) {
 						this.sendError("&4%s&c est plus petit que le timestamp actuel: &4%d&c.", args[2], Utils.getCurrentTimeInSeconds());

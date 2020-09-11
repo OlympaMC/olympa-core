@@ -14,11 +14,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import fr.olympa.api.groups.OlympaGroup;
+import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.ColorUtils;
-import fr.olympa.api.utils.Matcher;
 
 public class ChatListener implements Listener {
 
@@ -57,7 +57,7 @@ public class ChatListener implements Listener {
 			arg = ChatColor.stripColor(arg);
 			if (arg.startsWith("@"))
 				arg = arg.substring(1);
-			if (!Matcher.isUsername(arg))
+			if (!RegexMatcher.USERNAME.is(arg))
 				continue;
 			Player target = Bukkit.getPlayer(arg);
 			if (target == null)

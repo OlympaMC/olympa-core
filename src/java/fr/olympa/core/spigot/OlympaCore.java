@@ -5,8 +5,14 @@ import java.io.IOException;
 
 import org.bukkit.plugin.PluginManager;
 
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
+import fr.olympa.api.brigadier.UUIDArgumentType;
 import fr.olympa.api.command.CommandListener;
 import fr.olympa.api.frame.ImageFrameManager;
 import fr.olympa.api.gui.Inventories;
@@ -16,7 +22,6 @@ import fr.olympa.api.permission.OlympaAPIPermissions;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.plugin.OlympaSpigot;
-import fr.olympa.api.provider.RedisAccess;
 import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.server.ServerStatus;
@@ -53,6 +58,8 @@ import fr.olympa.core.spigot.security.HelpCommand;
 import fr.olympa.core.spigot.security.PluginCommand;
 import fr.olympa.core.spigot.status.SetStatusCommand;
 import fr.olympa.core.spigot.status.StatusMotdListener;
+import me.lucko.commodore.Commodore;
+import me.lucko.commodore.CommodoreProvider;
 
 public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
@@ -136,7 +143,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	@Override
 	public void onDisable() {
 		setStatus(ServerStatus.CLOSE);
-		RedisAccess.close();
 		nameTagApi.reset();
 		hologramsManager.unload();
 		super.onDisable();
@@ -185,10 +191,34 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new PermissionCommand(this).register();
 		new PingCommand(this).register();
 
+		TestCommand test = new TestCommand(this);
+		test.register();
+		// check if brigadier is supported
+		if (CommodoreProvider.isSupported()) {
+			// get a commodore instance
+			Commodore commodore = CommodoreProvider.getCommodore(this);
+			commodore.register(test.reflectCommand, LiteralArgumentBuilder.literal("test1")
+					.then(LiteralArgumentBuilder.literal("set")
+							.then(LiteralArgumentBuilder.literal("day"))
+							.then(LiteralArgumentBuilder.literal("noon"))
+							.then(LiteralArgumentBuilder.literal("night"))
+							.then(LiteralArgumentBuilder.literal("midnight"))
+							.then(RequiredArgumentBuilder.argument("time", IntegerArgumentType.integer())))
+					.then(LiteralArgumentBuilder.literal("add")
+							.then(RequiredArgumentBuilder.argument("time", DoubleArgumentType.doubleArg(-10, 10))))
+					.then(LiteralArgumentBuilder.literal("query")
+							.then(LiteralArgumentBuilder.literal("daytime"))
+							.then(LiteralArgumentBuilder.literal("gametime"))
+							.then(LiteralArgumentBuilder.literal("day"))
+							.then(RequiredArgumentBuilder.argument("uuid", UUIDArgumentType.uuid())))
+					.build());
+		}
+
+		pluginManager.registerEvents(new TestListener(), this);
+
 		pluginManager.registerEvents(new DataManagmentListener(), this);
 		pluginManager.registerEvents(new GroupListener(), this);
 		pluginManager.registerEvents(new CancerListener(), this);
-		pluginManager.registerEvents(new TestListener(), this);
 		pluginManager.registerEvents(new Inventories(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
 		pluginManager.registerEvents(new ChatListener(), this);

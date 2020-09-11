@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -7,10 +8,6 @@
 	<artifactId>olympa-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<repositories>
-		<repository>
-			<id>bungeecord-repo</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</repository>
 		<repository>
 			<id>papermc-releases</id>
 			<url>https://papermc.io/repo/repository/maven-releases/</url>
@@ -20,11 +17,24 @@
 			<url>https://jitpack.io</url>
 		</repository>
 		<repository>
-		    <id>viaversion-repo</id>
-		    <url>https://repo.viaversion.com</url>
+			<id>viaversion-repo</id>
+			<url>https://repo.viaversion.com</url>
+		</repository>
+		<repository>
+			<id>papermc</id>
+			<url>https://papermc.io/repo/repository/maven-public/</url>
+		</repository>
+		<repository>
+			<id>minecraft-repo</id>
+			<url>https://libraries.minecraft.net/</url>
 		</repository>
 	</repositories>
 	<dependencies>
+		<dependency>
+			<groupId>me.lucko</groupId>
+			<artifactId>commodore</artifactId>
+			<version>1.9</version>
+		</dependency>
 		<dependency>
 			<groupId>us.myles</groupId>
 			<artifactId>viaversion</artifactId>
@@ -40,20 +50,6 @@
 		<!-- <dependency> <groupId>io.github.waterfallmc</groupId> <artifactId>waterfall-api</artifactId> 
 			<version>[1.15-SNAPSHOT,)</version> <scope>provided</scope> </dependency> -->
 		<dependency>
-			<groupId>net.md-5</groupId>
-			<artifactId>bungeecord-api</artifactId>
-			<version>1.15-SNAPSHOT</version>
-			<type>jar</type>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.md-5</groupId>
-			<artifactId>bungeecord-api</artifactId>
-			<version>1.15-SNAPSHOT</version>
-			<type>javadoc</type>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 			<version>3.1.0</version>
@@ -61,6 +57,19 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot</artifactId>
+			<version>1.15.2-R0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.github.waterfallmc</groupId>
+			<artifactId>waterfall-api</artifactId>
+			<version>1.15-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.destroystokyo.paper</groupId>
+			<artifactId>paper-api</artifactId>
 			<version>1.15.2-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>

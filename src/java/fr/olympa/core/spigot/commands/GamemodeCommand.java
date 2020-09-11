@@ -11,8 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
+import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Prefix;
 
 public class GamemodeCommand extends OlympaCommand {
@@ -57,7 +57,7 @@ public class GamemodeCommand extends OlympaCommand {
 
 		public static Gm get(String nameOrId) {
 			Gm gamemode;
-			if (Matcher.isInt(nameOrId))
+			if (RegexMatcher.INT.is(nameOrId))
 				gamemode = Arrays.stream(Gm.values()).filter(gm -> gm.getId() == Integer.parseInt(nameOrId)).findFirst().orElse(null);
 			else
 				gamemode = Arrays.stream(Gm.values()).filter(gm -> gm.isName(nameOrId)).findFirst().orElse(null);
