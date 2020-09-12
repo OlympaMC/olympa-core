@@ -4,12 +4,14 @@ import java.util.concurrent.TimeUnit;
 
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.api.customevent.OlympaGroupChangeEvent;
 import fr.olympa.core.bungee.datamanagment.CachePlayer;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
+import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import fr.olympa.core.bungee.servers.WaitingConnection;
@@ -23,7 +25,6 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
-@SuppressWarnings("deprecation")
 public class OlympaLoginListener implements Listener {
 
 	@EventHandler
@@ -42,12 +43,16 @@ public class OlympaLoginListener implements Listener {
 	public void onOlympaPlayerLogin(OlympaPlayerLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
+		AccountProvider account = new AccountProvider(olympaPlayer.getUniqueId());
+		String ip = event.getIp();
+		if (!olympaPlayer.getIp().equals(ip)) {
+			olympaPlayer.addNewIp(ip);
+			account.saveToRedis(olympaPlayer);
+			RedisBungeeSend.sendOlympaPlayer(player.getServer().getInfo(), olympaPlayer);
+		}
 		String[] groupsNames = olympaPlayer.getGroups().keySet().stream().map(OlympaGroup::name).toArray(String[]::new);
 		if (groupsNames.length > 0)
 			player.addGroups(groupsNames);
-		String ip = player.getAddress().getAddress().getHostAddress();
-		if (!olympaPlayer.getIp().equals(ip))
-			olympaPlayer.addNewIp(ip);
 		CachePlayer cache = DataHandler.get(player.getName());
 		OlympaBungee.getInstance().getTask().runTaskLater("connect_player_" + player.getUniqueId(), () -> {
 			if (cache != null) {

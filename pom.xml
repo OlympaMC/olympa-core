@@ -47,8 +47,6 @@
 			<version>513e8f0371</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- <dependency> <groupId>io.github.waterfallmc</groupId> <artifactId>waterfall-api</artifactId> 
-			<version>[1.15-SNAPSHOT,)</version> <scope>provided</scope> </dependency> -->
 		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>

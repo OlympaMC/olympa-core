@@ -60,7 +60,7 @@ public class VpnListener implements Listener {
 				olympaVpn = VpnHandler.getInfo(event.getConnection());
 				if (!olympaVpn.isOk())
 					return;
-				olympaVpn.addUser(username, connection.isOnlineMode());
+				olympaVpn.addUser(username);
 				VpnSql.addIp(olympaVpn);
 
 			} else if (olympaVpn.getAs() == null) {
@@ -68,12 +68,12 @@ public class VpnListener implements Listener {
 				if (!newOlympaVpn.isOk())
 					return;
 				newOlympaVpn.setUsers(olympaVpn.getUsers());
-				if (!newOlympaVpn.hasUser(username, connection.isOnlineMode()))
-					newOlympaVpn.addUser(username, connection.isOnlineMode());
+				if (!newOlympaVpn.hasUser(username))
+					newOlympaVpn.addUser(username);
 				VpnSql.saveIp(newOlympaVpn);
 
-			} else if (!olympaVpn.hasUser(username, connection.isOnlineMode())) {
-				olympaVpn.addUser(username, connection.isOnlineMode());
+			} else if (!olympaVpn.hasUser(username)) {
+				olympaVpn.addUser(username);
 				VpnSql.saveIp(olympaVpn);
 			}
 		} catch (SQLException e) {

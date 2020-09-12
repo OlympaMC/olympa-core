@@ -64,11 +64,11 @@ public class RegisterCommand extends BungeeCommand {
 			return;
 		}
 		olympaPlayer.setPassword(password);
-		System.out.println("Password set for %s1 : %s2".replace("%s1", olympaPlayer.getName()).replace("%s2", olympaPlayer.getPassword()));
 		try {
 			MySQL.savePlayerPassOrEmail(olympaPlayer);
 		} catch (SQLException e) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Impossible de sauvegarder le mot de passe. Contacte un membre de staff.");
+			System.err.println("Password can't be save to db for %s1".replace("%s1", olympaPlayer.getName()));
 			e.printStackTrace();
 			return;
 		}

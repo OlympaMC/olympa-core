@@ -1,8 +1,8 @@
 package fr.olympa.core.bungee.vpn;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
@@ -22,7 +22,7 @@ public class OlympaVpn {
 	Boolean mobile;
 	Boolean proxy;
 	Boolean hosting;
-	Map<String, Boolean> users = new HashMap<>();
+	List<String> users = new ArrayList<>();
 
 	public OlympaVpn(long id, String query, boolean proxy, boolean mobile, boolean hosting, String usersString, String country, String city, String org, String as) {
 		this.id = id;
@@ -35,18 +35,15 @@ public class OlympaVpn {
 		this.org = org;
 		this.as = as;
 		if (usersString != null && !usersString.isEmpty())
-			users = Arrays.stream(usersString.split(",")).collect(Collectors.toMap(entry -> entry.split(":")[0], entry -> {
-				String[] split = entry.split(":");
-				if (split.length > 1)
-					return split[1].equals("1");
-				return false;
-			}));
+			users = Arrays.stream(usersString.split(";")).collect(Collectors.toList());
 	}
 
-	public void addUser(String username, boolean onlineMode) {
+	public void addUser(String username) {
 		if (users == null)
-			users = new HashMap<>();
-		users.put(username, onlineMode);
+			users = new ArrayList<>();
+		else if (hasUser(username))
+			return;
+		users.add(username);
 	}
 
 	public String getAs() {
@@ -77,12 +74,12 @@ public class OlympaVpn {
 		return status;
 	}
 
-	public Map<String, Boolean> getUsers() {
+	public List<String> getUsers() {
 		return users;
 	}
 
-	public boolean hasUser(String username, boolean onlineMode) {
-		return users.entrySet().stream().filter(entry -> entry.getKey().equalsIgnoreCase(username) && entry.getValue() == onlineMode).findFirst().isPresent();
+	public boolean hasUser(String username) {
+		return users.contains(username);
 	}
 
 	public Boolean isHosting() {
@@ -106,7 +103,7 @@ public class OlympaVpn {
 		return proxy || hosting;
 	}
 
-	public void setUsers(Map<String, Boolean> users) {
+	public void setUsers(List<String> users) {
 		this.users = users;
 	}
 }
