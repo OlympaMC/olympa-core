@@ -69,6 +69,8 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 	public void onEnable() {
 		super.onEnable();
 		if (config != null) {
+			setupDatabase();
+			setupRedis();
 			String statusString = config.getString("status");
 			if (statusString != null && !statusString.isEmpty()) {
 				ServerStatus status2 = ServerStatus.get(statusString);
@@ -76,8 +78,6 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 					status = status2;
 			} else
 				setStatus(ServerStatus.UNKNOWN);
-			setupDatabase();
-			setupRedis();
 		}
 	}
 
