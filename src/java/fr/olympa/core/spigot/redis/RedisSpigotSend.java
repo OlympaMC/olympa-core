@@ -99,6 +99,8 @@ public class RedisSpigotSend {
 	}
 
 	public static void changeStatus(ServerStatus status) {
+		if (RedisAccess.INSTANCE == null)
+			return;
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 			String serverName = OlympaCore.getInstance().getServerName();
 			jedis.publish(RedisChannel.SPIGOT_SERVER_CHANGE_STATUS.name(), serverName + ";" + status.getId());

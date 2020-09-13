@@ -88,8 +88,8 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 
 	@Override
 	public void setStatus(ServerStatus status) {
-		RedisSpigotSend.changeStatus(status);
 		this.status = status;
+		RedisSpigotSend.changeStatus(status);
 	}
 
 	private void setupDatabase(int... is) {

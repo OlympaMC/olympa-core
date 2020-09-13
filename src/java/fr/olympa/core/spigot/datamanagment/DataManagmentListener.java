@@ -80,11 +80,11 @@ public class DataManagmentListener implements Listener {
 		OlympaCore core = OlympaCore.getInstance();
 		ServerStatus status = core.getStatus();
 		if (status == ServerStatus.CLOSE) {
-			event.disallow(Result.KICK_OTHER, ColorUtils.color("&cLe serveur &4" + core.getServerName() + "&c est fermé, réessaye dans quelques instants..."));
+			event.disallow(Result.KICK_OTHER, ColorUtils.color("&cLe serveur est fermé, réessaye dans quelques instants..."));
 			return;
 		}
 		if (status == ServerStatus.UNKNOWN) {
-			event.disallow(Result.KICK_OTHER, ColorUtils.color("&cImpossible de se connecter au serveur &4" + core.getName() + "&c, réessaye dans quelques instants..."));
+			event.disallow(Result.KICK_OTHER, ColorUtils.color("&cImpossible de se connecter au serveur, réessaye dans quelques instants..."));
 			return;
 		}
 		if (status.getPermission() != null && !status.getPermission().hasPermission(olympaPlayer)) {

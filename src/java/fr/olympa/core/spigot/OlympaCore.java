@@ -214,7 +214,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 					.build());
 		}
 
-		pluginManager.registerEvents(new TestListener(), this);
+		//		pluginManager.registerEvents(new TestListener(), this);
 
 		pluginManager.registerEvents(new DataManagmentListener(), this);
 		pluginManager.registerEvents(new GroupListener(), this);
