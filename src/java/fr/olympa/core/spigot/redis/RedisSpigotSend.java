@@ -15,7 +15,7 @@ import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.RedisAccess;
+import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.report.OlympaReport;
 import fr.olympa.api.server.OlympaServer;

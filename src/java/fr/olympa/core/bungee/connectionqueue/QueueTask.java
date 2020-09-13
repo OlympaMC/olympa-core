@@ -29,6 +29,8 @@ public class QueueTask implements Runnable {
 			return;
 		}
 		String next = QueueHandler.getNext();
+		if (next == null)
+			return;
 		QueueHandler.remove(next);
 		s();
 	}

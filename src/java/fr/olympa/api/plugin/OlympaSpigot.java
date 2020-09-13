@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import fr.olympa.api.hook.IProtocolSupport;
-import fr.olympa.api.provider.RedisAccess;
+import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;

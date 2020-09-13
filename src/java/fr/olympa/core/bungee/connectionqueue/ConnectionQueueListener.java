@@ -16,22 +16,26 @@ public class ConnectionQueueListener implements Listener {
 		QueueHandler.remove(event.getPlayer().getName());
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPreLogin(PreLoginEvent event) {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
 		int timeToW8 = QueueHandler.add(name);
-		while (QueueHandler.isInQueue(name)) {
+		if (timeToW8 == -1) {
+			event.setCancelReason(BungeeUtils.connectScreen(String.join("&cIl y a déjà une connexion en attente avec le pseudo %s, réésaye dans %s secondes.", name, String.valueOf(QueueHandler.getTimeToW8(name) / 1000))));
+			event.setCancelled(true);
+		}
+		while (QueueHandler.isInQueue(name) && connection.isConnected()) {
 			try {
-				Thread.sleep(timeToW8 * QueueHandler.TIME_BETWEEN_2);
+				Thread.sleep(timeToW8);
 			} catch (Exception e) {
 				e.printStackTrace();
 				event.setCancelReason(TextComponent.fromLegacyText(BungeeUtils.connectScreen("§cUne erreur est survenue.")));
 				event.setCancelled(true);
 				return;
 			}
-			if (timeToW8 > 1)
-				timeToW8--;
+			timeToW8 = QueueHandler.getTimeToW8(name);
 		}
 	}
 }

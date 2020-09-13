@@ -12,7 +12,6 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
-import fr.olympa.api.brigadier.UUIDArgumentType;
 import fr.olympa.api.command.CommandListener;
 import fr.olympa.api.frame.ImageFrameManager;
 import fr.olympa.api.gui.Inventories;
@@ -193,9 +192,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
 		TestCommand test = new TestCommand(this);
 		test.register();
-		// check if brigadier is supported
+
 		if (CommodoreProvider.isSupported()) {
-			// get a commodore instance
 			Commodore commodore = CommodoreProvider.getCommodore(this);
 			commodore.register(test.reflectCommand, LiteralArgumentBuilder.literal("test1")
 					.then(LiteralArgumentBuilder.literal("set")
@@ -210,7 +208,9 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 							.then(LiteralArgumentBuilder.literal("daytime"))
 							.then(LiteralArgumentBuilder.literal("gametime"))
 							.then(LiteralArgumentBuilder.literal("day"))
-							.then(RequiredArgumentBuilder.argument("uuid", UUIDArgumentType.uuid())))
+					//.then(RequiredArgumentBuilder.argument("uuid", UUIDArgumentType.uuid()))
+					// Could not serialize fr.olympa.api.brigadier.UUIDArgumentType@28aefe5e (class fr.olympa.api.brigadier.UUIDArgumentType) - will not be sent to client!
+					)
 					.build());
 		}
 

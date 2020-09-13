@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.provider.RedisAccess;
+import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
@@ -29,6 +29,7 @@ import fr.olympa.core.bungee.commands.BPingCommand;
 import fr.olympa.core.bungee.commands.BungeelagCommand;
 import fr.olympa.core.bungee.commands.InfoCommand;
 import fr.olympa.core.bungee.commands.RedisCommand;
+import fr.olympa.core.bungee.connectionqueue.BungeeQueueCommand;
 import fr.olympa.core.bungee.connectionqueue.ConnectionQueueListener;
 import fr.olympa.core.bungee.connectionqueue.LeaveQueueCommand;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
@@ -153,6 +154,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		instance = this;
 		LinkSpigotBungee.Provider.link = this;
 
+		new RestartBungeeCommand(this).register();
 		bungeeTask = new BungeeTask(this);
 		defaultConfig = new BungeeCustomConfig(this, "config");
 		defaultConfig.load();
@@ -220,12 +222,12 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new StartServerCommand(this).register();
 		new StopServerCommand(this).register();
 		new RestartServerCommand(this).register();
-		new RestartBungeeCommand(this).register();
 		new LobbyCommand(this).register();
 		new LeaveQueueCommand(this).register();
 		new BungeelagCommand(this).register();
 		new RedisCommand(this).register();
 		new BPingCommand(this).register();
+		new BungeeQueueCommand(this).register();
 
 		new MonitorServers(this);
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
@@ -250,15 +252,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		if (is != null && is.length != 0)
 			i1 = is[0] + 1;
 		int i = i1;
-		Configuration path = defaultConfig.getConfig().getSection("database.default");
-		String host = path.getString("host");
-		String user = path.getString("user");
-		String password = path.getString("password");
-		String databaseName = path.getString("database");
-		int port = path.getInt("port");
-		if (port == 0)
-			port = 3306;
-		DbCredentials dbcredentials = new DbCredentials(host, user, password, databaseName, port);
+		DbCredentials dbcredentials = new DbCredentials(defaultConfig.getConfig());
 		database = new DbConnection(dbcredentials);
 		if (database.connect())
 			sendMessage("&aConnexion à la base de donnée &2" + dbcredentials.getDatabase() + "&a établie.");
@@ -278,7 +272,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		if (is != null && is.length != 0)
 			i1 = is[0] + 1;
 		int i = i1;
-		RedisAccess redisAccess = RedisAccess.init("bungee");
+		RedisAccess redisAccess = RedisAccess.init(defaultConfig.getConfig());
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
 			registerRedisSub(redisAccess.getConnection(), new SpigotGroupChangeReceiverOnBungee(), RedisChannel.SPIGOT_CHANGE_GROUP.name());

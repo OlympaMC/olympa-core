@@ -4,7 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.UUID;
 
 import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.RedisAccess;
+import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;

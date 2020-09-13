@@ -1,5 +1,8 @@
-package fr.olympa.api.provider;
+package fr.olympa.api.redis;
 
+import org.bukkit.configuration.file.FileConfiguration;
+
+import net.md_5.bungee.config.Configuration;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -14,6 +17,14 @@ public class RedisAccess {
 
 	public static RedisAccess init(String clientName) {
 		return new RedisAccess(new RedisCredentials("127.0.0.1", "1rWS1Fmj7s4snEDCQgw3Mcznf8ShfrLZpPkKtstu5coV9PpDI1", 6379, clientName));
+	}
+
+	public static RedisAccess init(FileConfiguration config) {
+		return new RedisAccess(new RedisCredentials(config));
+	}
+
+	public static RedisAccess init(Configuration config) {
+		return new RedisAccess(new RedisCredentials(config));
 	}
 
 	private RedisCredentials redisCredentials;

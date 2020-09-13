@@ -58,7 +58,7 @@ public class RegisterCommand extends BungeeCommand {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, 100 caratères maximum.");
 			return;
 		}
-		Set<String> disallowPassword = new HashSet<>(Arrays.asList("azerty", "qwerty", "12345", "01234"));
+		Set<String> disallowPassword = new HashSet<>(Arrays.asList("azerty", "qwerty", "12345", "01234", "123456789"));
 		if (disallowPassword.stream().anyMatch(dis -> dis.equalsIgnoreCase(password) || password.startsWith(dis))) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, ce mot de passe n'est pas possible.");
 			return;

@@ -22,20 +22,20 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
 
 public class MotdListener implements Listener {
-	
+
 	String prefix = "§e-------------§6 Olympa §e-------------";
 	String motd_base = "§3⬣ §e§lOlympa §6§n1.9 à 1.16+§3 ⬣\n";
 	// §6Fun \u2606 Tryhard \u2606 Ranked
 	String teamspeak = "§6Teamspeak: §e§nts.olympa.fr";
 	String site = "§6Site: §e§nwww.olympa.fr";
 	String twitter = "§6Twitter: §e@Olympa_fr";
-	String discord = "§6Discord: §e§nwww.discord.olympa.fr";
-	String games = "§b§mZTA§c \u00a4§b PvPFaction §c\u00a4 §b§mPvPBox";
+	String discord = "§6Discord: §e§ndiscord.olympa.fr";
+	String games = "§bPvPFaction§c \u00a4§3 ZTA §c\u00a4 §b§mCréatif";
 	String version = "§cUtilise 1.9 à 1.16+§l✖";
 	String reason = "§6Raison de la maintenance :";
-	String separator = "§7|";
+	String separator = " §7| ";
 	String suffix = "§e---------------------------------";
-	
+
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPing(ProxyPingEvent event) {
@@ -45,13 +45,13 @@ public class MotdListener implements Listener {
 		ServerPing ping = event.getResponse();
 		ServerPing.Protocol ver = ping.getVersion();
 		ServerPing.Players players = ping.getPlayers();
-		
+
 		// Petit troll pour ceux qui récup des stats
 		if (ip.equals("54.38.31.134")) {
 			players.setOnline(new Random().nextInt(10000));
 			return;
 		}
-		
+
 		ver.setName(version + " §7" + players.getOnline() + "§8/§7" + players.getMax());
 		// ping.setVersion(ver);
 		Configuration config = OlympaBungee.getInstance().getMaintConfig();

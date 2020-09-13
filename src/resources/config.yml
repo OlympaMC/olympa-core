@@ -1,4 +1,4 @@
-version: 1.1
+version: 1.2
 status: 'Développement'
 maintenance:
    messages:
@@ -188,6 +188,11 @@ database:
       user: minecraft
       password: AaYRqyRSrI2MLUs9L7Rv
       database: server
+redis:
+   host: localhost
+   port: 6379
+   password: 1rWS1Fmj7s4snEDCQgw3Mcznf8ShfrLZpPkKtstu5coV9PpDI1
+   clientname: unknownName
 default:
    noperm: '&cTu n''as pas la permission &l(◑_◑)'
    homeamade: '&aTous nos plugins sont développés par nos soins. &2&lᕙ(＾▿＾)ᕗ'

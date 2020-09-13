@@ -40,7 +40,7 @@ public class BasicSecurityListener implements Listener {
 		cache.put(player.getAddress().getAddress().getHostAddress(), "");
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOW)
 	public void on1PreLogin(PreLoginEvent event) {
 		if (event.isCancelled())
 			return;
