@@ -143,6 +143,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 
 	@Override
 	public void onDisable() {
+		bungeeTask.cancelTaskByName("monitor_serveurs");
 		//		RedisAccess.close();
 		if (database != null)
 			database.close();
@@ -281,6 +282,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 			registerRedisSub(redisAccess.connect(), new SpigotServerSwitchReceiver(), RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER.name());
 			registerRedisSub(redisAccess.connect(), new SpigotOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER_TO_BUNGEE.name());
 			registerRedisSub(redisAccess.connect(), new SpigotReportReceiver(), RedisChannel.SPIGOT_REPORT_SEND.name());
+			//			registerRedisSub(redisAccess.connect(), new SiteGroupChangeReceiver(), RedisChannel.SITE_GROUP_CHANGE.name());
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)

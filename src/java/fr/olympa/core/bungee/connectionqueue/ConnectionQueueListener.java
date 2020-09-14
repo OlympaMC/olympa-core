@@ -27,6 +27,7 @@ public class ConnectionQueueListener implements Listener {
 			event.setCancelled(true);
 		}
 		while (QueueHandler.isInQueue(name) && connection.isConnected()) {
+			System.out.println("WAIT " + timeToW8);
 			try {
 				Thread.sleep(timeToW8);
 			} catch (Exception e) {
@@ -35,6 +36,7 @@ public class ConnectionQueueListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}
+			System.out.println("ENDWAIT " + timeToW8);
 			timeToW8 = QueueHandler.getTimeToW8(name);
 		}
 	}

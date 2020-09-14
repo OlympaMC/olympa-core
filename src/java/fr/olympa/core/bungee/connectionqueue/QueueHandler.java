@@ -14,7 +14,7 @@ public class QueueHandler {
 		queue.add(playerName);
 		System.out.println("§bTaille de la flle d'attente: " + queue.size());
 		QueueTask.start();
-		return getTimeToW8(queue.size(), playerName);
+		return getTimeToW8(queue.size());
 	}
 
 	public static boolean remove(String playerName) {
@@ -38,11 +38,11 @@ public class QueueHandler {
 		return queue.size();
 	}
 
-	private static int getTimeToW8(int pos, String playerName) {
+	private static int getTimeToW8(int pos) {
 		return pos * TIME_BETWEEN_2;
 	}
 
 	public static int getTimeToW8(String playerName) {
-		return getTimeToW8(queue.indexOf(playerName) + 1, playerName);
+		return getTimeToW8(queue.indexOf(playerName) + 1);
 	}
 }
