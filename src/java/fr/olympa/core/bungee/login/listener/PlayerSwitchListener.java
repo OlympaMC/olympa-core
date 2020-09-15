@@ -15,7 +15,7 @@ public class PlayerSwitchListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onServerConnect(ServerConnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
-		OlympaBungee.getInstance().sendMessage("§7ServerConnect §6" + player.getName());
+		OlympaBungee.getInstance().sendMessage("§7ServerConnect §e" + player.getName() + " §7(§6" + (player.getServer() == null ? "" : player.getServer().getInfo().getName() + "§7 -> §6") + event.getTarget().getName() + "§7)");
 		if (event.isCancelled())
 			return;
 		Server server = player.getServer();
