@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import net.md_5.bungee.config.Configuration;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 public class RedisAccess {
 
@@ -64,7 +65,10 @@ public class RedisAccess {
 	public void initJedis() {
 		ClassLoader previous = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(Jedis.class.getClassLoader());
-		pool = new JedisPool(redisCredentials.getIp(), redisCredentials.getPort());
+		JedisPoolConfig config = new JedisPoolConfig();
+		config.setMaxTotal(12); // le Saint-Graal ? par défaut à 8
+		config.setMaxIdle(12);
+		pool = new JedisPool(config, redisCredentials.getIp(), redisCredentials.getPort());
 		Thread.currentThread().setContextClassLoader(previous);
 	}
 
