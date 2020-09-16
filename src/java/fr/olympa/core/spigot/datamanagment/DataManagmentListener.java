@@ -55,26 +55,21 @@ public class DataManagmentListener implements Listener {
 		UUID uuid = event.getUniqueId();
 
 		AccountProvider olympaAccount = new AccountProvider(uuid);
-		OlympaPlayer olympa = olympaAccount.getFromCache();
-		try {
-			Thread.sleep(1000);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-		if (olympa != null)
-			System.out.println("[REDIS] I have already data for " + olympa.getName());
-		OlympaPlayer olympaPlayer;
-		try {
-			olympaPlayer = olympaAccount.get();
-		} catch (Exception e) {
-			event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotPreLogin"));
-			e.printStackTrace();
-			return;
-		}
-		if (olympaPlayer == null) {
-			event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotNoData"));
-			return;
+		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
+		if (olympaPlayer != null)
+			System.out.println("[REDIS] I have already data for " + olympaPlayer.getName());
+		else {
+			try {
+				olympaPlayer = olympaAccount.get();
+			} catch (Exception e) {
+				event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotPreLogin"));
+				e.printStackTrace();
+				return;
+			}
+			if (olympaPlayer == null) {
+				event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotNoData"));
+				return;
+			}
 		}
 
 		OlympaCore core = OlympaCore.getInstance();

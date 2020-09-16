@@ -2,8 +2,6 @@ package fr.olympa.core.spigot.redis.receiver;
 
 import java.util.UUID;
 
-import org.apache.commons.lang3.Validate;
-
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.core.spigot.OlympaCore;
@@ -20,7 +18,6 @@ public class SpigotOlympaPlayerReceiver extends JedisPubSub {
 			return;
 		String serverTo = args[1];
 		OlympaPlayer olympaPlayer = AccountProvider.get(UUID.fromString(args[2]));
-		Validate.notNull(olympaPlayer);
 		RedisSpigotSend.sendOlympaPlayerToOtherSpigot(olympaPlayer, serverTo);
 	}
 }
