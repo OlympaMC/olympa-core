@@ -14,13 +14,18 @@ public class ConfigCommand extends OlympaCommand {
 
 	public ConfigCommand(Plugin plugin) {
 		super(plugin, "config", "Recharge la config", OlympaCorePermissions.CONFIG_COMMAND);
-		allowConsole = false;
+		addArgs(true, "reload");
+		usageString = "<reload>";
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		sendSuccess("Configuration reload.");
+		if (args.length == 0 || !args[0].equalsIgnoreCase("reload")) {
+			sendUsage(label);
+			return false;
+		}
 		OlympaCore.getInstance().getConfig().load();
+		sendSuccess("Configuration reload.");
 		return false;
 	}
 

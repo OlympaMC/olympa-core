@@ -21,25 +21,36 @@ public class SiteGroupChangeReceiver extends JedisPubSub {
 		UUID uuid = (UUID) RegexMatcher.UUID.parse(args[2]);
 		String[] infoGroup = args[1].split(":");
 		OlympaGroup groupChanged = OlympaGroup.getById(Integer.parseInt(infoGroup[0]));
-		long timestamp = Integer.parseInt(infoGroup[1]);
+		long timestamp;
+		if (infoGroup.length > 1)
+			timestamp = Integer.parseInt(infoGroup[1]);
+		else
+			timestamp = 0;
 		ChangeType state = ChangeType.get(Integer.parseInt(args[2]));
-		switch (state) {
-
-		case ADD:
-			break;
-		case REMOVE:
-			break;
-		case SET:
-			break;
-		default:
-			break;
-		}
 		OlympaPlayer olympaPlayer;
 		try {
 			olympaPlayer = new AccountProvider(uuid).get();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return;
+		}
+		if (olympaPlayer == null) {
+			System.err.println("Unable to get " + uuid + " player. Group change from website cannot work.");
+			return;
+		}
+		switch (state) {
+
+		case ADD:
+			olympaPlayer.addGroup(groupChanged, timestamp);
+			break;
+		case REMOVE:
+			olympaPlayer.removeGroup(groupChanged);
+			break;
+		case SET:
+			olympaPlayer.setGroup(groupChanged, timestamp);
+			break;
+		default:
+			break;
 		}
 		OlympaBungee.getInstance().sendMessage("&a[DEBUG] PLAYER CHANGE GROUPE from Redis for " + olympaPlayer.getName() + " from site");
 		ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
