@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 import fr.olympa.api.LinkSpigotBungee;
+import fr.olympa.api.groups.SqlGroup;
 import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.server.ServerStatus;
@@ -49,6 +50,7 @@ import fr.olympa.core.bungee.privatemessage.PrivateMessageListener;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageToggleCommand;
 import fr.olympa.core.bungee.privatemessage.ReplyCommand;
 import fr.olympa.core.bungee.protocol.ProtocolListener;
+import fr.olympa.core.bungee.redis.receiver.BungeeCommandReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotAskServerNameReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotGroupChangeReceiverOnBungee;
 import fr.olympa.core.bungee.redis.receiver.SpigotOlympaPlayerReceiver;
@@ -232,6 +234,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new BungeeQueueCommand(this).register();
 
 		new MonitorServers(this);
+		SqlGroup.init();
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
 	}
 
@@ -284,6 +287,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 			registerRedisSub(redisAccess.connect(), new SpigotOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER_TO_BUNGEE.name());
 			registerRedisSub(redisAccess.connect(), new SpigotReportReceiver(), RedisChannel.SPIGOT_REPORT_SEND.name());
 			registerRedisSub(redisAccess.connect(), new SiteGroupChangeReceiver(), RedisChannel.SITE_GROUP_CHANGE.name());
+			registerRedisSub(redisAccess.connect(), new BungeeCommandReceiver(), RedisChannel.BUNGEE_COMMAND.name());
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)

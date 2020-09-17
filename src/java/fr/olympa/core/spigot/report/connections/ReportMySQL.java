@@ -42,6 +42,7 @@ public class ReportMySQL {
 		resultSet.next();
 		long id = resultSet.getLong("id");
 		resultSet.close();
+		statement.close();
 		report.setId(id);
 	}
 
@@ -62,6 +63,7 @@ public class ReportMySQL {
 			statement.setObject(i++, null);
 		statement.setLong(i++, report.getId());
 		insertPlayerStatement.execute(statement);
+		statement.close();
 	}
 
 	private static OlympaStatement selectStatement = new OlympaStatement(StatementType.SELECT, tableName, "id", null);
