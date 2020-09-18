@@ -21,8 +21,8 @@ public class ListServerCommand extends BungeeCommand {
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		StringJoiner sj = new StringJoiner("\n");
-		sj.add("&6Liste des serveurs:");
-		MonitorServers.getServers().stream().sorted((o1, o2) -> Integer.compare(o1.getStatus().getId(), o2.getStatus().getId())).forEach(serverInfo -> {
+		sj.add("&6Liste des serveurs :");
+		MonitorServers.getServersSorted().forEach(serverInfo -> {
 			ServerStatus status = serverInfo.getStatus();
 			StringJoiner sb = new StringJoiner(" ");
 			sb.add("&7[" + status.getNameColored() + "&7]");

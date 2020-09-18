@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -32,6 +33,10 @@ public class MonitorServers {
 
 	public static Collection<MonitorInfo> getServers() {
 		return bungeeServers.values();
+	}
+
+	public static Stream<MonitorInfo> getServersSorted() {
+		return bungeeServers.values().stream().sorted((o1, o2) -> Integer.compare(o1.getStatus().getId(), o2.getStatus().getId()));
 	}
 
 	public static Map<ServerInfo, MonitorInfo> getServersMap() {

@@ -37,7 +37,7 @@ public class BungeeCommandListener implements Listener {
 		List<String> sugg = event.getSuggestions();
 		if (sugg.isEmpty())
 			return;
-		System.out.println("TabCompleteResponseEvent " + ((CommandSender) event.getSender()).getName() + " " + String.join(" ", sugg));
+		System.out.println("TabCompleteResponseEvent " + event.getSender().getAddress().getAddress().getHostAddress()+ " " + String.join(" ", sugg));
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)

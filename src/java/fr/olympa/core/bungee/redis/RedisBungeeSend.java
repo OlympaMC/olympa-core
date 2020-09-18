@@ -27,6 +27,13 @@ public class RedisBungeeSend {
 		RedisAccess.INSTANCE.disconnect();
 	}
 
+	public static void sendOlympaPlayerTeamspeakIDChanged(OlympaPlayer olympaPlayer) {
+		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
+			jedis.publish(RedisChannel.BUNGEE_SEND_TEAMSPEAKID.name(), olympaPlayer.getUniqueId() + ";" + olympaPlayer.getTeamspeakId());
+		}
+		RedisAccess.INSTANCE.disconnect();
+	}
+
 	@SuppressWarnings("deprecation")
 	public static void sendServerName(ServerInfo serverInfo) {
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {

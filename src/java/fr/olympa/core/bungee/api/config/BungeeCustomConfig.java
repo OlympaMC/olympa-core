@@ -10,6 +10,7 @@ import java.util.logging.Level;
 
 import com.google.common.io.ByteStreams;
 
+import fr.olympa.api.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -41,6 +42,19 @@ public class BungeeCustomConfig {
 		configs.add(this);
 	}
 
+	public Double getVersion() {
+		Object obj = this.getConfig().get("version");
+		if (obj instanceof Number)
+			return ((Number) obj).doubleValue();
+		else if (obj != null)
+			try {
+				return Double.valueOf(obj.toString());
+			} catch (NumberFormatException e) {
+				return null;
+			}
+		return null;
+	}
+
 	public Configuration getConfig() {
 		return configuration;
 	}
@@ -64,21 +78,29 @@ public class BungeeCustomConfig {
 		if (!folder.exists())
 			folder.mkdir();
 		File configFile = new File(folder, fileName);
-		if (!configFile.exists()) {
+		if (!configFile.exists() || Utils.isEmptyFile(configFile)) {
 			configFile.createNewFile();
 			InputStream jarfile = plugin.getResourceAsStream(fileName);
-			ByteStreams.copy(jarfile, new FileOutputStream(configFile));
+			if (jarfile != null)
+				ByteStreams.copy(jarfile, new FileOutputStream(configFile));
 			configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
+			ProxyServer.getInstance().getLogger().log(Level.INFO, ChatColor.GREEN + "nouvelle Config : " + fileName);
 		} else {
-			InputStream jarfile = plugin.getResourceAsStream(fileName);
-			Configuration jarconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(jarfile);
 			configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
-			if (jarconfig.getDouble("version") > configuration.getDouble("version")) {
-				configFile.renameTo(new File(folder, fileName + " V" + configuration.getDouble("version")));
-				configFile = new File(folder, fileName);
-				configFile.createNewFile();
-				ByteStreams.copy(plugin.getResourceAsStream(fileName), new FileOutputStream(configFile));
-				configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
+			Double version = getVersion();
+			InputStream jarfile = plugin.getResourceAsStream(fileName);
+			if (jarfile != null) {
+				Configuration jarconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(jarfile);
+				Double jarVersion = jarconfig.getDouble("version");
+				if (jarVersion != null && version != null)
+					if (jarVersion > version) {
+						configFile.renameTo(new File(folder, fileName + " V" + configuration.getDouble("version")));
+						configFile = new File(folder, fileName);
+						configFile.createNewFile();
+						ByteStreams.copy(plugin.getResourceAsStream(fileName), new FileOutputStream(configFile));
+						configuration = jarconfig;
+						ProxyServer.getInstance().getLogger().log(Level.INFO, ChatColor.GREEN + "Config updated : " + fileName);
+					}
 			}
 		}
 	}

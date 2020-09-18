@@ -13,6 +13,7 @@ import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.redis.receiver.BungeeAskPlayerServerReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeSendOlympaPlayerReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeServerNameReceiver;
+import fr.olympa.core.spigot.redis.receiver.BungeeTeamspeakIdReceiver;
 import fr.olympa.core.spigot.redis.receiver.SpigotCommandReceiver;
 import fr.olympa.core.spigot.redis.receiver.SpigotGroupChangedReceiveReceiver;
 import fr.olympa.core.spigot.redis.receiver.SpigotGroupChangedReceiver;
@@ -126,6 +127,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 			registerRedisSub(redisAccess.connect(), new SpigotGroupChangedReceiveReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP_RECEIVE.name());
 			registerRedisSub(redisAccess.connect(), new BungeeAskPlayerServerReceiver(), RedisChannel.BUNGEE_SEND_PLAYERSERVER.name());
 			registerRedisSub(redisAccess.connect(), new SpigotCommandReceiver(), RedisChannel.SPIGOT_COMMAND.name());
+			registerRedisSub(redisAccess.connect(), new BungeeTeamspeakIdReceiver(), RedisChannel.BUNGEE_SEND_TEAMSPEAKID.name());
 			RedisSpigotSend.askServerName();
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {

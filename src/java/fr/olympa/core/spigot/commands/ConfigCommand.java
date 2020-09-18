@@ -30,7 +30,7 @@ public class ConfigCommand extends ComplexCommand {
 		if (reloadOrSave.equals("reload")) {
 			long time = System.nanoTime();
 			try {
-				config.loadUnSafe();
+				config.reload();
 				time = System.nanoTime() - time;
 				sendMessage(Prefix.DEFAULT_GOOD, "Config &2%s&a chargé en &2%s secondes", config.getName(), new DecimalFormat("0.#").format(time / 1000000000d));
 			} catch (IOException | InvalidConfigurationException e) {
