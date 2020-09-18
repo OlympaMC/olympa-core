@@ -12,7 +12,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class BungeePingCommand extends BungeeCommand {
 
 	public BungeePingCommand(Plugin plugin) {
-		super(plugin, "ping", OlympaCorePermissions.BPING_COMMAND, "bping");
+		super(plugin, "bungeeping", OlympaCorePermissions.BPING_COMMAND, "bping");
 		addArgs(false, "joueur");
 		minArg = 0;
 	}
