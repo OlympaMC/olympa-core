@@ -23,21 +23,18 @@ public class UnmuteCommand extends BungeeCommand {
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		UUID author;
-		if (sender instanceof ProxiedPlayer) {
+		if (sender instanceof ProxiedPlayer)
 			author = proxiedPlayer.getUniqueId();
-		} else {
+		else
 			author = OlympaConsole.getUniqueId();
-		}
 		Configuration config = OlympaBungee.getInstance().getConfig();
 
-		if (Matcher.isUsername(args[0])) {
+		if (Matcher.isUsername(args[0]))
 			UnmutePlayer.unBan(author, sender, null, args[0], args);
-
-		} else if (Matcher.isFakeUUID(args[0])) {
-			if (Matcher.isUUID(args[0])) {
+		else if (Matcher.isFakeUUID(args[0])) {
+			if (Matcher.isUUID(args[0]))
 				UnmutePlayer.unBan(author, sender, UUID.fromString(args[0]), null, args);
-
-			} else {
+			else {
 				this.sendMessage(config.getString("default.messages.uuidinvalid").replace("%uuid%", args[0]));
 				return;
 			}

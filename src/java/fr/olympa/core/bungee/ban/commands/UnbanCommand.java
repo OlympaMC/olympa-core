@@ -18,11 +18,10 @@ import fr.olympa.core.bungee.ban.commands.methods.UnbanPlayer;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.plugin.TabExecutor;
 import net.md_5.bungee.config.Configuration;
 
 @SuppressWarnings("deprecation")
-public class UnbanCommand extends BungeeCommand implements TabExecutor {
+public class UnbanCommand extends BungeeCommand {
 
 	public UnbanCommand(Plugin plugin) {
 		super(plugin, "unban", OlympaCorePermissions.BAN_UNBAN_COMMAND, "pardon");
@@ -33,31 +32,27 @@ public class UnbanCommand extends BungeeCommand implements TabExecutor {
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		UUID author;
-		if (sender instanceof Player) {
+		if (sender instanceof Player)
 			author = ((Player) sender).getUniqueId();
-		} else {
+		else
 			author = OlympaConsole.getUniqueId();
-		}
 
 		Configuration config = OlympaBungee.getInstance().getConfig();
 		if (Matcher.isFakeIP(args[0])) {
-			if (Matcher.isIP(args[0])) {
+			if (Matcher.isIP(args[0]))
 				UnbanIp.unBan(author, sender, args[0], args);
-
-			} else {
+			else {
 				sender.sendMessage(config.getString("default.ipinvalid").replace("%ip%", args[0]));
 				return;
 			}
 
-		} else if (Matcher.isUsername(args[0])) {
+		} else if (Matcher.isUsername(args[0]))
 			UnbanPlayer.unBan(author, sender, null, args[0], args);
+		else if (Matcher.isFakeUUID(args[0])) {
 
-		} else if (Matcher.isFakeUUID(args[0])) {
-
-			if (Matcher.isUUID(args[0])) {
+			if (Matcher.isUUID(args[0]))
 				UnbanPlayer.unBan(author, sender, UUID.fromString(args[0]), null, args);
-
-			} else {
+			else {
 				sender.sendMessage(config.getString("default.uuidinvalid").replace("%uuid%", args[0]));
 				return;
 			}
@@ -69,7 +64,7 @@ public class UnbanCommand extends BungeeCommand implements TabExecutor {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		if (args.length == 1) {
 			// -> usless code, change to banned players
 			List<String> postentielNames = Utils.startWords(args[0], OlympaBungee.getInstance().getProxy().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toSet()));

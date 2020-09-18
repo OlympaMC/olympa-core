@@ -30,11 +30,10 @@ public class DelbanCommand extends BungeeCommand {
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		UUID author;
-		if (sender instanceof ProxiedPlayer) {
+		if (sender instanceof ProxiedPlayer)
 			author = proxiedPlayer.getUniqueId();
-		} else {
+		else
 			author = OlympaConsole.getUniqueId();
-		}
 
 		if (Matcher.isInt(args[0])) {
 			int id = Integer.parseInt(args[0]);
@@ -52,15 +51,12 @@ public class DelbanCommand extends BungeeCommand {
 					msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
 					OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
 					ProxyServer.getInstance().getConsole().sendMessage(msg);
-				} else {
+				} else
 					sendMessage(Prefix.DEFAULT_BAD, "Une erreur avec la base de donnés est survenu.");
-				}
-			} else {
+			} else
 				sendMessage(Prefix.DEFAULT_BAD, "Le ban n°" + args[0] + " n'existe pas");
-			}
 
-		} else {
+		} else
 			sendUsage();
-		}
 	}
 }

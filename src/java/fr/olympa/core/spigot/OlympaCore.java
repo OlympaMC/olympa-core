@@ -152,7 +152,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	public void onLoad() {
 		super.onLoad();
 		sendMessage("§6" + getDescription().getName() + "§e (" + getDescription().getVersion() + ") est chargé.");
-		System.setErr(new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(instance, run, 20)));
+		System.setErr(new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20)));
 	}
 
 	@Override

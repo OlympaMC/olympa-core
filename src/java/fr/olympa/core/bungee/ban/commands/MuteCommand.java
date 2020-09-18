@@ -26,30 +26,28 @@ public class MuteCommand extends BungeeCommand {
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		UUID author;
-		if (sender instanceof ProxiedPlayer) {
+		if (sender instanceof ProxiedPlayer)
 			author = proxiedPlayer.getUniqueId();
-		} else {
+		else
 			author = OlympaConsole.getUniqueId();
-		}
 
 		Configuration config = OlympaBungee.getInstance().getConfig();
-		if (Matcher.isUsername(args[0])) {
+		if (Matcher.isUsername(args[0]))
 			MutePlayer.addMute(author, sender, args[0], null, args, olympaPlayer);
+		else if (Matcher.isFakeIP(args[0])) {
 
-		} else if (Matcher.isFakeIP(args[0])) {
-
-			if (Matcher.isIP(args[0])) {
+			if (Matcher.isIP(args[0]))
 				MuteIp.addMute(author, sender, args[0], args, olympaPlayer);
-			} else {
+			else {
 				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.ipinvalid").replaceAll("%ip%", args[0]));
 				return;
 			}
 
 		} else if (Matcher.isFakeUUID(args[0])) {
 
-			if (Matcher.isUUID(args[0])) {
+			if (Matcher.isUUID(args[0]))
 				MutePlayer.addMute(author, sender, null, UUID.fromString(args[0]), args, olympaPlayer);
-			} else {
+			else {
 				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.uuidinvalid").replaceAll("%uuid%", args[0]));
 				return;
 			}

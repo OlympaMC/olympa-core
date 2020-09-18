@@ -6,10 +6,10 @@ import fr.olympa.core.bungee.api.command.BungeeCommand;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 
-public class BungeelagCommand extends BungeeCommand {
+public class BungeeLagCommand extends BungeeCommand {
 
-	public BungeelagCommand(Plugin plugin) {
-		super(plugin, "bungeelag", OlympaCorePermissions.BUNGEE_LAG_COMMAND_EXTRA, "blag", "btps", "bungee");
+	public BungeeLagCommand(Plugin plugin) {
+		super(plugin, "bungeelag", OlympaCorePermissions.BUNGEE_LAG_COMMAND, "blag", "btps", "bungee");
 	}
 
 	@Override

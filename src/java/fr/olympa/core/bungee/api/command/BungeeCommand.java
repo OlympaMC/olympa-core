@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.command.CommandArgument;
@@ -15,12 +17,15 @@ import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.api.config.BungeeCustomConfig;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -29,13 +34,19 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 
 	static Map<List<String>, BungeeCommand> commandPreProcess = new HashMap<>();
 
+	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
+		return new ArrayList<>();
+	}
+
+	public abstract void onCommand(CommandSender sender, String[] args);
+
 	protected String[] aliases;
 	public boolean allowConsole = true;
 	protected String command;
 	protected String description;
 	protected boolean bypassAuth = false;
 	protected OlympaPermission permission;
-	protected LinkedHashMap<Boolean, List<CommandArgument>> args = new LinkedHashMap<>();
+	protected LinkedHashMap<List<CommandArgument>, Boolean> args = new LinkedHashMap<>();
 
 	/**
 	 * Don't foget to set {@link BungeeCommand#usageString}
@@ -132,6 +143,63 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 
 	}
 
+	public List<String> tabComplete(Connection sender, String[] args) {
+		if (sender instanceof CommandSender)
+			this.sender = (CommandSender) sender;
+		else {
+			sendDoNotHavePermission();
+			return new ArrayList<>();
+		}
+
+		if (sender instanceof ProxiedPlayer) {
+			proxiedPlayer = (ProxiedPlayer) sender;
+			if (!this.hasPermission())
+				return new ArrayList<>();
+		} else {
+			proxiedPlayer = null;
+			if (!allowConsole) {
+				sendImpossibleWithConsole();
+				return new ArrayList<>();
+			}
+		}
+		List<String> customResponse = onTabComplete(this.sender, this, args);
+		if (customResponse != null)
+			return customResponse;
+
+		Set<List<CommandArgument>> defaultArgs = this.args.keySet();
+		if (defaultArgs.isEmpty())
+			return new ArrayList<>();
+		Iterator<List<CommandArgument>> iterator = defaultArgs.iterator();
+		List<CommandArgument> cas = null;
+		List<String> potentialArgs = new ArrayList<>();
+		int i = 0;
+		while (iterator.hasNext() && args.length > i) {
+			cas = iterator.next();
+			i++;
+		}
+		if (args.length != i || cas == null)
+			return null;
+		for (CommandArgument ca : cas) {
+			if (ca.getPermission() != null && !ca.getPermission().hasPermission(getOlympaPlayer()) || !ca.hasRequireArg(args, i))
+				continue;
+			switch (ca.getArgName().toLowerCase()) {
+			case "configs":
+				potentialArgs.addAll(BungeeCustomConfig.getConfigs().stream().map(BungeeCustomConfig::getName).collect(Collectors.toList()));
+				break;
+			case "joueur":
+				potentialArgs.addAll(ProxyServer.getInstance().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toList()));
+				break;
+			case "time":
+				potentialArgs.addAll(Arrays.asList("1h", "2h", "4h", "6h", "12h", "1j", "2j", "3j", "1semaine", "2semaines", "1mois", "1an"));
+				break;
+			default:
+				potentialArgs.add(ca.getArgName());
+				break;
+			}
+		}
+		return Utils.startWords(args[i - 1], potentialArgs);
+	}
+
 	public String getCommand() {
 		return command;
 	}
@@ -148,8 +216,6 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 	public ProxiedPlayer getProxiedPlayer() {
 		return proxiedPlayer;
 	}
-
-	public abstract void onCommand(CommandSender sender, String[] args);
 
 	@Override
 	public void register() {
@@ -279,13 +345,13 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 
 	@Override
 	public void addCommandArguments(boolean isMandatory, List<CommandArgument> ca) {
-		args.put(isMandatory, ca);
+		args.put(ca, isMandatory);
 	}
 
 	private void build() {
 		usageString = args.entrySet().stream().map(entry -> {
-			boolean isMandatory = entry.getKey();
-			List<CommandArgument> ca = entry.getValue();
+			boolean isMandatory = entry.getValue();
+			List<CommandArgument> ca = entry.getKey();
 			return (isMandatory ? "<" : "[") + ca.stream().map(c -> c.getArgName()).collect(Collectors.joining("|")) + (isMandatory ? ">" : "]");
 		}).collect(Collectors.joining(" "));
 		if (minArg == 0)

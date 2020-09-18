@@ -26,8 +26,9 @@ import fr.olympa.core.bungee.ban.commands.MuteCommand;
 import fr.olympa.core.bungee.ban.commands.UnbanCommand;
 import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
-import fr.olympa.core.bungee.commands.BPingCommand;
-import fr.olympa.core.bungee.commands.BungeelagCommand;
+import fr.olympa.core.bungee.commands.BungeeConfigCommand;
+import fr.olympa.core.bungee.commands.BungeeLagCommand;
+import fr.olympa.core.bungee.commands.BungeePingCommand;
 import fr.olympa.core.bungee.commands.InfoCommand;
 import fr.olympa.core.bungee.commands.RedisCommand;
 import fr.olympa.core.bungee.connectionqueue.BungeeQueueCommand;
@@ -161,10 +162,10 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new RestartBungeeCommand(this).register();
 		bungeeTask = new BungeeTask(this);
 		defaultConfig = new BungeeCustomConfig(this, "config");
-		defaultConfig.load();
+		defaultConfig.loadSafe();
 
 		maintConfig = new BungeeCustomConfig(this, "maintenance");
-		maintConfig.load();
+		maintConfig.loadSafe();
 		status = ServerStatus.get(maintConfig.getConfig().getString("settings.status"));
 		setupDatabase();
 		new MySQL(database);
@@ -228,10 +229,11 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new RestartServerCommand(this).register();
 		new LobbyCommand(this).register();
 		new LeaveQueueCommand(this).register();
-		new BungeelagCommand(this).register();
+		new BungeeLagCommand(this).register();
 		new RedisCommand(this).register();
-		new BPingCommand(this).register();
+		new BungeePingCommand(this).register();
 		new BungeeQueueCommand(this).register();
+		new BungeeConfigCommand(this).register();
 
 		new MonitorServers(this);
 		SqlGroup.init();

@@ -68,15 +68,18 @@ public class OlympaCorePermissions {
 	public static final OlympaPermission PING_COMMAND = new OlympaPermission(OlympaGroup.PLAYER);
 	public static final OlympaPermission BPING_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
 
-	public static final OlympaPermission BUNGEE_LAG_COMMAND_EXTRA = new OlympaBungeePermission(OlympaGroup.FRIEND);
-	public static final OlympaPermission SPIGOT_LAG_COMMAND = new OlympaPermission(OlympaGroup.FRIEND);
+	public static final OlympaPermission BUNGEE_LAG_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
+	public static final OlympaPermission SPIGOT_LAG_COMMAND = new OlympaPermission(OlympaGroup.PLAYER);
 
 	// Don't fogot to change it in ZTA
 	public static final OlympaPermission GAMEMODE_COMMAND = new OlympaPermission(OlympaGroup.BUILDER);
 	public static final OlympaPermission GAMEMODE_COMMAND_CREATIVE = new OlympaPermission(OlympaGroup.BUILDER);
 	public static final OlympaPermission FLY_COMMAND = new OlympaPermission(OlympaGroup.BUILDER);
 
-	public static final OlympaPermission CONFIG_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaPermission BUNGEE_CONFIG_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaPermission SPIGOT_CONFIG_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 
 	public static final OlympaPermission BUNGEE_QUEUE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaPermission TEAMSPEAK_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
+	public static final OlympaPermission TEAMSPEAK_COMMAND_MANAGE = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 }

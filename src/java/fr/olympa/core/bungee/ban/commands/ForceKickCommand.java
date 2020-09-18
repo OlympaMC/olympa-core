@@ -29,9 +29,8 @@ public class ForceKickCommand extends BungeeCommand {
 			target.getPendingConnection().disconnect();
 			this.sendMessage(Prefix.DEFAULT_GOOD + "Le joueur &2" + target.getName() + "&a a été kick.");
 
-		} else {
+		} else
 			sendUsage();
-		}
 	}
 
 }

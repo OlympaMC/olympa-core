@@ -104,7 +104,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 					} else
 						sendMessage(defaultConfig.getString("maintenance.messages.alreadyadded").replace("%player%", args[1]));
 					maintconfig.set("whitelist", whitelist);
-					customConfig.save();
+					customConfig.saveSafe();
 					break;
 
 				case "remove":
@@ -119,7 +119,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 					} else
 						sendMessage(defaultConfig.getString("maintenance.messages.alreadyremoved").replace("%player%", args[1]));
 					maintconfig.set("whitelist", whitelist);
-					customConfig.save();
+					customConfig.saveSafe();
 					break;
 
 				case "list":
@@ -177,7 +177,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 		Configuration config = customConfig.getConfig();
 		config.set("settings.status", status.getName());
 		config.set("settings.message", message);
-		customConfig.save();
+		customConfig.saveSafe();
 		String statusmsg = "";
 		if (message != null && !message.isEmpty())
 			statusmsg = "(" + message.replace("\n", "") + ")";
