@@ -141,7 +141,13 @@ public class GroupCommand extends OlympaCommand {
 						this.sendError("%s&c n'est pas dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName(gender));
 						return true;
 					}
-					msg = null;
+					Entry<OlympaGroup, Long> entry = olympaTarget.getGroups().firstEntry();
+					OlympaGroup principalGroup = entry.getKey();
+					Long timestamp2 = entry.getValue();
+					String timestampString2 = new String();
+					if (timestamp2 != 0)
+						timestampString2 = "pendant &4" + Utils.timestampToDuration(timestamp2) + "&c";
+					msg = "&cTu as été démote du groupe &4%group&c%time&c. Ton grade principale deviens &4%group2&c%time2&c.".replace("%time2", timestampString2).replace("%group2", principalGroup.getName(gender));
 					state = ChangeType.REMOVE;
 					olympaTarget.removeGroup(newGroup);
 				} else {
@@ -171,9 +177,9 @@ public class GroupCommand extends OlympaCommand {
 			else {
 				done = b -> {
 				};
-				Prefix.DEFAULT.sendMessage(target, msg.replace("%group", newGroup.getName()).replace("%time", timestampString));
 				olympaAccount.saveToRedis(olympaTarget);
 				olympaAccount.saveToDb(olympaTarget);
+				Prefix.DEFAULT.sendMessage(target, msg.replace("%group", newGroup.getName()).replace("%time", timestampString));
 			}
 			OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, state, olympaTarget, done, timestamp, newGroup));
 			if (player != null && (target == null || !SpigotUtils.isSamePlayer(player, target)))

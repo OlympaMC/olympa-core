@@ -82,4 +82,6 @@ public class OlympaCorePermissions {
 	public static final OlympaPermission BUNGEE_QUEUE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaPermission TEAMSPEAK_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
 	public static final OlympaPermission TEAMSPEAK_COMMAND_MANAGE = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaBungeePermission TEAMSPEAK_SEE_MODHELP = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
+	public static final OlympaBungeePermission TEAMSPEAK_SEE_ADMINHELP = new OlympaBungeePermission(OlympaGroup.MODP);
 }
