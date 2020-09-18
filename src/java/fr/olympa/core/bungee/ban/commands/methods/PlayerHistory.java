@@ -30,25 +30,21 @@ public class PlayerHistory {
 	public static void histBan(CommandSender sender, String name, UUID uuid) {
 		ProxiedPlayer target = null;
 		OlympaPlayer olympaTarget = null;
-		if (uuid != null) {
+		if (uuid != null)
 			target = ProxyServer.getInstance().getPlayer(uuid);
-
-		} else if (name != null) {
+		else if (name != null)
 			target = ProxyServer.getInstance().getPlayer(name);
-
-		} else {
+		else
 			throw new NullPointerException("The uuid or name must be specified");
-		}
 
 		Configuration config = OlympaBungee.getInstance().getConfig();
 		try {
-			if (target != null) {
+			if (target != null)
 				olympaTarget = AccountProvider.get(target.getUniqueId());
-			} else if (uuid != null) {
+			else if (uuid != null)
 				olympaTarget = AccountProvider.getFromDatabase(uuid);
-			} else if (name != null) {
+			else if (name != null)
 				olympaTarget = AccountProvider.getFromDatabase(name);
-			}
 		} catch (SQLException e) {
 			sender.sendMessage(config.getString("ban.messages.errordb"));
 			e.printStackTrace();
@@ -67,7 +63,7 @@ public class PlayerHistory {
 			return;
 		}
 
-		TextComponent msg = new TextComponent(BungeeUtils.color("&6Historique des sanctions de " + olympaTarget.getGroup().getPrefix() + olympaTarget.getName() + "&6:\n"));
+		TextComponent msg = new TextComponent(BungeeUtils.color("&6Historique des sanctions de " + olympaTarget.getGroupPrefix() + olympaTarget.getName() + "&6:\n"));
 		msg.addExtra(BungeeUtils.color("&6Bans: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.BAN).count() + " "));
 		msg.addExtra(BungeeUtils.color("&6Mute: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.MUTE).count() + " "));
 		msg.addExtra(BungeeUtils.color("&6Kick: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.KICK).count() + "\n"));
@@ -84,9 +80,8 @@ public class PlayerHistory {
 							.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + b.getId()))
 							.create();
 
-			for (BaseComponent s : comp) {
+			for (BaseComponent s : comp)
 				msg.addExtra(s);
-			}
 		});
 		sender.sendMessage(msg);
 	}

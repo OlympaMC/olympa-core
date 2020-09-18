@@ -17,7 +17,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 public class StartServerCommand extends BungeeCommand implements TabExecutor {
 
 	public StartServerCommand(Plugin plugin) {
-		super(plugin, "startserv", OlympaCorePermissions.SERVER_START_COMMAND, "startserver");
+		super(plugin, "startserver", OlympaCorePermissions.SERVER_START_COMMAND);
 		minArg = 1;
 		usageString = "<" + plugin.getProxy().getServers().entrySet().stream().map(entry -> entry.getKey()).collect(Collectors.joining("|")) + ">";
 	}

@@ -23,7 +23,7 @@ public class ConfigCommand extends ComplexCommand {
 		}, x -> String.format("&cLa config &4%s&c n'existe pas.", x));
 	}
 
-	@Cmd(args = { "CONFIGS", "reload|save" }, otherArg = true)
+	@Cmd(args = { "CONFIGS", "reload|save" }, otherArg = true, syntax = "<config> <reload|save>")
 	public void other(CommandContext cmd) {
 		CustomConfig config = cmd.getArgument(0);
 		String reloadOrSave = ((String) cmd.getArgument(1)).toLowerCase();

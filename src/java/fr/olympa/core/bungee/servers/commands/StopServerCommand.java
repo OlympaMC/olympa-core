@@ -17,7 +17,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 public class StopServerCommand extends BungeeCommand implements TabExecutor {
 
 	public StopServerCommand(Plugin plugin) {
-		super(plugin, "stopserv", OlympaCorePermissions.SERVER_START_COMMAND, "stopserver");
+		super(plugin, "stopserver", OlympaCorePermissions.SERVER_START_COMMAND);
 		minArg = 1;
 		usageString = "<" + plugin.getProxy().getServers().entrySet().stream().map(entry -> entry.getKey()).collect(Collectors.joining("|")) + ">";
 	}

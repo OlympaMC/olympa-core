@@ -13,10 +13,6 @@
 			<url>https://papermc.io/repo/repository/maven-releases/</url>
 		</repository>
 		<repository>
-			<id>jitpack.io</id>
-			<url>https://jitpack.io</url>
-		</repository>
-		<repository>
 			<id>viaversion-repo</id>
 			<url>https://repo.viaversion.com</url>
 		</repository>
@@ -28,8 +24,18 @@
 			<id>minecraft-repo</id>
 			<url>https://libraries.minecraft.net/</url>
 		</repository>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
 	</repositories>
 	<dependencies>
+		<dependency>
+			<groupId>com.github.ProtocolSupport</groupId>
+			<artifactId>ProtocolSupport</artifactId>
+			<version>513e8f0371</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>me.lucko</groupId>
 			<artifactId>commodore</artifactId>
@@ -39,12 +45,6 @@
 			<groupId>us.myles</groupId>
 			<artifactId>viaversion</artifactId>
 			<version>3.1.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.github.ProtocolSupport</groupId>
-			<artifactId>ProtocolSupport</artifactId>
-			<version>513e8f0371</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

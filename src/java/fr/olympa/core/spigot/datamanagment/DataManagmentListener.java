@@ -82,10 +82,10 @@ public class DataManagmentListener implements Listener {
 			event.disallow(Result.KICK_OTHER, ColorUtils.color("&cImpossible de se connecter au serveur, réessaye dans quelques instants..."));
 			return;
 		}
-		if (status.getPermission() != null && !status.getPermission().hasPermission(olympaPlayer)) {
-			event.disallow(Result.KICK_OTHER, ColorUtils.color("&cLe serveur &4" + core.getServerName() + "&c est actuellement en mode " + status.getNameColored() + "&c."));
-			return;
-		}
+		//		if (status.getPermission() != null && !status.getPermission().hasPermission(olympaPlayer)) {
+		//			event.disallow(Result.KICK_OTHER, ColorUtils.color("&cLe serveur &4" + core.getServerName() + "&c est actuellement en mode " + status.getNameColored() + "&c."));
+		//			return;
+		//		}
 
 		olympaAccount.saveToCache(olympaPlayer);
 	}
@@ -100,7 +100,7 @@ public class DataManagmentListener implements Listener {
 			event.setJoinMessage(null);
 			return;
 		}
-		event.setJoinMessage(ColorUtils.color("&7[&a+&7] %prefix%name".replace("%group", olympaPlayer.getGroupName()).replace("%prefix", olympaPlayer.getGroupPrefix()).replace("%name", player.getDisplayName())));
+		event.setJoinMessage(ColorUtils.color(String.format("&7[&a+&7] %s%s", olympaPlayer.getGroupPrefix(), player.getDisplayName())));
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -141,7 +141,7 @@ public class DataManagmentListener implements Listener {
 		AccountProvider account = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = account.getFromCache();
 		if (olympaPlayer != null)
-			event.setQuitMessage(ColorUtils.color("&7[&c-&7] %prefix%name".replace("%group", olympaPlayer.getGroupName()).replace("%prefix", olympaPlayer.getGroupPrefix()).replace("%name", player.getDisplayName())));
+			event.setQuitMessage(ColorUtils.color(String.format("&7[&c-&7] %s%s", olympaPlayer.getGroupPrefix(), player.getDisplayName())));
 		else
 			event.setQuitMessage(null);
 	}

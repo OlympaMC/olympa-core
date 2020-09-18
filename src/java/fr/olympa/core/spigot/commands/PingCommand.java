@@ -19,6 +19,7 @@ public class PingCommand extends OlympaCommand {
 	public PingCommand(Plugin plugin) {
 		super(plugin, "ping", OlympaCorePermissions.PING_COMMAND);
 		addArgs(false, "joueur");
+		minArg = 0;
 	}
 
 	@Override
