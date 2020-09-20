@@ -29,11 +29,12 @@
 			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
+	
 	<dependencies>
 		<dependency>
 			<groupId>com.github.ProtocolSupport</groupId>
 			<artifactId>ProtocolSupport</artifactId>
-			<version>513e8f0371</version>
+			<version>c7735cd0cf</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -50,7 +51,7 @@
 		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
-			<version>3.1.0</version>
+			<version>3.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.spigotmc</groupId>
@@ -61,10 +62,9 @@
 		<dependency>
 			<groupId>io.github.waterfallmc</groupId>
 			<artifactId>waterfall-api</artifactId>
-			<version>1.15-SNAPSHOT</version>
+			<version>1.16-R0.4-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.destroystokyo.paper</groupId>
 			<artifactId>paper-api</artifactId>
