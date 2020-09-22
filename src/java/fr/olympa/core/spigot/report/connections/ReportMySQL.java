@@ -34,10 +34,10 @@ public class ReportMySQL {
 			statement.setObject(i++, null);
 		List<ReportStatusInfo> statusInfo = report.getStatusInfo();
 		if (statusInfo != null && statusInfo.isEmpty())
-			statement.setString(i++, report.getStatusInfoToJson());
+			statement.setString(i, report.getStatusInfoToJson());
 		else
-			statement.setObject(i++, null);
-		insertPlayerStatement.execute(statement);
+			statement.setObject(i, null);
+		insertPlayerStatement.execute();
 		ResultSet resultSet = statement.getGeneratedKeys();
 		resultSet.next();
 		long id = resultSet.getLong("id");
@@ -62,7 +62,7 @@ public class ReportMySQL {
 		else
 			statement.setObject(i++, null);
 		statement.setLong(i++, report.getId());
-		insertPlayerStatement.execute(statement);
+		updateStatement.execute();
 		statement.close();
 	}
 
@@ -72,7 +72,7 @@ public class ReportMySQL {
 		OlympaReport report = null;
 		PreparedStatement statement = selectStatement.getStatement();
 		statement.setLong(1, id);
-		ResultSet resultSet = insertPlayerStatement.executeQuery(statement);
+		ResultSet resultSet = selectStatement.executeQuery();
 		if (resultSet.next())
 			report = get(resultSet);
 		resultSet.close();
@@ -85,7 +85,7 @@ public class ReportMySQL {
 		List<OlympaReport> report = new ArrayList<>();
 		PreparedStatement statement = selectPlayerStatement.getStatement();
 		statement.setLong(1, idTarget);
-		ResultSet resultSet = selectPlayerStatement.executeQuery(statement);
+		ResultSet resultSet = selectPlayerStatement.executeQuery();
 		while (resultSet.next())
 			report.add(get(resultSet));
 		resultSet.close();
@@ -98,7 +98,7 @@ public class ReportMySQL {
 		List<OlympaReport> report = new ArrayList<>();
 		PreparedStatement statement = selectTargetStatement.getStatement();
 		statement.setLong(1, idAuthor);
-		ResultSet resultSet = selectTargetStatement.executeQuery(statement);
+		ResultSet resultSet = selectTargetStatement.executeQuery();
 		while (resultSet.next())
 			report.add(get(resultSet));
 		resultSet.close();

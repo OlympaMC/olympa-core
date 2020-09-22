@@ -14,9 +14,9 @@ import com.google.common.collect.Multimap;
 import fr.olympa.api.utils.Utils;
 
 public class SwearHandler {
-	
+
 	private Map<String, Pattern> regexSwear;
-	
+
 	public SwearHandler(List<String> swears) {
 		regexSwear = new HashMap<>();
 		for (String swear : swears) {
@@ -53,7 +53,7 @@ public class SwearHandler {
 			regexSwear.put(swear, Pattern.compile("(?iu)" + start + "(" + sb.toString() + end + ")"));
 		}
 	}
-	
+
 	public Collection<Pattern> getRegexSwear() {
 		return regexSwear.values();
 	}
@@ -64,17 +64,15 @@ public class SwearHandler {
 			return null;
 		return replace(msg, test, prefix, suffix);
 	}
-	
+
 	public Multimap<String, String> test(String msg) {
 		Multimap<String, String> match = ArrayListMultimap.create();
 		for (Entry<String, Pattern> entry : regexSwear.entrySet()) {
 			String word = entry.getKey();
 			Pattern pattern = entry.getValue();
 			Matcher matcher = pattern.matcher(Utils.removeAccents(msg));
-			while (matcher.find()) {
-				System.out.println("[M] " + word + " '" + matcher.group() + "' '" + pattern + "'");
+			while (matcher.find())
 				match.put(word, matcher.group());
-			}
 		}
 		return match;
 	}

@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.groups.SqlGroup;
+import fr.olympa.api.groups.SQLGroup;
 import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.server.ServerStatus;
@@ -236,7 +236,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new BungeeConfigCommand(this).register();
 
 		new MonitorServers(this);
-		SqlGroup.init();
+		SQLGroup.init();
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
 	}
 
