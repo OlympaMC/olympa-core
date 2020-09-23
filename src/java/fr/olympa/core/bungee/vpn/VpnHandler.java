@@ -51,7 +51,7 @@ public class VpnHandler {
 
 	public static OlympaVpn createVpnInfo(Connection con) throws IOException {
 		String ip = con.getAddress().getAddress().getHostAddress();
-		URL url = new URL(String.join("http://ip-api.com/json/%s?fields=17034769", ip));
+		URL url = new URL(String.format("http://ip-api.com/json/%s?fields=17034769", ip));
 		URLConnection connection = url.openConnection(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ip, con.getAddress().getPort())));
 		connection.setUseCaches(false);
 		String result = CharStreams.toString(new InputStreamReader(connection.getURL().openStream(), Charsets.UTF_8));

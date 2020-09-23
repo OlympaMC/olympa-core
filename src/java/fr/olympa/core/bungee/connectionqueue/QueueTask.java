@@ -19,7 +19,7 @@ public class QueueTask implements Runnable {
 	}
 
 	public static void s() {
-		task = OlympaBungee.getInstance().getTask().runTaskLater(new QueueTask(), QueueHandler.TIME_BETWEEN_2, TimeUnit.MILLISECONDS);
+		task = OlympaBungee.getInstance().getTask().runTaskLaterAndGet(new QueueTask(), QueueHandler.TIME_BETWEEN_2, TimeUnit.MILLISECONDS);
 	}
 
 	@Override

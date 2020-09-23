@@ -3,11 +3,9 @@ package fr.olympa.core.bungee.api.command;
 import java.util.Arrays;
 import java.util.List;
 
-import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.TabCompleteEvent;
-import net.md_5.bungee.api.event.TabCompleteResponseEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
@@ -31,14 +29,14 @@ public class BungeeCommandListener implements Listener {
 		cmd.execute(player, Arrays.copyOfRange(args, 1, args.length));
 		event.setCancelled(true);
 	}
-
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onTabComplete(TabCompleteResponseEvent event) {
-		List<String> sugg = event.getSuggestions();
-		if (sugg.isEmpty())
-			return;
-		System.out.println("TabCompleteResponseEvent " + event.getSender().getAddress().getAddress().getHostAddress()+ " " + String.join(" ", sugg));
-	}
+	/*
+		@EventHandler(priority = EventPriority.LOWEST)
+		public void onTabComplete(TabCompleteResponseEvent event) {
+			List<String> sugg = event.getSuggestions();
+			if (sugg.isEmpty())
+				return;
+			System.out.println("TabCompleteResponseEvent " + event.getSender().getAddress().getAddress().getHostAddress()+ " " + String.join(" ", sugg));
+		}*/
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onTabComplete(TabCompleteEvent event) {

@@ -52,7 +52,7 @@ public class ReportCommand extends ComplexCommand {
 		return false;
 	}
 
-	@Cmd(args = { "PLAYERS", "REPORTREASON", "Informations complémentaire du report" }, min = 1, syntax = "<joueur> [status] [note]", otherArg = true)
+	@Cmd(args = { "PLAYERS", "REPORTREASON", "Informations complémentaire du report" }, min = 0, syntax = "[joueur] [status] [note]", otherArg = true)
 	public void wrongArg(CommandContext cmd) {
 		Player player = this.player;
 		OfflinePlayer target = cmd.getArgument(0);

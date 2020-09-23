@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.api.task.BungeeTaskManager;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -90,7 +91,9 @@ public class ServersConnection {
 	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer) {
 		removeTryToConnect(player);
 		//		connect.put(player.getUniqueId(), );
-		addConnection(new WaitingConnection(player.getUniqueId(), olympaServer, OlympaBungee.getInstance().getTask().scheduleSyncRepeatingTask(new QueueSpigotTask(player, olympaServer), 0, 15, TimeUnit.SECONDS)));
+		BungeeTaskManager taskHandler = OlympaBungee.getInstance().getTask();
+		int taskId = OlympaBungee.getInstance().getTask().scheduleSyncRepeatingTask(new QueueSpigotTask(player, olympaServer), 0, 15, TimeUnit.SECONDS);
+		addConnection(new WaitingConnection(player.getUniqueId(), olympaServer, taskHandler.getTask(taskId)));
 	}
 	// Move to QueueSpigotTask
 	//	@SuppressWarnings("deprecation")

@@ -12,10 +12,11 @@ import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.api.command.BungeeCommandListener;
 import fr.olympa.core.bungee.api.config.BungeeCustomConfig;
-import fr.olympa.core.bungee.api.task.BungeeTask;
+import fr.olympa.core.bungee.api.task.BungeeTaskManager;
 import fr.olympa.core.bungee.ban.commands.BanCommand;
 import fr.olympa.core.bungee.ban.commands.BanHistoryCommand;
 import fr.olympa.core.bungee.ban.commands.BanIpCommand;
@@ -72,9 +73,9 @@ import fr.olympa.core.bungee.servers.commands.StopServerCommand;
 import fr.olympa.core.bungee.staffchat.StaffChatCommand;
 import fr.olympa.core.bungee.staffchat.StaffChatListener;
 import fr.olympa.core.bungee.tabtext.TabTextListener;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import fr.olympa.core.bungee.vpn.VpnListener;
 import fr.olympa.core.bungee.vpn.VpnSql;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.config.Configuration;
@@ -93,7 +94,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	protected long uptime = Utils.getCurrentTimeInSeconds();
 	protected BungeeCustomConfig defaultConfig;
 	protected BungeeCustomConfig maintConfig;
-	private BungeeTask bungeeTask;
+	private BungeeTaskManager task;
 	private ServerStatus status;
 
 	public Configuration getConfig() {
@@ -101,53 +102,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	}
 
 	@Override
-	public Connection getDatabase() throws SQLException {
-		return database.getConnection();
-	}
-
-	public BungeeCustomConfig getDefaultConfig() {
-		return defaultConfig;
-	}
-
-	public Configuration getMaintConfig() {
-		return maintConfig != null ? maintConfig.getConfig() : null;
-	}
-
-	public BungeeCustomConfig getMaintCustomConfig() {
-		return maintConfig;
-	}
-
-	private String getPrefixConsole() {
-		return "&f[&6" + getDescription().getName() + "&f] &e";
-	}
-
-	@Override
-	public String getServerName() {
-		return "bungee";
-	}
-
-	public BungeeTask getTask() {
-		return bungeeTask;
-	}
-
-	@Override
-	public String getUptime() {
-		return Utils.timestampToDuration(uptime);
-	}
-
-	@Override
-	public long getUptimeLong() {
-		return uptime;
-	}
-
-	@Override
-	public void launchAsync(Runnable run) {
-		getTask().runTaskAsynchronously(run);
-	}
-
-	@Override
 	public void onDisable() {
-		bungeeTask.cancelTaskByName("monitor_serveurs");
+		task.cancelTaskByName("monitor_serveurs");
 		//		RedisAccess.close();
 		if (database != null)
 			database.close();
@@ -160,7 +116,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		LinkSpigotBungee.Provider.link = this;
 
 		new RestartBungeeCommand(this).register();
-		bungeeTask = new BungeeTask(this);
+		task = new BungeeTaskManager(this);
 		defaultConfig = new BungeeCustomConfig(this, "config");
 		defaultConfig.loadSafe();
 
@@ -241,9 +197,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
-	public void sendMessage(String message) {
-		getProxy().getConsole().sendMessage(BungeeUtils.color(getPrefixConsole() + message));
+	public void sendMessage(String message, Object... args) {
+		getProxy().getConsole().sendMessage(TextComponent.fromLegacyText(String.format(ColorUtils.color(getPrefixConsole() + message), args)));
 	}
 
 	public void setDefaultConfig(BungeeCustomConfig defaultConfig) {
@@ -311,4 +266,56 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	public boolean isSpigot() {
 		return false;
 	}
+
+	@Override
+	public Connection getDatabase() throws SQLException {
+		return database.getConnection();
+	}
+
+	public BungeeCustomConfig getDefaultConfig() {
+		return defaultConfig;
+	}
+
+	public Configuration getMaintConfig() {
+		return maintConfig != null ? maintConfig.getConfig() : null;
+	}
+
+	public BungeeCustomConfig getMaintCustomConfig() {
+		return maintConfig;
+	}
+
+	private String getPrefixConsole() {
+		return "&f[&6" + getDescription().getName() + "&f] &e";
+	}
+
+	@Override
+	public String getServerName() {
+		return "bungee";
+	}
+
+	//	@Override
+	//	public OlympaTask getTask() {
+	//		return task;
+	//	}
+
+	@Override
+	public BungeeTaskManager getTask() {
+		return task;
+	}
+
+	@Override
+	public String getUptime() {
+		return Utils.timestampToDuration(uptime);
+	}
+
+	@Override
+	public long getUptimeLong() {
+		return uptime;
+	}
+
+	@Override
+	public void launchAsync(Runnable run) {
+		getTask().runTaskAsynchronously(run);
+	}
+
 }

@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableMap;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.api.task.BungeeTask;
+import fr.olympa.core.bungee.api.task.BungeeTaskManager;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue.Consumer;
 import net.md_5.bungee.api.ProxyServer;
@@ -80,7 +80,7 @@ public class MonitorServers {
 	}
 
 	public MonitorServers(OlympaBungee plugin) {
-		BungeeTask task = plugin.getTask();
+		BungeeTaskManager task = plugin.getTask();
 		task.scheduleSyncRepeatingTask("monitor_serveurs", () -> {
 			for (ServerInfo serverInfo : ProxyServer.getInstance().getServers().values())
 				updateServer(serverInfo, false);
