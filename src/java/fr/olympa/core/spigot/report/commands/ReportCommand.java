@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -26,7 +25,6 @@ import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.spigot.report.ReportMsg;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
 import fr.olympa.core.spigot.report.gui.ReportGui;
-import fr.olympa.core.spigot.report.gui.ReportGuiChoose;
 import fr.olympa.core.spigot.report.gui.ReportGuiConfirm;
 import us.myles.viaversion.libs.gson.Gson;
 
@@ -43,22 +41,22 @@ public class ReportCommand extends ComplexCommand {
 		}, x -> String.format("&4%s&c doit être un status tel que &4%s&c", x, Arrays.asList(ReportStatus.values()).stream().map(ReportStatus::getName).collect(Collectors.joining(", "))));
 	}
 
-	@Override
-	public boolean noArguments(CommandSender sender) {
-		if (sender instanceof Player) {
-			ReportGuiChoose.open(player);
-			return true;
-		}
-		return false;
-	}
+	//	@Override
+	//	public boolean noArguments(CommandSender sender) {
+	//		if (sender instanceof Player) {
+	//			ReportGuiChoose.open(player);
+	//			return true;
+	//		}
+	//		return false;
+	//	}
 
-	@Cmd(args = { "PLAYERS", "REPORTREASON", "Informations complémentaire du report" }, min = 0, syntax = "[joueur] [status] [note]", otherArg = true)
+	@Cmd(args = { "PLAYERS", "REPORTREASON", "Informations complémentaire du report" }, min = 1, syntax = "<joueur> [status] [note]", otherArg = true)
 	public void wrongArg(CommandContext cmd) {
 		Player player = this.player;
 		OfflinePlayer target = cmd.getArgument(0);
 		if (target.getUniqueId().equals(player.getUniqueId()))
-			sendError("Tu ne peux pas te report toi même.");
-		//			return;
+			sendError("Tu ne peux pas te report toi même. (enfin si mais que pour tester)");
+		//			return; TODO REMOVE comment
 		ReportReason reportReason = null;
 		String note = null;
 		if (cmd.getArgumentsLength() > 1)
@@ -104,7 +102,7 @@ public class ReportCommand extends ComplexCommand {
 		}
 	}
 
-	@Cmd(args = "PLAYERS|INTEGER|UUID", aliases = { "seeauthor" }, permissionName = "REPORT_SEE_COMMAND", syntax = "<joueur | uuid | idReport>")
+	@Cmd(args = "PLAYERS|INTEGER|UUID", aliases = { "seeauthor" }, permissionName = "REPORT_SEE_COMMAND", syntax = "<joueur | uuid | idReport>", min = 1)
 	public void see(CommandContext cmd) {
 		List<OlympaReport> reports = new ArrayList<>();
 		OlympaPlayer op = null;

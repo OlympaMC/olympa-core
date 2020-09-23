@@ -10,8 +10,8 @@ import java.util.List;
 import fr.olympa.api.report.OlympaReport;
 import fr.olympa.api.report.ReportStatusInfo;
 import fr.olympa.api.sql.DbConnection;
-import fr.olympa.api.sql.OlympaStatement;
-import fr.olympa.api.sql.StatementType;
+import fr.olympa.api.sql.statement.OlympaStatement;
+import fr.olympa.api.sql.statement.StatementType;
 
 public class ReportMySQL {
 
@@ -33,7 +33,7 @@ public class ReportMySQL {
 		else
 			statement.setObject(i++, null);
 		List<ReportStatusInfo> statusInfo = report.getStatusInfo();
-		if (statusInfo != null && statusInfo.isEmpty())
+		if (statusInfo != null && !statusInfo.isEmpty())
 			statement.setString(i, report.getStatusInfoToJson());
 		else
 			statement.setObject(i, null);
@@ -57,11 +57,11 @@ public class ReportMySQL {
 		statement.setTimestamp(i++, new Timestamp(report.getTime() * 1000L));
 		statement.setString(i++, report.getServerName());
 		List<ReportStatusInfo> statusInfo = report.getStatusInfo();
-		if (statusInfo != null && statusInfo.isEmpty())
+		if (statusInfo != null && !statusInfo.isEmpty())
 			statement.setString(i++, report.getStatusInfoToJson());
 		else
 			statement.setObject(i++, null);
-		statement.setLong(i++, report.getId());
+		statement.setLong(i, report.getId());
 		updateStatement.execute();
 		statement.close();
 	}
