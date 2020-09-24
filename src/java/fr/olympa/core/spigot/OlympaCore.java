@@ -2,6 +2,8 @@ package fr.olympa.core.spigot;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.plugin.PluginManager;
 
@@ -152,7 +154,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	public void onLoad() {
 		super.onLoad();
 		sendMessage("§6" + getDescription().getName() + "§e (" + getDescription().getVersion() + ") est chargé.");
-		System.setErr(new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20)));
+		System.setErr(new PrintStream(new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20))));
 	}
 
 	@Override
@@ -255,7 +257,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-		}, 100);
+		}, 5, TimeUnit.SECONDS);
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 	}
 
