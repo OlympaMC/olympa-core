@@ -30,9 +30,9 @@ public class ErrorOutputStream extends OutputStream {
 	}
 	
 	@Override
-	public void write(byte[] b, int off, int len) throws IOException {
-		super.write(b, off, len);
-		pending.append(new String(b, off, len));
+	public void write(byte[] buf, int off, int len) throws IOException {
+		wrap.write(buf, off, len);
+		pending.append(new String(buf, off, len));
 		if (task == null) task = launchTask.apply(this::execute);
 	}
 	

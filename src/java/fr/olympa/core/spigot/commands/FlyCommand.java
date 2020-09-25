@@ -19,10 +19,8 @@ public class FlyCommand extends OlympaCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		boolean toggle = !player.isFlying();
-		player.setAllowFlight(toggle);
-		player.setFlying(toggle);
-		sendMessage(Prefix.DEFAULT_GOOD, "Tu es désormais en %s&a.", player.isFlying() ? "§2fly on" : "§cfly off");
+		player.setAllowFlight(!player.getAllowFlight());
+		sendMessage(Prefix.DEFAULT_GOOD, "Tu es désormais en %s&a.", player.getAllowFlight() ? "§2fly on" : "§cfly off");
 		return false;
 	}
 
