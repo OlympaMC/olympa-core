@@ -2,6 +2,7 @@ package fr.olympa.api.plugin;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
 
 import fr.olympa.api.hook.IProtocolSupport;
 import fr.olympa.api.redis.RedisAccess;
@@ -107,7 +108,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		else {
 			if (i % 100 == 0)
 				sendMessage("&cConnexion à la base de donnée &4" + dbcredentials.getDatabase() + "&c impossible.");
-			getTask().runTaskLater(() -> setupDatabase(i), 10 * 20);
+			getTask().runTaskLater(() -> setupDatabase(i), 10, TimeUnit.SECONDS);
 		}
 	}
 
@@ -120,7 +121,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
 			registerRedisSub(redisAccess.getConnection(), new BungeeServerNameReceiver(), RedisChannel.BUNGEE_ASK_SEND_SERVERNAME.name());
-			registerRedisSub(redisAccess.connect(), new SpigotOlympaPlayerReceiver(), RedisChannel.BUNGEE_ASK_SEND_OLYMPAPLAYER.name()); // BUG blocked thread
+			registerRedisSub(redisAccess.connect(), new SpigotOlympaPlayerReceiver(), RedisChannel.BUNGEE_ASK_SEND_OLYMPAPLAYER.name());
 			registerRedisSub(redisAccess.connect(), new SpigotReceiveOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name());
 			registerRedisSub(redisAccess.connect(), new BungeeSendOlympaPlayerReceiver(), RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name());
 			registerRedisSub(redisAccess.connect(), new SpigotGroupChangedReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP.name());
@@ -133,7 +134,7 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 		} else {
 			if (i % 100 == 0)
 				sendMessage("&cConnexion à &4Redis&c impossible.");
-			getTask().runTaskLater(() -> setupRedis(i), 10 * 20);
+			getTask().runTaskLater(() -> setupRedis(i), 10, TimeUnit.SECONDS);
 		}
 	}
 }

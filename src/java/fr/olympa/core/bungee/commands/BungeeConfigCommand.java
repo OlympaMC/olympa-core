@@ -15,7 +15,7 @@ public class BungeeConfigCommand extends BungeeCommand {
 	public BungeeConfigCommand(Plugin plugin) {
 		super(plugin, "bungeeconfig", OlympaCorePermissions.BUNGEE_CONFIG_COMMAND, "bconfig");
 		description = "Gère les configs bungeecord";
-		addArgs(true, "config");
+		addArgs(true, "CONFIGS");
 		addArgs(true, "reload", "save");
 	}
 

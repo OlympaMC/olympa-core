@@ -3,6 +3,8 @@ package fr.olympa.core.bungee.redis;
 import java.net.InetSocketAddress;
 import java.util.UUID;
 
+import com.google.gson.Gson;
+
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
@@ -22,7 +24,14 @@ public class RedisBungeeSend {
 
 	public static void sendOlympaPlayer(ServerInfo target, OlympaPlayer olympaPlayer) {
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			jedis.publish(RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name(), target.getName() + ";" + olympaPlayer);
+			jedis.publish(RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name(), target.getName() + ";" + new Gson().toJson(olympaPlayer));
+		}
+		RedisAccess.INSTANCE.disconnect();
+	}
+
+	public static void sendOlympaPlayerFirstConnection(ServerInfo target, OlympaPlayer olympaPlayer) {
+		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
+			jedis.publish(RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name(), "bungee;" + target.getName() + ";" + new Gson().toJson(olympaPlayer));
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}

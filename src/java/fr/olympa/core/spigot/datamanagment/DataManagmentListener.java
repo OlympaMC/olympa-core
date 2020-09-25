@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.PermissionAttachment;
 
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
@@ -50,15 +51,16 @@ public class DataManagmentListener implements Listener {
 		});
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler
 	public void on1PlayerPreLogin(AsyncPlayerPreLoginEvent event) {
 		UUID uuid = event.getUniqueId();
 
 		AccountProvider olympaAccount = new AccountProvider(uuid);
 		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
 		if (olympaPlayer != null)
-			System.out.println("[REDIS] I have already data for " + olympaPlayer.getName());
+			LinkSpigotBungee.Provider.link.sendMessage("&6[&eREDIS&6] &aDonnés en cache récupérer pour &2%s&a.", olympaPlayer.getName());
 		else {
+			LinkSpigotBungee.Provider.link.sendMessage("&6[&eREDIS&6] &cPas de donnés en cache pour &4%s&c.", uuid);
 			try {
 				olympaPlayer = olympaAccount.get();
 			} catch (Exception e) {

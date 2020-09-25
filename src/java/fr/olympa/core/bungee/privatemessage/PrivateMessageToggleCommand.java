@@ -11,16 +11,15 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
-@SuppressWarnings("deprecation")
 public class PrivateMessageToggleCommand extends BungeeCommand {
-	
+
 	public static List<UUID> players = new ArrayList<>();
-	
+
 	public PrivateMessageToggleCommand(Plugin plugin) {
 		super(plugin, "msgtoggle", OlympaCorePermissions.PRIVATEMESSAGE_TOGGLE, "msgt");
 		allowConsole = false;
 	}
-	
+
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		ProxiedPlayer player = (ProxiedPlayer) sender;
@@ -32,5 +31,5 @@ public class PrivateMessageToggleCommand extends BungeeCommand {
 			players.add(player.getUniqueId());
 		}
 	}
-	
+
 }

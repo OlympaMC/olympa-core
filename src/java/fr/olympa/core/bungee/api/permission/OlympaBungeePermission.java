@@ -9,6 +9,7 @@ import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.server.ServerType;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -81,5 +82,11 @@ public class OlympaBungeePermission extends OlympaPermission {
 	@Override
 	public void sendMessage(BaseComponent baseComponent) {
 		getPlayersBungee(players -> players.forEach(player -> player.sendMessage(baseComponent)));
+	}
+
+	public boolean hasSenderPermissionBungee(CommandSender sender) {
+		if (sender instanceof ProxiedPlayer)
+			return this.hasPermission(((ProxiedPlayer) sender).getUniqueId());
+		return true;
 	}
 }

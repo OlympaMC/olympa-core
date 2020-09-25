@@ -109,6 +109,7 @@ public class OlympaLoginListener implements Listener {
 							OlympaBungee.getInstance().getTask().runTaskLater(() -> ServersConnection.tryConnect(player, olympaServer2), 5, TimeUnit.SECONDS);
 						} else {
 							event.setTarget(server);
+							// TODO envoyer les donnés du joueur au serveur spigot
 							return;
 						}
 					}
@@ -116,6 +117,7 @@ public class OlympaLoginListener implements Listener {
 				ServerInfo lobby = ServersConnection.getBestServer(OlympaServer.LOBBY, null);
 				if (lobby != null) {
 					event.setTarget(lobby);
+					RedisBungeeSend.sendOlympaPlayerFirstConnection(lobby, olympaPlayer);
 					return;
 				} else if (!tryConnect)
 					OlympaBungee.getInstance().getTask().runTaskLater(() -> ServersConnection.tryConnect(player, OlympaServer.LOBBY), 5, TimeUnit.SECONDS);

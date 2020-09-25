@@ -41,7 +41,7 @@ public class RedisSpigotSend {
 			core.getTask().runTaskLater(() -> {
 				if (core.getServerName().contains(":"))
 					RedisSpigotSend.askServerName();
-			}, 10 * 20);
+			}, 10, TimeUnit.SECONDS);
 		});
 	}
 

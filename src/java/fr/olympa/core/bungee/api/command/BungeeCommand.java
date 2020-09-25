@@ -54,7 +54,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 	public Integer minArg = 0;
 
 	protected Plugin plugin;
-	private CommandSender sender;
+	protected CommandSender sender;
 	protected ProxiedPlayer proxiedPlayer;
 	protected OlympaPlayer olympaPlayer;
 
@@ -69,6 +69,15 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 		super(command);
 		this.plugin = plugin;
 		this.command = command;
+	}
+
+	public BungeeCommand(Plugin plugin, String command, String description, OlympaPermission permission, String... aliases) {
+		super(command, null, aliases);
+		this.plugin = plugin;
+		this.description = description;
+		this.command = command;
+		this.permission = permission;
+		this.aliases = aliases;
 	}
 
 	public BungeeCommand(Plugin plugin, String command, OlympaPermission permission, String... aliases) {
@@ -183,7 +192,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 			if (ca.getPermission() != null && !ca.getPermission().hasPermission(getOlympaPlayer()) || !ca.hasRequireArg(args, i))
 				continue;
 			switch (ca.getArgName().toLowerCase()) {
-			case "configs":
+			case "CONFIGS":
 				potentialArgs.addAll(BungeeCustomConfig.getConfigs().stream().map(BungeeCustomConfig::getName).collect(Collectors.toList()));
 				break;
 			case "joueur":
@@ -346,6 +355,12 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 	@Override
 	public void addCommandArguments(boolean isMandatory, List<CommandArgument> ca) {
 		args.put(ca, isMandatory);
+	}
+
+	public void sendHelp(CommandSender sender) {
+		sendMessage(sender, Prefix.DEFAULT, "§eCommande §6%s", command + (aliases == null || aliases.length == 0 ? "" : " §e(" + String.join(", ", aliases) + ")"));
+		if (description != null)
+			sendMessage(sender, Prefix.DEFAULT, "§e%s", description);
 	}
 
 	private void build() {
