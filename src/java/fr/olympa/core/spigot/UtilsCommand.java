@@ -51,12 +51,8 @@ public class UtilsCommand extends ComplexCommand {
 	public UtilsCommand(Plugin plugin) {
 		super(plugin, "utils", "Commandes diverses", OlympaCorePermissions.UTILS_COMMAND);
 		
-		super.addArgumentParser("FILE", sender -> Arrays.stream(OlympaCore.getInstance().getDataFolder().listFiles()).map(File::getName).collect(Collectors.toList()), x -> new File(OlympaCore.getInstance().getDataFolder(), x));
-		super.addArgumentParser("REGION", sender -> new ArrayList<>(OlympaCore.getInstance().getRegionManager().getTrackedRegions().keySet()), x -> {
-			TrackedRegion region = OlympaCore.getInstance().getRegionManager().getTrackedRegions().get(x);
-			if (region == null) sendError("Cette région n'existe pas !");
-			return region;
-		});
+		super.addArgumentParser("FILE", sender -> Arrays.stream(OlympaCore.getInstance().getDataFolder().listFiles()).map(File::getName).collect(Collectors.toList()), x -> new File(OlympaCore.getInstance().getDataFolder(), x), null);
+		super.addArgumentParser("REGION", sender -> new ArrayList<>(OlympaCore.getInstance().getRegionManager().getTrackedRegions().keySet()), OlympaCore.getInstance().getRegionManager().getTrackedRegions()::get, x -> "Cette région n'existe pas !");
 	}
 
 	@Cmd (player = true)

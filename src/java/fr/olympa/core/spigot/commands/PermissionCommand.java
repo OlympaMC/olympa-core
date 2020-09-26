@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
@@ -38,21 +37,13 @@ public class PermissionCommand extends ComplexCommand {
 		super.addArgumentParser("PERMISSION", (player) -> {
 			return OlympaPermission.permissions.entrySet().stream().map(Entry::getKey).collect(Collectors.toList());
 		}, arg -> {
-			Optional<Entry<String, OlympaPermission>> op = OlympaPermission.permissions.entrySet().stream().filter(e -> e.getKey().equalsIgnoreCase(arg)).findFirst();
-			if (op.isPresent())
-				return op.get();
-			sendError("La permission &4%s&c n'existe pas", arg);
-			return null;
-		});
+			return OlympaPermission.permissions.entrySet().stream().filter(e -> e.getKey().equalsIgnoreCase(arg)).findFirst().orElse(null);
+		}, x -> String.format("La permission &4%s&c n'existe pas", x));
 		super.addArgumentParser("GROUPS", (player) -> {
 			return Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toList());
 		}, arg -> {
-			Optional<OlympaGroup> op = Arrays.stream(OlympaGroup.values()).filter(e -> e.getName().equalsIgnoreCase(arg)).findFirst();
-			if (op.isPresent())
-				return op.get();
-			sendError("Le groupe &4%s&c n'existe pas", arg);
-			return null;
-		});
+			return Arrays.stream(OlympaGroup.values()).filter(e -> e.getName().equalsIgnoreCase(arg)).findFirst().orElse(null);
+		}, x -> String.format("Le groupe &4%s&c n'existe pas", x));
 	}
 
 	@Override
