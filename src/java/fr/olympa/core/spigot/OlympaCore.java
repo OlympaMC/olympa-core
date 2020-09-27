@@ -173,25 +173,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new MySQL(database);
 		new ReportMySQL(database);
 
-		new GroupCommand(this).register();
-		new ChatCommand(this).register();
-		new ReportCommand(this).register();
-		new SetStatusCommand(this).register();
-		new PluginCommand(this).registerPreProcess();
-		new HelpCommand(this).registerPreProcess();
-		new TpsCommand(this).registerPreProcess();
-		new UtilsCommand(this).register();
-		new GenderCommand(this).register();
-		new RestartCommand(this).registerPreProcess();
-		GamemodeCommand gm = new GamemodeCommand(this);
-		gm.register();
-		gm.registerPreProcess();
-		new FlyCommand(this).register();
-		new AfkCommand(this).register();
-		new ConfigCommand(this).register();
-		new PermissionCommand(this).register();
-		new PingCommand(this).register();
-
 		TestCommand test = new TestCommand(this);
 		test.register();
 
@@ -240,6 +221,23 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		nameTagApi = new NametagAPI(new NametagManager());
 		((NametagAPI) nameTagApi).testCompat();
 
+		new GroupCommand(this).register();
+		new ChatCommand(this).register();
+		new ReportCommand(this).register();
+		new SetStatusCommand(this).register();
+		new PluginCommand(this).registerPreProcess();
+		new HelpCommand(this).registerPreProcess();
+		new TpsCommand(this).registerPreProcess();
+		new UtilsCommand(this).register();
+		new GenderCommand(this).register();
+		new RestartCommand(this).registerPreProcess();
+		new GamemodeCommand(this).register().registerPreProcess();
+		new FlyCommand(this).register();
+		new AfkCommand(this).register();
+		new ConfigCommand(this).register();
+		new PermissionCommand(this).register();
+		new PingCommand(this).register();
+		
 		new AntiWD(this);
 		getTask().runTaskLater(() -> {
 			if (pluginManager.isPluginEnabled("ViaVersion"))

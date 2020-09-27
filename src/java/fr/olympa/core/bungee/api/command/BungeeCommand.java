@@ -227,18 +227,20 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 	}
 
 	@Override
-	public void register() {
+	public BungeeCommand register() {
 		build();
 		plugin.getProxy().getPluginManager().registerCommand(plugin, this);
+		return this;
 	}
 
 	@Override
-	public void registerPreProcess() {
+	public BungeeCommand registerPreProcess() {
 		build();
 		List<String> commands = new ArrayList<>();
 		commands.add(command);
 		commands.addAll(Arrays.asList(aliases));
 		commandPreProcess.put(commands, this);
+		return this;
 	}
 
 	@Override

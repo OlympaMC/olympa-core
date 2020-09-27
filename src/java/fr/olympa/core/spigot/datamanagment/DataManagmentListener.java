@@ -121,7 +121,7 @@ public class DataManagmentListener implements Listener {
 				MySQL.loadPlayerPluginDatas(olympaPlayer);
 
 				PermissionAttachment attachment = player.addAttachment(OlympaCore.getInstance());
-				olympaPlayer.getGroups().keySet().forEach(group -> group.runtimePermissions.forEach(perm -> attachment.setPermission(perm, true)));
+				olympaPlayer.getGroup().getAllGroups().forEach(group -> group.runtimePermissions.forEach(perm -> attachment.setPermission(perm, true)));
 				player.recalculatePermissions();
 
 				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
