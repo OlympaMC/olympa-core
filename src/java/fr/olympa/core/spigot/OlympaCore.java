@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.concurrent.TimeUnit;
 
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import com.mojang.brigadier.arguments.DoubleArgumentType;
@@ -27,6 +29,7 @@ import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.ErrorLoggerHandler;
 import fr.olympa.api.utils.ErrorOutputStream;
 import fr.olympa.api.utils.spigot.ProtocolAPI;
 import fr.olympa.core.spigot.chat.CancerListener;
@@ -153,8 +156,13 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	@Override
 	public void onLoad() {
 		super.onLoad();
-		sendMessage("§6" + getDescription().getName() + "§e (" + getDescription().getVersion() + ") est chargé.");
 		System.setErr(new PrintStream(new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20))));
+		ErrorLoggerHandler errorHandler = new ErrorLoggerHandler(RedisSpigotSend::sendError);
+		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+			plugin.getLogger().addHandler(errorHandler);
+			sendMessage("Hooked error stream handler into %s's logger!", plugin.getName());
+		}
+		sendMessage("§6" + getDescription().getName() + "§e (" + getDescription().getVersion() + ") est chargé.");
 	}
 
 	@Override
