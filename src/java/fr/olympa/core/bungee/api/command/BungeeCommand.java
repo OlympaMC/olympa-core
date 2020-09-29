@@ -191,14 +191,14 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 		for (CommandArgument ca : cas) {
 			if (ca.getPermission() != null && !ca.getPermission().hasPermission(getOlympaPlayer()) || !ca.hasRequireArg(args, i))
 				continue;
-			switch (ca.getArgName().toLowerCase()) {
+			switch (ca.getArgName().toUpperCase()) {
 			case "CONFIGS":
 				potentialArgs.addAll(BungeeCustomConfig.getConfigs().stream().map(BungeeCustomConfig::getName).collect(Collectors.toList()));
 				break;
-			case "joueur":
+			case "JOUEUR":
 				potentialArgs.addAll(ProxyServer.getInstance().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toList()));
 				break;
-			case "time":
+			case "TIME":
 				potentialArgs.addAll(Arrays.asList("1h", "2h", "4h", "6h", "12h", "1j", "2j", "3j", "1semaine", "2semaines", "1mois", "1an"));
 				break;
 			default:
@@ -279,7 +279,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 	}
 
 	public void sendMessage(TextComponent text) {
-		proxiedPlayer.sendMessage(text);
+		sender.sendMessage(text);
 	}
 
 	@Override
@@ -304,8 +304,8 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 
 	public void sendMessage(Iterable<? extends CommandSender> senders, Prefix prefix, String text, Object... args) {
 		text = prefix.formatMessage(text, args);
-		for (CommandSender sender : senders)
-			sendMessage(sender, text);
+		for (CommandSender s : senders)
+			sendMessage(s, text);
 	}
 
 	@Override

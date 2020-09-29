@@ -2,6 +2,7 @@ package fr.olympa.core.bungee.api.command;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
@@ -21,7 +22,7 @@ public class BungeeCommandListener implements Listener {
 		if (args.length == 0)
 			return;
 		String command = args[0].toLowerCase();
-		BungeeCommand cmd = BungeeCommand.commandPreProcess.entrySet().stream().filter(entry -> entry.getKey().contains(command)).map(entry -> entry.getValue()).findFirst().orElse(null);
+		BungeeCommand cmd = BungeeCommand.commandPreProcess.entrySet().stream().filter(entry -> entry.getKey().contains(command)).map(Entry::getValue).findFirst().orElse(null);
 		if (cmd == null)
 			return;
 
@@ -29,14 +30,6 @@ public class BungeeCommandListener implements Listener {
 		cmd.execute(player, Arrays.copyOfRange(args, 1, args.length));
 		event.setCancelled(true);
 	}
-	/*
-		@EventHandler(priority = EventPriority.LOWEST)
-		public void onTabComplete(TabCompleteResponseEvent event) {
-			List<String> sugg = event.getSuggestions();
-			if (sugg.isEmpty())
-				return;
-			System.out.println("TabCompleteResponseEvent " + event.getSender().getAddress().getAddress().getHostAddress()+ " " + String.join(" ", sugg));
-		}*/
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onTabComplete(TabCompleteEvent event) {
@@ -44,7 +37,7 @@ public class BungeeCommandListener implements Listener {
 		if (sugg.isEmpty())
 			return;
 		String command = sugg.get(0).toLowerCase();
-		BungeeCommand cmd = BungeeCommand.commandPreProcess.entrySet().stream().filter(entry -> entry.getKey().contains(command)).map(entry -> entry.getValue()).findFirst().orElse(null);
+		BungeeCommand cmd = BungeeCommand.commandPreProcess.entrySet().stream().filter(entry -> entry.getKey().contains(command)).map(Entry::getValue).findFirst().orElse(null);
 		if (cmd == null)
 			return;
 		sugg.remove(0);

@@ -31,6 +31,10 @@ public class QueueSpigotTask implements Runnable {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
+		if (!proxiedPlayer.isConnected()) {
+			ServersConnection.removeTryToConnect(proxiedPlayer);
+			return;
+		}
 		ServerInfo server = ServersConnection.getBestServer(olympaServer, null);
 		if (server == null && olympaServer.hasMultiServers()) {
 			TextComponent text = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_BAD + BungeeUtils.color("Aucun serveur " + olympaServer.getNameCaps() + " n'est actuellement disponible, merci de patienter...")));

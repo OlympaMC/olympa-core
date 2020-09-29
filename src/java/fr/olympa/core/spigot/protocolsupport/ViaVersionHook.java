@@ -38,16 +38,22 @@ public class ViaVersionHook {
 		ViaAPI<?> api = Via.getAPI();
 		SortedSet<Integer> versions = api.getSupportedVersions();
 		Iterator<Integer> iterator = versions.iterator();
-		Integer version = null;
+		Integer protocol = null;
+		String version = null;
 		while (iterator.hasNext())
-			version = iterator.next();
-		return version == null ? "unknown" : ProtocolAPI.getAll(version).stream().map(p -> p.getName()).collect(Collectors.joining(", "));
+			protocol = iterator.next();
+		if (protocol != null) {
+			version = ProtocolAPI.getAll(protocol).stream().map(ProtocolAPI::getName).collect(Collectors.joining(", "));
+			if (version == null)
+				return "unknown";
+		}
+		return version;
 	}
 
 	public String getVersionSupported() {
 		if (viaVersion == null)
 			return null;
 		ViaAPI<?> api = Via.getAPI();
-		return api.getSupportedVersions().stream().map(ver -> ProtocolAPI.getAll(ver).stream().map(p -> p.name()).collect(Collectors.joining(", "))).distinct().collect(Collectors.joining(", "));
+		return api.getSupportedVersions().stream().map(ver -> ProtocolAPI.getAll(ver).stream().map(ProtocolAPI::getName).collect(Collectors.joining(", "))).distinct().collect(Collectors.joining(", "));
 	}
 }

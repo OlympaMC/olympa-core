@@ -60,6 +60,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>fr.olympa</groupId>
+			<artifactId>olympa-api</artifactId>
+			<version>[0.0.1-SNAPSHOT,)</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>io.github.waterfallmc</groupId>
 			<artifactId>waterfall-api</artifactId>
 			<version>1.16-R0.4-SNAPSHOT</version>

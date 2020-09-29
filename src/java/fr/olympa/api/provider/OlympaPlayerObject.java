@@ -65,7 +65,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			if (object.has("verifMode"))
 				player.verifMode = object.get("verifMode").getAsBoolean();
 			if (object.has("teamspeakId"))
-				player.teamspeakId = object.get("teamspeakId").getAsLong();
+				player.teamspeakId = object.get("teamspeakId").getAsInt();
 			return player;
 		}
 
@@ -106,7 +106,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Expose
 	Boolean connected;
 	@Expose
-	private long teamspeakId;
+	private int teamspeakId;
 	private Object cachedPlayer = null;
 	private OlympaPlayerInformations cachedInformations = null;
 
@@ -262,7 +262,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public long getTeamspeakId() {
+	public int getTeamspeakId() {
 		return teamspeakId;
 	}
 
@@ -418,7 +418,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public void setTeamspeakId(long teamspeakId) {
+	public void setTeamspeakId(int teamspeakId) {
 		this.teamspeakId = teamspeakId;
 	}
 

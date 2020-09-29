@@ -61,7 +61,7 @@ public class BungeeCustomConfig {
 
 	public void reload() throws IOException {
 		load();
-		plugin.getProxy().getPluginManager().callEvent(new BungeeConfigReloadEvent(getConfig()));
+		plugin.getProxy().getPluginManager().callEvent(new BungeeConfigReloadEvent(fileName, getConfig()));
 	}
 
 	public void loadSafe() {
@@ -103,6 +103,10 @@ public class BungeeCustomConfig {
 					}
 			}
 		}
+	}
+
+	public String getFileName() {
+		return fileName;
 	}
 
 	public void saveSafe() {

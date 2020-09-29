@@ -3,9 +3,13 @@ package fr.olympa.core.spigot;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
@@ -17,8 +21,11 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
 import fr.olympa.api.command.CommandListener;
+import fr.olympa.api.config.CustomConfig;
+import fr.olympa.api.customevents.SpigotConfigReloadEvent;
 import fr.olympa.api.frame.ImageFrameManager;
 import fr.olympa.api.gui.Inventories;
+import fr.olympa.api.holograms.HologramsCommand;
 import fr.olympa.api.holograms.HologramsManager;
 import fr.olympa.api.hook.IProtocolSupport;
 import fr.olympa.api.permission.OlympaAPIPermissions;
@@ -31,7 +38,7 @@ import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.ErrorLoggerHandler;
 import fr.olympa.api.utils.ErrorOutputStream;
-import fr.olympa.api.utils.spigot.ProtocolAPI;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
@@ -48,7 +55,7 @@ import fr.olympa.core.spigot.datamanagment.DataManagmentListener;
 import fr.olympa.core.spigot.datamanagment.OnLoadListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
-import fr.olympa.core.spigot.protocolsupport.ProtocolSupportHook;
+import fr.olympa.core.spigot.protocolsupport.VersionHandler;
 import fr.olympa.core.spigot.protocolsupport.ViaVersionHook;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.report.commands.ReportCommand;
@@ -65,7 +72,7 @@ import fr.olympa.core.spigot.status.StatusMotdListener;
 import me.lucko.commodore.Commodore;
 import me.lucko.commodore.CommodoreProvider;
 
-public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
+public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listener {
 
 	private static OlympaCore instance = null;
 
@@ -77,8 +84,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	private RegionManager regionManager;
 	private HologramsManager hologramsManager;
 	private ImageFrameManager imageFrameManager;
-	private IProtocolSupport protocolSupportHook;
-	private ViaVersionHook viaVersionHook;
+	private VersionHandler versionHandler;
 	private String lastVersion = "unknown";
 	private String firstVersion = "unknown";
 
@@ -105,7 +111,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 	}
 
 	public ViaVersionHook getViaVersionHook() {
-		return viaVersionHook;
+		return versionHandler.getViaVersion();
 	}
 
 	private INametagApi nameTagApi;
@@ -117,7 +123,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
 	@Override
 	public IProtocolSupport getProtocolSupport() {
-		return protocolSupportHook;
+		return versionHandler.getProtocolSupport();
 	}
 
 	@Override
@@ -207,6 +213,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
 		//		pluginManager.registerEvents(new TestListener(), this);
 
+		pluginManager.registerEvents(this, this);
 		pluginManager.registerEvents(new DataManagmentListener(), this);
 		pluginManager.registerEvents(new GroupListener(), this);
 		pluginManager.registerEvents(new CancerListener(), this);
@@ -245,26 +252,43 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		new ConfigCommand(this).register();
 		new PermissionCommand(this).register();
 		new PingCommand(this).register();
-		
+		new HologramsCommand(hologramsManager).register();
+
 		new AntiWD(this);
-		getTask().runTaskLater(() -> {
-			if (pluginManager.isPluginEnabled("ViaVersion"))
-				viaVersionHook = new ViaVersionHook(this);
-			if (pluginManager.isPluginEnabled("ProtocolSupport")) {
-				protocolSupportHook = new ProtocolSupportHook(this);
-				String[] versions = protocolSupportHook.getRangeVersionArray();
-				setFirstVersion(versions[0]);
-				setLastVersion(versions[1]);
-			} else
-				try {
-					String[] versions = ProtocolAPI.getVersionSupportedArray();
-					setFirstVersion(versions[0]);
-					setLastVersion(versions[1]);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-		}, 5, TimeUnit.SECONDS);
+		getTask().runTaskLater(() -> versionHandler = new VersionHandler(this), 5, TimeUnit.SECONDS);
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
+
+		File file = new File(OlympaCore.class.getProtectionDomain()
+				.getCodeSource()
+				.getLocation()
+				.getPath());
+
+		BasicFileAttributes attr;
+		try {
+			attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+			System.out.println("creationTime: " + Utils.timestampToDuration(attr.creationTime().toMillis()));
+			System.out.println("lastAccessTime: " + Utils.timestampToDuration(attr.lastAccessTime().toMillis()));
+			System.out.println("lastModifiedTime: " + Utils.timestampToDuration(attr.lastModifiedTime().toMillis()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@EventHandler
+	public void onSpigotConfigReload(SpigotConfigReloadEvent event) {
+		CustomConfig newConfig = event.getConfig();
+		String newFileName = newConfig.getFileName();
+		if (newFileName.equals(getConfig().getFileName()))
+			swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
+		else if (newFileName.equals(imageFrameManager.getFileName()))
+			imageFrameManager.loadMaps(newConfig);
+		else if (newFileName.equals(hologramsManager.getFile().getName()))
+			try {
+				hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
 
 	@Override

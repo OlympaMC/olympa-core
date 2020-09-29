@@ -17,5 +17,6 @@ public class StatusMotdListener implements Listener {
 		MachineInfo machineInfo = new MachineInfo();
 		OlympaCore core = OlympaCore.getInstance();
 		event.setMotd(status.getName() + " " + TPS.getTPS() + " " + machineInfo.getMemUsage() + " " + machineInfo.getThreads() + " " + core.getFirstVersion() + " " + core.getLastVersion());
+
 	}
 }

@@ -22,7 +22,7 @@ public class BungeeTeamspeakIdReceiver extends JedisPubSub {
 		OlympaPlayer olympaPlayer = account.getFromCache();
 		if (olympaPlayer == null)
 			return;
-		olympaPlayer.setTeamspeakId((long) RegexMatcher.INT.parse(info[1]));
+		olympaPlayer.setTeamspeakId((int) RegexMatcher.INT.parse(info[1]));
 		account.saveToRedis(olympaPlayer);
 	}
 }
