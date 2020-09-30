@@ -7,12 +7,12 @@ import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.commands.methods.UnbanIp;
 import fr.olympa.core.bungee.ban.commands.methods.UnbanPlayer;
 import net.md_5.bungee.api.CommandSender;

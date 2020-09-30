@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.api.permission;
+package fr.olympa.api.bungee.permission;
 
 import java.sql.SQLException;
 import java.util.Set;
@@ -77,11 +77,15 @@ public class OlympaBungeePermission extends OlympaPermission {
 		}).collect(Collectors.toSet());
 		if (!players.isEmpty())
 			success.accept(players);
+		success.accept(null);
 	}
 
 	@Override
 	public void sendMessage(BaseComponent baseComponent) {
-		getPlayersBungee(players -> players.forEach(player -> player.sendMessage(baseComponent)));
+		getPlayersBungee(players -> {
+			if (players != null)
+				players.forEach(player -> player.sendMessage(baseComponent));
+		});
 	}
 
 	public boolean hasSenderPermissionBungee(CommandSender sender) {

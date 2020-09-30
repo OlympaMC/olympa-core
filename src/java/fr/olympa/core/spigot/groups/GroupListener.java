@@ -25,7 +25,7 @@ import fr.olympa.core.spigot.redis.RedisSpigotSend;
 public class GroupListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onOlympaPlayerLoad(AsyncOlympaPlayerChangeGroupEvent event) {
+	public void onAsyncOlympaPlayerChangeGroup(AsyncOlympaPlayerChangeGroupEvent event) {
 		if (event.getPlayer() == null || event.getDone() != null)
 			RedisSpigotSend.sendOlympaGroupChange(event.getOlympaPlayer(), event.getGroupsChanges()[0], event.getTimeStamp(), event.getChangeType(), event.getDone());
 	}

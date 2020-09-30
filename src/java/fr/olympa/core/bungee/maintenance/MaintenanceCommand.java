@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
+import fr.olympa.api.bungee.config.BungeeCustomConfig;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.server.ServerStatus;
@@ -12,8 +14,6 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.api.config.BungeeCustomConfig;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;

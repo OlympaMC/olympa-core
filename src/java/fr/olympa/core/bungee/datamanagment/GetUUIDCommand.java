@@ -3,8 +3,8 @@ package fr.olympa.core.bungee.datamanagment;
 import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 

@@ -3,10 +3,10 @@ package fr.olympa.core.bungee.commands;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
+import fr.olympa.api.bungee.config.BungeeCustomConfig;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.api.config.BungeeCustomConfig;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 

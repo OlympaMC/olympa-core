@@ -175,8 +175,7 @@ public class GroupCommand extends OlympaCommand {
 					}
 				};
 			else {
-				done = b -> {
-				};
+				done = null;
 				olympaAccount.saveToRedis(olympaTarget);
 				olympaAccount.saveToDb(olympaTarget);
 				Prefix.DEFAULT.sendMessage(target, msg.replace("%group", newGroup.getName()).replace("%time", timestampString));

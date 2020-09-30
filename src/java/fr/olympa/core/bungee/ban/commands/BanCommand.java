@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.objects.BanExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;

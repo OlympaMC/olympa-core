@@ -39,10 +39,11 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.ErrorLoggerHandler;
 import fr.olympa.api.utils.ErrorOutputStream;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.spigot.afk.AfkCommand;
+import fr.olympa.core.spigot.afk.AfkListener;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
-import fr.olympa.core.spigot.commands.AfkCommand;
 import fr.olympa.core.spigot.commands.ConfigCommand;
 import fr.olympa.core.spigot.commands.FlyCommand;
 import fr.olympa.core.spigot.commands.GamemodeCommand;
@@ -225,6 +226,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		pluginManager.registerEvents(new NameTagListener(), this);
 		pluginManager.registerEvents(new ScoreboardTeamListener(), this);
 		pluginManager.registerEvents(regionManager = new RegionManager(), this);
+		pluginManager.registerEvents(new AfkListener(), this);
 
 		try {
 			pluginManager.registerEvents(hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml")), this);

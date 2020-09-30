@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.api.customevent;
+package fr.olympa.api.bungee.customevent;
 
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.groups.OlympaGroup;

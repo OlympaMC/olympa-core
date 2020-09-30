@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.api.config;
+package fr.olympa.api.bungee.config;
 
 import java.io.File;
 import java.io.FileOutputStream;

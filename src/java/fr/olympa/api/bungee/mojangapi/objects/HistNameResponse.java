@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.api.mojangapi.objects;
+package fr.olympa.api.bungee.mojangapi.objects;
 
 import com.google.gson.Gson;
 

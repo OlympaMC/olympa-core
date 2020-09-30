@@ -26,6 +26,7 @@ public class SpigotAskServerNameReceiver extends JedisPubSub {
 					ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(wc.uuid);
 					proxiedPlayer.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("Tentative de connexion au serveur &2" + serverInfo.getName() + "&a..."));
 					proxiedPlayer.connect(serverInfo);
+					System.out.println("Connexion automatique après restart de " + wc.uuid);
 				});
 
 			});

@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.api.command;
+package fr.olympa.api.bungee.command;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.bungee.config.BungeeCustomConfig;
 import fr.olympa.api.command.CommandArgument;
 import fr.olympa.api.command.IOlympaCommand;
 import fr.olympa.api.permission.OlympaPermission;
@@ -18,19 +19,18 @@ import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.api.config.BungeeCustomConfig;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
-public abstract class BungeeCommand extends Command implements IOlympaCommand {
+public abstract class BungeeCommand extends Command implements IOlympaCommand, TabExecutor {
 
 	static Map<List<String>, BungeeCommand> commandPreProcess = new HashMap<>();
 
@@ -152,9 +152,10 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 
 	}
 
-	public List<String> tabComplete(Connection sender, String[] args) {
+	@Override
+	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		if (sender instanceof CommandSender)
-			this.sender = (CommandSender) sender;
+			this.sender = sender;
 		else {
 			sendDoNotHavePermission();
 			return new ArrayList<>();
@@ -187,7 +188,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand {
 			i++;
 		}
 		if (args.length != i || cas == null)
-			return null;
+			return new ArrayList<>();
 		for (CommandArgument ca : cas) {
 			if (ca.getPermission() != null && !ca.getPermission().hasPermission(getOlympaPlayer()) || !ca.hasRequireArg(args, i))
 				continue;

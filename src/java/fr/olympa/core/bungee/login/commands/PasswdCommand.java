@@ -5,10 +5,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 

@@ -1,9 +1,9 @@
 package fr.olympa.core.bungee.ban.commands;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.objects.BanExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;

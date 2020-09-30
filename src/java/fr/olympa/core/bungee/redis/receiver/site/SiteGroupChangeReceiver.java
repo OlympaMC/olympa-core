@@ -3,13 +3,13 @@ package fr.olympa.core.bungee.redis.receiver.site;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import fr.olympa.api.bungee.customevent.OlympaGroupChangeEvent;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.api.customevent.OlympaGroupChangeEvent;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import redis.clients.jedis.JedisPubSub;

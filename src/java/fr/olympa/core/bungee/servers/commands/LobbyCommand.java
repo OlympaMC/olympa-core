@@ -1,10 +1,10 @@
 package fr.olympa.core.bungee.servers.commands;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;

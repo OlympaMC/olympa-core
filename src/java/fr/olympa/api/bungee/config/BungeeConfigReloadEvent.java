@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.api.config;
+package fr.olympa.api.bungee.config;
 
 import net.md_5.bungee.api.plugin.Event;
 import net.md_5.bungee.config.Configuration;

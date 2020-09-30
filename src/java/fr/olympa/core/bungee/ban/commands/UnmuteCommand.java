@@ -2,11 +2,11 @@ package fr.olympa.core.bungee.ban.commands;
 
 import java.util.UUID;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.commands.methods.UnmutePlayer;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

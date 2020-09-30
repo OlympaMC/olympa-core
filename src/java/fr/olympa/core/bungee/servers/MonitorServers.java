@@ -9,10 +9,10 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
 
+import fr.olympa.api.bungee.task.BungeeTaskManager;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.api.task.BungeeTaskManager;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue.Consumer;
 import net.md_5.bungee.api.ProxyServer;
@@ -86,6 +86,6 @@ public class MonitorServers {
 				updateServer(serverInfo, false);
 			for (OlympaServer olympaServer : olympaServers.keySet())
 				updateOlympaServer(olympaServer);
-		}, 1, 10, TimeUnit.SECONDS);
+		}, 1, 20, TimeUnit.SECONDS);
 	}
 }

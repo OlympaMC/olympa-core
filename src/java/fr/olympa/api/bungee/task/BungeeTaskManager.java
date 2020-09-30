@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.api.task;
+package fr.olympa.api.bungee.task;
 
 import java.util.concurrent.TimeUnit;
 

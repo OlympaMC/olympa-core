@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.api.command;
+package fr.olympa.api.bungee.command;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,13 +13,13 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.bungee.permission.OlympaBungeePermission;
 import fr.olympa.api.command.complex.ArgumentParser;
 import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.command.complex.IComplexCommand;
 import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaPermission;
-import fr.olympa.core.bungee.api.permission.OlympaBungeePermission;
 import fr.olympa.core.spigot.OlympaCore;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;

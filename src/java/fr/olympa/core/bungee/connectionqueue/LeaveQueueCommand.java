@@ -1,7 +1,7 @@
 package fr.olympa.core.bungee.connectionqueue;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;

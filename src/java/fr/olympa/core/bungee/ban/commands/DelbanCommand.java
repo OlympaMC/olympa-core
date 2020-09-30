@@ -2,11 +2,11 @@ package fr.olympa.core.bungee.ban.commands;
 
 import java.util.UUID;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionHistory;

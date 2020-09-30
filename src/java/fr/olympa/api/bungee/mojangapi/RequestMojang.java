@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.api.mojangapi;
+package fr.olympa.api.bungee.mojangapi;
 
 import java.io.BufferedReader;
 import java.io.IOException;

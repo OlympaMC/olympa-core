@@ -8,9 +8,9 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.bungee.task.BungeeTaskManager;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.api.task.BungeeTaskManager;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -82,8 +82,10 @@ public class ServersConnection {
 		WaitingConnection wc = removeConnection(player);
 		if (wc != null) {
 			ScheduledTask task = wc.task;
-			task.cancel();
-			return true;
+			if (task != null) {
+				task.cancel();
+				return true;
+			}
 		}
 		return false;
 	}

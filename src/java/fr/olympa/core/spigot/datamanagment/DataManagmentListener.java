@@ -150,6 +150,7 @@ public class DataManagmentListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerQuitHighest(PlayerQuitEvent event) {
+		System.out.println("SAVE player OK");
 		Player player = event.getPlayer();
 		AccountProvider account = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = account.getFromCache();

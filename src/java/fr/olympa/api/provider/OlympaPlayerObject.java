@@ -38,8 +38,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		public OlympaPlayerObject deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 			JsonObject object = json.getAsJsonObject();
 			OlympaPlayerObject player = (OlympaPlayerObject) AccountProvider.playerProvider.create(context.deserialize(object.get("uuid"), UUID.class), object.get("name").getAsString(), object.get("ip").getAsString());
-			if (object.has("afk"))
-				player.afk = object.get("afk").getAsBoolean();
 			if (object.has("email"))
 				player.email = object.get("email").getAsString();
 			if (object.has("firstConnection"))
@@ -62,8 +60,8 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 				player.premiumUuid = context.deserialize(object.get("premiumUuid"), UUID.class);
 			if (object.has("vanish"))
 				player.vanish = object.get("vanish").getAsBoolean();
-			if (object.has("verifMode"))
-				player.verifMode = object.get("verifMode").getAsBoolean();
+			if (object.has("discordOlympaId"))
+				player.discordOlympaId = object.get("discordOlympaId").getAsInt();
 			if (object.has("teamspeakId"))
 				player.teamspeakId = object.get("teamspeakId").getAsInt();
 			return player;
@@ -100,13 +98,12 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Expose
 	boolean vanish;
 	@Expose
-	boolean verifMode;
-	@Expose
-	boolean afk;
-	@Expose
 	Boolean connected;
 	@Expose
 	private int teamspeakId;
+	@Expose
+	private int discordOlympaId;
+
 	private Object cachedPlayer = null;
 	private OlympaPlayerInformations cachedInformations = null;
 
@@ -197,7 +194,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		return groups.entrySet().stream().map(entry -> {
 			String time = new String();
 			if (entry.getValue() != 0)
-				time = " (" + Utils.timestampToDateAndHour(entry.getValue()) + ")";
+				time = " (" + Utils.timestampToDuration(entry.getValue()) + ")";
 			return entry.getKey().getName(gender) + time;
 		}).collect(Collectors.joining(", "));
 	}
@@ -277,11 +274,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public boolean isAfk() {
-		return afk;
-	}
-
-	@Override
 	public boolean isConnected() {
 		return connected != null ? connected : false;
 	}
@@ -307,17 +299,12 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public boolean isVerifMode() {
-		return verifMode;
-	}
-
-	@Override
 	public void loadDatas(ResultSet resultSet) throws SQLException {
 		// has to be override
 	}
 
 	@Override
-	public void loadSavedDatas(long id, UUID premiumUuid, String groupsString, long firstConnection, long lastConnection, String password, String email, Gender gender, String histNameJson, String histIpJson) {
+	public void loadSavedDatas(long id, UUID premiumUuid, String groupsString, long firstConnection, long lastConnection, String password, String email, Gender gender, String histNameJson, String histIpJson, int discordOlympaId, int teamspeakId, boolean vanish) {
 		this.id = id;
 		this.premiumUuid = premiumUuid;
 		for (String groupInfos : groupsString.split(";")) {
@@ -335,6 +322,9 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		this.password = password;
 		this.email = email;
 		this.gender = gender;
+		this.discordOlympaId = discordOlympaId;
+		this.teamspeakId = teamspeakId;
+		this.vanish = vanish;
 
 		if (histNameJson != null && !histNameJson.isEmpty()) {
 			Map<Long, String> histName2 = GsonCustomizedObjectTypeAdapter.GSON.fromJson(histNameJson, Map.class);
@@ -354,11 +344,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void saveDatas(PreparedStatement statement) throws SQLException {
 		// has to be override
-	}
-
-	@Override
-	public void setAfk(boolean afk) {
-		this.afk = afk;
 	}
 
 	@Override
@@ -428,8 +413,12 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public void setVerifMode(boolean verifMode) {
-		this.verifMode = verifMode;
+	public int getDiscordOlympaId() {
+		return discordOlympaId;
 	}
 
+	@Override
+	public void setDiscordOlympaId(int discordOlympaId) {
+		this.discordOlympaId = discordOlympaId;
+	}
 }

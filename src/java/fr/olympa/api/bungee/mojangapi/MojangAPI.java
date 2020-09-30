@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.api.mojangapi;
+package fr.olympa.api.bungee.mojangapi;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,8 +10,8 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
-import fr.olympa.core.bungee.api.mojangapi.objects.HistNameResponse;
-import fr.olympa.core.bungee.api.mojangapi.objects.UuidResponse;
+import fr.olympa.api.bungee.mojangapi.objects.HistNameResponse;
+import fr.olympa.api.bungee.mojangapi.objects.UuidResponse;
 import net.md_5.bungee.api.connection.PendingConnection;
 
 @SuppressWarnings("deprecation")

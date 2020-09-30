@@ -24,6 +24,7 @@ import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.provider.OlympaPlayerInformationsObject;
 import fr.olympa.api.sql.statement.OlympaStatement;
+import fr.olympa.api.sql.statement.StatementType;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
@@ -65,7 +66,7 @@ public class MySQL {
 	// Pour pas surcharger les requettes MySQL
 	// TODO -> cache redis pour le cache multi-server
 	static Set<String> allPlayersNamesCache = null;
-
+	
 	public static Set<String> getAllPlayersNames() {
 		if (allPlayersNamesCache != null)
 			return allPlayersNamesCache;
@@ -122,7 +123,10 @@ public class MySQL {
 				resultSet.getString("email"),
 				Gender.get(resultSet.getInt("gender")),
 				resultSet.getString("name_history"),
-				resultSet.getString("ip_history"));
+				resultSet.getString("ip_history"),
+				resultSet.getInt("ts3_id"),
+				resultSet.getInt("discord_olympa_id"),
+				resultSet.getBoolean("vanish"));
 		return player;
 	}
 
@@ -420,8 +424,10 @@ public class MySQL {
 		return false;
 	}
 
-	private static OlympaStatement savePlayerStatement = new OlympaStatement("UPDATE " + tableName + " SET `pseudo` = ?, `uuid_server` = ?,"
-			+ " `uuid_premium` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ?, `ip_history` = ?, `gender` = ? WHERE `id` = ?");
+	//	private static OlympaStatement savePlayerStatement = new OlympaStatement("UPDATE " + tableName + " SET `pseudo` = ?, `uuid_server` = ?,"
+	//			+ " `uuid_premium` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ?, `ip_history` = ?, `gender` = ? WHERE `id` = ?");
+	private static OlympaStatement savePlayerStatement = new OlympaStatement(StatementType.UPDATE, tableName,
+			new String[] { "pseudo", "uuid_server", "uuid_premium", "ip", "groups", "last_connection", "name_history", "ip_history", "gender", "ts3_id", "discord_olympa_id", "vanish" }, "id");
 
 	/**
 	 * Sauvegarde les infos du olympaPlayer
@@ -451,8 +457,17 @@ public class MySQL {
 			else
 				pstate.setString(i++, null);
 			pstate.setInt(i++, olympaPlayer.getGender().ordinal());
-			pstate.setLong(i++, olympaPlayer.getId());
-			pstate.executeUpdate();
+			if (olympaPlayer.getTeamspeakId() != 0)
+				pstate.setInt(i++, olympaPlayer.getTeamspeakId());
+			else
+				pstate.setObject(i++, null);
+			if (olympaPlayer.getDiscordOlympaId() != 0)
+				pstate.setInt(i++, olympaPlayer.getDiscordOlympaId());
+			else
+				pstate.setObject(i++, null);
+			pstate.setBoolean(i++, olympaPlayer.isVanish());
+			pstate.setLong(i, olympaPlayer.getId());
+			savePlayerStatement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

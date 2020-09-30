@@ -5,10 +5,10 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
