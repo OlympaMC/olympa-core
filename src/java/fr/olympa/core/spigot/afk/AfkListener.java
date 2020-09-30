@@ -7,6 +7,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import fr.olympa.api.utils.spigot.SpigotUtils;
+
 public class AfkListener implements Listener {
 
 	@EventHandler
@@ -18,12 +20,14 @@ public class AfkListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		AfkHandler.updateLastAction(player, false, "join");
+		//		AfkHandler.updateLastAction(player, false);
 	}
 
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
-		AfkHandler.updateLastAction(player, false, "move");
+		if (SpigotUtils.isSameLocationXZ(event.getFrom(), event.getTo()))
+			return;
+		//		AfkHandler.updateLastAction(player, false);
 	}
 }

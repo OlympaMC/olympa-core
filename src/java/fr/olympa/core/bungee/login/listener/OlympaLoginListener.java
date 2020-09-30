@@ -14,7 +14,6 @@ import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersConnection;
-import fr.olympa.core.bungee.servers.WaitingConnection;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -131,9 +130,7 @@ public class OlympaLoginListener implements Listener {
 	@EventHandler
 	public void onServerConnected(ServerConnectedEvent event) {
 		ProxiedPlayer player = event.getPlayer();
-		WaitingConnection wc = ServersConnection.getConnection(player.getUniqueId());
-		if (wc != null)
-			ServersConnection.removeTryToConnect(player);
+		ServersConnection.removeTryToConnect(player);
 		CachePlayer cache = DataHandler.get(player.getName());
 		if (cache != null) {
 			OlympaPlayer olympaPlayer = cache.getOlympaPlayer();

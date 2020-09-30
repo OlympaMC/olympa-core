@@ -1,9 +1,9 @@
 package fr.olympa.core.bungee.servers;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -18,8 +18,7 @@ import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 public class ServersConnection {
 
-	//	public static Map<UUID, ScheduledTask> connect = new HashMap<>();
-	private static List<WaitingConnection> connect = new ArrayList<>();
+	private static Set<WaitingConnection> connect = new HashSet<>();
 
 	public static void addConnection(WaitingConnection wc) {
 		connect.add(wc);
@@ -29,18 +28,12 @@ public class ServersConnection {
 		return connect.remove(wc);
 	}
 
-	public static WaitingConnection removeConnection(ProxiedPlayer player) {
-		WaitingConnection wc = getConnection(player.getUniqueId());
-		connect.remove(wc);
-		return wc;
+	public static Set<WaitingConnection> getConnections(OlympaServer olympaServer) {
+		return connect.stream().filter(wc -> wc.olympaServer.isSame(olympaServer)).collect(Collectors.toSet());
 	}
 
-	public static List<WaitingConnection> getConnections(OlympaServer olympaServer) {
-		return connect.stream().filter(wc -> wc.olympaServer.isSame(olympaServer)).collect(Collectors.toList());
-	}
-
-	public static WaitingConnection getConnection(UUID uuid) {
-		return connect.stream().filter(wc -> wc.uuid.equals(uuid)).findFirst().orElse(null);
+	public static Set<WaitingConnection> getConnections(UUID uuid) {
+		return connect.stream().filter(wc -> wc.uuid.equals(uuid)).collect(Collectors.toSet());
 	}
 
 	public static boolean canPlayerConnect(ServerInfo server) {
@@ -79,45 +72,22 @@ public class ServersConnection {
 	}
 
 	public static boolean removeTryToConnect(ProxiedPlayer player) {
-		WaitingConnection wc = removeConnection(player);
-		if (wc != null) {
+		boolean b = false;
+		Set<WaitingConnection> wcs = getConnections(player.getUniqueId());
+		for (WaitingConnection wc : wcs) {
 			ScheduledTask task = wc.task;
 			if (task != null) {
 				task.cancel();
-				return true;
+				b = true;
 			}
 		}
-		return false;
+		return b;
 	}
 
 	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer) {
 		removeTryToConnect(player);
-		//		connect.put(player.getUniqueId(), );
 		BungeeTaskManager taskHandler = OlympaBungee.getInstance().getTask();
 		int taskId = OlympaBungee.getInstance().getTask().scheduleSyncRepeatingTask(new QueueSpigotTask(player, olympaServer), 0, 15, TimeUnit.SECONDS);
 		addConnection(new WaitingConnection(player.getUniqueId(), olympaServer, taskHandler.getTask(taskId)));
 	}
-	// Move to QueueSpigotTask
-	//	@SuppressWarnings("deprecation")
-	//	private static void tryConnectTo(ProxiedPlayer player, OlympaServer olympaServer) {
-	//		ServerInfo server = getBestServer(olympaServer, null);
-	//		if (server == null && olympaServer.hasMultiServers()) {
-	//			TextComponent text = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_BAD + BungeeUtils.color("Aucun serveur " + olympaServer.getNameCaps() + " n'est actuellement disponible, merci de patienter...")));
-	//			text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(BungeeUtils.color("&cClique ici pour sortir de la file d'attente"))));
-	//			text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/leavequeue"));
-	//			player.sendMessage(text);
-	//			return;
-	//		}
-	//		String serverName = Utils.capitalize(server.getName());
-	//		if (!canPlayerConnect(server)) {
-	//			TextComponent text = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu dans la file d'attente du &4" + serverName + "&c...")));
-	//			text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(BungeeUtils.color("&cClique ici pour sortir de la file d'attente"))));
-	//			text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/leavequeue"));
-	//			player.sendMessage(text);
-	//			return;
-	//		}
-	//		player.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("Tentative de connexion au serveur &2" + serverName + "&a..."));
-	//		player.connect(server);
-	//		return;
-	//	}
 }

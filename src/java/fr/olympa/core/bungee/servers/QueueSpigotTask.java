@@ -36,7 +36,7 @@ public class QueueSpigotTask implements Runnable {
 			return;
 		}
 		ServerInfo server = ServersConnection.getBestServer(olympaServer, null);
-		if (server == null && olympaServer.hasMultiServers()) {
+		if (server == null || olympaServer.hasMultiServers()) {
 			TextComponent text = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_BAD + BungeeUtils.color("Aucun serveur " + olympaServer.getNameCaps() + " n'est actuellement disponible, merci de patienter...")));
 			text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(BungeeUtils.color("&cClique ici pour sortir de la file d'attente"))));
 			text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/leavequeue"));

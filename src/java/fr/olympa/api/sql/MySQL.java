@@ -51,7 +51,7 @@ public class MySQL {
 		statement.setString(i++, olympaPlayer.getGroupsToString());
 		statement.setDate(i++, new Date(olympaPlayer.getFirstConnection() * 1000L));
 		statement.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
-		statement.setString(i++, olympaPlayer.getPassword());
+		statement.setString(i, olympaPlayer.getPassword());
 
 		statement.executeUpdate();
 		ResultSet resultSet = statement.getGeneratedKeys();
@@ -66,7 +66,7 @@ public class MySQL {
 	// Pour pas surcharger les requettes MySQL
 	// TODO -> cache redis pour le cache multi-server
 	static Set<String> allPlayersNamesCache = null;
-	
+
 	public static Set<String> getAllPlayersNames() {
 		if (allPlayersNamesCache != null)
 			return allPlayersNamesCache;
