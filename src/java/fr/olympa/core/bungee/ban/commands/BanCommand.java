@@ -52,7 +52,7 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 			List<String> units = new ArrayList<>();
 			for (List<String> unit : SanctionUtils.units)
 				for (String u : unit)
-					for (int i = 0; i < 20; i++)
+					for (int i = 1; i < 20; i++)
 						units.add(i + u);
 			return Utils.startWords(args[1], units);
 		case 3:

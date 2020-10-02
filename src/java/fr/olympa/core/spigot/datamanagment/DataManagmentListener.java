@@ -14,7 +14,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.PermissionAttachment;
 
-import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
@@ -54,26 +53,8 @@ public class DataManagmentListener implements Listener {
 	@EventHandler
 	public void on1PlayerPreLogin(AsyncPlayerPreLoginEvent event) {
 		UUID uuid = event.getUniqueId();
-
 		AccountProvider olympaAccount = new AccountProvider(uuid);
 		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
-		if (olympaPlayer != null)
-			LinkSpigotBungee.Provider.link.sendMessage("&6[&eREDIS&6] &aDonnés en cache récupérer pour &2%s&a.", olympaPlayer.getName());
-		else {
-			LinkSpigotBungee.Provider.link.sendMessage("&6[&eREDIS&6] &cPas de donnés en cache pour &4%s&c.", uuid);
-			try {
-				olympaPlayer = olympaAccount.get();
-			} catch (Exception e) {
-				event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotPreLogin"));
-				e.printStackTrace();
-				return;
-			}
-			if (olympaPlayer == null) {
-				event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotNoData"));
-				return;
-			}
-		}
-
 		OlympaCore core = OlympaCore.getInstance();
 		ServerStatus status = core.getStatus();
 		if (status == ServerStatus.CLOSE) {
@@ -84,11 +65,32 @@ public class DataManagmentListener implements Listener {
 			event.disallow(Result.KICK_OTHER, ColorUtils.color("&cImpossible de se connecter au serveur, réessaye dans quelques instants..."));
 			return;
 		}
+		int i = 0;
+		while (olympaPlayer == null && i++ < 10) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if (i == 2 || i == 4)
+				olympaPlayer = olympaAccount.getFromRedis();
+			else if (i == 6)
+				try {
+					olympaPlayer = olympaAccount.get();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			else
+				olympaPlayer = olympaAccount.getFromCache();
+		}
+		if (olympaPlayer == null) {
+			event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotNoData"));
+			return;
+		}
 		//		if (status.getPermission() != null && !status.getPermission().hasPermission(olympaPlayer)) {
 		//			event.disallow(Result.KICK_OTHER, ColorUtils.color("&cLe serveur &4" + core.getServerName() + "&c est actuellement en mode " + status.getNameColored() + "&c."));
 		//			return;
 		//		}
-
 		olympaAccount.saveToCache(olympaPlayer);
 	}
 
@@ -150,7 +152,6 @@ public class DataManagmentListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerQuitHighest(PlayerQuitEvent event) {
-		System.out.println("SAVE player OK");
 		Player player = event.getPlayer();
 		AccountProvider account = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = account.getFromCache();

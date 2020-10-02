@@ -2,6 +2,7 @@ package fr.olympa.core.bungee.login.listener;
 
 import java.util.concurrent.TimeUnit;
 
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.bungee.customevent.OlympaGroupChangeEvent;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.OlympaPlayer;
@@ -105,7 +106,7 @@ public class OlympaLoginListener implements Listener {
 						if (server == null || !MonitorServers.getMonitor(server).isOpen()) {
 							tryConnect = true;
 							OlympaServer olympaServer2 = olympaServer;
-							OlympaBungee.getInstance().getTask().runTaskLater(() -> ServersConnection.tryConnect(player, olympaServer2), 5, TimeUnit.SECONDS);
+							LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> ServersConnection.tryConnect(player, olympaServer2), 2, TimeUnit.SECONDS);
 						} else {
 							event.setTarget(server);
 							// TODO envoyer les donnés du joueur au serveur spigot
@@ -119,7 +120,7 @@ public class OlympaLoginListener implements Listener {
 					RedisBungeeSend.sendOlympaPlayerFirstConnection(lobby, olympaPlayer);
 					return;
 				} else if (!tryConnect)
-					OlympaBungee.getInstance().getTask().runTaskLater(() -> ServersConnection.tryConnect(player, OlympaServer.LOBBY), 5, TimeUnit.SECONDS);
+					LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> ServersConnection.tryConnect(player, OlympaServer.LOBBY), 2, TimeUnit.SECONDS);
 			}
 		}
 		ServerInfo auth = ServersConnection.getBestServer(OlympaServer.AUTH, null);

@@ -3,6 +3,7 @@ package fr.olympa.core.bungee.vpn;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import fr.olympa.core.bungee.security.SecurityHandler;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.event.LoginEvent;
@@ -16,6 +17,8 @@ public class VpnListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onLoginEvent(LoginEvent event) {
 		PendingConnection connection = event.getConnection();
+		if (!SecurityHandler.CHECK_VPN)
+			return;
 		OlympaVpn olympaVpn;
 		try {
 			olympaVpn = VpnHandler.checkIP(connection);

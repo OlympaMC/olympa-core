@@ -25,7 +25,6 @@ public class SanctionUtils {
 		Configuration unit = config.getSection("ban.units");
 		for (String Sunit : unit.getKeys())
 			units.add(config.getStringList("ban.units." + Sunit));
-
 		List<String> units2 = new ArrayList<>();
 		for (List<String> s2 : units)
 			units2.add(String.join("|", s2));
@@ -64,15 +63,19 @@ public class SanctionUtils {
 			}
 		return 0;
 	}
-	
+
 	public static String formatReason(String reason) {
 		return Utils.capitalize(reason.replaceAll(" {2,}", " "));
 	}
 
 	public static BanExecute formatArgs(String[] args) {
 		BanExecute banExecute = new BanExecute();
-		List<String> listArgs = Arrays.asList(Arrays.copyOfRange(args, 1, args.length));
-		
+		List<String> listArgs = new ArrayList<>();
+		int i = 0;
+		for (String arg : args)
+			if (i != 0)
+				listArgs.add(arg);
+
 		List<Object> targets = new ArrayList<>();
 		Arrays.asList(args[0].split(",")).forEach(t -> {
 			if (fr.olympa.api.utils.Matcher.isIP(t))
@@ -87,23 +90,23 @@ public class SanctionUtils {
 				targets.add(t);
 		});
 		banExecute.setTargets(targets);
-		
 		long expire = 0;
-		Matcher matcherDuration = SanctionUtils.matchDuration(String.join(" ", listArgs));
+		String allArgs = String.join(" ", listArgs);
+		String newAllArgs = null;
+		Matcher matcherDuration = SanctionUtils.matchDuration(allArgs);
 		if (matcherDuration.find()) {
-			listArgs.remove(matcherDuration.group());
 			String time = matcherDuration.group(1);
 			String unit = matcherDuration.group(2);
-			if (!listArgs.remove(time + unit)) {
-				listArgs.remove(time);
-				listArgs.remove(unit);
+			newAllArgs = allArgs.replace(time + unit, "");
+			if (newAllArgs.length() == allArgs.length()) {
+				newAllArgs = newAllArgs.replace(time, "");
+				newAllArgs = newAllArgs.replace(unit, "");
 			}
 			expire = SanctionUtils.toTimeStamp(Integer.parseInt(time), unit);
 			banExecute.setExpire(expire);
-		}
-
-		banExecute.setReason(String.join(" ", listArgs));
-
+		} else
+			newAllArgs = allArgs;
+		banExecute.setReason(newAllArgs);
 		return banExecute;
 	}
 }

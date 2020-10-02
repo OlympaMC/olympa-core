@@ -3,9 +3,10 @@ package fr.olympa.core.spigot.afk;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 import fr.olympa.api.LinkSpigotBungee;
+import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.scoreboard.tab.Nametag;
 import fr.olympa.api.task.OlympaTask;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
@@ -14,11 +15,13 @@ import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
 
 public class AfkPlayer {
 
+	public static final String AFK_SUFFIX = " §4[§cAFK§4]";
+
 	boolean afk;
 	String lastAction;
 	String lastSuffix;
 	long time;
-	BukkitTask task;
+	Integer taskId;
 
 	public AfkPlayer(Player player) {
 		afk = false;
@@ -26,8 +29,9 @@ public class AfkPlayer {
 	}
 
 	public boolean disableTask() {
-		if (task != null) {
-			task.cancel();
+		if (taskId != null) {
+			LinkSpigotBungee.Provider.link.getTask().cancelTaskById(taskId);
+			taskId = null;
 			return true;
 		}
 		return false;
@@ -36,10 +40,9 @@ public class AfkPlayer {
 	void launchTask(Player player) {
 		disableTask();
 		OlympaTask taskHandler = LinkSpigotBungee.Provider.link.getTask();
-		int id = taskHandler.runTaskLater(() -> {
+		taskId = taskHandler.runTaskLater(() -> {
 			setAfk(player);
-		}, 20, TimeUnit.SECONDS);
-		task = (BukkitTask) taskHandler.getTask(id);
+		}, 15, TimeUnit.MINUTES);
 	}
 
 	public AfkPlayer(boolean afk, String lastAction) {
@@ -57,8 +60,11 @@ public class AfkPlayer {
 		Prefix.DEFAULT_BAD.sendMessage(player, "Tu es désormais &4AFK&c.");
 		NametagAPI api = (NametagAPI) OlympaCore.getInstance().getNameTagApi();
 		if (api != null) {
-			lastSuffix = api.getNametag(player).getSuffix();
-			api.setSuffix(player.getName(), " §4[§cAFK§4]");
+			Nametag oldNameTag = api.getNametag(player);
+			lastSuffix = oldNameTag.getSuffix();
+			if (AFK_SUFFIX.contains(lastSuffix))
+				lastSuffix = lastSuffix.replace(AFK_SUFFIX, "");
+			OlympaCorePermissions.AFK_SEE_IN_TAB.getPlayers(players -> api.updateFakeNameTag(player, new Nametag(oldNameTag.getPrefix(), lastSuffix + AFK_SUFFIX), players));
 		}
 	}
 
@@ -68,7 +74,7 @@ public class AfkPlayer {
 		launchTask(player);
 		NametagAPI api = (NametagAPI) OlympaCore.getInstance().getNameTagApi();
 		if (api != null)
-			api.setSuffix(player.getName(), getLastSuffix());
+			OlympaCorePermissions.AFK_SEE_IN_TAB.getPlayers(players -> api.updateFakeNameTag(player, new Nametag(api.getNametag(player).getPrefix(), getLastSuffix()), players));
 	}
 
 	private String getLastSuffix() {

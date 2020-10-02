@@ -2,10 +2,13 @@ package fr.olympa.core.bungee.connectionqueue;
 
 import java.util.LinkedList;
 
+import fr.olympa.core.bungee.antibot.AntiBotHandler;
+
 public class QueueHandler {
 
 	// 150 = 0.15 sec
 	public static int TIME_BETWEEN_2 = 300;
+	public static int NUMBER_BEFORE_CANCEL = 50;
 	private static LinkedList<String> queue = new LinkedList<>();
 
 	public static int add(String playerName) {
@@ -14,6 +17,10 @@ public class QueueHandler {
 		queue.add(playerName);
 		System.out.println("§bTaille de la flle d'attente: " + queue.size());
 		QueueTask.start();
+		if (queue.size() > NUMBER_BEFORE_CANCEL)
+			AntiBotHandler.setEnable(true);
+		else
+			AntiBotHandler.setEnable(false);
 		return getTimeToW8(queue.size());
 	}
 

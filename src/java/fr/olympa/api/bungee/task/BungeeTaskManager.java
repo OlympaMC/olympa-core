@@ -1,5 +1,7 @@
 package fr.olympa.api.bungee.task;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import fr.olympa.api.task.OlympaTask;
@@ -10,9 +12,20 @@ import net.md_5.bungee.api.scheduler.TaskScheduler;
 public class BungeeTaskManager implements OlympaTask {
 
 	protected Plugin plugin;
+	Map<Integer, ScheduledTask> taskList2 = new HashMap<>();
 
 	public BungeeTaskManager(Plugin plugin) {
 		this.plugin = plugin;
+	}
+
+	@Override
+	public void removeTaskById(int id) {
+		String taskName = getTaskNameById(id);
+		if (taskName != null)
+			taskList.remove(taskName);
+		ScheduledTask task = taskList2.get(id);
+		if (task != null)
+			taskList2.remove(id);
 	}
 
 	@Override
@@ -29,11 +42,8 @@ public class BungeeTaskManager implements OlympaTask {
 
 	@Override
 	public ScheduledTask getTask(int id) {
-		ScheduledTask task = null;
-		if (id > 0)
-			for (int taskId : taskList.values())
-				if (taskId == id)
-					return task;
+		if (id > 0 && id < taskList2.size())
+			return taskList2.get(id);
 		return null;
 	}
 
@@ -49,7 +59,7 @@ public class BungeeTaskManager implements OlympaTask {
 
 	@Override
 	public int runTaskAsynchronously(Runnable runnable) {
-		return getScheduler().runAsync(plugin, runnable).getId();
+		return runTaskAsynchronously(getUniqueTaskName("runTaskAsynchronously"), runnable);
 	}
 
 	@Override
@@ -57,9 +67,10 @@ public class BungeeTaskManager implements OlympaTask {
 		Integer oldTaskId = taskList.get(taskName);
 		if (oldTaskId != null)
 			getScheduler().cancel(oldTaskId);
-		int taskId = this.runTaskAsynchronously(runnable);
-		taskList.put(taskName, taskId);
-		return taskId;
+		ScheduledTask task = getScheduler().runAsync(plugin, runnable);
+		taskList.put(taskName, task.getId());
+		taskList2.put(task.getId(), task);
+		return task.getId();
 	}
 
 	@Override
@@ -79,6 +90,7 @@ public class BungeeTaskManager implements OlympaTask {
 		ScheduledTask schTask = getScheduler().schedule(plugin, runnable, delay, timeUnit);
 		int id = schTask.getId();
 		taskList.put(taskName, id);
+		taskList2.put(id, schTask);
 		this.runTaskLater(() -> {
 			if (taskList.get(taskName) != null && taskList.get(taskName) == id)
 				taskList.remove(taskName);
@@ -91,12 +103,17 @@ public class BungeeTaskManager implements OlympaTask {
 		return getScheduler().schedule(plugin, runnable, delay, refresh, timeUnit).getId();
 	}
 
+	public ScheduledTask scheduleSyncRepeatingTaskAndGet(String taskName, Runnable runnable, long delay, long refresh, TimeUnit timeUnit) {
+		cancelTaskByName(taskName);
+		ScheduledTask task = getScheduler().schedule(plugin, runnable, delay, refresh, timeUnit);
+		taskList.put(taskName, task.getId());
+		taskList2.put(task.getId(), task);
+		return task;
+	}
+
 	@Override
 	public int scheduleSyncRepeatingTask(String taskName, Runnable runnable, long delay, long refresh, TimeUnit timeUnit) {
-		cancelTaskByName(taskName);
-		int taskId = getScheduler().schedule(plugin, runnable, delay, refresh, timeUnit).getId();
-		taskList.put(taskName, taskId);
-		return taskId;
+		return scheduleSyncRepeatingTaskAndGet(taskName, runnable, delay, refresh, timeUnit).getId();
 	}
 
 	private TaskScheduler getScheduler() {

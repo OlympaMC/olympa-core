@@ -5,8 +5,12 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -30,14 +34,15 @@ import fr.olympa.api.hook.IProtocolSupport;
 import fr.olympa.api.permission.OlympaAPIPermissions;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.plugin.OlympaSpigot;
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.ErrorLoggerHandler;
 import fr.olympa.api.utils.ErrorOutputStream;
-import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.afk.AfkCommand;
 import fr.olympa.core.spigot.afk.AfkListener;
 import fr.olympa.core.spigot.chat.CancerListener;
@@ -115,6 +120,11 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	}
 
 	private INametagApi nameTagApi;
+	private long lastModifiedTime;
+
+	public long getLastModifiedTime() {
+		return lastModifiedTime;
+	}
 
 	@Override
 	public INametagApi getNameTagApi() {
@@ -256,24 +266,33 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new HologramsCommand(hologramsManager).register();
 
 		new AntiWD(this);
-		versionHandler = new VersionHandler(this);
-		//		getTask().runTaskLater(() -> versionHandler = new VersionHandler(this), 5, TimeUnit.SECONDS);
+		getTask().runTaskLater(() -> versionHandler = new VersionHandler(this), 2, TimeUnit.SECONDS);
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 
-		File file = new File(OlympaCore.class.getProtectionDomain()
-				.getCodeSource()
-				.getLocation()
-				.getPath());
-
-		BasicFileAttributes attr;
 		try {
+			File file = new File(OlympaCore.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+			BasicFileAttributes attr;
 			attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-			System.out.println("creationTime: " + Utils.timestampToDuration(attr.creationTime().toMillis()));
-			System.out.println("lastAccessTime: " + Utils.timestampToDuration(attr.lastAccessTime().toMillis()));
-			System.out.println("lastModifiedTime: " + Utils.timestampToDuration(attr.lastModifiedTime().toMillis()));
-		} catch (IOException e) {
+			lastModifiedTime = attr.lastModifiedTime().toMillis() / 1000L;
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+			players.forEach(p -> {
+				AccountProvider account = new AccountProvider(p.getUniqueId());
+				OlympaPlayer olympaPlayer = account.getFromCache();
+				if (olympaPlayer != null)
+					try {
+						MySQL.savePlayerPluginDatas(olympaPlayer);
+						account.saveToRedis(olympaPlayer);
+						account.removeFromCache();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				System.out.println("Succes save " + p.getName());
+			});
+		}));
 
 	}
 

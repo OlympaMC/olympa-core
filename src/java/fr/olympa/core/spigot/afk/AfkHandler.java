@@ -2,6 +2,8 @@ package fr.olympa.core.spigot.afk;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -13,12 +15,10 @@ public class AfkHandler {
 	public static void updateLastAction(Player player, boolean afk) {
 		AfkPlayer afkPlayer = get(player);
 		boolean oldStatue = afkPlayer.isAfk();
-		if (oldStatue == afk) {
-			if (afk)
+		if (afk == oldStatue) {
+			if (!afk)
 				afkPlayer.launchTask(player);
-			return;
-		}
-		if (afk)
+		} else if (afk)
 			afkPlayer.setAfk(player);
 		else
 			afkPlayer.setNotAfk(player);
@@ -33,9 +33,18 @@ public class AfkHandler {
 		return afk;
 	}
 
+	public static Set<Entry<UUID, AfkPlayer>> get() {
+		return lastActions.entrySet();
+	}
+
 	public static void removeLastAction(Player player) {
 		AfkPlayer afkPlayer = lastActions.remove(player.getUniqueId());
 		if (afkPlayer != null)
 			afkPlayer.disableTask();
+	}
+
+	public static boolean isAfk(Player target) {
+		AfkPlayer afkPlayer = lastActions.get(target.getUniqueId());
+		return afkPlayer != null && afkPlayer.isAfk();
 	}
 }

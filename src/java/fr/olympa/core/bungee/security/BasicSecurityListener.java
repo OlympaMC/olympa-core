@@ -48,10 +48,8 @@ public class BasicSecurityListener implements Listener {
 		String name = connection.getName();
 		String ip = connection.getAddress().getAddress().getHostAddress();
 
-		// ProtocolSupport.
-
-		if (!name.matches("[a-zA-Z0-9_]*")) {
-			event.setCancelReason(BungeeUtils.connectScreen("&6Ton pseudo doit contenir uniquement des chiffres, des lettres et des tiret bas."));
+		if (!name.matches("[a-zA-Z0-9_]*") || name.length() > 16 || name.length() < 4) {
+			event.setCancelReason(BungeeUtils.connectScreen("&6Ton pseudo doit contenir uniquement des chiffres, des lettres et des tiret bas et entre 4 et 16 charatères."));
 			event.setCancelled(true);
 			return;
 		}
@@ -61,7 +59,7 @@ public class BasicSecurityListener implements Listener {
 		String subdomain = event.getConnection().getVirtualHost().getHostName().split("\\.")[0];
 
 		// Vérifie si l'adresse est correct
-		if (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net") || !subdomain.equalsIgnoreCase("play") && !subdomain.equalsIgnoreCase("buildeur")) {
+		if (SecurityHandler.CHECK_IP && (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net") || !subdomain.equalsIgnoreCase("play") && !subdomain.equalsIgnoreCase("buildeur"))) {
 			ProxiedPlayer player = ProxyServer.getInstance().getPlayer(name);
 			if (player != null) {
 				event.setCancelReason(BungeeUtils.connectScreen("&7[&cSécurité&7] &cTu dois te connecter avec l'adresse &nplay.olympa.fr&c."));
@@ -69,7 +67,7 @@ public class BasicSecurityListener implements Listener {
 			}
 		}
 
-		if (SecurityHandler.activated) {
+		if (SecurityHandler.PING_BEFORE_JOIN) {
 			String test = cache.asMap().get(ip);
 			if (test == null) {
 				event.setCancelReason(BungeeUtils.connectScreen("&7[&cSécurité&7] &2Actualise la liste des serveurs pour te connecter."));

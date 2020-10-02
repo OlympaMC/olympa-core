@@ -17,7 +17,10 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.antibot.AntiBotHandler;
+import fr.olympa.core.bungee.connectionqueue.QueueHandler;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
+import fr.olympa.core.bungee.security.SecurityHandler;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.PendingConnection;
@@ -33,12 +36,6 @@ import net.md_5.bungee.event.EventPriority;
 @SuppressWarnings("deprecation")
 public class AuthListener implements Listener {
 
-	// public static Cache<String, String> cacheServer =
-	// CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.SECONDS).build();
-	// private Cache<String, UUID> cachePremiumUUID =
-	// CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.SECONDS).build();
-	// private Cache<String, OlympaPlayer> cachePlayer =
-	// CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.SECONDS).build();
 	public static Set<String> wait = new HashSet<>();
 
 	@EventHandler
@@ -58,11 +55,6 @@ public class AuthListener implements Listener {
 			DataHandler.removePlayer(oldCache);
 		CachePlayer cache = new CachePlayer(name);
 		OlympaPlayer olympaPlayer;
-		//		UUID uuidCrack = null;
-
-		//			event.setCancelReason(BungeeUtils.connectScreen("&eMerci de patienter avant chaque reconnection."));
-		//			event.setCancelled(true);
-		//			return;
 		try {
 			olympaPlayer = AccountProvider.get(name);
 		} catch (Exception e) {
@@ -73,6 +65,12 @@ public class AuthListener implements Listener {
 		}
 		// Si le joueur ne s'est jamais connecté
 		if (olympaPlayer == null) {
+			if (QueueHandler.getQueueSize() > 10 || AntiBotHandler.isEnable()) {
+				event.setCancelReason(BungeeUtils.connectScreen("&4AntiBot Activé &c> Tu dois t'inscrire sur le site pour te connecter\nwww.olympa.fr"));
+				event.setCancelled(true);
+				return;
+			}
+
 			UuidResponse response;
 			try {
 				// On regarde si le pseudo est utilisé par un compte premium
@@ -147,8 +145,19 @@ public class AuthListener implements Listener {
 					return;
 				}
 				connection.setOnlineMode(false);
-			} else
+				if (!SecurityHandler.ALLOW_CRACK) {
+					event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Crack sont temporairement désactivées. Désolé du dérangement."));
+					event.setCancelled(true);
+					return;
+				}
+			} else {
 				connection.setOnlineMode(true);
+				if (!SecurityHandler.ALLOW_PREMIUM) {
+					event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Premium sont temporairement désactivées. Désolé du dérangement."));
+					event.setCancelled(true);
+					return;
+				}
+			}
 		}
 		cache.setSubDomain(event.getConnection());
 		DataHandler.addPlayer(cache);

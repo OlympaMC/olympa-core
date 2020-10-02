@@ -1,6 +1,7 @@
 package fr.olympa.api.provider;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -50,6 +51,10 @@ public class AccountProvider implements OlympaAccount {
 	@SuppressWarnings("unchecked")
 	public static <T extends OlympaPlayer> T get(UUID uuid) {
 		return (T) cache.get(uuid);
+	}
+
+	public static Collection<OlympaPlayer> getAll() {
+		return cache.values();
 	}
 
 	private static OlympaPlayer getFromCache(String name) {

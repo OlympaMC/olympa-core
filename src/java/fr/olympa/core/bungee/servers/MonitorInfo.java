@@ -4,9 +4,9 @@ import java.util.AbstractMap;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
-import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Utils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
@@ -36,6 +36,7 @@ public class MonitorInfo {
 	private Float tps;
 	private String lastVersion = "unknown";
 	private String firstVersion = "unknown";
+	private int lastModifiedCore;
 
 	public MonitorInfo(ServerInfo server, long time, ServerPing serverPing, Throwable error) {
 		serverName = server.getName();
@@ -55,20 +56,26 @@ public class MonitorInfo {
 			String[] motd = allMotd.split(" ");
 			if (motd.length >= 1)
 				status = ServerStatus.get(motd[0]);
-			if (motd.length >= 2 && Matcher.isDouble(motd[1]))
-				tps = Float.valueOf(motd[1]);
-			if (motd.length >= 3 && Matcher.isInt(motd[2]))
-				ramUsage = Integer.valueOf(motd[2]);
-			if (motd.length >= 4 && Matcher.isInt(motd[3]))
-				threads = Integer.valueOf(motd[3]);
+			if (motd.length >= 2 && RegexMatcher.DOUBLE.is(motd[1]))
+				tps = (Float) RegexMatcher.DOUBLE.parse(motd[1]);
+			if (motd.length >= 3 && RegexMatcher.INT.is(motd[2]))
+				ramUsage = (Integer) RegexMatcher.INT.parse(motd[2]);
+			if (motd.length >= 4 && RegexMatcher.INT.is(motd[3]))
+				threads = (Integer) RegexMatcher.INT.parse(motd[3]);
 			if (motd.length >= 5)
 				firstVersion = motd[4];
 			if (motd.length >= 6)
 				lastVersion = motd[5];
+			if (motd.length >= 7 && RegexMatcher.INT.is(motd[6]))
+				lastModifiedCore = (Integer) RegexMatcher.INT.parse(motd[6]);
 		} else {
 			status = ServerStatus.CLOSE;
-			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "Connexion ✕ ");
+			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "");
 		}
+	}
+
+	public int getLastModifiedCore() {
+		return lastModifiedCore;
 	}
 
 	public static Pattern getIdPattern() {
@@ -93,6 +100,10 @@ public class MonitorInfo {
 
 	public String getError() {
 		return error;
+	}
+
+	public boolean isDefaultError() {
+		return error != null && error.isEmpty();
 	}
 
 	public Integer getMaxPlayers() {

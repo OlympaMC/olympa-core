@@ -77,15 +77,32 @@ public final class NametagAPI implements INametagApi {
 	}
 
 	@Override
+	public void setNametag(String player, String prefix, String suffix, int sortPriority) {
+		manager.setNametag(player, prefix, suffix, sortPriority);
+	}
+
+	@Override
 	public void setPrefix(String player, String prefix) {
 		FakeTeam fakeTeam = manager.getFakeTeam(player);
 		manager.setNametag(player, prefix, fakeTeam == null ? null : fakeTeam.getSuffix());
 	}
 
 	@Override
+	public void addPrefix(String player, String prefix) {
+		FakeTeam fakeTeam = manager.getFakeTeam(player);
+		manager.setNametag(player, fakeTeam == null ? null : fakeTeam.getPrefix() + prefix, fakeTeam == null ? null : fakeTeam.getSuffix());
+	}
+
+	@Override
 	public void setSuffix(String player, String suffix) {
 		FakeTeam fakeTeam = manager.getFakeTeam(player);
 		manager.setNametag(player, fakeTeam == null ? null : fakeTeam.getPrefix(), suffix);
+	}
+
+	@Override
+	public void addSuffix(String player, String suffix) {
+		FakeTeam fakeTeam = manager.getFakeTeam(player);
+		manager.setNametag(player, fakeTeam == null ? null : fakeTeam.getPrefix(), (fakeTeam == null ? null : fakeTeam.getSuffix()) + suffix);
 	}
 
 	public boolean testCompat() {
@@ -105,13 +122,18 @@ public final class NametagAPI implements INametagApi {
 	}
 
 	@Override
-	public void updateFakeNameTag(Player player, Nametag nametag, Collection<? extends Player> toPlayers) {
-		updateFakeNameTag(player.getName(), nametag, toPlayers);
+	public void updateFakeNameTag(Player player, Nametag nameTag, Collection<? extends Player> toPlayers) {
+		updateFakeNameTag(player.getName(), nameTag, toPlayers);
 	}
 
 	@Override
-	public void updateFakeNameTag(String player, Nametag nametag, Collection<? extends Player> toPlayers) {
-		manager.changeFakeNametag(player, nametag, toPlayers);
+	public void updateFakeNameTag(String player, Nametag nameTag, Collection<? extends Player> toPlayers) {
+		manager.changeFakeNametag(player, nameTag, toPlayers);
+	}
+
+	@Override
+	public void updateFakeNameTag(String player, Nametag nameTag) {
+		manager.changeFakeNametag(player, nameTag, null);
 	}
 
 }

@@ -4,8 +4,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -16,6 +18,7 @@ import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.command.complex.ComplexCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.report.OlympaReport;
 import fr.olympa.api.report.ReportReason;
@@ -26,7 +29,6 @@ import fr.olympa.core.spigot.report.ReportMsg;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
 import fr.olympa.core.spigot.report.gui.ReportGui;
 import fr.olympa.core.spigot.report.gui.ReportGuiConfirm;
-import us.myles.viaversion.libs.gson.Gson;
 
 public class ReportCommand extends ComplexCommand {
 
@@ -94,7 +96,7 @@ public class ReportCommand extends ComplexCommand {
 			report.addStatusInfo(new ReportStatusInfo(note, idP, status));
 			ReportMySQL.updateReport(report);
 			String targetName = AccountProvider.get(report.getTargetId()).getName();
-			sender.sendMessage(Prefix.DEFAULT_GOOD.formatMessage("Le report &2n°%s&a envers &2%s&a est passé de %s&a à %s&a.", report.getId(), targetName, oldStatus.getNameColored(), status.getNameColored()));
+			sender.sendMessage(Prefix.DEFAULT_GOOD.formatMessage("Le report &2n°%s&a envers &2%s&a est passé de %s&a à %s&a.", report.getId(), targetName, oldStatus.getNameColored(), report.getStatus().getNameColored()));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			sendError("Une erreur est survenu avec la base de donnés.");
@@ -106,35 +108,110 @@ public class ReportCommand extends ComplexCommand {
 	public void see(CommandContext cmd) {
 		List<OlympaReport> reports = new ArrayList<>();
 		OlympaPlayer op = null;
+		long targetId = 0;
 		try {
 			if (cmd.getArgument(0) instanceof Player)
-				op = AccountProvider.get(cmd.<Player>getArgument(0).getUniqueId());
+				targetId = (op = AccountProvider.get(cmd.<Player>getArgument(0).getUniqueId())).getId();
 			else if (cmd.getArgument(0) instanceof UUID)
-				op = new AccountProvider(cmd.<UUID>getArgument(0)).get();
+				targetId = (op = new AccountProvider(cmd.<UUID>getArgument(0)).get()).getId();
 			else if (cmd.getArgument(0) instanceof Integer)
-				reports.add(ReportMySQL.getReport(cmd.<Integer>getArgument(0)));
+				targetId = cmd.<Integer>getArgument(0);
 			else {
 				sendUsage(cmd.label);
 				return;
 			}
-
 			if (reports.isEmpty())
 				if (cmd.label.equals("seeauthor"))
-					reports.addAll(ReportMySQL.getReportsByAuthor(op.getId()));
+					reports.addAll(ReportMySQL.getReportsByAuthor(targetId));
 				else
-					reports.addAll(ReportMySQL.getReportByTarget(op.getId()));
-
+					reports.addAll(ReportMySQL.getReportByTarget(targetId));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			sendError("Une erreur est survenu avec la base de donnés.");
 			return;
 		}
 		String target = op != null ? op.getName() : cmd.getArgument(0) instanceof Integer ? String.valueOf(cmd.<Integer>getArgument(0)) : cmd.<String>getArgument(0);
-		System.out.println("target " + target + " reports " + new Gson().toJson(reports));
 		if (reports.isEmpty()) {
 			player.sendMessage(Prefix.DEFAULT_BAD.formatMessage("Aucun report trouvé avec &4%s&c.", target));
 			return;
 		}
-		ReportMsg.sendPanel(sender, target, reports);
+		if (cmd.getArgument(0) instanceof Integer)
+			ReportMsg.sendPanelId(sender, reports.get(0));
+		else if (cmd.label.equals("seeauthor"))
+			ReportMsg.sendPanelAuthor(sender, target, reports);
+		else
+			ReportMsg.sendPanelTarget(sender, target, reports);
+	}
+
+	@Cmd(args = "INTEGER", permissionName = "REPORT_SEE_COMMAND", syntax = "<idReport>", min = 1)
+	public void seeId(CommandContext cmd) {
+		OlympaReport report = null;
+		try {
+			if (cmd.getArgument(0) instanceof Integer)
+				report = ReportMySQL.getReport(cmd.<Integer>getArgument(0));
+			else {
+				sendUsage(cmd.label);
+				return;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			sendError("Une erreur est survenu avec la base de donnés.");
+			return;
+		}
+		if (report == null) {
+			player.sendMessage(Prefix.DEFAULT_BAD.formatMessage("Aucun report trouvé avec l'id &4%s&c.", cmd.getArgument(0)));
+			return;
+		}
+		ReportMsg.sendPanelId(sender, report);
+	}
+
+	@Cmd(args = "INTEGER", permissionName = "REPORT_SEE_COMMAND", syntax = "[nombre] [limite]", min = 0)
+	public void seeLast(CommandContext cmd) {
+		List<OlympaReport> reports = null;
+		int limit = -1;
+		int number = -1;
+		try {
+			if (cmd.getArgumentsLength() > 0) {
+				if (cmd.getArgument(0) instanceof Integer)
+					number = cmd.<Integer>getArgument(0);
+				if (cmd.getArgumentsLength() > 1 && cmd.getArgument(1) instanceof Integer)
+					limit = cmd.<Integer>getArgument(1);
+				if (limit == -1 || number == -1) {
+					sendIncorrectSyntax(getCommand(getCommand()));
+					return;
+				}
+			}
+			if (limit == -1)
+				limit = 10;
+			if (number == -1)
+				number = 0;
+			reports = ReportMySQL.getLastReports(number, limit);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			sendError("Une erreur est survenu avec la base de donnés.");
+			return;
+		}
+		if (reports == null) {
+			player.sendMessage(Prefix.DEFAULT_BAD.formatMessage("Aucun report trouvé avec l'id &4%s&c.", cmd.getArgument(0)));
+			return;
+		}
+		ReportMsg.sendPanelLast(sender, reports);
+	}
+
+	@Cmd(permissionName = "REPORT_SEE_COMMAND", min = 0)
+	public void seeMax(CommandContext cmd) {
+		Stream<Entry<OlympaPlayerInformations, List<OlympaReport>>> reports = null;
+		try {
+			reports = ReportMySQL.getMaxReports();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			sendError("Une erreur est survenu avec la base de donnés.");
+			return;
+		}
+		if (reports == null) {
+			player.sendMessage(Prefix.DEFAULT_BAD.formatMessage("Aucun report trouvé avec l'id &4%s&c.", cmd.getArgument(0)));
+			return;
+		}
+		ReportMsg.sendPanelMax(sender, reports);
 	}
 }
