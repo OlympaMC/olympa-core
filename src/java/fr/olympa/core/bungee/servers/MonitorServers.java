@@ -86,6 +86,6 @@ public class MonitorServers {
 				updateServer(serverInfo, false);
 			for (OlympaServer olympaServer : olympaServers.keySet())
 				updateOlympaServer(olympaServer);
-		}, 1, 20, TimeUnit.SECONDS);
+		}, 1, 10, TimeUnit.SECONDS);
 	}
 }

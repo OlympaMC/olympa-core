@@ -56,8 +56,8 @@ public class MonitorInfo {
 			String[] motd = allMotd.split(" ");
 			if (motd.length >= 1)
 				status = ServerStatus.get(motd[0]);
-			if (motd.length >= 2 && RegexMatcher.DOUBLE.is(motd[1]))
-				tps = (Float) RegexMatcher.DOUBLE.parse(motd[1]);
+			if (motd.length >= 2 && RegexMatcher.FLOAT.is(motd[1]))
+				tps = (Float) RegexMatcher.FLOAT.parse(motd[1]);
 			if (motd.length >= 3 && RegexMatcher.INT.is(motd[2]))
 				ramUsage = (Integer) RegexMatcher.INT.parse(motd[2]);
 			if (motd.length >= 4 && RegexMatcher.INT.is(motd[3]))
