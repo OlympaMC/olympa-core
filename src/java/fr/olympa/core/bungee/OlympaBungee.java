@@ -39,6 +39,7 @@ import fr.olympa.core.bungee.datamanagment.AuthListener;
 import fr.olympa.core.bungee.datamanagment.GetUUIDCommand;
 import fr.olympa.core.bungee.login.commands.EmailCommand;
 import fr.olympa.core.bungee.login.commands.LoginCommand;
+import fr.olympa.core.bungee.login.commands.PasswdCommand;
 import fr.olympa.core.bungee.login.commands.RegisterCommand;
 import fr.olympa.core.bungee.login.listener.FailsPasswordEvent;
 import fr.olympa.core.bungee.login.listener.LoginChatListener;
@@ -172,6 +173,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new MaintenanceCommand(this).register();
 		new LoginCommand(this).register().registerPreProcess();
 		new RegisterCommand(this).register().registerPreProcess();
+		new PasswdCommand(this).register().registerPreProcess();
 		new EmailCommand(this).register();
 		new ServerSwitchCommand(this).register();
 		new InfoCommand(this).register();

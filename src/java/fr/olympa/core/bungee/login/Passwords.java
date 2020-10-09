@@ -1,15 +1,18 @@
 package fr.olympa.core.bungee.login;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 import java.util.Random;
 
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+
 public class Passwords {
-	
+
 	private static final Random RANDOM = new SecureRandom();
-	
+
 	/**
 	 * Generates a random password of a given length, using letters and digits.
 	 * @param length the length of the password
@@ -28,24 +31,24 @@ public class Passwords {
 		}
 		return sb.toString();
 	}
-	
-	private static String getSHA512(String passwordToHash, String salt) {
+
+	private static String getPBKDF2(String passwordToHash, String salt) {
 		String generatedPassword = null;
 		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-512");
-			md.update(salt.getBytes(StandardCharsets.UTF_8));
-			byte[] bytes = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
+			KeySpec spec = new PBEKeySpec(passwordToHash.toCharArray(), salt.getBytes(), 65536, 128 * 4);
+			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+			byte[] hash = factory.generateSecret(spec).getEncoded();
 			StringBuilder sb = new StringBuilder();
-			for (byte b : bytes)
+			for (byte b : hash)
 				sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
 			generatedPassword = sb.toString();
-		} catch (NoSuchAlgorithmException e) {
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			e.printStackTrace();
 		}
 		return generatedPassword;
 	}
-	
-	public static String getSHA512(String passwordToHash) {
-		return getSHA512(passwordToHash, "DYhG9guiRVoUubWwvn2G0Fg3b0qyJfIxfs2aC9mi");
+
+	public static String getPBKDF2(String passwordToHash) {
+		return getPBKDF2(passwordToHash, "6irXA1wSbY5jkJLbZbU3j_tDB6hhT4MrtKtnUY_wkxCrBRbGeB");
 	}
 }

@@ -290,7 +290,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public boolean isSamePassword(String password) {
-		return this.password.equals(Passwords.getSHA512(password));
+		return this.password.equals(Passwords.getPBKDF2(password));
 	}
 
 	@Override
@@ -394,7 +394,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public void setPassword(String password) {
-		this.password = Passwords.getSHA512(password);
+		this.password = Passwords.getPBKDF2(password);
 	}
 
 	@Override

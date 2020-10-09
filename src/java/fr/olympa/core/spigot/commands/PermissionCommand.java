@@ -159,6 +159,7 @@ public class PermissionCommand extends ComplexCommand {
 			sendMessage(Prefix.DEFAULT_GOOD, "Le joueur &2%s&a a désormais la permission &2%s&a.", player.getName(), permName);
 		}
 	}
+	//   /permission see <groups|player>
 
 	@Cmd(args = { "GROUPS|PLAYERS" }, min = 1)
 	public void see(CommandContext cmd) {
