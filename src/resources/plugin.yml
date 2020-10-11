@@ -5,4 +5,3 @@ author: Tristiisch, SkytAsul
 version: 0.1
 softdepend: [ProtocolSupport, ViaVersion]
 api-version: 1.15
-load: STARTUP
