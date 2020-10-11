@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -266,7 +265,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new HologramsCommand(hologramsManager).register();
 
 		new AntiWD(this);
-		getTask().runTaskLater(() -> versionHandler = new VersionHandler(this), 2, TimeUnit.SECONDS);
+		getTask().runTask(() -> versionHandler = new VersionHandler(this));
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 
 		try {
