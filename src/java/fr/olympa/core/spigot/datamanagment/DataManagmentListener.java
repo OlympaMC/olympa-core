@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -125,6 +127,7 @@ public class DataManagmentListener implements Listener {
 				PermissionAttachment attachment = player.addAttachment(OlympaCore.getInstance());
 				olympaPlayer.getGroup().getAllGroups().forEach(group -> group.runtimePermissions.forEach(perm -> attachment.setPermission(perm, true)));
 				player.recalculatePermissions();
+				((CraftServer) Bukkit.getServer()).getHandle().getServer().getCommandDispatcher().a((((CraftPlayer) player).getHandle()));
 
 				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
 				Bukkit.getPluginManager().callEvent(loginevent);
