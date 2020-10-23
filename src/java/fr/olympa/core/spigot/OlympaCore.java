@@ -175,7 +175,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		ErrorLoggerHandler errorHandler = new ErrorLoggerHandler(RedisSpigotSend::sendError);
 		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
 			plugin.getLogger().addHandler(errorHandler);
-			sendMessage("Hooked error stream handler into %s's logger!", plugin.getName());
+			sendMessage("Hooked error stream handler into §6%s§e's logger!", plugin.getName());
 		}
 		sendMessage("§6" + getDescription().getName() + "§e (" + getDescription().getVersion() + ") est chargé.");
 	}
