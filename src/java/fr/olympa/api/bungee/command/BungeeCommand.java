@@ -212,11 +212,6 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 		return olympaPlayer;
 	}
 
-	@Override
-	public OlympaPermission getOlympaPermission() {
-		return permission;
-	}
-
 	public ProxiedPlayer getProxiedPlayer() {
 		return proxiedPlayer;
 	}
@@ -335,8 +330,8 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 	}
 
 	@Override
-	public boolean hasPermission() {
-		return hasPermission(permission);
+	public OlympaPermission getOlympaPermission() {
+		return permission;
 	}
 
 	@Override

@@ -22,14 +22,13 @@ public class HelpCommand extends OlympaCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		/*for (HelpTopic cmdLabel : Bukkit.getServer().getHelpMap().getHelpTopics()) {
-			sendMessage(Prefix.NONE, cmdLabel.getName() + " | " + cmdLabel.getShortText() + " | " + cmdLabel.getFullText(sender));
-		}*/
+		OlympaPlayer olympaPlayer = getOlympaPlayer();
 		if (args.length == 0) {
-			OlympaPlayer olympaPlayer = getOlympaPlayer();
 			TextComponent compo = new TextComponent(TextComponent.fromLegacyText("§e---------- §6Aide §lOlympa§e ----------"));
 			for (OlympaCommand command : OlympaCommand.commands) {
 				if (!(command.getOlympaPermission() == null ? true : command.getOlympaPermission().hasPermission(olympaPlayer)))
+					continue;
+				if (!command.hasPermission(olympaPlayer))
 					continue;
 				TextComponent commandCompo = new TextComponent(TextComponent.fromLegacyText("\n§7➤ §6/" + command.getCommand() + (command.getDescription() == null ? "" : ": §e" + command.getDescription())));
 				commandCompo.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§bClique pour afficher l'aide de cette commande !")));
@@ -41,8 +40,11 @@ public class HelpCommand extends OlympaCommand {
 		} else
 			for (OlympaCommand command : OlympaCommand.commands)
 				if (command.getAllCommands().contains(args[0])) {
-					command.sendHelp(sender);
-					break;
+					if (command.hasPermission(olympaPlayer))
+						command.sendHelp(sender);
+					else
+						sendError("Vous n'avez pas la permission pour afficher l'aide de cette commande.");
+					return false;
 				}
 		return false;
 	}

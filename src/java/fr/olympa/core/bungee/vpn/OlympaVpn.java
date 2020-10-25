@@ -41,8 +41,6 @@ public class OlympaVpn {
 	public void addUser(String username) {
 		if (users == null)
 			users = new ArrayList<>();
-		else if (hasUser(username))
-			return;
 		users.add(username);
 	}
 
@@ -96,14 +94,5 @@ public class OlympaVpn {
 
 	public Boolean isProxy() {
 		return proxy;
-	}
-
-	@Deprecated
-	public boolean isVpn() {
-		return proxy || hosting;
-	}
-
-	public void setUsers(List<String> users) {
-		this.users = users;
 	}
 }
