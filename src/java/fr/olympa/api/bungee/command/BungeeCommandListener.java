@@ -41,7 +41,8 @@ public class BungeeCommandListener implements Listener {
 		BungeeCommand cmd = BungeeCommand.commandPreProcess.entrySet().stream().filter(entry -> entry.getKey().contains(command)).map(Entry::getValue).findFirst().orElse(null);
 		if (cmd == null)
 			return;
-		sugg.remove(0);
+		CommandSender sender = (CommandSender) event.getSender();
+		//		sugg.remove(0);
 		List<String> suggestion = (List<String>) cmd.onTabComplete((CommandSender) event.getSender(), sugg.toArray(String[]::new));
 		if (!suggestion.isEmpty()) {
 			event.getSuggestions().clear();

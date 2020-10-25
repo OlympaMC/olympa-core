@@ -49,11 +49,6 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 			ServerStatus maintenanceStatus = ServerStatus.getByCommandArg(args[0]);
 			if (maintenanceStatus != null)
 				switch (maintenanceStatus) {
-
-				case OPEN:
-					setServerStatus(maintenanceStatus, null, sender);
-					break;
-
 				case MAINTENANCE:
 					if (args.length >= 2) {
 						String[] reason = Arrays.copyOfRange(args, 1, args.length);
@@ -69,19 +64,8 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 					} else
 						setServerStatus(maintenanceStatus, "", sender);
 					break;
-
-				case DEV:
-					setServerStatus(maintenanceStatus, null, sender);
-					break;
-
-				case SOON:
-					setServerStatus(maintenanceStatus, null, sender);
-					break;
-
-				case BETA:
-					setServerStatus(maintenanceStatus, null, sender);
-					break;
 				default:
+					setServerStatus(maintenanceStatus, null, sender);
 					break;
 				}
 			else {
@@ -95,9 +79,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 						sendUsage();
 						return;
 					}
-
 					List<String> whitelist = maintconfig.getStringList("whitelist");
-
 					if (!whitelist.contains(args[1])) {
 						whitelist.add(args[1]);
 						sendMessage(defaultConfig.getString("maintenance.messages.added").replace("%player%", args[1]));
@@ -135,8 +117,8 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 					String statusString = maintconfig.getString("settings.status");
 					maintenanceStatus = ServerStatus.get(statusString);
 					String statusmsg = "";
-					if (message != "")
-						statusmsg = "(" + message.replaceAll("\n", "") + ")";
+					if (message.equals(""))
+						statusmsg = "(" + message.replace("\n", "") + ")";
 					sendMessage(BungeeUtils.color("&6Le mode maintenance est en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
 					break;
 

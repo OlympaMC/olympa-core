@@ -212,6 +212,23 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()), });
 			ping.setDescriptionComponent(new TextComponent(motd_base + "§c[§6Beta&c] &e-> &binscrit-toi sur www.olympa.fr"));
 			break;
+		case CLOSE_BETA:
+			players.setSample(new ServerPing.PlayerInfo[] {
+					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
+					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("§6Première Bêta Fermée", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("§eSeul le staff et quelques amis", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("§eont accès au serveur.", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
+					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
+					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()), });
+			ping.setDescriptionComponent(new TextComponent(motd_base + "§6Première Bêta Fermée"));
+			break;
 		default:
 			break;
 		}

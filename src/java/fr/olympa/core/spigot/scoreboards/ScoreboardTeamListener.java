@@ -20,7 +20,7 @@ public class ScoreboardTeamListener implements Listener {
 	// HandlerList.unregisterAll(new ScoreboardTeamListener()) pour désactiver le
 	// format de base
 
-	@EventHandler (priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void on0PlayerLoad(OlympaPlayerLoadEvent event) {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
@@ -30,8 +30,7 @@ public class ScoreboardTeamListener implements Listener {
 	@EventHandler
 	public void on1OlympaPlayerChangeGroup(AsyncOlympaPlayerChangeGroupEvent event) {
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
-		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new PlayerNameTagEditEvent(player, olympaPlayer, null, null));
+		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new PlayerNameTagEditEvent(player, event.getOlympaPlayer(), null, null));
 	}
 
 	@EventHandler
@@ -49,7 +48,7 @@ public class ScoreboardTeamListener implements Listener {
 		nameTag.appendPrefix(olympaPlayer.getGroupPrefix());
 	}
 
-	@EventHandler (priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void on4PlayerNameTagEdit(PlayerNameTagEditEvent event) {
 		Player player = event.getPlayer();
 		NametagAPI nameTagApi = (NametagAPI) OlympaCore.getInstance().getNameTagApi();

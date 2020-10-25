@@ -154,13 +154,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 
 	@Override
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-		if (sender instanceof CommandSender)
-			this.sender = sender;
-		else {
-			sendDoNotHavePermission();
-			return new ArrayList<>();
-		}
-
+		this.sender = sender;
 		if (sender instanceof ProxiedPlayer) {
 			proxiedPlayer = (ProxiedPlayer) sender;
 			if (!this.hasPermission())
@@ -175,7 +169,6 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 		List<String> customResponse = onTabComplete(this.sender, this, args);
 		if (customResponse != null)
 			return customResponse;
-
 		Set<List<CommandArgument>> defaultArgs = this.args.keySet();
 		if (defaultArgs.isEmpty())
 			return new ArrayList<>();
