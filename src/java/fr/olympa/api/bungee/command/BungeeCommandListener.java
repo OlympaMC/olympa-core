@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
+import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
@@ -41,12 +43,16 @@ public class BungeeCommandListener implements Listener {
 		BungeeCommand cmd = BungeeCommand.commandPreProcess.entrySet().stream().filter(entry -> entry.getKey().contains(command)).map(Entry::getValue).findFirst().orElse(null);
 		if (cmd == null)
 			return;
-		CommandSender sender = (CommandSender) event.getSender();
-		//		sugg.remove(0);
-		List<String> suggestion = (List<String>) cmd.onTabComplete((CommandSender) event.getSender(), sugg.toArray(String[]::new));
-		if (!suggestion.isEmpty()) {
-			event.getSuggestions().clear();
-			event.getSuggestions().addAll(suggestion);
+		if (cmd.hasPermission(AccountProvider.<OlympaPlayer>get(((ProxiedPlayer) event.getSender()).getUniqueId()))) {
+			//CommandSender sender = (CommandSender) event.getSender();
+			//		sugg.remove(0);
+			List<String> suggestion = (List<String>) cmd.onTabComplete((CommandSender) event.getSender(), sugg.toArray(String[]::new));
+			if (!suggestion.isEmpty()) {
+				event.getSuggestions().clear();
+				event.getSuggestions().addAll(suggestion);
+			}
+		}else {
+			event.setCancelled(true);
 		}
 	}
 }

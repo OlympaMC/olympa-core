@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.spigotmc.SpigotConfig;
 
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -178,6 +179,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			sendMessage("Hooked error stream handler into §6%s§e's logger!", plugin.getName());
 		}
 		sendMessage("§6" + getDescription().getName() + "§e (" + getDescription().getVersion() + ") est chargé.");
+		SpigotConfig.sendNamespaced = false;
 	}
 
 	@Override

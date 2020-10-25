@@ -36,11 +36,16 @@ public class HelpCommand extends OlympaCommand {
 			sender.spigot().sendMessage(compo);
 		}else {
 			for (OlympaCommand command : OlympaCommand.commands) {
-				if (command.getAllCommands().contains(args[0]) && command.hasPermission(olympaPlayer)) {
-					command.sendHelp(sender);
-					break;
+				if (command.getAllCommands().contains(args[0])) {
+					if (command.hasPermission(olympaPlayer)) {
+						command.sendHelp(sender);
+					}else {
+						sendError("Vous n'avez pas la permission pour afficher l'aide de cette commande.");
+					}
+					return false;
 				}
 			}
+			sendError("Cette commande n'existe pas.");
 		}
 		return false;
 	}
