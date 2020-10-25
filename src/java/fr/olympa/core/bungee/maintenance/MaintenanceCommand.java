@@ -35,18 +35,17 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 
 	public MaintenanceCommand(Plugin plugin) {
 		super(plugin, "maintenance", OlympaCorePermissions.MAINTENANCE_COMMAND, "maint");
-		permission = getPerm();
 		command = getCommand();
 		minArg = 1;
 		arg2.addAll(Arrays.asList("status", "add", "remove", "list"));
-		arg2.addAll(ServerStatus.getNames());
+		arg2.addAll(ServerStatus.getCommandsArgs());
 		usageString = "<" + String.join("|", MaintenanceCommand.arg2).toLowerCase() + "> [joueur]";
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		ProxyServer.getInstance().getScheduler().runAsync(OlympaBungee.getInstance(), () -> {
-			ServerStatus maintenanceStatus = ServerStatus.getByCommandArg(args[0]);
+			ServerStatus maintenanceStatus = ServerStatus.getByCommandArg(buildText(0, args));
 			if (maintenanceStatus != null)
 				switch (maintenanceStatus) {
 				case MAINTENANCE:
@@ -88,7 +87,6 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 					maintconfig.set("whitelist", whitelist);
 					customConfig.saveSafe();
 					break;
-
 				case "remove":
 					if (args.length < 2) {
 						sendUsage();
@@ -103,16 +101,13 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 					maintconfig.set("whitelist", whitelist);
 					customConfig.saveSafe();
 					break;
-
 				case "list":
 					whitelist = maintconfig.getStringList("whitelist");
 					sendMessage(defaultConfig.getString("maintenance.messages.whitelist")
 							.replace("%size%", String.valueOf(whitelist.size()))
 							.replace("%list%", String.join(defaultConfig.getString("maintenance.messages.whitelist_separator"), whitelist)));
 					break;
-
 				case "status":
-
 					String message = maintconfig.getString("settings.message");
 					String statusString = maintconfig.getString("settings.status");
 					maintenanceStatus = ServerStatus.get(statusString);
@@ -121,14 +116,12 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 						statusmsg = "(" + message.replace("\n", "") + ")";
 					sendMessage(BungeeUtils.color("&6Le mode maintenance est en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
 					break;
-
 				default:
 					sendUsage();
 					break;
 				}
 			}
 		});
-
 	}
 
 	@Override

@@ -19,16 +19,15 @@ import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
-import fr.olympa.core.spigot.redis.RedisSpigotSend;
 
 @SuppressWarnings("deprecation")
 public class GroupListener implements Listener {
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onAsyncOlympaPlayerChangeGroup(AsyncOlympaPlayerChangeGroupEvent event) {
-		if (event.getPlayer() == null || event.getDone() != null)
-			RedisSpigotSend.sendOlympaGroupChange(event.getOlympaPlayer(), event.getGroupsChanges()[0], event.getTimeStamp(), event.getChangeType(), event.getDone());
-	}
+	//	@EventHandler(priority = EventPriority.HIGHEST)
+	//	public void onAsyncOlympaPlayerChangeGroup(AsyncOlympaPlayerChangeGroupEvent event) {
+	//		if (event.getPlayer() == null || event.getDone() != null)
+	//			RedisSpigotSend.sendOlympaGroupChange(event.getOlympaPlayer(), event.getGroupsChanges()[0], event.getTimeStamp(), event.getChangeType(), event.getDone());
+	//	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onOlympaPlayerLoad(OlympaPlayerLoadEvent event) {

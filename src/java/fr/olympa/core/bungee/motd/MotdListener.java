@@ -24,7 +24,7 @@ import net.md_5.bungee.event.EventHandler;
 public class MotdListener implements Listener {
 
 	String prefix = "§e-------------§6 Olympa §e-------------";
-	String motd_base = "§3⬣ §e§lOlympa §6§n1.9 à 1.16+§3 ⬣\n";
+	String motd_base = "§3⬣ §e§lOlympa §61.9 à 1.16+§3 ⬣\n";
 	// §6Fun \u2606 Tryhard \u2606 Ranked
 	String teamspeak = "§6Teamspeak: §e§nts.olympa.fr";
 	String site = "§6Site: §e§nwww.olympa.fr";
@@ -202,7 +202,7 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§eInscrit-toi sur notre site pour", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§eêtre pententiellement selectionner", UUID.randomUUID()),
-					new ServerPing.PlayerInfo("§eà rejoindre la beta fermer.", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("§eà rejoindre la beta.", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
@@ -216,7 +216,7 @@ public class MotdListener implements Listener {
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo("§6Première Bêta Fermée", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("§cPremière Bêta Fermée", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§eSeul le staff et quelques amis", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§eont accès au serveur.", UUID.randomUUID()),

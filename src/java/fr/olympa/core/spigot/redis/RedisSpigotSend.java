@@ -84,7 +84,7 @@ public class RedisSpigotSend {
 			OlympaCore.getInstance().getTask().runTaskLater("waitModifications" + uuid.toString(), () -> {
 				callable.accept(false);
 				modificationReceive.remove(uuid);
-			}, 3 * 20);
+			}, 2 * 20);
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}

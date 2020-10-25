@@ -30,6 +30,7 @@ import fr.olympa.api.utils.Utils;
 import fr.olympa.api.utils.UtilsCore;
 import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.spigot.OlympaCore;
+import fr.olympa.core.spigot.redis.RedisSpigotSend;
 
 @SuppressWarnings("deprecation")
 public class GroupCommand extends OlympaCommand {
@@ -162,25 +163,26 @@ public class GroupCommand extends OlympaCommand {
 				state = ChangeType.SET;
 				olympaTarget.setGroup(newGroup, timestamp);
 			}
-			Consumer<? super Boolean> done;
-			if (target == null)
-				done = b -> {
+			if (target == null) {
+				Consumer<? super Boolean> done = b -> {
 					if (b)
-						sendInfo("&aLe changement de grade de &2%s&a bien été reçu sur l'infrastructure (dont discord).", olympaTarget.getName());
+						sendInfo("&aLe joueur est connecté sur un autre serveur. Le changement de grade de &2%s&a bien été reçu sur l'infrastructure (dont discord).", olympaTarget.getName());
 					else {
-						sendInfo("&aLe joueur &2%s&a n'est pas connecté, le changement de grade a bien été reçu sur l'infrastructure (dont discord).", olympaTarget.getName());
+						sendInfo("&aLe joueur &2%s&a n'est pas connecté, le changement de grade a bien été reçu (dont discord).", olympaTarget.getName());
 						AccountProvider olympaAccount2 = new AccountProvider(olympaTarget.getUniqueId());
 						olympaAccount2.saveToRedis(olympaTarget);
 						olympaAccount2.saveToDb(olympaTarget);
 					}
 				};
-			else {
-				done = null;
+				RedisSpigotSend.sendOlympaGroupChange(olympaTarget, newGroup, timestamp, state, done);
+
+			} else {
 				olympaAccount.saveToRedis(olympaTarget);
 				olympaAccount.saveToDb(olympaTarget);
 				Prefix.DEFAULT.sendMessage(target, msg.replace("%group", newGroup.getName()).replace("%time", timestampString));
+				OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, state, olympaTarget, null, timestamp, newGroup));
+				RedisSpigotSend.sendOlympaGroupChange(olympaTarget, newGroup, timestamp, state, null);
 			}
-			OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, state, olympaTarget, done, timestamp, newGroup));
 			if (player != null && (target == null || !SpigotUtils.isSamePlayer(player, target)))
 				if (msg == null)
 					sendSuccess("&cLe joueur &4%s&c n'est plus dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName(gender));

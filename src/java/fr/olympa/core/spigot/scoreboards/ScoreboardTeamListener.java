@@ -30,7 +30,8 @@ public class ScoreboardTeamListener implements Listener {
 	@EventHandler
 	public void on1OlympaPlayerChangeGroup(AsyncOlympaPlayerChangeGroupEvent event) {
 		Player player = event.getPlayer();
-		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new PlayerNameTagEditEvent(player, event.getOlympaPlayer(), null, null));
+		if (player != null && player.isOnline())
+			OlympaCore.getInstance().getServer().getPluginManager().callEvent(new PlayerNameTagEditEvent(player, event.getOlympaPlayer(), null, null));
 	}
 
 	@EventHandler

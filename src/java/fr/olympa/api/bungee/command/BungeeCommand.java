@@ -212,7 +212,8 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 		return olympaPlayer;
 	}
 
-	public OlympaPermission getPerm() {
+	@Override
+	public OlympaPermission getOlympaPermission() {
 		return permission;
 	}
 
