@@ -332,10 +332,10 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 	public boolean isConsole() {
 		return proxiedPlayer == null;
 	}
-
+	
 	@Override
-	public boolean hasPermission() {
-		return hasPermission(permission);
+	public OlympaPermission getOlympaPermission() {
+		return permission;
 	}
 
 	@Override
