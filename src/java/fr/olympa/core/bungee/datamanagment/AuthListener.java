@@ -85,6 +85,7 @@ public class AuthListener implements Listener {
 
 			// Si le pseudo est un compte premium
 			if (response != null) {
+				connection.setOnlineMode(true);
 				// Si la connection est crack
 				//				if (!connection.isOnlineMode()) {
 				//					event.setCancelReason(BungeeUtils.connectScreen("&cLe pseudo &4" + response.getName() + "&c est un compte premium.\n&c&nTu ne peux pas l'utiliser."));
@@ -115,17 +116,18 @@ public class AuthListener implements Listener {
 					OlympaBungee.getInstance().sendMessage("&cChangement de pseudo  " + name + " HAS PREMIUM ? " + uuidPremium);
 				} else
 					OlympaBungee.getInstance().sendMessage("&cNouveau Joueur  " + name + " HAS PREMIUM ? " + uuidPremium);
-
-			} else
-				// Si la connection est premium
-				/*if (connection.isOnlineMode()) {
-					event.setCancelReason(BungeeUtils.connectScreen("&cTu ne peux pas te faire passer pour un compte premium."));
-					event.setCancelled(true);
-					return;
-				}*/
-				//				event.setCancelReason(BungeeUtils.connectScreen("&eLes cracks ne sont pas encore autoriser."));
-				//				event.setCancelled(true);
+			} else {
+				connection.setOnlineMode(false);
 				OlympaBungee.getInstance().sendMessage("§7Joueur crack sans données §e" + name);
+			}
+			// Si la connection est premium
+			/*if (connection.isOnlineMode()) {
+				event.setCancelReason(BungeeUtils.connectScreen("&cTu ne peux pas te faire passer pour un compte premium."));
+				event.setCancelled(true);
+				return;
+			}*/
+			//				event.setCancelReason(BungeeUtils.connectScreen("&eLes cracks ne sont pas encore autoriser."));
+			//				event.setCancelled(true);
 		}
 
 		// Si le joueur s'est déjà connecté
@@ -133,6 +135,7 @@ public class AuthListener implements Listener {
 			cache.setOlympaPlayer(olympaPlayer);
 			OlympaBungee.getInstance().sendMessage("§7Connexion du joueur connu §e" + olympaPlayer.getName());
 			if (olympaPlayer.getPremiumUniqueId() == null) {
+				connection.setOnlineMode(false);
 				/*if (connection.isOnlineMode()) {
 					event.setCancelReason(BungeeUtils.connectScreen(
 							"&cCe pseudo &4" + olympaPlayer.getName() + "&c est utilisé par un compte crack.\n&bIl est préférable de changer de pseudo, toutefois il est possible de faire une demande au Staff."));
@@ -144,20 +147,17 @@ public class AuthListener implements Listener {
 					event.setCancelled(true);
 					return;
 				}
-				connection.setOnlineMode(false);
-				if (!SecurityHandler.ALLOW_CRACK) {
-					event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Crack sont temporairement désactivées. Désolé du dérangement."));
-					event.setCancelled(true);
-					return;
-				}
-			} else {
+			} else
 				connection.setOnlineMode(true);
-				if (!SecurityHandler.ALLOW_PREMIUM) {
-					event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Premium sont temporairement désactivées. Désolé du dérangement."));
-					event.setCancelled(true);
-					return;
-				}
-			}
+		}
+		if (!connection.isOnlineMode() && !SecurityHandler.ALLOW_CRACK) {
+			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Crack sont temporairement désactivées. Désolé du dérangement."));
+			event.setCancelled(true);
+			return;
+		} else if (connection.isOnlineMode() && !SecurityHandler.ALLOW_PREMIUM) {
+			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Premium sont temporairement désactivées. Désolé du dérangement."));
+			event.setCancelled(true);
+			return;
 		}
 		cache.setSubDomain(event.getConnection());
 		DataHandler.addPlayer(cache);

@@ -59,14 +59,12 @@ public class OlympaLoginListener implements Listener {
 				if (!olympaPlayer.isPremium()) {
 					String subdomain = cache.getSubDomain();
 					if (subdomain != null)
-						if (subdomain.equalsIgnoreCase("buildeur")) {
+						if (subdomain.equalsIgnoreCase("buildeur"))
 							ServersConnection.tryConnect(player, OlympaServer.BUILDEUR);
-							return;
-						} else if (subdomain.equalsIgnoreCase("dev")) {
+						else if (subdomain.equalsIgnoreCase("dev"))
 							ServersConnection.tryConnect(player, OlympaServer.DEV);
-							return;
-						}
-					ServersConnection.tryConnect(player, OlympaServer.LOBBY);
+						else
+							ServersConnection.tryConnect(player, OlympaServer.LOBBY);
 				}
 				DataHandler.removePlayer(cache);
 			}
