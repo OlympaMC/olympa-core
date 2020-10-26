@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.objects.BanExecute;
@@ -70,28 +71,22 @@ public class SanctionUtils {
 
 	public static BanExecute formatArgs(String[] args) {
 		BanExecute banExecute = new BanExecute();
-		List<String> listArgs = new ArrayList<>();
-		int i = 0;
-		for (String arg : args)
-			if (i != 0)
-				listArgs.add(arg);
-
 		List<Object> targets = new ArrayList<>();
 		Arrays.asList(args[0].split(",")).forEach(t -> {
-			if (fr.olympa.api.utils.Matcher.isIP(t))
+			if (RegexMatcher.IP.is(t))
 				try {
 					targets.add(InetAddress.getByName(t));
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
 				}
-			else if (fr.olympa.api.utils.Matcher.isUUID(t))
+			else if (RegexMatcher.UUID.is(t))
 				targets.add(UUID.fromString(t));
-			else if (fr.olympa.api.utils.Matcher.isUsername(t))
+			else if (RegexMatcher.USERNAME.is(t))
 				targets.add(t);
 		});
 		banExecute.setTargets(targets);
 		long expire = 0;
-		String allArgs = String.join(" ", listArgs);
+		String allArgs = String.join(" ", args);
 		String newAllArgs = null;
 		Matcher matcherDuration = SanctionUtils.matchDuration(allArgs);
 		if (matcherDuration.find()) {

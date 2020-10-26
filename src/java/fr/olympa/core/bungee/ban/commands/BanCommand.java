@@ -41,14 +41,8 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		switch (args.length) {
 		case 1:
-			List<String> postentielNames = Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
-			return postentielNames;
+			return Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
 		case 2:
-			/*
-			 * String i = new String(); java.util.regex.Matcher matcher =
-			 * Pattern.compile("[0-9]+").matcher(args[1]); if (matcher.find()) { i =
-			 * matcher.group(); }
-			 */
 			List<String> units = new ArrayList<>();
 			for (List<String> unit : SanctionUtils.units)
 				for (String u : unit)
@@ -56,7 +50,7 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 						units.add(i + u);
 			return Utils.startWords(args[1], units);
 		case 3:
-			List<String> reasons = Arrays.asList("Cheat", "Insulte", "Provocation", "Spam", "Harcèlement");
+			List<String> reasons = Arrays.asList("Cheat", "Insulte", "Provocation", "Spam", "Harcèlement", "Publicité");
 			return Utils.startWords(args[2], reasons);
 		default:
 			return new ArrayList<>();

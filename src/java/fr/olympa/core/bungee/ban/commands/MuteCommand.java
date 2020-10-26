@@ -1,13 +1,19 @@
 package fr.olympa.core.bungee.ban.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
+import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaConsole;
-import fr.olympa.api.utils.Matcher;
+import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.commands.methods.MuteIp;
 import fr.olympa.core.bungee.ban.commands.methods.MutePlayer;
 import net.md_5.bungee.api.CommandSender;
@@ -30,31 +36,47 @@ public class MuteCommand extends BungeeCommand {
 			author = proxiedPlayer.getUniqueId();
 		else
 			author = OlympaConsole.getUniqueId();
-
 		Configuration config = OlympaBungee.getInstance().getConfig();
-		if (Matcher.isUsername(args[0]))
+		if (RegexMatcher.USERNAME.is(args[0]))
 			MutePlayer.addMute(author, sender, args[0], null, args, olympaPlayer);
-		else if (Matcher.isFakeIP(args[0])) {
-
-			if (Matcher.isIP(args[0]))
+		else if (RegexMatcher.FAKE_IP.is(args[0])) {
+			if (RegexMatcher.IP.is(args[0]))
 				MuteIp.addMute(author, sender, args[0], args, olympaPlayer);
 			else {
-				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.ipinvalid").replaceAll("%ip%", args[0]));
+				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.ipinvalid").replace("%ip%", args[0]));
 				return;
 			}
-
-		} else if (Matcher.isFakeUUID(args[0])) {
-
-			if (Matcher.isUUID(args[0]))
+		} else if (RegexMatcher.UUID.is(args[0])) {
+			if (RegexMatcher.UUID.is(args[0]))
 				MutePlayer.addMute(author, sender, null, UUID.fromString(args[0]), args, olympaPlayer);
 			else {
-				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.uuidinvalid").replaceAll("%uuid%", args[0]));
+				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.uuidinvalid").replace("%uuid%", args[0]));
 				return;
 			}
-
 		} else {
-			this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replaceAll("%type%", args[0]));
+			this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replace("%type%", args[0]));
 			return;
+		}
+	}
+
+	@Override
+	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+		switch (args.length) {
+		case 1:
+			List<String> postentielNames = Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
+			return postentielNames;
+		case 2:
+			List<String> units = new ArrayList<>();
+			for (List<String> unit : SanctionUtils.units)
+				for (String u : unit)
+					for (int i = 1; i < 20; i++)
+						units.add(i + u);
+			return Utils.startWords(args[1], units);
+		case 3:
+			List<String> reasons = Arrays.asList("Insulte", "Provocation", "Spam", "Harcèlement", "Publicité");
+			return Utils.startWords(args[2], reasons);
+		default:
+			return new ArrayList<>();
 		}
 	}
 }

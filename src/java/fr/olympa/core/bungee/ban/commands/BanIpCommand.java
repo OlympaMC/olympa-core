@@ -1,8 +1,12 @@
 package fr.olympa.core.bungee.ban.commands;
 
+import java.util.ArrayList;
+
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.objects.BanExecute;
@@ -28,5 +32,15 @@ public class BanIpCommand extends BungeeCommand {
 		if (sender instanceof ProxiedPlayer)
 			banArg.setAuthor((ProxiedPlayer) sender);
 		banArg.execute();
+	}
+
+	@Override
+	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+		switch (args.length) {
+		case 1:
+			return Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
+		default:
+			return new ArrayList<>();
+		}
 	}
 }

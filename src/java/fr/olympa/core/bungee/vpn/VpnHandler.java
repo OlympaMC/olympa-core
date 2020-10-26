@@ -7,6 +7,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Charsets;
@@ -21,11 +22,15 @@ import net.md_5.bungee.api.connection.PendingConnection;
 @SuppressWarnings("deprecation")
 public class VpnHandler {
 
-	public static Cache<String, OlympaVpn> cache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).removalListener(notification -> {
+	private static Cache<String, OlympaVpn> cache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).removalListener(notification -> {
 		OlympaVpn olympaVpn = (OlympaVpn) notification.getValue();
 		try {
 			if (olympaVpn.getId() == 0)
-				VpnSql.addIp(olympaVpn);
+				try {
+					VpnSql.addIp(olympaVpn);
+				} catch (SQLIntegrityConstraintViolationException e) {
+					VpnSql.saveIp(olympaVpn); // bad fix
+				}
 			else
 				VpnSql.saveIp(olympaVpn);
 		} catch (SQLException e) {

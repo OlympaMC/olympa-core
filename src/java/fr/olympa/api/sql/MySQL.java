@@ -377,6 +377,8 @@ public class MySQL {
 
 	public static Set<String> getNamesBySimilarName(String name) {
 		Set<String> names = new HashSet<>();
+		if (name == null || name.isBlank())
+			return names;
 		if (name.charAt(name.length() - 1) != '%')
 			name += "%";
 		try {

@@ -1,16 +1,20 @@
 package fr.olympa.core.bungee.ban.commands;
 
+import java.util.ArrayList;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.commands.methods.KickIp;
 import fr.olympa.core.bungee.ban.commands.methods.KickPlayer;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 
@@ -54,6 +58,16 @@ public class KickCommand extends BungeeCommand {
 		} else {
 			sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replaceAll("%type%", args[0]));
 			return;
+		}
+	}
+
+	@Override
+	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+		switch (args.length) {
+		case 1:
+			return Utils.startWords(args[0], ProxyServer.getInstance().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toList()));
+		default:
+			return new ArrayList<>();
 		}
 	}
 }

@@ -176,13 +176,14 @@ public class GroupCommand extends OlympaCommand {
 					}
 				};
 				RedisSpigotSend.sendOlympaGroupChange(olympaTarget, newGroup, timestamp, state, done);
-
+				olympaAccount.removeFromCache();
 			} else {
 				olympaAccount.saveToRedis(olympaTarget);
 				olympaAccount.saveToDb(olympaTarget);
 				Prefix.DEFAULT.sendMessage(target, msg.replace("%group", newGroup.getName()).replace("%time", timestampString));
 				OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, state, olympaTarget, null, timestamp, newGroup));
 				RedisSpigotSend.sendOlympaGroupChange(olympaTarget, newGroup, timestamp, state, null);
+				olympaAccount.saveToCache(olympaTarget);
 			}
 			if (player != null && (target == null || !SpigotUtils.isSamePlayer(player, target)))
 				if (msg == null)

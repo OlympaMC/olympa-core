@@ -11,6 +11,7 @@ import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.utils.Matcher;
+import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.commands.methods.UnbanIp;
@@ -42,7 +43,7 @@ public class UnbanCommand extends BungeeCommand {
 			if (Matcher.isIP(args[0]))
 				UnbanIp.unBan(author, sender, args[0], args);
 			else {
-				sender.sendMessage(config.getString("default.ipinvalid").replace("%ip%", args[0]));
+				sendMessage(Prefix.DEFAULT_BAD, config.getString("default.ipinvalid").replace("%ip%", args[0]));
 				return;
 			}
 
@@ -53,11 +54,11 @@ public class UnbanCommand extends BungeeCommand {
 			if (Matcher.isUUID(args[0]))
 				UnbanPlayer.unBan(author, sender, UUID.fromString(args[0]), null, args);
 			else {
-				sender.sendMessage(config.getString("default.uuidinvalid").replace("%uuid%", args[0]));
+				sendMessage(Prefix.DEFAULT_BAD, config.getString("default.uuidinvalid").replace("%uuid%", args[0]));
 				return;
 			}
 		} else {
-			sender.sendMessage(config.getString("default.typeunknown").replace("%type%", args[0]));
+			sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replace("%type%", args[0]));
 			return;
 		}
 		return;
