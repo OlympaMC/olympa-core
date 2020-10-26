@@ -11,6 +11,7 @@ import fr.olympa.api.customevents.PlayerNameTagEditEvent;
 import fr.olympa.api.customevents.PlayerSexChangeEvent;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.scoreboard.tab.FakeTeam;
 import fr.olympa.api.scoreboard.tab.Nametag;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
@@ -56,10 +57,14 @@ public class ScoreboardTeamListener implements Listener {
 		Nametag nameTag = event.getNameTag();
 		if (event.isCancelled())
 			return;
-		if (nameTagApi.getFakeTeam(player) == null || event.isForceCreateTeam())
+
+		FakeTeam team = nameTagApi.getFakeTeam(player);
+		if (team == null || event.isForceCreateTeam())
 			nameTagApi.setNametag(player.getName(), nameTag.getPrefix(), nameTag.getSuffix(), event.getSortPriority());
-		else
+		else if (team.getMembers().size() == 1)
 			nameTagApi.updateFakeNameTag(player.getName(), nameTag, event.getTargets());
+		else
+			nameTagApi.setNametag(player.getName(), nameTag.getPrefix(), nameTag.getSuffix(), event.getSortPriority());
 	}
 
 }
