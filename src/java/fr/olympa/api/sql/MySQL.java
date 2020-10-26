@@ -66,7 +66,7 @@ public class MySQL {
 	// Pour pas surcharger les requettes MySQL
 	// TODO -> cache redis pour le cache multi-server
 	static Set<String> allPlayersNamesCache = null;
-
+	
 	public static Set<String> getAllPlayersNames() {
 		if (allPlayersNamesCache != null)
 			return allPlayersNamesCache;
@@ -377,8 +377,6 @@ public class MySQL {
 
 	public static Set<String> getNamesBySimilarName(String name) {
 		Set<String> names = new HashSet<>();
-		if (name.length() < 3)
-			return names;
 		if (name.charAt(name.length() - 1) != '%')
 			name += "%";
 		try {

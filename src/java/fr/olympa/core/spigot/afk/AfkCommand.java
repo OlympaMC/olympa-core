@@ -6,6 +6,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
+import fr.olympa.api.afk.AfkHandler;
+import fr.olympa.api.afk.AfkPlayer;
+import fr.olympa.api.afk.AfkPlayerToggleEvent;
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.core.spigot.OlympaCore;
 

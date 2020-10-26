@@ -10,11 +10,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import fr.olympa.api.afk.AfkHandler;
+import fr.olympa.api.afk.AfkPlayer;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.customevents.PlayerNameTagEditEvent;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.OlympaAPIPermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.scoreboard.tab.Nametag;
@@ -49,9 +51,9 @@ public class AfkListener implements Listener {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
 		INametagApi nameTagApi = OlympaCore.getInstance().getNameTagApi();
-		if (Arrays.stream(event.getGroupsChanges()).noneMatch(OlympaCorePermissions.AFK_SEE_IN_TAB::hasPermission))
+		if (Arrays.stream(event.getGroupsChanges()).noneMatch(OlympaAPIPermissions.AFK_SEE_IN_TAB::hasPermission))
 			return;
-		if ((ChangeType.SET.equals(changeType) || ChangeType.ADD.equals(changeType)) && OlympaCorePermissions.AFK_SEE_IN_TAB.hasPermission(olympaPlayer))
+		if ((ChangeType.SET.equals(changeType) || ChangeType.ADD.equals(changeType)) && OlympaAPIPermissions.AFK_SEE_IN_TAB.hasPermission(olympaPlayer))
 			AfkHandler.get().stream().forEach(entry -> {
 				Player target = Bukkit.getPlayer(entry.getKey());
 				Nametag nameTag = nameTagApi.getNametag(target);

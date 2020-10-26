@@ -84,7 +84,6 @@ public class OlympaCorePermissions {
 	public static final OlympaPermission TEAMSPEAK_COMMAND_MANAGE = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaBungeePermission TEAMSPEAK_SEE_MODHELP = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
 	public static final OlympaBungeePermission TEAMSPEAK_SEE_ADMINHELP = new OlympaBungeePermission(OlympaGroup.MODP);
-	public static final OlympaPermission AFK_SEE_IN_TAB = new OlympaPermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaPermission VERIFMOD_SEE_IN_TAB = new OlympaPermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaPermission VANISH_SEE_IN_TAB = new OlympaPermission(OlympaGroup.MODP);
 }

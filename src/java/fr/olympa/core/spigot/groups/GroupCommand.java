@@ -1,6 +1,7 @@
 package fr.olympa.core.spigot.groups;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -37,7 +38,7 @@ public class GroupCommand extends OlympaCommand {
 
 	public GroupCommand(Plugin plugin) {
 		super(plugin, "group", "Permet la gestion des groupes de Olympa.", OlympaCorePermissions.GROUP_COMMAND, "groupe", "rank");
-		addArgs(false, "joueur");
+		addArgs(false, "JOUEUR");
 		addArgs(false, "group");
 		addArgs(false, "time");
 		addArgs(false, "add", "remove");
@@ -194,9 +195,13 @@ public class GroupCommand extends OlympaCommand {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (args.length == 1)
-			return Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
-		else if (args.length == 2)
+		if (args.length == 1) {
+			List<String> potentialArgs = new ArrayList<>();
+			potentialArgs.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
+			if (args[0].length() > 2)
+				potentialArgs.addAll(Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0])));
+			return potentialArgs.stream().distinct().collect(Collectors.toList());
+		} else if (args.length == 2)
 			return Utils.startWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toList()));
 		else if (args.length == 3)
 			return Utils.startWords(args[2], Arrays.asList(String.valueOf(Utils.getCurrentTimeInSeconds() + 2628000), "0"));
