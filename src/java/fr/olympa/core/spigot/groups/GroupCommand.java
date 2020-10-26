@@ -199,8 +199,8 @@ public class GroupCommand extends OlympaCommand {
 			List<String> potentialArgs = new ArrayList<>();
 			potentialArgs.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
 			if (args[0].length() > 2)
-				potentialArgs.addAll(Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0])));
-			return potentialArgs.stream().distinct().collect(Collectors.toList());
+				potentialArgs.addAll(MySQL.getNamesBySimilarName(args[0]));
+			return Utils.startWords(args[0], potentialArgs);
 		} else if (args.length == 2)
 			return Utils.startWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toList()));
 		else if (args.length == 3)
