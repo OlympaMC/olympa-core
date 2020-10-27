@@ -28,7 +28,7 @@ public class ReportMySQL {
 	static DbConnection dbConnection;
 
 	static String tableName = "reports";
-	private static OlympaStatement insertPlayerStatement = new OlympaStatement(StatementType.INSERT, tableName, "target_id", "author_id", "reason", "time", "server", "note", "status_info");
+	private static OlympaStatement insertPlayerStatement = new OlympaStatement(StatementType.INSERT, tableName, "target_id", "author_id", "reason", "time", "server", "note", "status_info").returnGeneratedKeys();
 
 	public static void createReport(OlympaReport report) throws SQLException {
 		PreparedStatement statement = insertPlayerStatement.getStatement();
@@ -47,7 +47,7 @@ public class ReportMySQL {
 			statement.setString(i, report.getStatusInfoToJson());
 		else
 			statement.setObject(i, null);
-		insertPlayerStatement.execute();
+		insertPlayerStatement.executeUpdate();
 		ResultSet resultSet = statement.getGeneratedKeys();
 		resultSet.next();
 		long id = resultSet.getLong("id");
@@ -72,7 +72,7 @@ public class ReportMySQL {
 		else
 			statement.setObject(i++, null);
 		statement.setLong(i, report.getId());
-		updateStatement.execute();
+		updateStatement.executeUpdate();
 		statement.close();
 	}
 

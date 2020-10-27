@@ -272,9 +272,9 @@ public class AuthListener implements Listener {
 			}
 			olympaPlayer.setLastConnection(Utils.getCurrentTimeInSeconds());
 			olympaPlayer.setConnected(false);
-			olympaAccount.accountExpire();
+			olympaAccount.removeFromRedis();
 			olympaAccount.saveToDb(olympaPlayer);
-		}, 2, TimeUnit.SECONDS);
+		}, 4, TimeUnit.SECONDS);
 	}
 
 }

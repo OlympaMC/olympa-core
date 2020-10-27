@@ -7,15 +7,16 @@ import java.sql.Statement;
 import java.util.List;
 
 import fr.olympa.api.sql.DbConnection;
+import fr.olympa.api.sql.statement.OlympaStatement;
 
 public class VpnSql {
 	private static String tableName = "commun.vpn";
 	private static DbConnection dbConnection;
 
 	public static OlympaVpn addIp(OlympaVpn olympaVpn) throws SQLException {
-		String ps = "INSERT INTO " + tableName + " (`ip`, `is_vpn`, `is_mobile`, `is_host`, `pseudo`, `country`, `city`, `org`, `as`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		int i = 1;
-		PreparedStatement pstate = dbConnection.getConnection().prepareStatement(ps);
+		PreparedStatement pstate = new OlympaStatement("INSERT INTO " + tableName + " (`ip`, `is_vpn`, `is_mobile`, `is_host`, `pseudo`, `country`, `city`, `org`, `as`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);").returnGeneratedKeys()
+				.getStatement();
 		pstate.setString(i++, olympaVpn.getIp());
 		pstate.setInt(i++, olympaVpn.isProxy() ? 1 : 0);
 		pstate.setInt(i++, olympaVpn.isMobile() ? 1 : 0);
@@ -28,9 +29,11 @@ public class VpnSql {
 		pstate.setString(i++, olympaVpn.getCountry());
 		pstate.setString(i++, olympaVpn.getCity());
 		pstate.setString(i++, olympaVpn.getOrg());
-		pstate.setString(i++, olympaVpn.getAs());
-		ResultSet rs = pstate.executeQuery();
-		olympaVpn.id = rs.getLong(1);
+		pstate.setString(i, olympaVpn.getAs());
+		pstate.executeUpdate();
+		ResultSet rs = pstate.getGeneratedKeys();
+		rs.next();
+		olympaVpn.id = rs.getLong("id");
 		rs.close();
 		pstate.close();
 		return olympaVpn;

@@ -171,7 +171,7 @@ public class GroupCommand extends OlympaCommand {
 					else {
 						sendInfo("&aLe joueur &2%s&a n'est pas connecté, le changement de grade a bien été reçu (dont discord).", olympaTarget.getName());
 						AccountProvider olympaAccount2 = new AccountProvider(olympaTarget.getUniqueId());
-						olympaAccount2.saveToRedis(olympaTarget);
+						olympaAccount2.removeFromRedis();
 						olympaAccount2.saveToDb(olympaTarget);
 					}
 				};

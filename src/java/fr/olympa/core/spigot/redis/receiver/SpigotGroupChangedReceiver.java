@@ -29,11 +29,12 @@ public class SpigotGroupChangedReceiver extends JedisPubSub {
 		if (player == null)
 			return;
 		AccountProvider olympaAccount = new AccountProvider(newOlympaPlayer.getUniqueId());
-		OlympaPlayer olympaPlayer = olympaAccount.getFromCache();
-		olympaPlayer.getGroups().clear();
-		olympaPlayer.getGroups().putAll(newOlympaPlayer.getGroups());
-		olympaAccount.saveToRedis(olympaPlayer);
-		olympaAccount.saveToDb(olympaPlayer);
+		OlympaPlayer oldOlympaPlayer = olympaAccount.getFromCache();
+		oldOlympaPlayer.getGroups().clear();
+		oldOlympaPlayer.getGroups().putAll(newOlympaPlayer.getGroups());
+		olympaAccount.saveToCache(oldOlympaPlayer);
+		olympaAccount.saveToRedis(oldOlympaPlayer);
+		olympaAccount.saveToDb(oldOlympaPlayer);
 
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(player, state, newOlympaPlayer, null, timestamp, groupChanged));
 		RedisSpigotSend.sendModificationsReceive(newOlympaPlayer.getUniqueId());

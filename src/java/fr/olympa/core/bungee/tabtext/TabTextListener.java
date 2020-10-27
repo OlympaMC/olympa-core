@@ -1,5 +1,7 @@
 package fr.olympa.core.bungee.tabtext;
 
+import java.util.concurrent.TimeUnit;
+
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
@@ -16,7 +18,7 @@ public class TabTextListener implements Listener {
 		//		if (t - time < 10)
 		//			return;
 		//		time = t;
-		OlympaBungee.getInstance().getTask().runTask(() -> TabText.sendAll());
+		OlympaBungee.getInstance().getTask().runTaskLater("tabText", () -> TabText.sendAll(), 1, TimeUnit.SECONDS);
 	}
 
 	@EventHandler

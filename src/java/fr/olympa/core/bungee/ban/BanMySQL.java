@@ -13,6 +13,7 @@ import java.util.UUID;
 import com.google.common.collect.Lists;
 
 import fr.olympa.api.player.OlympaConsole;
+import fr.olympa.api.sql.statement.OlympaStatement;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
@@ -34,7 +35,7 @@ public class BanMySQL {
 	`status_id` INT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
-	
+
 	 */
 	/**
 	 * Ajoute un sanction/mute
@@ -43,8 +44,8 @@ public class BanMySQL {
 	 * @throws SQLException
 	 */
 	public static long addSanction(OlympaSanction olympaban) throws SQLException {
-		PreparedStatement pstate = OlympaBungee.getInstance().getDatabase()
-				.prepareStatement("INSERT INTO sanctions (type_id, target, reason, author_uuid, expires, created, status_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+		OlympaStatement statement = new OlympaStatement("INSERT INTO sanctions (type_id, target, reason, author_uuid, expires, created, status_id) VALUES (?, ?, ?, ?, ?, ?, ?)", true);
+		PreparedStatement pstate = statement.getStatement();
 		int i = 1;
 		pstate.setInt(i++, olympaban.getType().getId());
 		pstate.setString(i++, olympaban.getPlayer().toString());
@@ -52,7 +53,7 @@ public class BanMySQL {
 		pstate.setString(i++, olympaban.getAuthor().toString());
 		pstate.setTimestamp(i++, new Timestamp(olympaban.getExpires() * 1000L));
 		pstate.setTimestamp(i++, new Timestamp(olympaban.getCreated() * 1000L));
-		pstate.setLong(i++, olympaban.getStatus().getId());
+		pstate.setLong(i, olympaban.getStatus().getId());
 		pstate.executeUpdate();
 		ResultSet resultSet = pstate.getGeneratedKeys();
 		resultSet.next();
@@ -62,12 +63,13 @@ public class BanMySQL {
 	}
 
 	public static boolean changeCurrentSanction(OlympaSanctionHistory banhistory, long l) {
+		OlympaStatement statement = new OlympaStatement("UPDATE sanctions SET `status_id` = ?, `history` = CONCAT_WS(`;`, ?, history) WHERE `id` = ?;");
 		try {
-			PreparedStatement pstate = OlympaBungee.getInstance().getDatabase().prepareStatement("UPDATE sanctions SET `status_id` = ?, `history` = CONCAT_WS(`;`, ?, history) WHERE `id` = ?;");
+			PreparedStatement pstate = statement.getStatement();
 			pstate.setInt(1, banhistory.getStatus().getId());
 			pstate.setString(2, banhistory.toJson());
 			pstate.setLong(3, l);
-			int i = pstate.executeUpdate();
+			int i = statement.executeUpdate();
 			if (i != 1)
 				throw new SQLException("An error has occurred (" + i + " row(s) affected)");
 		} catch (SQLException e) {

@@ -467,7 +467,7 @@ public class MySQL {
 				pstate.setObject(i++, null);
 			pstate.setBoolean(i++, olympaPlayer.isVanish());
 			pstate.setLong(i, olympaPlayer.getId());
-			savePlayerStatement.execute();
+			savePlayerStatement.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
