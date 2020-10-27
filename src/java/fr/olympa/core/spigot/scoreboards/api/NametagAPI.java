@@ -59,7 +59,6 @@ public final class NametagAPI implements INametagApi {
 			for (Entry<EventPriority, NametagHandler> handlerEntry : handlers) {
 				NametagHandler handler = handlerEntry.getValue();
 				handler.updateNameTag(tag, player, to);
-				System.out.println(player.getName() + " for " + to.getName() + " : " + tag.toString());
 			}
 			List<Player> similarTags = nametags.get(tag);
 			if (similarTags == null) {
@@ -84,6 +83,11 @@ public final class NametagAPI implements INametagApi {
 	@Override
 	public void sendTeams(Player player) {
 		manager.sendTeams(player);
+	}
+	
+	@Override
+	public void createPlayerTeam(Player player) {
+		manager.setNametag(player.getName(), null, null);
 	}
 
 	/*@Override
