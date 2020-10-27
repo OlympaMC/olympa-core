@@ -21,23 +21,22 @@ public class SpigotGroupChangedReceiver extends JedisPubSub {
 		if (from.equals(OlympaCore.getInstance().getServerName()))
 			return;
 		OlympaPlayer newOlympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(args[1], OlympaPlayer.class);
+		Player player = newOlympaPlayer.getPlayer();
+		if (player == null)
+			return;
 		String[] infoGroup = args[2].split(":");
 		OlympaGroup groupChanged = OlympaGroup.getById(Integer.parseInt(infoGroup[0]));
 		long timestamp = Integer.parseInt(infoGroup[1]);
 		ChangeType state = ChangeType.get(Integer.parseInt(args[3]));
-		Player player = newOlympaPlayer.getPlayer();
-		if (player == null)
-			return;
 		AccountProvider olympaAccount = new AccountProvider(newOlympaPlayer.getUniqueId());
 		OlympaPlayer oldOlympaPlayer = olympaAccount.getFromCache();
 		oldOlympaPlayer.getGroups().clear();
 		oldOlympaPlayer.getGroups().putAll(newOlympaPlayer.getGroups());
 		olympaAccount.saveToCache(oldOlympaPlayer);
 		olympaAccount.saveToRedis(oldOlympaPlayer);
-		olympaAccount.saveToDb(oldOlympaPlayer);
 
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(player, state, newOlympaPlayer, null, timestamp, groupChanged));
 		RedisSpigotSend.sendModificationsReceive(newOlympaPlayer.getUniqueId());
-		OlympaCore.getInstance().sendMessage("&a[Redis] PLAYER change groupe for " + newOlympaPlayer.getName() + " from server " + from);
+		OlympaCore.getInstance().sendMessage("&a[Redis] PLAYER change groupe for " + newOlympaPlayer.getName() + " to " + oldOlympaPlayer.getGroupsToHumainString() + " from server " + from);
 	}
 }

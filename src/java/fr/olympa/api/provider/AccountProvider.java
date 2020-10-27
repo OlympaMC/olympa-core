@@ -80,7 +80,7 @@ public class AccountProvider implements OlympaAccount {
 	public static OlympaPlayer getFromRedis(String name) {
 		OlympaPlayer olympaPlayer = null;
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			olympaPlayer = jedis.hgetAll(name).entrySet().stream().map(entry -> GsonCustomizedObjectTypeAdapter.GSON.fromJson(entry.getValue(), playerClass))
+			olympaPlayer = jedis.keys("*").stream().filter(v -> v.contains(name)).map(v -> GsonCustomizedObjectTypeAdapter.GSON.fromJson(v, playerClass))
 					.filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
 		}
 		RedisAccess.INSTANCE.disconnect();
@@ -90,7 +90,7 @@ public class AccountProvider implements OlympaAccount {
 	public static OlympaPlayer getFromRedis(long id) {
 		OlympaPlayer olympaPlayer = null;
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			olympaPlayer = jedis.hgetAll(String.valueOf(id)).entrySet().stream().map(entry -> GsonCustomizedObjectTypeAdapter.GSON.fromJson(entry.getValue(), playerClass))
+			olympaPlayer = jedis.keys("*").stream().filter(v -> v.contains(String.valueOf(id))).map(value -> GsonCustomizedObjectTypeAdapter.GSON.fromJson(value, playerClass))
 					.filter(p -> p.getId() == id).findFirst().orElse(null);
 		}
 		RedisAccess.INSTANCE.disconnect();
