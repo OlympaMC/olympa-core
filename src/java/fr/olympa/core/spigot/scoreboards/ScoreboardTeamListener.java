@@ -1,5 +1,8 @@
 package fr.olympa.core.spigot.scoreboards;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -7,14 +10,11 @@ import org.bukkit.event.Listener;
 
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
-import fr.olympa.api.customevents.PlayerNameTagEditEvent;
 import fr.olympa.api.customevents.PlayerSexChangeEvent;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.scoreboard.tab.FakeTeam;
-import fr.olympa.api.scoreboard.tab.Nametag;
+import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.core.spigot.OlympaCore;
-import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
 
 public class ScoreboardTeamListener implements Listener {
 
@@ -25,31 +25,39 @@ public class ScoreboardTeamListener implements Listener {
 	public void on0PlayerLoad(OlympaPlayerLoadEvent event) {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
-		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new PlayerNameTagEditEvent(player, olympaPlayer, null, null));
+		//OlympaCore.getInstance().getServer().getPluginManager().callEvent(new PlayerNameTagEditEvent(player, olympaPlayer, null, null));
+		INametagApi nameTagApi = OlympaCore.getInstance().getNameTagApi();
+		nameTagApi.callNametagUpdate(olympaPlayer);
+		List<OlympaPlayer> self = Arrays.asList(olympaPlayer);
+		for (OlympaPlayer other : AccountProvider.getAll()) {
+			if (other.isConnected()) nameTagApi.callNametagUpdate(other, self);
+		}
 	}
 
 	@EventHandler
 	public void on1OlympaPlayerChangeGroup(AsyncOlympaPlayerChangeGroupEvent event) {
 		Player player = event.getPlayer();
-		if (player != null && player.isOnline())
-			OlympaCore.getInstance().getServer().getPluginManager().callEvent(new PlayerNameTagEditEvent(player, event.getOlympaPlayer(), null, null));
+		if (player != null && player.isOnline()) {
+			//OlympaCore.getInstance().getServer().getPluginManager().callEvent(new PlayerNameTagEditEvent(player, event.getOlympaPlayer(), null, null));
+			OlympaCore.getInstance().getNameTagApi().callNametagUpdate(event.getOlympaPlayer());
+		}
 	}
 
 	@EventHandler
 	public void on2PlayerSexChange(PlayerSexChangeEvent event) {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
-		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new PlayerNameTagEditEvent(player, olympaPlayer, null, null));
+		OlympaCore.getInstance().getNameTagApi().callNametagUpdate(olympaPlayer);
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	/*@EventHandler(priority = EventPriority.LOWEST)
 	public void on3PlayerNameTagEdit(PlayerNameTagEditEvent event) {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
 		Nametag nameTag = event.getNameTag();
 		nameTag.appendPrefix(olympaPlayer.getGroupPrefix());
 	}
-
+	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void on4PlayerNameTagEdit(PlayerNameTagEditEvent event) {
 		Player player = event.getPlayer();
@@ -57,7 +65,7 @@ public class ScoreboardTeamListener implements Listener {
 		Nametag nameTag = event.getNameTag();
 		if (event.isCancelled())
 			return;
-
+	
 		FakeTeam team = nameTagApi.getFakeTeam(player);
 		if (team == null || event.isForceCreateTeam())
 			nameTagApi.setNametag(player.getName(), nameTag.getPrefix(), nameTag.getSuffix(), event.getSortPriority());
@@ -65,6 +73,6 @@ public class ScoreboardTeamListener implements Listener {
 			nameTagApi.updateFakeNameTag(player.getName(), nameTag, event.getTargets());
 		else
 			nameTagApi.setNametag(player.getName(), nameTag.getPrefix(), nameTag.getSuffix(), event.getSortPriority());
-	}
+	}*/
 
 }

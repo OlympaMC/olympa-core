@@ -11,6 +11,7 @@ import java.util.Collection;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -23,6 +24,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
+import fr.olympa.api.afk.AfkHandler;
 import fr.olympa.api.command.CommandListener;
 import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.customevents.SpigotConfigReloadEvent;
@@ -44,7 +46,6 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.ErrorLoggerHandler;
 import fr.olympa.api.utils.ErrorOutputStream;
 import fr.olympa.core.spigot.afk.AfkCommand;
-import fr.olympa.core.spigot.afk.AfkListener;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
@@ -91,6 +92,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	private HologramsManager hologramsManager;
 	private ImageFrameManager imageFrameManager;
 	private VersionHandler versionHandler;
+	private AfkHandler afkHandler;
 	private String lastVersion = "unknown";
 	private String firstVersion = "unknown";
 
@@ -154,6 +156,10 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 	public SwearHandler getSwearHandler() {
 		return swearHandler;
+	}
+	
+	public AfkHandler getAfkHandler() {
+		return afkHandler;
 	}
 
 	@Override
@@ -237,7 +243,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		pluginManager.registerEvents(new NameTagListener(), this);
 		pluginManager.registerEvents(new ScoreboardTeamListener(), this);
 		pluginManager.registerEvents(regionManager = new RegionManager(), this);
-		pluginManager.registerEvents(new AfkListener(), this);
+		pluginManager.registerEvents(afkHandler = new AfkHandler(), this);
 
 		try {
 			pluginManager.registerEvents(hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml")), this);
@@ -247,6 +253,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		}
 
 		nameTagApi = new NametagAPI(new NametagManager());
+		nameTagApi.addNametagHandler(EventPriority.LOWEST, (nametag, player, to) -> nametag.appendPrefix(player.getGroupPrefix()));
 		((NametagAPI) nameTagApi).testCompat();
 
 		new GroupCommand(this).register();

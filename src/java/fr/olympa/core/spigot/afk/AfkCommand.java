@@ -21,10 +21,11 @@ public class AfkCommand extends OlympaCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		AfkPlayer afkPlayer = AfkHandler.get(player);
+		AfkHandler afkHandler = OlympaCore.getInstance().getAfkHandler();
+		AfkPlayer afkPlayer = afkHandler.get(player);
 		AfkPlayerToggleEvent event = new AfkPlayerToggleEvent(player, afkPlayer);
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(event);
-		AfkHandler.updateLastAction(player, !event.getAfkPlayer().isAfk());
+		afkHandler.updateLastAction(player, !event.getAfkPlayer().isAfk());
 		return false;
 	}
 
