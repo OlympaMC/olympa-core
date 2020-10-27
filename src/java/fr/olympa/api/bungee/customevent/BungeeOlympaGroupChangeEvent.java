@@ -6,7 +6,7 @@ import fr.olympa.api.player.OlympaPlayer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Event;
 
-public class OlympaGroupChangeEvent extends Event {
+public class BungeeOlympaGroupChangeEvent extends Event {
 
 	final private OlympaPlayer olympaPlayer;
 	final private ProxiedPlayer player;
@@ -14,7 +14,7 @@ public class OlympaGroupChangeEvent extends Event {
 	final private long timestamp;
 	final private ChangeType state;
 
-	public OlympaGroupChangeEvent(ProxiedPlayer player, OlympaPlayer olympaPlayer, OlympaGroup groupChanged, long timestamp, ChangeType state) {
+	public BungeeOlympaGroupChangeEvent(ProxiedPlayer player, OlympaPlayer olympaPlayer, OlympaGroup groupChanged, long timestamp, ChangeType state) {
 		super();
 		this.player = player;
 		this.olympaPlayer = olympaPlayer;

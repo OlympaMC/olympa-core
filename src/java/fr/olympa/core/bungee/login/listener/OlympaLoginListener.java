@@ -3,7 +3,7 @@ package fr.olympa.core.bungee.login.listener;
 import java.util.concurrent.TimeUnit;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.bungee.customevent.OlympaGroupChangeEvent;
+import fr.olympa.api.bungee.customevent.BungeeOlympaGroupChangeEvent;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
@@ -28,7 +28,7 @@ import net.md_5.bungee.event.EventPriority;
 public class OlympaLoginListener implements Listener {
 
 	@EventHandler
-	public void onOlympaGroupChange(OlympaGroupChangeEvent event) {
+	public void onOlympaGroupChange(BungeeOlympaGroupChangeEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		if (player == null)
 			return;

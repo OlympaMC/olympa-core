@@ -167,9 +167,9 @@ public class GroupCommand extends OlympaCommand {
 			if (target == null) {
 				Consumer<? super Boolean> done = b -> {
 					if (b)
-						sendInfo("&aLe joueur est connecté sur un autre serveur. Le changement de grade de &2%s&a bien été reçu sur l'infrastructure (dont discord).", olympaTarget.getName());
+						sendInfo("&6Le joueur est connecté sur un autre serveur. &aLe changement de grade de &2%s&a bien été reçu sur l'infrastructure (dont discord).", olympaTarget.getName());
 					else {
-						sendInfo("&aLe joueur &2%s&a n'est pas connecté, le changement de grade a bien été reçu (dont discord).", olympaTarget.getName());
+						sendInfo("&cLe joueur &2%s&a n'est pas connecté, &ale changement de grade a bien été reçu (dont discord).", olympaTarget.getName());
 						AccountProvider olympaAccount2 = new AccountProvider(olympaTarget.getUniqueId());
 						olympaAccount2.removeFromRedis();
 						olympaAccount2.saveToDb(olympaTarget);
@@ -180,10 +180,10 @@ public class GroupCommand extends OlympaCommand {
 			} else {
 				olympaAccount.saveToRedis(olympaTarget);
 				olympaAccount.saveToDb(olympaTarget);
+				olympaAccount.saveToCache(olympaTarget);
 				Prefix.DEFAULT.sendMessage(target, msg.replace("%group", newGroup.getName()).replace("%time", timestampString));
 				OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, state, olympaTarget, null, timestamp, newGroup));
 				RedisSpigotSend.sendOlympaGroupChange(olympaTarget, newGroup, timestamp, state, null);
-				olympaAccount.saveToCache(olympaTarget);
 			}
 			if (player != null && (target == null || !SpigotUtils.isSamePlayer(player, target)))
 				if (msg == null)

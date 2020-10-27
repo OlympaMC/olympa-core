@@ -3,7 +3,7 @@ package fr.olympa.core.bungee.redis.receiver.site;
 import java.sql.SQLException;
 import java.util.UUID;
 
-import fr.olympa.api.bungee.customevent.OlympaGroupChangeEvent;
+import fr.olympa.api.bungee.customevent.BungeeOlympaGroupChangeEvent;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.match.RegexMatcher;
@@ -54,6 +54,6 @@ public class SiteGroupChangeReceiver extends JedisPubSub {
 		}
 		OlympaBungee.getInstance().sendMessage("&a[DEBUG] PLAYER CHANGE GROUPE from Redis for " + olympaPlayer.getName() + " from site");
 		ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
-		ProxyServer.getInstance().getPluginManager().callEvent(new OlympaGroupChangeEvent(player, olympaPlayer, groupChanged, timestamp, state));
+		ProxyServer.getInstance().getPluginManager().callEvent(new BungeeOlympaGroupChangeEvent(player, olympaPlayer, groupChanged, timestamp, state));
 	}
 }

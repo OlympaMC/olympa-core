@@ -363,7 +363,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public void setGroup(OlympaGroup group) {
-		this.setGroup(group, 0l);
+		setGroup(group, 0l);
 	}
 
 	@Override
