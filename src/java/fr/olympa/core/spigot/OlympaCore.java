@@ -232,6 +232,10 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 		//		pluginManager.registerEvents(new TestListener(), this);
 
+		nameTagApi = new NametagAPI(new NametagManager());
+		nameTagApi.addNametagHandler(EventPriority.LOWEST, (nametag, player, to) -> nametag.appendPrefix(player.getGroupPrefix()));
+		((NametagAPI) nameTagApi).testCompat();
+		
 		pluginManager.registerEvents(this, this);
 		pluginManager.registerEvents(new DataManagmentListener(), this);
 		pluginManager.registerEvents(new GroupListener(), this);
@@ -252,10 +256,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
 			e.printStackTrace();
 		}
-
-		nameTagApi = new NametagAPI(new NametagManager());
-		nameTagApi.addNametagHandler(EventPriority.LOWEST, (nametag, player, to) -> nametag.appendPrefix(player.getGroupPrefix()));
-		((NametagAPI) nameTagApi).testCompat();
 
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();

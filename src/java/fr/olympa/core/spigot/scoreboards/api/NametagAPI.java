@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -17,6 +16,7 @@ import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.scoreboard.tab.Nametag;
+import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.scoreboards.NametagManager;
 import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
 
@@ -38,16 +38,20 @@ public final class NametagAPI implements INametagApi {
 	public void addNametagHandler(EventPriority priority, NametagHandler handler) {
 		handlers.add(new AbstractMap.SimpleEntry<>(priority, handler));
 		handlers.sort((o1, o2) -> Integer.compare(o1.getKey().getSlot(), o2.getKey().getSlot()));
+		OlympaCore.getInstance().sendMessage("+1 nametag handler, priorité §6%s", priority.name());
 	}
 	
 	@Override
 	public void callNametagUpdate(OlympaPlayer player) {
-		callNametagUpdate(player, Bukkit.getOnlinePlayers().stream().map(onlinePlayer -> AccountProvider.<OlympaPlayer>get(onlinePlayer.getUniqueId())).collect(Collectors.toList()));
+		callNametagUpdate(player, AccountProvider.getAll());
 	}
 	
 	@Override
 	public void callNametagUpdate(OlympaPlayer player, Collection<? extends OlympaPlayer> toPlayers) {
-		if (!player.isConnected()) return;
+		if (!player.isConnected()) {
+			OlympaCore.getInstance().sendMessage("§cTentative de mise à jour du nametag du joueur hors-ligne §4%s", player.getName());
+			return;
+		}
 		Map<Nametag, List<Player>> nametags = new HashMap<>();
 		for (OlympaPlayer to : toPlayers) {
 			if (!to.isConnected()) continue;
@@ -55,6 +59,7 @@ public final class NametagAPI implements INametagApi {
 			for (Entry<EventPriority, NametagHandler> handlerEntry : handlers) {
 				NametagHandler handler = handlerEntry.getValue();
 				handler.updateNameTag(tag, player, to);
+				System.out.println(player.getName() + " for " + to.getName() + " : " + tag.toString());
 			}
 			List<Player> similarTags = nametags.get(tag);
 			if (similarTags == null) {
