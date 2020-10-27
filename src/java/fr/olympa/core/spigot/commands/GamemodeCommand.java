@@ -105,7 +105,7 @@ public class GamemodeCommand extends OlympaCommand {
 		} else if (args.length >= 1)
 			targetName = args[0];
 
-		if (args.length >= 2 && targetName != null) {
+		if (targetName != null) {
 			target = Bukkit.getPlayer(targetName);
 			if (target == null) {
 				sendUnknownPlayer(targetName);
@@ -131,7 +131,7 @@ public class GamemodeCommand extends OlympaCommand {
 		}
 		target.setGameMode(gm.getGameMode());
 		if (target != player)
-			sendMessage(Prefix.DEFAULT_GOOD, "&2%s&a est désormais en gamemode &2%s&a(avant %s).", target.getName(), gm.getName(), oldGamemode);
+			sendMessage(Prefix.DEFAULT_GOOD, "&2%s&a est désormais en gamemode &2%s&a (avant &2%s&a).", target.getName(), gm.getName(), oldGamemode);
 		Prefix.DEFAULT_GOOD.sendMessage(target, "&aTu es désormais en gamemode &2%s&a.", gm.getName());
 		return false;
 	}

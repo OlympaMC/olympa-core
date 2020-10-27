@@ -55,6 +55,7 @@ import fr.olympa.core.spigot.commands.GenderCommand;
 import fr.olympa.core.spigot.commands.PermissionCommand;
 import fr.olympa.core.spigot.commands.PingCommand;
 import fr.olympa.core.spigot.commands.RestartCommand;
+import fr.olympa.core.spigot.commands.TpCommand;
 import fr.olympa.core.spigot.commands.TpsCommand;
 import fr.olympa.core.spigot.datamanagment.DataManagmentListener;
 import fr.olympa.core.spigot.datamanagment.OnLoadListener;
@@ -265,6 +266,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new PermissionCommand(this).register();
 		new PingCommand(this).register();
 		new HologramsCommand(hologramsManager).register();
+		new TpCommand(this).register();
 
 		new AntiWD(this);
 		getTask().runTask(() -> versionHandler = new VersionHandler(this));

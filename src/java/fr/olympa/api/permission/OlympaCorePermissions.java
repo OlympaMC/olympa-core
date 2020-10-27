@@ -32,8 +32,8 @@ public class OlympaCorePermissions {
 	public static final OlympaBungeePermission BAN_MUTE_COMMAND = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
 	public static final OlympaBungeePermission BAN_UNMUTE_COMMAND = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
 	public static final OlympaBungeePermission BAN_HISTORY_COMMAND = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
-	public static final OlympaBungeePermission BAN_SEEBANMSG = new OlympaBungeePermission(OlympaGroup.BUILDER);
-	public static final OlympaBungeePermission BAN_BYPASS_BAN = new OlympaBungeePermission(OlympaGroup.BUILDER);
+	public static final OlympaBungeePermission BAN_SEEBANMSG = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
+	public static final OlympaBungeePermission BAN_BYPASS_BAN = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 
 	public static final OlympaPermission UTILS_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 	public static final OlympaPermission GETUUID_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
@@ -72,9 +72,10 @@ public class OlympaCorePermissions {
 	public static final OlympaPermission SPIGOT_LAG_COMMAND = new OlympaPermission(OlympaGroup.PLAYER);
 
 	// Don't fogot to change it in ZTA
-	public static final OlympaPermission GAMEMODE_COMMAND = new OlympaPermission(OlympaGroup.BUILDER);
-	public static final OlympaPermission GAMEMODE_COMMAND_CREATIVE = new OlympaPermission(OlympaGroup.BUILDER);
-	public static final OlympaPermission FLY_COMMAND = new OlympaPermission(OlympaGroup.BUILDER);
+	public static final OlympaPermission GAMEMODE_COMMAND = new OlympaPermission(OlympaGroup.GRAPHISTE);
+	public static final OlympaPermission TP_COMMAND = new OlympaPermission(OlympaGroup.GRAPHISTE);
+	public static final OlympaPermission GAMEMODE_COMMAND_CREATIVE = new OlympaPermission(OlympaGroup.GRAPHISTE);
+	public static final OlympaPermission FLY_COMMAND = new OlympaPermission(OlympaGroup.GRAPHISTE);
 
 	public static final OlympaPermission BUNGEE_CONFIG_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaPermission SPIGOT_CONFIG_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
