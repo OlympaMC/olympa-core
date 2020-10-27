@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
+import fr.olympa.api.afk.AfkHandler;
 import fr.olympa.api.hook.IProtocolSupport;
 import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
@@ -37,6 +38,8 @@ public abstract class OlympaSpigot extends OlympaAPIPlugin implements OlympaCore
 
 	public abstract IProtocolSupport getProtocolSupport();
 
+	public abstract AfkHandler getAfkHandler();
+	
 	@Override
 	public String getServerName() {
 		return serverName != null ? serverName : serverNameIp;

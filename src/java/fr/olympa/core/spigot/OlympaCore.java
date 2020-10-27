@@ -158,6 +158,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		return swearHandler;
 	}
 	
+	@Override
 	public AfkHandler getAfkHandler() {
 		return afkHandler;
 	}
