@@ -13,7 +13,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import fr.olympa.api.afk.AfkHandler;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaCorePermissions;
@@ -21,6 +20,7 @@ import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.spigot.OlympaCore;
 
 public class ChatListener implements Listener {
 
@@ -77,7 +77,7 @@ public class ChatListener implements Listener {
 			target.playSound(target.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 3.0F, 0.533F);
 			new FakeMsg(format, player.getDisplayName(), messageToTarget).send(target);
 			event.getRecipients().remove(target);
-			if (AfkHandler.isAfk(target))
+			if (OlympaCore.getInstance().getAfkHandler().isAfk(target))
 				Prefix.INFO.sendMessage(player, "&7%s est AFK et risque de ne pas te répondre.", target.getName());
 		}
 	}

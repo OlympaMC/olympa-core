@@ -65,6 +65,7 @@ public class NametagManager {
 	}
 
 	public void changeFakeNametag(String player, Nametag nameTag, Collection<? extends Player> toPlayers) {
+		//System.out.println("Changed " + player + " for " + toPlayers.size() + " players : " + nameTag.toString());
 		FakeTeam previous = getFakeTeam(player);
 		String suffix = nameTag.getSuffix();
 		String prefix = nameTag.getPrefix();

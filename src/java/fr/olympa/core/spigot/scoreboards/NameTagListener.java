@@ -15,6 +15,7 @@ public class NameTagListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		OlympaCore.getInstance().getNameTagApi().sendTeams(player);
+		OlympaCore.getInstance().getNameTagApi().createPlayerTeam(player);
 	}
 
 	@EventHandler
