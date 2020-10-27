@@ -67,7 +67,7 @@ public final class NametagAPI implements INametagApi {
 			}
 			similarTags.add(to.getPlayer());
 		}
-		nametags.forEach((tag, players) -> updateFakeNameTag(player.getPlayer(), tag, players));
+		nametags.forEach((tag, players) -> updateFakeNameTag(player.getName(), tag, players));
 	}
 	
 	@Override

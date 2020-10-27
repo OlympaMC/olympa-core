@@ -29,7 +29,7 @@ public class ChatListener implements Listener {
 		return format.substring(index - 3, index - 1);
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler (priority = EventPriority.LOW)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
