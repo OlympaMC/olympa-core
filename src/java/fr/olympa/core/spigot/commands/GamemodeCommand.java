@@ -65,7 +65,7 @@ public class GamemodeCommand extends OlympaCommand {
 		}
 
 		public boolean isGameMode(GameMode gameMode) {
-			return gameMode.toString() == toString();
+			return gameMode.toString().equals(toString());
 		}
 
 		public static Gm get(GameMode gameMode) {
@@ -75,9 +75,9 @@ public class GamemodeCommand extends OlympaCommand {
 
 	public GamemodeCommand(Plugin plugin) {
 		super(plugin, "gamemode", "Change ton mode de jeux", OlympaCorePermissions.GAMEMODE_COMMAND, "gm", "gms", "gma", "gmc", "gmsp");
-		addArgs(false, "adventure", "creative", "survival", "spectator");
-		addArgs(false, "joueur");
-		allowConsole = false;
+		addArgs(false, "adventure", "creative", "survival", "spectator", "JOUEUR");
+		addArgs(false, "JOUEUR");
+		allowConsole = true;
 	}
 
 	@Override
@@ -86,20 +86,26 @@ public class GamemodeCommand extends OlympaCommand {
 		Gm gm = null;
 		if (!label.equals("gm") && label.startsWith("gm"))
 			gm = Gm.getByStartWith(label.substring(2));
-		if (gm == null)
-			if (args.length == 0 || (gm = Gm.get(args[0])) == null) {
+		String targetName = null;
+		if (gm == null) {
+			if (args.length == 1) {
+				target = Bukkit.getPlayer(args[0]);
+				if (target == null) {
+					sendUnknownPlayer(args[0]);
+					return false;
+				}
+				sendMessage(Prefix.DEFAULT_GOOD, "&2%s&a est en gamemode &2%s&a.", target.getName(), Gm.get(target.getGameMode()).getName());
+				return true;
+			}
+			if (args.length < 2 || (gm = Gm.get(args[0])) == null) {
 				sendUsage(label);
 				return false;
 			}
-		if (target == null) {
-			String targetName;
-			if (args.length == 0) {
-				sendUsage(label);
-				return false;
-			} else if (args.length == 1)
-				targetName = args[0];
-			else
-				targetName = args[1];
+			targetName = args[1];
+		} else if (args.length >= 1)
+			targetName = args[0];
+
+		if (args.length >= 2 && targetName != null) {
 			target = Bukkit.getPlayer(targetName);
 			if (target == null) {
 				sendUnknownPlayer(targetName);
@@ -110,7 +116,12 @@ public class GamemodeCommand extends OlympaCommand {
 			sendDoNotHavePermission();
 			return false;
 		}
-		String oldGamemode = Gm.get(target.getGameMode()).getName();
+		Gm oldgm = Gm.get(target.getGameMode());
+		if (oldgm == null) {
+			sendError("Gamemode %s inconnu.", target.getGameMode().name().toLowerCase());
+			return false;
+		}
+		String oldGamemode = oldgm.getName();
 		if (gm.isGameMode(target.getGameMode())) {
 			if (target != player)
 				sendMessage(Prefix.DEFAULT_BAD, "&4%s&c est déjà en gamemode &4%s&c.", target.getName(), oldGamemode);

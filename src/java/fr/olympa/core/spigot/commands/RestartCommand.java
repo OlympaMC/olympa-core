@@ -3,6 +3,7 @@ package fr.olympa.core.spigot.commands;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -20,6 +21,7 @@ public class RestartCommand extends OlympaCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		Bukkit.getOnlinePlayers().forEach(p -> p.kickPlayer("Server is restarting"));
 		Consumer<String> function = player != null ? out -> sender.sendMessage(out) : null;
 		Runtime.getRuntime().addShutdownHook(OlympaRuntime.action("sh start.sh", function));
 		plugin.getServer().shutdown();

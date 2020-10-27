@@ -27,9 +27,16 @@
 		<repository>
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>daily</updatePolicy>
+			</releases>
 		</repository>
 	</repositories>
-	
 	<dependencies>
 		<dependency>
 			<groupId>com.github.ProtocolSupport</groupId>
@@ -57,12 +64,6 @@
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot</artifactId>
 			<version>1.15.2-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>fr.olympa</groupId>
-			<artifactId>olympa-api</artifactId>
-			<version>[0.0.1-SNAPSHOT,)</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

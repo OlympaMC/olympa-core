@@ -30,7 +30,7 @@ public class CancerListener implements Listener {
 	private Pattern matchIpv4 = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
 	private Pattern matchLink = Pattern.compile("^(https?:\\/\\/(www\\\\.)?)?([-\\w]+(\\.|[0-9]))+(fr|org|net|com|xxx|name|xyr|gg|ly|be|lu)$");
 	private Pattern matchLink2 = Pattern.compile("^(https?:\\/\\/)?(www|play|pvp)\\.([-\\w]+(\\.|[0-9]))+(fr|org|net|com|xxx|name|xyr|gg|ly|be|lu|shop)$");
-	private Pattern matchFlood = Pattern.compile("\\S*((.)\\2{3,})\\S*");
+	private Pattern matchFlood = Pattern.compile("(.)\\1{2,}");
 	private Pattern matchNoWord = Pattern.compile("[^\\w\\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ\\-=+÷²!@#%^&*(),.?\\\"':{}|\\[\\]<>~\\\\€$£\\/°]+");
 
 	@EventHandler
@@ -150,56 +150,52 @@ public class CancerListener implements Listener {
 		// TODO check players names
 		try {
 			matcher = matchFlood.matcher(message);
-
 			int i = 0;
 			boolean find = false;
-			if (matcher.find()) {
-				do {
-					String wordFlooded = matcher.group();
-					String charsFlooded = matcher.group(1);
-					String charFlooded = matcher.group(2);
-
-					if (Bukkit.getPlayer(wordFlooded) != null) {
+			if (matcher.find())
+				for (String wordFlooded : message.split(" ")) {
+					if (Bukkit.getPlayer(wordFlooded) != null)
+						continue;
+					matcher = matchFlood.matcher(wordFlooded);
+					i = 0;
+					while (matcher.find()) {
+						String charsFlooded = matcher.group();
+						String charFlooded = matcher.group(1);
 						String wordWithoutFlood = wordFlooded.replace(charsFlooded, charFlooded);
 						message = message.replace(wordFlooded, wordWithoutFlood);
 						find = true;
+						if (++i > 10) {
+							OlympaCore.getInstance().sendMessage("&4ERROR &cBoucle infini dans la gestion de chat pour le flood.");
+							break;
+						}
 					}
-					if (++i > 50) {
-						OlympaCore.getInstance().sendMessage("&4ERROR &cBoucle infini dans la gestion de chat pour le flood.");
-						break;
+					if (find) {
+						event.setMessage(message);
+						player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci d'éviter le flood."));
 					}
-					matcher = matchFlood.matcher(message);
-				} while (matcher.find());
-
-				if (find) {
-					event.setMessage(message);
-					player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci d'éviter le flood."));
 				}
-			}
 			i = 0;
 			find = false;
 			// Si le message contient des charatères non autorisé
 			matcher = matchNoWord.matcher(message);
-			if (matcher.find()) {
-				do {
-					String chars = matcher.group();
-					message = message.replace(chars, "");
-					if (++i > 100) {
-						OlympaCore.getInstance().sendMessage("&4ERROR &cBoucle infini dans la gestion de chat pour les symboles interdits.");
-						break;
-					}
-					matcher = matchNoWord.matcher(message);
-				} while (matcher.find());
-
-				if (find) {
-					event.setMessage(message);
-					player.sendMessage(ColorUtils.color(Prefix.BAD + "Les symboles chelou sont interdit."));
+			while (matcher.find()) {
+				String chars = matcher.group();
+				message = message.replace(chars, "");
+				if (++i > 100) {
+					OlympaCore.getInstance().sendMessage("&4ERROR &cBoucle infini dans la gestion de chat pour les symboles interdits.");
+					break;
 				}
+				find = true;
 			}
-
+			if (find) {
+				event.setMessage(message);
+				player.sendMessage(ColorUtils.color(Prefix.BAD + "Les symboles chelou sont interdit."));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		olympaTchat.setLastMsg(msgNFD);
+		if (event.getMessage().isBlank())
+			event.setCancelled(true);
 	}
 }
