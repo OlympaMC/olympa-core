@@ -72,22 +72,22 @@ public final class NametagAPI implements INametagApi {
 	
 	@Override
 	public void reset() {
-		manager.reset();
+		//manager.reset();
 	}
 	
 	@Override
 	public void reset(String player) {
-		manager.reset(player);
+		//manager.reset(player);
 	}
 	
 	@Override
 	public void sendTeams(Player player) {
-		manager.sendTeams(player);
+		//manager.sendTeams(player);
 	}
 	
 	@Override
 	public void createPlayerTeam(Player player) {
-		manager.setNametag(player.getName(), null, null);
+		//manager.setNametag(player.getName(), null, null);
 	}
 
 	/*@Override
