@@ -30,6 +30,7 @@ public class NametagManager {
 			suffix = previous.getSuffix();*/
 		if (nameTag.isEmpty()) return;
 		FakeTeam team = new FakeTeam(nameTag.getPrefix(), nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix(), -1);
+		team.addMember(player);
 		new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers()).send(toPlayers);
 		//new PacketWrapper(team.getName(), 3, Arrays.asList(player)).send(toPlayers);
 	}
