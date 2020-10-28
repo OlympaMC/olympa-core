@@ -1,8 +1,8 @@
 package fr.olympa.core.spigot.scoreboards;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.entity.Player;
 
@@ -15,14 +15,29 @@ public class NametagManager {
 
 	public static boolean DISABLE_PUSH_ALL_TAGS = true;
 
-	private final HashMap<String, FakeTeam> TEAMS = new HashMap<>();
+	private final Map<Player, Map<Player, FakeTeam>> playerTeams = new HashMap<>(); //TODO
+	
+	public void changeFakeNametag(String player, Nametag nameTag, Collection<? extends Player> toPlayers) {
+		System.out.println("Changed " + player + " for players " + toPlayers.toString() + " : " + nameTag.toString());
+		/*FakeTeam previous = getFakeTeam(player);
+		String suffix = nameTag.getSuffix();
+		String prefix = nameTag.getPrefix();
+		if (previous == null || prefix == null && previous.getSuffix().equals(suffix) || suffix == null && previous.getPrefix().equals(prefix))
+			return;
+		if (prefix == null)
+			prefix = previous.getPrefix();
+		else if (suffix == null)
+			suffix = previous.getSuffix();*/
+		if (nameTag.isEmpty()) return;
+		FakeTeam team = new FakeTeam(nameTag.getPrefix(), nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix(), -1);
+		new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers()).send(toPlayers);
+		//new PacketWrapper(team.getName(), 3, Arrays.asList(player)).send(toPlayers);
+	}
+	
+	/*private final HashMap<String, FakeTeam> TEAMS = new HashMap<>();
 	private final HashMap<String, FakeTeam> CACHED_FAKE_TEAMS = new HashMap<>();
-
-	/**
-	 * Adds a player to a FakeTeam. If they are already on this team, we do NOT
-	 * change that.
-	 */
-	/*private void addPlayerToTeam(String player, String prefix, String suffix, int sortPriority) {
+	
+	private void addPlayerToTeam(String player, String prefix, String suffix, int sortPriority) {
 		FakeTeam previous = getFakeTeam(player);
 		if (previous != null && previous.isSimilar(prefix, suffix))
 			return;
@@ -57,41 +72,17 @@ public class NametagManager {
 	
 	private void cache(String player, FakeTeam fakeTeam) {
 		CACHED_FAKE_TEAMS.put(player, fakeTeam);
-	}*/
-
-	public void changeFakeNametag(String player, Nametag nameTag, Collection<? extends Player> toPlayers) {
-		System.out.println("Changed " + player + " for players " + toPlayers.toString() + " : " + nameTag.toString());
-		/*FakeTeam previous = getFakeTeam(player);
-		String suffix = nameTag.getSuffix();
-		String prefix = nameTag.getPrefix();
-		if (previous == null || prefix == null && previous.getSuffix().equals(suffix) || suffix == null && previous.getPrefix().equals(prefix))
-			return;
-		if (prefix == null)
-			prefix = previous.getPrefix();
-		else if (suffix == null)
-			suffix = previous.getSuffix();*/
-		if (nameTag.isEmpty()) return;
-		FakeTeam team = new FakeTeam(nameTag.getPrefix(), nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix(), -1);
-		PacketWrapper packet = new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 2, new ArrayList<>());
-		if (toPlayers != null && !toPlayers.isEmpty())
-			packet.send(toPlayers);
-		else
-			packet.send();
 	}
-
-	/*private FakeTeam decache(String player) {
+	
+	private FakeTeam decache(String player) {
 		return CACHED_FAKE_TEAMS.remove(player);
 	}
 	
 	public FakeTeam getFakeTeam(String player) {
 		return CACHED_FAKE_TEAMS.get(player);
-	}*/
-
-	/**
-	 * Gets the current team given a prefix and suffix If there is no team similar
-	 * to this, then a new team is created.
-	 */
-	/*private FakeTeam getFakeTeam(String prefix, String suffix) {
+	}
+	
+	private FakeTeam getFakeTeam(String prefix, String suffix) {
 		for (FakeTeam fakeTeam : TEAMS.values())
 			if (fakeTeam.isSimilar(prefix, suffix))
 				return fakeTeam;
@@ -148,12 +139,9 @@ public class NametagManager {
 	public void sendTeams(Player player) {
 		for (FakeTeam fakeTeam : TEAMS.values())
 			new PacketWrapper(fakeTeam.getName(), fakeTeam.getPrefix(), fakeTeam.getSuffix(), 0, fakeTeam.getMembers()).send(player);
-	}*/
-
-	// ==============================================================
-	// Below are public methods to modify certain data
-	// ==============================================================
-	/*public void setNametag(String player, String prefix, String suffix) {
+	}
+	
+	public void setNametag(String player, String prefix, String suffix) {
 		setNametag(player, prefix, suffix, -1);
 	}
 	
