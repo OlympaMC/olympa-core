@@ -17,7 +17,7 @@ public class NametagManager {
 
 	private final Map<Player, Map<Player, FakeTeam>> playerTeams = new HashMap<>(); //TODO
 	
-	public void changeFakeNametag(String player, Nametag nameTag, Collection<? extends Player> toPlayers) {
+	public void changeFakeNametag(String player, Nametag nameTag, int sortPriority, Collection<? extends Player> toPlayers) {
 		System.out.println("Changed " + player + " for players " + toPlayers.toString() + " : " + nameTag.toString());
 		/*FakeTeam previous = getFakeTeam(player);
 		String suffix = nameTag.getSuffix();
@@ -29,7 +29,7 @@ public class NametagManager {
 		else if (suffix == null)
 			suffix = previous.getSuffix();*/
 		if (nameTag.isEmpty()) return;
-		FakeTeam team = new FakeTeam(nameTag.getPrefix(), nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix(), -1);
+		FakeTeam team = new FakeTeam(nameTag.getPrefix(), nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix(), sortPriority);
 		team.addMember(player);
 		new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers()).send(toPlayers);
 		//new PacketWrapper(team.getName(), 3, Arrays.asList(player)).send(toPlayers);

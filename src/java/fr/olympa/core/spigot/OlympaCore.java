@@ -67,7 +67,6 @@ import fr.olympa.core.spigot.protocolsupport.ViaVersionHook;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.report.commands.ReportCommand;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
-import fr.olympa.core.spigot.scoreboards.NameTagListener;
 import fr.olympa.core.spigot.scoreboards.NametagManager;
 import fr.olympa.core.spigot.scoreboards.ScoreboardTeamListener;
 import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
@@ -171,7 +170,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	@Override
 	public void onDisable() {
 		setStatus(ServerStatus.CLOSE);
-		nameTagApi.reset();
 		hologramsManager.unload();
 		super.onDisable();
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
@@ -245,7 +243,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		pluginManager.registerEvents(new ChatListener(), this);
 		pluginManager.registerEvents(new CommandListener(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
-		pluginManager.registerEvents(new NameTagListener(), this);
 		pluginManager.registerEvents(new ScoreboardTeamListener(), this);
 		pluginManager.registerEvents(regionManager = new RegionManager(), this);
 		pluginManager.registerEvents(afkHandler = new AfkHandler(), this);
