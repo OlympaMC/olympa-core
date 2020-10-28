@@ -82,9 +82,11 @@ public class RedisSpigotSend {
 		if (callable != null) {
 			modificationReceive.put(uuid, callable);
 			OlympaCore.getInstance().getTask().runTaskLater("waitModifications" + uuid.toString(), () -> {
-				callable.accept(false);
+				if (!modificationReceive.containsKey(uuid))
+					return;
 				modificationReceive.remove(uuid);
-			}, 2 * 20);
+				callable.accept(false);
+			}, 4, TimeUnit.SECONDS);
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}

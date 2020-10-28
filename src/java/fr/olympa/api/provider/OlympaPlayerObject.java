@@ -275,8 +275,8 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public boolean isConnected() {
-		//return connected != null ? connected : false;
-		return getPlayer() != null && getPlayer().isOnline();
+		return connected != null ? connected : false;
+		//		return getPlayer() != null && getPlayer().isOnline();
 	}
 
 	@Override

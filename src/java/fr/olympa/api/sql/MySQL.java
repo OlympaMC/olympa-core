@@ -17,6 +17,9 @@ import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import com.google.gson.Gson;
+
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
@@ -467,7 +470,9 @@ public class MySQL {
 				pstate.setObject(i++, null);
 			pstate.setBoolean(i++, olympaPlayer.isVanish());
 			pstate.setLong(i, olympaPlayer.getId());
-			savePlayerStatement.executeUpdate();
+			pstate.executeUpdate();
+			pstate.close();
+			LinkSpigotBungee.Provider.link.sendMessage("&2Sauvegarde DB pour %s %s ", olympaPlayer.getName(), new Gson().toJson(olympaPlayer));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

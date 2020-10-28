@@ -82,7 +82,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 			for (Entry<Long, String> entry : histName.entrySet()) {
 				out2 = new TextComponent(TextComponent.fromLegacyText("§b" + entry.getValue()));
 				out2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(
-						String.join("§cChangé depuis %s, le %s", Utils.timestampToDuration(entry.getKey()), Utils.timestampToDate(target.getLastConnection())))));
+						String.format("§cChangé depuis §4%s§c, le §4%s", Utils.timestampToDuration(entry.getKey()), Utils.timestampToDate(target.getLastConnection())))));
 				out.addExtra(out2);
 				if (--size != 0)
 					out.addExtra(new TextComponent(TextComponent.fromLegacyText("§3, §b")));

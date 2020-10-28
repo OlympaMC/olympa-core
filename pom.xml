@@ -32,7 +32,7 @@
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
 			<releases>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
 				<updatePolicy>daily</updatePolicy>
 			</releases>
 		</repository>
