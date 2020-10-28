@@ -30,7 +30,7 @@ public class ScoreboardTeamListener implements Listener {
 		nameTagApi.callNametagUpdate(olympaPlayer);
 		List<OlympaPlayer> self = Arrays.asList(olympaPlayer);
 		for (OlympaPlayer other : AccountProvider.getAll()) {
-			if (other != olympaPlayer && other.isConnected()) nameTagApi.callNametagUpdate(other, self);
+			if (other != olympaPlayer && other.getPlayer() != null && other.getPlayer().isOnline()) nameTagApi.callNametagUpdate(other, self);
 		}
 	}
 

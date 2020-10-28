@@ -27,34 +27,35 @@ import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
 public final class NametagAPI implements INametagApi {
 
 	private NametagManager manager;
-	
+
 	private List<Entry<EventPriority, NametagHandler>> handlers = new ArrayList<>();
-	
+
 	public NametagAPI(NametagManager manager) {
 		this.manager = manager;
 	}
-	
+
 	@Override
 	public void addNametagHandler(EventPriority priority, NametagHandler handler) {
 		handlers.add(new AbstractMap.SimpleEntry<>(priority, handler));
 		handlers.sort((o1, o2) -> Integer.compare(o1.getKey().getSlot(), o2.getKey().getSlot()));
 		OlympaCore.getInstance().sendMessage("+1 nametag handler, priorité §6%s", priority.name());
 	}
-	
+
 	@Override
 	public void callNametagUpdate(OlympaPlayer player) {
 		callNametagUpdate(player, AccountProvider.getAll());
 	}
-	
+
 	@Override
 	public void callNametagUpdate(OlympaPlayer player, Collection<? extends OlympaPlayer> toPlayers) {
-		if (!player.isConnected()) {
+		if (player.getPlayer() == null || !player.getPlayer().isOnline()) {
 			OlympaCore.getInstance().sendMessage("§cTentative de mise à jour du nametag du joueur hors-ligne §4%s", player.getName());
 			return;
 		}
 		Map<Nametag, List<Player>> nametags = new HashMap<>();
 		for (OlympaPlayer to : toPlayers) {
-			if (!to.isConnected()) continue;
+			if (to.getPlayer() == null || !to.getPlayer().isOnline())
+				continue;
 			Nametag tag = new Nametag();
 			for (Entry<EventPriority, NametagHandler> handlerEntry : handlers) {
 				NametagHandler handler = handlerEntry.getValue();
@@ -69,7 +70,7 @@ public final class NametagAPI implements INametagApi {
 		}
 		nametags.forEach((tag, players) -> manager.changeFakeNametag(player.getName(), tag, player.getGroup().getIndex(), players));
 	}
-	
+
 	public boolean testCompat() {
 		PacketWrapper wrapper = new PacketWrapper("TEST", "&f", "", 0, new ArrayList<>());
 		wrapper.send();
