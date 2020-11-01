@@ -163,10 +163,10 @@ public class UtilsCommand extends ComplexCommand {
 		Region region = trackedRegion.getRegion();
 		sendSuccess("Région §e%s §a(%s)", trackedRegion.getID(), region.getWorld().getName());
 		sendSuccess("Type: §e%s", region.getClass().getSimpleName());
-		sendSuccess("Min: §e%s §a| Max: §e%s", SpigotUtils.convertLocationToString(region.getMin()), SpigotUtils.convertLocationToString(region.getMax()));
+		sendSuccess("Min: §e%s §a| Max: §e%s", SpigotUtils.convertLocationToHumanString(region.getMin()), SpigotUtils.convertLocationToHumanString(region.getMax()));
 		sendSuccess("%d points:", region.getLocations().size());
 		for (Location location : region.getLocations()) {
-			sendMessage(Prefix.DEFAULT, "- " + SpigotUtils.convertLocationToString(location));
+			sendMessage(Prefix.DEFAULT, "- " + SpigotUtils.convertLocationToHumanString(location));
 		}
 		sendSuccess("%d flag(s): §e%s", trackedRegion.getFlags().size(), trackedRegion.getFlags().stream().map(flag -> flag.getClass().getSimpleName()).collect(Collectors.joining(",", "[", "]")));
 		sendSuccess("Priorité: §e%s", trackedRegion.getPriority().name());

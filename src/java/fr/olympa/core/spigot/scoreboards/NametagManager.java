@@ -18,7 +18,6 @@ public class NametagManager {
 	private final Map<Player, Map<Player, FakeTeam>> playerTeams = new HashMap<>(); //TODO
 	
 	public void changeFakeNametag(String player, Nametag nameTag, int sortPriority, Collection<? extends Player> toPlayers) {
-		System.out.println("Changed " + player + " for players " + toPlayers.toString() + " : " + nameTag.toString());
 		/*FakeTeam previous = getFakeTeam(player);
 		String suffix = nameTag.getSuffix();
 		String prefix = nameTag.getPrefix();
