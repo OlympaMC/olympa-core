@@ -87,7 +87,7 @@ public class GroupCommand extends OlympaCommand {
 			String groupString = olympaTarget.getGroupsToHumainString();
 			sendInfo("%player est dans le%s groupe%s %group."
 					.replace("%player", targetNamePrefix)
-					.replaceAll("%s", groups.size() > 1 ? "s" : "")
+					.replace("%s", groups.size() > 1 ? "s" : "")
 					.replace("%group", Prefix.INFO.getColor2() + groupString + Prefix.INFO.getColor()));
 		} else {
 			String arg1 = args[1];

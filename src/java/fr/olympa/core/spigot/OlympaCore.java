@@ -26,8 +26,10 @@ import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
 import fr.olympa.api.afk.AfkHandler;
 import fr.olympa.api.command.CommandListener;
+import fr.olympa.api.command.essentials.EcseeCommand;
 import fr.olympa.api.command.essentials.FlyCommand;
 import fr.olympa.api.command.essentials.GamemodeCommand;
+import fr.olympa.api.command.essentials.InvseeCommand;
 import fr.olympa.api.command.essentials.tp.TpCommand;
 import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.customevents.SpigotConfigReloadEvent;
@@ -156,7 +158,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	public SwearHandler getSwearHandler() {
 		return swearHandler;
 	}
-	
+
 	@Override
 	public AfkHandler getAfkHandler() {
 		return afkHandler;
@@ -233,7 +235,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		nameTagApi = new NametagAPI(new NametagManager());
 		nameTagApi.addNametagHandler(EventPriority.LOWEST, (nametag, player, to) -> nametag.appendPrefix(player.getGroupPrefix()));
 		((NametagAPI) nameTagApi).testCompat();
-		
+
 		pluginManager.registerEvents(this, this);
 		pluginManager.registerEvents(new DataManagmentListener(), this);
 		pluginManager.registerEvents(new GroupListener(), this);
@@ -265,6 +267,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new GenderCommand(this).register();
 		new RestartCommand(this).registerPreProcess();
 		new GamemodeCommand(this).register().registerPreProcess();
+		new InvseeCommand(this).register();
+		new EcseeCommand(this).register();
 		new FlyCommand(this).register();
 		new AfkCommand(this).register();
 		new ConfigCommand(this).register();

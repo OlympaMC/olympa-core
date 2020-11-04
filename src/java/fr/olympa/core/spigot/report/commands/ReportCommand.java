@@ -34,9 +34,9 @@ public class ReportCommand extends ComplexCommand {
 
 	public ReportCommand(Plugin plugin) {
 		super(plugin, "report", "Signale un joueur", OlympaCorePermissions.REPORT_SEE_COMMAND, "signale");
-		addArgumentParser("REPORTREASON", sender -> Arrays.asList(ReportReason.values()).stream().map(ReportReason::getReasonClear).collect(Collectors.toList()), x -> {
+		addArgumentParser("REPORTREASON", sender -> ReportReason.values().stream().map(ReportReason::getReasonClear).collect(Collectors.toList()), x -> {
 			return ReportReason.getByReason(x.replace("_", " "));
-		}, x -> String.format("&4%s&c doit être une raison tel que &4%s&c", x, Arrays.asList(ReportReason.values()).stream().map(ReportReason::getReasonClear).collect(Collectors.joining(", "))));
+		}, x -> String.format("&4%s&c doit être une raison tel que &4%s&c", x, ReportReason.values().stream().map(ReportReason::getReasonClear).collect(Collectors.joining(", "))));
 
 		addArgumentParser("REPORTSTATUS", sender -> Arrays.asList(ReportStatus.values()).stream().map(ReportStatus::getName).collect(Collectors.toList()), x -> {
 			return ReportStatus.get(x);

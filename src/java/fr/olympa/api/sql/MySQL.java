@@ -17,10 +17,9 @@ import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import com.google.gson.Gson;
-
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.groups.OlympaGroup;
+import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.player.OlympaPlayerInformations;
@@ -114,8 +113,8 @@ public class MySQL {
 		String uuidPremiumString = resultSet.getString("uuid_premium");
 		UUID uuidPremium = null;
 		if (uuidPremiumString != null)
-			uuidPremium = Utils.getUUID(uuidPremiumString);
-		OlympaPlayer player = AccountProvider.playerProvider.create(Utils.getUUID(resultSet.getString("uuid_server")), resultSet.getString("pseudo"), resultSet.getString("ip"));
+			uuidPremium = (UUID) RegexMatcher.UUID.parse(uuidPremiumString);
+		OlympaPlayer player = AccountProvider.playerProvider.create((UUID) RegexMatcher.UUID.parse(resultSet.getString("uuid_server")), resultSet.getString("pseudo"), resultSet.getString("ip"));
 		player.loadSavedDatas(
 				resultSet.getLong("id"),
 				uuidPremium,
@@ -470,9 +469,9 @@ public class MySQL {
 				pstate.setObject(i++, null);
 			pstate.setBoolean(i++, olympaPlayer.isVanish());
 			pstate.setLong(i, olympaPlayer.getId());
-			pstate.executeUpdate();
+			i = pstate.executeUpdate();
 			pstate.close();
-			LinkSpigotBungee.Provider.link.sendMessage("&2Sauvegarde DB pour %s %s ", olympaPlayer.getName(), new Gson().toJson(olympaPlayer));
+			LinkSpigotBungee.Provider.link.sendMessage("&2Sauvegarde DB pour %s %s : %s row affected", olympaPlayer.getName(), GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer), i);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
