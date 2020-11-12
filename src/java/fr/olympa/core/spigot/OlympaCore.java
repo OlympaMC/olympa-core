@@ -251,7 +251,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 		try {
 			pluginManager.registerEvents(hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml")), this);
-		} catch (IOException e) {
+		}catch (IOException | ReflectiveOperationException e) {
 			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
 			e.printStackTrace();
 		}
@@ -316,12 +316,12 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 		else if (newFileName.equals(imageFrameManager.getFileName()))
 			imageFrameManager.loadMaps(newConfig);
-		else if (newFileName.equals(hologramsManager.getFile().getName()))
+		/*else if (newFileName.equals(hologramsManager.getFile().getName()))
 			try {
 				hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml"));
-			} catch (IOException e) {
+			}catch (IOException | ReflectiveOperationException e) {
 				e.printStackTrace();
-			}
+			}*/
 	}
 
 	@Override
