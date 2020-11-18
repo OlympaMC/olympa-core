@@ -46,9 +46,9 @@ public class TabText {
 		int onlineCount = OlympaBungee.getInstance().getProxy().getOnlineCount();
 		sj.add("&e%o &6joueur%s".replace("%o", String.valueOf(onlineCount)).replace("%s", Utils.withOrWithoutS(onlineCount)));
 		sj.add("");
-		sj.add("&6Discord &e&n&lwww.discord.olympa.fr&7 | &6Teamspeak &e&n&lts.olympa.fr");
+		sj.add("&8Discord &7&nwww.discord.olympa.fr&7 | &8Teamspeak &7&nts.olympa.fr");
 		sj.add("");
-		sj.add("&6Twitter &e&l@Olympa_fr &7| &6Site &e&n&lwww.olympa.fr");
+		sj.add("&8Twitter &7@Olympa_fr &7| &8Site &7&nwww.olympa.fr");
 		return ColorUtils.color(sj.toString());
 	}
 }
