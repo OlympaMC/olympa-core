@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.ban;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +17,7 @@ public class MuteUtils {
 		mutes.add(mute);
 	}
 
-	public static boolean chechExpireBan(OlympaSanction mute) {
+	public static boolean chechExpireBan(OlympaSanction mute) throws SQLException {
 		if (Utils.getCurrentTimeInSeconds() > mute.getExpires()) {
 			removeMute(mute);
 			BanMySQL.expireSanction(mute);

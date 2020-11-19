@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.ban.commands;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
@@ -9,8 +10,8 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.SanctionUtils;
-import fr.olympa.core.bungee.ban.objects.BanExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.bungee.ban.objects.SanctionExecute;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -27,11 +28,18 @@ public class BanIpCommand extends BungeeCommand {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		BanExecute banArg = SanctionUtils.formatArgs(args);
+		SanctionExecute banArg = SanctionUtils.formatArgs(args);
 		banArg.setSanctionType(OlympaSanctionType.BANIP);
 		if (sender instanceof ProxiedPlayer)
-			banArg.setAuthor((ProxiedPlayer) sender);
-		banArg.execute();
+			banArg.setAuthor(getOlympaPlayer());
+		if (!banArg.getOlympaPlayersFromArgs())
+			return;
+		try {
+			banArg.execute();
+		} catch (SQLException e) {
+			sendError(e.getCause());
+			e.printStackTrace();
+		}
 	}
 
 	@Override

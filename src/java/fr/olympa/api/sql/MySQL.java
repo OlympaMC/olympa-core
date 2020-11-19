@@ -17,7 +17,6 @@ import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.player.Gender;
@@ -412,6 +411,17 @@ public class MySQL {
 		return -1;
 	}
 
+	private static OlympaStatement getDuplicatePasswordStatement = new OlympaStatement("SELECT * FROM " + tableName + " ORDER BY password HAVING COUNT(password) > 1");
+
+	public static Set<OlympaPlayer> getDuplicatePassword() throws SQLException {
+		Set<OlympaPlayer> olympaPlayers = new HashSet<>();
+		PreparedStatement statement = getDuplicatePasswordStatement.getStatement();
+		ResultSet resultSet = statement.executeQuery();
+		while (resultSet.next())
+			olympaPlayers.add(getOlympaPlayer(resultSet));
+		return olympaPlayers;
+	}
+
 	private static OlympaStatement playerExistStatement = new OlympaStatement("SELECT * FROM " + tableName + " WHERE `uuid_server` = ?");
 
 	public static boolean playerExist(UUID playerUUID) {
@@ -428,8 +438,8 @@ public class MySQL {
 
 	//	private static OlympaStatement savePlayerStatement = new OlympaStatement("UPDATE " + tableName + " SET `pseudo` = ?, `uuid_server` = ?,"
 	//			+ " `uuid_premium` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ?, `ip_history` = ?, `gender` = ? WHERE `id` = ?");
-	private static OlympaStatement savePlayerStatement = new OlympaStatement(StatementType.UPDATE, tableName,
-			new String[] { "pseudo", "uuid_server", "uuid_premium", "ip", "groups", "last_connection", "name_history", "ip_history", "gender", "ts3_id", "discord_olympa_id", "vanish" }, "id");
+	private static OlympaStatement savePlayerStatement = new OlympaStatement(StatementType.UPDATE, tableName, "id",
+			new String[] { "pseudo", "uuid_server", "uuid_premium", "ip", "groups", "last_connection", "name_history", "ip_history", "gender", "ts3_id", "discord_olympa_id", "vanish" });
 
 	/**
 	 * Sauvegarde les infos du olympaPlayer
@@ -471,7 +481,7 @@ public class MySQL {
 			pstate.setLong(i, olympaPlayer.getId());
 			i = pstate.executeUpdate();
 			pstate.close();
-			LinkSpigotBungee.Provider.link.sendMessage("&2Sauvegarde DB pour %s %s : %s row affected", olympaPlayer.getName(), GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer), i);
+			//			LinkSpigotBungee.Provider.link.sendMessage("&2Sauvegarde DB pour %s %s : %s row affected (%s)", olympaPlayer.getName(), GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer), i, savePlayerStatement.getStatementCommand());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

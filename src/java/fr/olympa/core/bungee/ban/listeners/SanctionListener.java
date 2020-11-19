@@ -3,7 +3,6 @@ package fr.olympa.core.bungee.ban.listeners;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.provider.BungeeNewPlayerEvent;
@@ -14,6 +13,8 @@ import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.MuteUtils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.bungee.datamanagment.CachePlayer;
+import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.privatemessage.PrivateMessage;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.connection.PendingConnection;
@@ -37,17 +38,18 @@ public class SanctionListener implements Listener {
 	}
 
 	@SuppressWarnings("deprecation")
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on1Login(LoginEvent event) {
 		if (event.isCancelled())
 			return;
 		PendingConnection connection = event.getConnection();
-		UUID playerUUID = connection.getUniqueId();
+		CachePlayer cache = DataHandler.get(connection.getName());
+		long playerId = cache.getOlympaPlayer().getId();
 		String playerIp = connection.getAddress().getAddress().getHostAddress();
 
 		List<OlympaSanction> sanctions;
 		try {
-			sanctions = BanMySQL.getSanctionsActive(playerUUID, playerIp);
+			sanctions = BanMySQL.getSanctionsActive(playerId, playerIp);
 		} catch (SQLException e) {
 			event.setCancelReason(BungeeUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci la signaler au staff.\n§eCode d'erreur: §l#SQLBungeeSanction"));
 			e.printStackTrace();
@@ -62,14 +64,14 @@ public class SanctionListener implements Listener {
 			Configuration config = OlympaBungee.getInstance().getConfig();
 			if (permanant != null)
 				event.setCancelReason(SpigotUtils.connectScreen(config.getString("ban.bandisconnect")
-						.replaceAll("%reason%", permanant.getReason())
-						.replaceAll("%id%", String.valueOf(permanant.getId()))));
+						.replace("%reason%", permanant.getReason())
+						.replace("%id%", String.valueOf(permanant.getId()))));
 			OlympaSanction temp = bans.stream().filter(ban -> !ban.isPermanent()).findFirst().orElse(null);
 			if (temp != null)
 				event.setCancelReason(SpigotUtils.connectScreen(config.getString("ban.tempbandisconnect")
-						.replaceAll("%reason%", temp.getReason())
-						.replaceAll("%time%", Utils.timestampToDuration(temp.getExpires()))
-						.replaceAll("%id%", String.valueOf(temp.getId()))));
+						.replace("%reason%", temp.getReason())
+						.replace("%time%", Utils.timestampToDuration(temp.getExpires()))
+						.replace("%id%", String.valueOf(temp.getId()))));
 		}
 		sanctions.stream().filter(sanction -> sanction.getType() == OlympaSanctionType.MUTE).forEach(mute -> MuteUtils.addMute(mute));
 	}
@@ -103,15 +105,16 @@ public class SanctionListener implements Listener {
 		if (event.getMessage().startsWith("/") && !commandDisableWhenMuted.contains(command))
 			return;
 		ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-
 		OlympaSanction mute = MuteUtils.getMute(player.getUniqueId());
 		if (mute != null)
-			if (!MuteUtils.chechExpireBan(mute)) {
-				Configuration config = OlympaBungee.getInstance().getConfig();
-				player.sendMessage(
-						config.getString("ban.youaremuted").replace("%reason%", mute.getReason()).replace("%expire%", Utils.timestampToDuration(mute.getExpires())));
-				event.setCancelled(true);
-				return;
+			try {
+				if (!MuteUtils.chechExpireBan(mute)) {
+					Configuration config = OlympaBungee.getInstance().getConfig();
+					player.sendMessage(config.getString("ban.youaremuted").replace("%reason%", mute.getReason()).replace("%expire%", Utils.timestampToDuration(mute.getExpires())));
+					event.setCancelled(true);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 	}
 }

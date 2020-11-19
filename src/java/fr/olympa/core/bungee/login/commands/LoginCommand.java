@@ -66,7 +66,7 @@ public class LoginCommand extends BungeeCommand {
 				proxiedPlayer.disconnect(BungeeUtils.connectScreen("Tu as fais trop de tentatives de mot de passe."));
 			else
 				try {
-					SanctionManager.addAndApply(OlympaSanctionType.BANIP, OlympaConsole.getUniqueId(), ip, "Trop de tentatives de mot de passe.", Utils.getCurrentTimeInSeconds() + 60 * 60 * 60);
+					SanctionManager.addAndApply(OlympaSanctionType.BANIP, OlympaConsole.getId(), ip, "Trop de tentatives de mot de passe.", Utils.getCurrentTimeInSeconds() + 60 * 60 * 60);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}

@@ -34,8 +34,8 @@ public class MonitorInfo {
 	private ServerStatus status = ServerStatus.UNKNOWN;
 	private String error;
 	private Float tps;
-	private String lastVersion = "unknown";
 	private String firstVersion = "unknown";
+	private String lastVersion = "unknown";
 	private int lastModifiedCore;
 
 	public MonitorInfo(ServerInfo server, long time, ServerPing serverPing, Throwable error) {

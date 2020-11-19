@@ -6,14 +6,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.ban.objects.BanExecute;
+import fr.olympa.core.bungee.ban.objects.SanctionExecute;
 import net.md_5.bungee.config.Configuration;
 
 public class SanctionUtils {
@@ -69,10 +68,12 @@ public class SanctionUtils {
 		return Utils.capitalize(reason.replaceAll(" {2,}", " "));
 	}
 
-	public static BanExecute formatArgs(String[] args) {
-		BanExecute banExecute = new BanExecute();
+	public static SanctionExecute formatArgs(String[] args) {
+		SanctionExecute banExecute = new SanctionExecute();
+		List<String> targetsNames = Arrays.asList(args[0].split(","));
+		banExecute.setTargetsString(targetsNames);
 		List<Object> targets = new ArrayList<>();
-		Arrays.asList(args[0].split(",")).forEach(t -> {
+		targetsNames.forEach(t -> {
 			if (RegexMatcher.IP.is(t))
 				try {
 					targets.add(InetAddress.getByName(t));
@@ -80,9 +81,11 @@ public class SanctionUtils {
 					e.printStackTrace();
 				}
 			else if (RegexMatcher.UUID.is(t))
-				targets.add(UUID.fromString(t));
+				targets.add(RegexMatcher.UUID.parse(t));
 			else if (RegexMatcher.USERNAME.is(t))
 				targets.add(t);
+			else if (RegexMatcher.LONG.is(t))
+				targets.add(RegexMatcher.LONG.parse(t));
 		});
 		banExecute.setTargets(targets);
 		long expire = 0;
@@ -98,6 +101,7 @@ public class SanctionUtils {
 				newAllArgs = newAllArgs.replace(unit, "");
 			}
 			expire = SanctionUtils.toTimeStamp(Integer.parseInt(time), unit);
+			System.out.println("expire timestamp " + expire);
 			banExecute.setExpire(expire);
 		} else
 			newAllArgs = allArgs;

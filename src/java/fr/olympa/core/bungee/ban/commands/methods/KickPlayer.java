@@ -8,10 +8,10 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.ban.SanctionManager;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.bungee.ban.objects.SanctionExecuteTarget;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -24,7 +24,7 @@ import net.md_5.bungee.config.Configuration;
 public class KickPlayer {
 
 	@SuppressWarnings("deprecation")
-	public static void addKick(UUID author, CommandSender sender, String targetname, UUID targetUUID, String[] args, OlympaPlayer olympaPlayer) {
+	public static void addKick(long authorId, CommandSender sender, String targetname, UUID targetUUID, String[] args, OlympaPlayer olympaPlayer) {
 		ProxiedPlayer target = null;
 		OlympaPlayer olympaTarget = null;
 
@@ -52,7 +52,7 @@ public class KickPlayer {
 
 		OlympaSanction kick;
 		try {
-			kick = SanctionManager.add(OlympaSanctionType.KICK, author, olympaTarget.getUniqueId(), reason, 0, OlympaSanctionStatus.EXPIRE);
+			kick = SanctionExecuteTarget.add(OlympaSanctionType.KICK, authorId, olympaTarget.getUniqueId(), reason, 0, OlympaSanctionStatus.EXPIRE);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			sender.sendMessage(config.getString("ban.errordb"));
@@ -67,12 +67,12 @@ public class KickPlayer {
 		 */
 
 		target.disconnect(
-				BungeeUtils.connectScreen(config.getString("bungee.ban.messages.kickdisconnect").replaceAll("%reason%", kick.getReason()).replaceAll("%id%", String.valueOf(kick.getId()))));
+				BungeeUtils.connectScreen(config.getString("bungee.ban.messages.kickdisconnect").replaceAll("%reason%", kick.getReason()).replace("%id%", String.valueOf(kick.getId()))));
 
 		TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("ban.kickannouncetoauthor")
-				.replaceAll("%player%", olympaTarget.getName())
-				.replaceAll("%reason%", reason)
-				.replaceAll("%author%", BungeeUtils.getName(author)));
+				.replace("%player%", olympaTarget.getName())
+				.replace("%reason%", reason)
+				.replace("%author%", BungeeUtils.getName(authorId)));
 		msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, kick.toBaseComplement()));
 		msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + kick.getId()));
 		OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);

@@ -1,9 +1,9 @@
 package fr.olympa.core.bungee.login.commands;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.match.RegexMatcher;
@@ -18,12 +18,12 @@ public class EmailCommand extends BungeeCommand {
 
 	public static boolean isDisposableEmail(String email) {
 		String domain = email.replaceFirst("(.+)@", "").toLowerCase();
-		File file = new File(OlympaBungee.getInstance().getDataFolder(), "DisposableEmail.txt");
-		if (!file.exists())
+		InputStream stream = OlympaBungee.getInstance().getResourceAsStream("DisposableEmail.txt");
+		if (stream == null)
 			throw new RuntimeException("File not found");
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new FileReader(file));
+			reader = new BufferedReader(new InputStreamReader(stream));
 			String line;
 			while ((line = reader.readLine()) != null)
 				if (domain.equals(line))

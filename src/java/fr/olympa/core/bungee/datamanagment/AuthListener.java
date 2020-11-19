@@ -171,7 +171,7 @@ public class AuthListener implements Listener {
 			DataHandler.removePlayer(name);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGH)
 	public void on3Login(LoginEvent event) {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();

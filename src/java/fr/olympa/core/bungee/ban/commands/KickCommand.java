@@ -5,9 +5,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
+import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaConsole;
-import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -28,33 +28,28 @@ public class KickCommand extends BungeeCommand {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		UUID author;
+		long authorId;
 		if (sender instanceof ProxiedPlayer)
-			author = proxiedPlayer.getUniqueId();
+			authorId = getOlympaPlayer().getId();
 		else
-			author = OlympaConsole.getUniqueId();
-
+			authorId = OlympaConsole.getId();
 		Configuration config = OlympaBungee.getInstance().getConfig();
-		if (Matcher.isUsername(args[0]))
-			KickPlayer.addKick(author, sender, args[0], null, args, olympaPlayer);
-		else if (Matcher.isFakeIP(args[0])) {
-
-			if (Matcher.isIP(args[0]))
-				KickIp.addKick(author, sender, args[0], args, olympaPlayer);
+		if (RegexMatcher.USERNAME.is(args[0]))
+			KickPlayer.addKick(authorId, sender, args[0], null, args, olympaPlayer);
+		else if (RegexMatcher.FAKE_IP.is(args[0])) {
+			if (RegexMatcher.IP.is(args[0]))
+				KickIp.addKick(authorId, sender, args[0], args, olympaPlayer);
 			else {
 				sendMessage(Prefix.DEFAULT_BAD, config.getString("default.ipinvalid").replaceAll("%ip%", args[0]));
 				return;
 			}
-
-		} else if (Matcher.isFakeUUID(args[0])) {
-
-			if (Matcher.isUUID(args[0]))
-				KickPlayer.addKick(author, sender, null, UUID.fromString(args[0]), args, olympaPlayer);
+		} else if (RegexMatcher.FAKE_UUID.is(args[0])) {
+			if (RegexMatcher.UUID.is(args[0]))
+				KickPlayer.addKick(authorId, sender, null, UUID.fromString(args[0]), args, olympaPlayer);
 			else {
 				sendMessage(Prefix.DEFAULT_BAD, config.getString("default.uuidinvalid").replaceAll("%uuid%", args[0]));
 				return;
 			}
-
 		} else {
 			sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replaceAll("%type%", args[0]));
 			return;

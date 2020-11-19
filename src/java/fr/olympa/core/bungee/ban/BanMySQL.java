@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
@@ -29,13 +30,13 @@ public class BanMySQL {
 	`type_id` INT NULL,
 	`target` VARCHAR(36) NULL,
 	`reason` VARCHAR(45) NULL,
-	`author_uuid` VARCHAR(36) NULL,
+	`author_id` VARCHAR(36) NULL,
 	`expires` TIMESTAMP NULL,
 	`created` TIMESTAMP NULL,
 	`status_id` INT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
-
+	
 	 */
 	/**
 	 * Ajoute un sanction/mute
@@ -44,13 +45,13 @@ public class BanMySQL {
 	 * @throws SQLException
 	 */
 	public static long addSanction(OlympaSanction olympaban) throws SQLException {
-		OlympaStatement statement = new OlympaStatement("INSERT INTO sanctions (type_id, target, reason, author_uuid, expires, created, status_id) VALUES (?, ?, ?, ?, ?, ?, ?)", true);
+		OlympaStatement statement = new OlympaStatement("INSERT INTO sanctions (type_id, target, reason, author_id, expires, created, status_id) VALUES (?, ?, ?, ?, ?, ?, ?)", true);
 		PreparedStatement pstate = statement.getStatement();
 		int i = 1;
 		pstate.setInt(i++, olympaban.getType().getId());
 		pstate.setString(i++, olympaban.getPlayer().toString());
 		pstate.setString(i++, olympaban.getReason());
-		pstate.setString(i++, olympaban.getAuthor().toString());
+		pstate.setLong(i++, olympaban.getAuthor());
 		pstate.setTimestamp(i++, new Timestamp(olympaban.getExpires() * 1000L));
 		pstate.setTimestamp(i++, new Timestamp(olympaban.getCreated() * 1000L));
 		pstate.setLong(i, olympaban.getStatus().getId());
@@ -79,23 +80,17 @@ public class BanMySQL {
 		return true;
 	}
 
-	public static boolean expireSanction(OlympaSanction sanction) {
+	public static OlympaSanction expireSanction(OlympaSanction sanction) throws SQLException {
 		OlympaSanctionHistory banhistory = new OlympaSanctionHistory(OlympaConsole.getUniqueId(), OlympaSanctionStatus.EXPIRE);
 		sanction.setStatus(OlympaSanctionStatus.EXPIRE);
 		sanction.addHistory(banhistory);
-		try {
-			PreparedStatement pstate = OlympaBungee.getInstance().getDatabase().prepareStatement("UPDATE sanctions SET `status_id` = ?, `history` = CONCAT_WS(`;`, ?, history) WHERE `id` = ?;");
-			pstate.setInt(1, sanction.getStatus().getId());
-			pstate.setString(2, banhistory.toJson());
-			pstate.setLong(3, sanction.getId());
-			pstate.executeUpdate();
-			pstate.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-
+		PreparedStatement pstate = OlympaBungee.getInstance().getDatabase().prepareStatement("UPDATE sanctions SET `status_id` = ?, `history` = CONCAT_WS(`;`, ?, history) WHERE `id` = ?;");
+		pstate.setInt(1, sanction.getStatus().getId());
+		pstate.setString(2, banhistory.toJson());
+		pstate.setLong(3, sanction.getId());
+		pstate.executeUpdate();
+		pstate.close();
+		return sanction;
 	}
 
 	public static OlympaSanction getSanction(int id) {
@@ -117,7 +112,7 @@ public class BanMySQL {
 				resultSet.getInt("id"),
 				OlympaSanctionType.getByID(resultSet.getInt("type_id")),
 				UUID.fromString(resultSet.getString("target")),
-				UUID.fromString(resultSet.getString("author_uuid")),
+				resultSet.getLong("author_id"),
 				resultSet.getString("reason"),
 				resultSet.getTimestamp("created").getTime() / 1000L,
 				resultSet.getTimestamp("expires").getTime() / 1000L,
@@ -154,11 +149,11 @@ public class BanMySQL {
 		return sanction;
 	}
 
-	public static List<OlympaSanction> getSanctionByAuthor(UUID authorUUID) {
+	public static List<OlympaSanction> getSanctionByAuthor(Long playerId) {
 		List<OlympaSanction> sanctions = new ArrayList<>();
 		try {
 			Statement state = OlympaBungee.getInstance().getDatabase().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT * FROM sanctions WHERE `author_uuid` = '" + authorUUID + "';");
+			ResultSet resultSet = state.executeQuery("SELECT * FROM sanctions WHERE `author_id` = '" + playerId + "';");
 			while (resultSet.next()) {
 				OlympaSanction sanction = getSanction(resultSet);
 				if (sanction != null)
@@ -215,19 +210,19 @@ public class BanMySQL {
 		return sanctions;
 	}
 
-	public static List<OlympaSanction> getSanctionsActive(UUID targetUuid, String targetIp) throws SQLException {
+	public static List<OlympaSanction> getSanctionsActive(long targetId, String targetIp) throws SQLException {
 		List<OlympaSanction> sanctions = new ArrayList<>();
 		Connection connection = OlympaBungee.getInstance().getDatabase();
 		PreparedStatement pstate = connection.prepareStatement("SELECT * FROM sanctions WHERE (`target` = ? OR `target` = ?) AND `status_id` = ?;");
 		int i = 1;
-		pstate.setString(i++, targetUuid.toString());
+		pstate.setLong(i++, targetId);
 		pstate.setString(i++, targetIp);
-		pstate.setInt(i++, OlympaSanctionStatus.ACTIVE.getId());
+		pstate.setInt(i, OlympaSanctionStatus.ACTIVE.getId());
 		ResultSet resultSet = pstate.executeQuery();
 		while (resultSet.next())
 			sanctions.add(getSanction(resultSet));
 		pstate.close();
-		return Lists.reverse(sanctions);
+		return Lists.reverse(sanctions.stream().filter(sanction -> !sanction.getStatus().isStatus(OlympaSanctionStatus.EXPIRE)).collect(Collectors.toList()));
 	}
 
 	public static boolean isBanned(String ip) {

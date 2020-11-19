@@ -2,14 +2,12 @@ package fr.olympa.core.bungee.ban.objects;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -26,11 +24,12 @@ public class OlympaSanction {
 	private OlympaSanctionType type;
 	private Object player;
 	private String reason;
-	private UUID author;
+	private long author;
 	private long expires;
 	private long created;
 	private OlympaSanctionStatus status;
 	private List<OlympaSanctionHistory> history;
+	private List<OlympaPlayer> olympaPlayers;
 
 	private boolean permanant;
 
@@ -41,7 +40,7 @@ public class OlympaSanction {
 	 * @param created Timestamp de la creation du ban
 	 * @param expires Timestamp du temps de ban, 0 = permanant
 	 */
-	public OlympaSanction(OlympaSanctionType type, Object player, UUID author, String reason, long created, long expires) {
+	public OlympaSanction(OlympaSanctionType type, Object player, long author, String reason, long created, long expires) {
 		this.type = type;
 		this.player = player;
 		this.reason = reason;
@@ -63,7 +62,7 @@ public class OlympaSanction {
 	 * @param expires Timestamp du temps de ban, 0 = permanant
 	 * @param status  Status du ban
 	 */
-	public OlympaSanction(OlympaSanctionType type, Object player, UUID author, String reason, long created, long expires, OlympaSanctionStatus status) {
+	public OlympaSanction(OlympaSanctionType type, Object player, long author, String reason, long created, long expires, OlympaSanctionStatus status) {
 		this.type = type;
 		this.player = player;
 		this.reason = reason;
@@ -75,7 +74,7 @@ public class OlympaSanction {
 		permanant = this.expires == 0 ? true : false;
 	}
 
-	public OlympaSanction(int id, OlympaSanctionType type, Object player, UUID author, String reason, long created, long expires, OlympaSanctionStatus status) {
+	public OlympaSanction(int id, OlympaSanctionType type, Object player, long author, String reason, long created, long expires, OlympaSanctionStatus status) {
 		this.id = id;
 		this.type = type;
 		this.player = player;
@@ -92,7 +91,7 @@ public class OlympaSanction {
 		this.history.add(history);
 	}
 
-	public UUID getAuthor() {
+	public long getAuthor() {
 		return author;
 	}
 
@@ -128,16 +127,22 @@ public class OlympaSanction {
 		return String.valueOf(getPlayer());
 	}
 
+	public void addPlayers(List<OlympaPlayer> olympaPlayers) {
+		this.olympaPlayers = olympaPlayers;
+	}
+
 	public List<OlympaPlayer> getPlayers() {
-		return MySQL.getPlayersByIp(getPlayerIp());
+		if (olympaPlayers == null)
+			olympaPlayers = MySQL.getPlayersByIp(getPlayerIp());
+		return olympaPlayers;
 	}
 
 	public String getPlayersName() {
 		return getPlayers().stream().map(OlympaPlayer::getName).collect(Collectors.joining(", "));
 	}
 
-	public UUID getPlayerUniqueId() {
-		return UUID.fromString(String.valueOf(getPlayer()));
+	public Long getPlayerId() {
+		return Long.parseLong(player.toString());
 	}
 
 	public String getReason() {
@@ -177,8 +182,8 @@ public class OlympaSanction {
 	public BaseComponent[] toBaseComplement() {
 		return new ComponentBuilder(BungeeUtils.color("&6Information sanction n°&e" + getId() + "\n\n"))
 
-				.append(BungeeUtils.color((Matcher.isUUID(getPlayerIp()) ? "&6Joueur: &e" + SpigotUtils.getName(getPlayerUniqueId()) : "&6IP de: &e" + getPlayersName()) + "\n"))
-				.append(BungeeUtils.color("&6Auteur: &e" + SpigotUtils.getName(getAuthor()) + "\n"))
+				.append(BungeeUtils.color((RegexMatcher.LONG.is(getPlayerIp()) ? "&6Joueur: &e" + BungeeUtils.getName(getPlayerId()) : "&6IP de: &e" + getPlayersName()) + "\n"))
+				.append(BungeeUtils.color("&6Auteur: &e" + BungeeUtils.getName(getAuthor()) + "\n"))
 				.append(BungeeUtils.color("&6Type: &e" + getType().getName() + "\n"))
 				.append(BungeeUtils.color("&6Raison: &e" + getReason() + "\n"))
 				.append(BungeeUtils.color("&6Crée: &e" + Utils.timestampToDateAndHour(getCreated()) + "\n"))
@@ -190,4 +195,5 @@ public class OlympaSanction {
 				.append(BungeeUtils.color("&6Status: &e" + getStatus().getColor() + getStatus().getName()))
 				.create();
 	}
+
 }

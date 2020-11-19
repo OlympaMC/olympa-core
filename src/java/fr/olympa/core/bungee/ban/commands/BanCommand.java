@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.ban.commands;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,8 +11,8 @@ import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.SanctionUtils;
-import fr.olympa.core.bungee.ban.objects.BanExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.bungee.ban.objects.SanctionExecute;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -25,16 +26,23 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 		super(plugin, "ban", OlympaCorePermissions.BAN_BAN_COMMAND, "tempban");
 		permToBandef = OlympaCorePermissions.BAN_BANDEF_COMMAND;
 		minArg = 2;
-		usageString = "<joueur|uuid|ip> [temps] <motif>";
+		usageString = "<joueur|uuid|id|ip> [temps] <motif>";
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		BanExecute banArg = SanctionUtils.formatArgs(args);
+		SanctionExecute banArg = SanctionUtils.formatArgs(args);
 		banArg.setSanctionType(OlympaSanctionType.BAN);
 		if (sender instanceof ProxiedPlayer)
-			banArg.setAuthor((ProxiedPlayer) sender);
-		banArg.execute();
+			banArg.setAuthor(getOlympaPlayer());
+		if (!banArg.getOlympaPlayersFromArgs())
+			return;
+		try {
+			banArg.execute();
+		} catch (SQLException e) {
+			sendError(e.getCause());
+			e.printStackTrace();
+		}
 	}
 
 	@Override

@@ -127,7 +127,7 @@ public class DataManagmentListener implements Listener {
 				PermissionAttachment attachment = player.addAttachment(OlympaCore.getInstance());
 				olympaPlayer.getGroup().getAllGroups().forEach(group -> group.runtimePermissions.forEach(perm -> attachment.setPermission(perm, true)));
 				player.recalculatePermissions();
-				((CraftServer) Bukkit.getServer()).getHandle().getServer().getCommandDispatcher().a((((CraftPlayer) player).getHandle()));
+				((CraftServer) Bukkit.getServer()).getHandle().getServer().getCommandDispatcher().a(((CraftPlayer) player).getHandle());
 
 				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
 				Bukkit.getPluginManager().callEvent(loginevent);

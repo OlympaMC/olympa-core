@@ -31,24 +31,24 @@ public class MuteCommand extends BungeeCommand {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		UUID author;
+		long authorId;
 		if (sender instanceof ProxiedPlayer)
-			author = proxiedPlayer.getUniqueId();
+			authorId = getOlympaPlayer().getId();
 		else
-			author = OlympaConsole.getUniqueId();
+			authorId = OlympaConsole.getId();
 		Configuration config = OlympaBungee.getInstance().getConfig();
 		if (RegexMatcher.USERNAME.is(args[0]))
-			MutePlayer.addMute(author, sender, args[0], null, args, olympaPlayer);
+			MutePlayer.addMute(authorId, sender, args[0], null, args, olympaPlayer);
 		else if (RegexMatcher.FAKE_IP.is(args[0])) {
 			if (RegexMatcher.IP.is(args[0]))
-				MuteIp.addMute(author, sender, args[0], args, olympaPlayer);
+				MuteIp.addMute(authorId, sender, args[0], args, olympaPlayer);
 			else {
 				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.ipinvalid").replace("%ip%", args[0]));
 				return;
 			}
 		} else if (RegexMatcher.UUID.is(args[0])) {
 			if (RegexMatcher.UUID.is(args[0]))
-				MutePlayer.addMute(author, sender, null, UUID.fromString(args[0]), args, olympaPlayer);
+				MutePlayer.addMute(authorId, sender, null, UUID.fromString(args[0]), args, olympaPlayer);
 			else {
 				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.uuidinvalid").replace("%uuid%", args[0]));
 				return;

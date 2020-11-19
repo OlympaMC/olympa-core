@@ -22,10 +22,16 @@ public enum OlympaSanctionType {
 	}
 
 	public int getId() {
-		return this.id;
+		return id;
 	}
 
 	public String getName() {
-		return this.s;
+		return s;
+	}
+
+	public String getNameForPlayer() {
+		if (this == BANIP)
+			return BAN.s;
+		return s;
 	}
 }

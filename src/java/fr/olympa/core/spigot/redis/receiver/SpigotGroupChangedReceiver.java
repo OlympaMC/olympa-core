@@ -34,6 +34,7 @@ public class SpigotGroupChangedReceiver extends JedisPubSub {
 		oldOlympaPlayer.getGroups().putAll(newOlympaPlayer.getGroups());
 		olympaAccount.saveToCache(oldOlympaPlayer);
 		olympaAccount.saveToRedis(oldOlympaPlayer);
+		olympaAccount.saveToDb(oldOlympaPlayer);
 
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(player, state, newOlympaPlayer, null, timestamp, groupChanged));
 		RedisSpigotSend.sendModificationsReceive(newOlympaPlayer.getUniqueId());
