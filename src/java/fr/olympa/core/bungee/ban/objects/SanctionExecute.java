@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
@@ -79,32 +80,18 @@ public class SanctionExecute {
 		this.author = author;
 	}
 
-	public void execute() throws SQLException {
-		if (printfErrorIfAny())
+	public void execute(BungeeCommand bungeeCommand) {
+		if (printfErrorIfAny() || !getOlympaPlayersFromArgs())
 			return;
-		for (SanctionExecuteTarget target : targets) {
-			target.save(this);
-			target.execute(this);
-			SanctionManager.annonce(target);
-		}
-		//		for (Entry<Object, List<OlympaPlayer>> entry : targets.entrySet()) {
-		//			Object t = entry.getKey();
-		//			boolean hasWork;
-		//			OlympaSanctionType tSanctionType = sanctionType;
-		//			if (sanctionType == OlympaSanctionType.BAN && t instanceof InetAddress) {
-		//
-		//				t = ((InetAddress) t).getHostAddress();
-		//				tSanctionType = OlympaSanctionType.BANIP;
-		//			}
-		//			try {
-		//				hasWork = SanctionManager.addAndApply(tSanctionType, getAuthorUuid(), reason, expire, OlympaSanctionStatus.ACTIVE, entry.getValue());
-		//				if (!hasWork)
-		//					getAuthor().sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color("'" + t + "' est inconnu dans la base de données."));
-		//			} catch (SQLException e) {
-		//				e.printStackTrace();
-		//				getAuthor().sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color("Une erreur SQL est survenue lors de la sanction de '" + t + "'."));
-		//			}
-		//		}
+		for (SanctionExecuteTarget target : targets)
+			try {
+				if (!target.save(this))
+					return;
+				target.execute(this);
+				SanctionManager.annonce(target);
+			} catch (SQLException e) {
+				bungeeCommand.sendError(e);
+			}
 	}
 
 	private boolean printfErrorIfAny() {
@@ -119,7 +106,11 @@ public class SanctionExecute {
 		return true;
 	}
 
-	public boolean getOlympaPlayersFromArgs() {
+	private boolean isValidSanction() {
+		return true;
+	}
+
+	private boolean getOlympaPlayersFromArgs() {
 		for (Object t : targetsRaw)
 			try {
 				if (t instanceof InetAddress)

@@ -54,7 +54,7 @@ public class MutePlayer {
 			OlympaSanction alreadymute = MuteUtils.getMute(olympaTarget.getUniqueId());
 			if (alreadymute != null && !MuteUtils.chechExpireBan(alreadymute)) {
 				// Sinon annuler le ban
-				TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("bungee.ban.messages.alreadymute").replaceAll("%player%", olympaTarget.getName()));
+				TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("bungee.ban.messages.alreadymute").replace("%player%", olympaTarget.getName()));
 				msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, alreadymute.toBaseComplement()));
 				msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + alreadymute.getId()));
 				sender.sendMessage(msg);
@@ -79,17 +79,17 @@ public class MutePlayer {
 				long seconds = timestamp - Utils.getCurrentTimeInSeconds();
 
 				if (olymaPlayer != null && OlympaCorePermissions.STAFF.hasPermission(olympaTarget) && OlympaCorePermissions.BAN_BYPASS_SANCTION_STAFF.hasPermission(olymaPlayer)) {
-					sender.sendMessage(config.getString("ban.messages.cantmutestaffmembers"));
+					sender.sendMessage(config.getString("ban.cantmutestaffmembers"));
 					return;
 				}
 
-				if (seconds <= config.getInt("ban.settings.minmutetime")) {
-					sender.sendMessage(config.getString("ban.messages.cantbypassmaxmutetime"));
+				if (seconds <= config.getInt("ban.minmutetime")) {
+					sender.sendMessage(config.getString("ban.cantbypassmaxmutetime"));
 					return;
 				}
 
-				if (seconds >= config.getInt("ban.settings.maxmutetime")) {
-					sender.sendMessage(config.getString("ban.messages.cantbypassmminmutetime"));
+				if (seconds >= config.getInt("ban.maxmutetime")) {
+					sender.sendMessage(config.getString("ban.cantbypassmminmutetime"));
 					return;
 				}
 
@@ -99,7 +99,7 @@ public class MutePlayer {
 					mute = SanctionExecuteTarget.add(OlympaSanctionType.MUTE, authorId, olympaTarget.getUniqueId(), reason, timestamp);
 				} catch (SQLException e) {
 					e.printStackTrace();
-					sender.sendMessage(config.getString("bungee.ban.messages.errordb"));
+					sender.sendMessage(config.getString("ban.errordb"));
 					return;
 				}
 				MuteUtils.addMute(mute);
@@ -107,27 +107,27 @@ public class MutePlayer {
 				if (target != null) {
 					// Envoyer un message à tous les joueurs du même serveur spigot
 					for (ProxiedPlayer players : target.getServer().getInfo().getPlayers())
-						players.sendMessage(config.getString("bungee.ban.messages.tempmuteannounce")
-								.replaceAll("%player%", olympaTarget.getName())
-								.replaceAll("%time%", Stimestamp)
-								.replaceAll("%reason%", reason));
-					target.sendMessage(config.getString("bungee.ban.messages.tempmuteannouncetotarget").replaceAll("%time%", Stimestamp).replaceAll("%reason%", reason));
+						players.sendMessage(config.getString("ban.tempmuteannounce")
+								.replace("%player%", olympaTarget.getName())
+								.replace("%time%", Stimestamp)
+								.replace("%reason%", reason));
+					target.sendMessage(config.getString("ban.messages.tempmuteannouncetotarget").replace("%time%", Stimestamp).replace("%reason%", reason));
 
 				}
 				// Envoye un message à l'auteur
-				TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("bungee.ban.messages.tempmuteannouncetoauthor")
-						.replaceAll("%player%", olympaTarget.getName())
-						.replaceAll("%time%", Stimestamp)
-						.replaceAll("%reason%", reason)
-						.replaceAll("%author%", BungeeUtils.getName(authorId)));
+				TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("ban.tempmuteannouncetoauthor")
+						.replace("%player%", olympaTarget.getName())
+						.replace("%time%", Stimestamp)
+						.replace("%reason%", reason)
+						.replace("%author%", BungeeUtils.getName(authorId)));
 				msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, mute.toBaseComplement()));
 				msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + mute.getId()));
 				OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
 				ProxyServer.getInstance().getConsole().sendMessage(msg);
 			} else
-				sender.sendMessage(config.getString("bungee.ban.messages.usagemute"));
+				sender.sendMessage(config.getString("ban.messages.usagemute"));
 		} else {
-			sender.sendMessage(config.getString("bungee.ban.messages.usagemute"));
+			sender.sendMessage(config.getString("ban.messages.usagemute"));
 			String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
 			OlympaSanction mute;
@@ -140,10 +140,10 @@ public class MutePlayer {
 			}
 			if (target != null)
 				for (ProxiedPlayer players : target.getServer().getInfo().getPlayers())
-					players.sendMessage(config.getString("bungee.ban.messages.muteannounce").replaceAll("%player%", olympaTarget.getName()).replaceAll("%reason%", reason));
+					players.sendMessage(config.getString("bungee.ban.messages.muteannounce").replace("%player%", olympaTarget.getName()).replace("%reason%", reason));
 
 			TextComponent msg = BungeeUtils
-					.formatStringToJSON(config.getString("bungee.ban.messages.muteannouncetoauthor").replaceAll("%player%", olympaTarget.getName()).replaceAll("%reason%", reason));
+					.formatStringToJSON(config.getString("bungee.ban.messages.muteannouncetoauthor").replace("%player%", olympaTarget.getName()).replace("%reason%", reason));
 			msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, mute.toBaseComplement()));
 			msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + mute.getId()));
 			OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);

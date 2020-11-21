@@ -13,6 +13,7 @@ import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.objects.SanctionExecute;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.config.Configuration;
 
 public class SanctionUtils {
@@ -68,7 +69,7 @@ public class SanctionUtils {
 		return Utils.capitalize(reason.replaceAll(" {2,}", " "));
 	}
 
-	public static SanctionExecute formatArgs(String[] args) {
+	public static SanctionExecute formatArgs(CommandSender author, String[] args) {
 		SanctionExecute banExecute = new SanctionExecute();
 		List<String> targetsNames = Arrays.asList(args[0].split(","));
 		banExecute.setTargetsString(targetsNames);
@@ -106,6 +107,18 @@ public class SanctionUtils {
 		} else
 			newAllArgs = allArgs;
 		banExecute.setReason(newAllArgs);
+		//		Configuration config = OlympaBungee.getInstance().getConfig();
+		//		if (OlympaCorePermissions.BAN_BYPASS_BAN.hasSenderPermissionBungee(author)) {
+		//			author.sendMessage(ColorUtils.color(config.getString("ban.cantbanstaffmembers")));
+		//			return null;
+		//		}
+		//		if (seconds <= SanctionManager.minTimeBan) {
+		//			author.sendMessage(ColorUtils.color(config.getString("ban.cantbypasstime").replace("%sanction", "ban").replace("%duration", Utils.timeToDuration(SanctionManager.minTimeBan))));
+		//			return null;
+		//		} else if (seconds >= SanctionManager.maxTimeBan) {
+		//			author.sendMessage(ColorUtils.color(config.getString("ban.cantbypasstime").replace("%sanction", "ban").replace("%duration", Utils.timeToDuration(SanctionManager.maxTimeBan))));
+		//			return null;
+		//		}
 		return banExecute;
 	}
 }

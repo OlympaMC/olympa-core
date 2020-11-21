@@ -1,6 +1,5 @@
 package fr.olympa.core.bungee.ban.commands;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,18 +30,11 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		SanctionExecute banArg = SanctionUtils.formatArgs(args);
+		SanctionExecute banArg = SanctionUtils.formatArgs(sender, args);
 		banArg.setSanctionType(OlympaSanctionType.BAN);
 		if (sender instanceof ProxiedPlayer)
 			banArg.setAuthor(getOlympaPlayer());
-		if (!banArg.getOlympaPlayersFromArgs())
-			return;
-		try {
-			banArg.execute();
-		} catch (SQLException e) {
-			sendError(e.getCause());
-			e.printStackTrace();
-		}
+		banArg.execute(this);
 	}
 
 	@Override
