@@ -29,7 +29,7 @@ public class SanctionUtils {
 		List<String> units2 = new ArrayList<>();
 		for (List<String> s2 : units)
 			units2.add(String.join("|", s2));
-		matchDuration = Pattern.compile("(?i)^(\\d+)\\s*(" + String.join("|", units2) + ")\\b");
+		matchDuration = Pattern.compile("(?i)(\\d+)\\s*(" + String.join("|", units2) + ")");
 	}
 
 	public static Matcher matchDuration(String s) {
@@ -90,19 +90,20 @@ public class SanctionUtils {
 		});
 		banExecute.setTargets(targets);
 		long expire = 0;
-		String allArgs = String.join(" ", args);
+
+		String allArgs = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 		String newAllArgs = null;
 		Matcher matcherDuration = SanctionUtils.matchDuration(allArgs);
 		if (matcherDuration.find()) {
 			String time = matcherDuration.group(1);
 			String unit = matcherDuration.group(2);
-			newAllArgs = allArgs.replace(time + unit, "");
+			newAllArgs = allArgs.replace(" " + matcherDuration.group() + " ", "");
 			if (newAllArgs.length() == allArgs.length()) {
-				newAllArgs = newAllArgs.replace(time, "");
-				newAllArgs = newAllArgs.replace(unit, "");
+				newAllArgs = newAllArgs.replace(" " + time, "");
+				newAllArgs = newAllArgs.replace(unit + " ", "");
 			}
 			expire = SanctionUtils.toTimeStamp(Integer.parseInt(time), unit);
-			System.out.println("expire timestamp " + expire);
+
 			banExecute.setExpire(expire);
 		} else
 			newAllArgs = allArgs;

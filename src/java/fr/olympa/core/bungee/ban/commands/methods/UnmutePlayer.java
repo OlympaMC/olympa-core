@@ -11,7 +11,6 @@ import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.MuteUtils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionHistory;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.bungee.utils.BungeeUtils;
@@ -34,25 +33,21 @@ public class UnmutePlayer {
 
 		ProxiedPlayer target = null;
 		OlympaPlayer olympaTarget = null;
-		if (targetUUID != null) {
+		if (targetUUID != null)
 			target = ProxyServer.getInstance().getPlayer(targetUUID);
-
-		} else if (targetname != null) {
+		else if (targetname != null)
 			target = ProxyServer.getInstance().getPlayer(targetname);
-
-		} else {
+		else
 			throw new NullPointerException("The uuid or name must be specified");
-		}
 
 		Configuration config = OlympaBungee.getInstance().getConfig();
 		try {
-			if (target != null) {
+			if (target != null)
 				olympaTarget = AccountProvider.get(target.getUniqueId());
-			} else if (targetUUID != null) {
+			else if (targetUUID != null)
 				olympaTarget = AccountProvider.getFromDatabase(targetUUID);
-			} else if (targetname != null) {
+			else if (targetname != null)
 				olympaTarget = AccountProvider.getFromDatabase(targetname);
-			}
 		} catch (SQLException e) {
 			sender.sendMessage(config.getString("ban.messages.errordb"));
 			e.printStackTrace();
@@ -79,10 +74,10 @@ public class UnmutePlayer {
 
 		MuteUtils.getMute(olympaTarget.getUniqueId());
 		mute.setStatus(OlympaSanctionStatus.CANCEL);
-		if (!BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.CANCEL), mute.getId())) {
-			sender.sendMessage(config.getString("bungee.ban.messages.errordb"));
-			return;
-		}
+		//		if (!BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.CANCEL), mute.getId())) {
+		//			sender.sendMessage(config.getString("bungee.ban.messages.errordb"));
+		//			return;
+		//		}
 
 		MuteUtils.removeMute(olympaTarget.getUniqueId());
 

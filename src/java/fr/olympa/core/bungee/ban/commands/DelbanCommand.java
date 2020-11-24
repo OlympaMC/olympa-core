@@ -9,11 +9,9 @@ import fr.olympa.api.utils.Matcher;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionHistory;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -46,13 +44,13 @@ public class DelbanCommand extends BungeeCommand {
 					return;
 				}
 				ban.setStatus(OlympaSanctionStatus.DELETE);
-				if (BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.DELETE), ban.getId())) {
-					TextComponent msg = BungeeUtils.formatStringToJSON(Prefix.DEFAULT_GOOD + "Le ban n°" + ban.getId() + " a été supprimé.");
-					msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
-					OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
-					ProxyServer.getInstance().getConsole().sendMessage(msg);
-				} else
-					sendMessage(Prefix.DEFAULT_BAD, "Une erreur avec la base de donnés est survenu.");
+				//				if (BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.DELETE), ban.getId())) {
+				//					TextComponent msg = BungeeUtils.formatStringToJSON(Prefix.DEFAULT_GOOD + "Le ban n°" + ban.getId() + " a été supprimé.");
+				//					msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
+				//					OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);
+				//					ProxyServer.getInstance().getConsole().sendMessage(msg);
+				//				} else
+				//					sendMessage(Prefix.DEFAULT_BAD, "Une erreur avec la base de donnés est survenu.");
 			} else
 				sendMessage(Prefix.DEFAULT_BAD, "Le ban n°" + args[0] + " n'existe pas");
 

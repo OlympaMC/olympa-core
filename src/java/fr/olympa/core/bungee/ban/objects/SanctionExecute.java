@@ -2,6 +2,7 @@ package fr.olympa.core.bungee.ban.objects;
 
 import java.net.InetAddress;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.SanctionManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -22,7 +24,7 @@ public class SanctionExecute {
 
 	private List<String> targetsString;
 	private List<Object> targetsRaw;
-	List<SanctionExecuteTarget> targets;
+	private List<SanctionExecuteTarget> targets = new ArrayList<>();
 	long expire = 0;
 	String reason;
 	OlympaSanctionType sanctionType;
@@ -52,7 +54,7 @@ public class SanctionExecute {
 	}
 
 	public void setReason(String reason) {
-		this.reason = reason;
+		this.reason = Utils.capitalize(reason);
 	}
 
 	public void setSanctionType(OlympaSanctionType sanctionType) {
@@ -80,12 +82,12 @@ public class SanctionExecute {
 		this.author = author;
 	}
 
-	public void execute(BungeeCommand bungeeCommand) {
+	public void launchSanction(BungeeCommand bungeeCommand, OlympaSanctionStatus active) {
 		if (printfErrorIfAny() || !getOlympaPlayersFromArgs())
 			return;
 		for (SanctionExecuteTarget target : targets)
 			try {
-				if (!target.save(this))
+				if (!target.save(this, active))
 					return;
 				target.execute(this);
 				SanctionManager.annonce(target);
@@ -97,16 +99,12 @@ public class SanctionExecute {
 	private boolean printfErrorIfAny() {
 		if (reason == null)
 			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color("Chaques sanctions doit contenir une raison."));
-		else if (targets == null)
+		else if (targetsRaw == null || targetsRaw.isEmpty())
 			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color("La/Les cibles n'ont pas été trouvés. Utilise l'un des format suivants: pseudo, IP ou UUID."));
 		else if (sanctionType == null)
 			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color("Le type de sanction n'est pas connu."));
 		else
 			return false;
-		return true;
-	}
-
-	private boolean isValidSanction() {
 		return true;
 	}
 
@@ -125,7 +123,7 @@ public class SanctionExecute {
 				e.printStackTrace();
 			}
 		// Never join data
-		if (!targets.isEmpty())
+		if (targets.isEmpty())
 			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color(String.format("&cCible &4%s&c inconnu.", String.join(", ", targetsString))));
 		return !targets.isEmpty();
 	}

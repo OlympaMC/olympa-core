@@ -7,12 +7,12 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.provider.BungeeNewPlayerEvent;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.MuteUtils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.bungee.ban.objects.SanctionExecuteTarget;
 import fr.olympa.core.bungee.datamanagment.CachePlayer;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.privatemessage.PrivateMessage;
@@ -52,6 +52,7 @@ public class SanctionListener implements Listener {
 			sanctions = BanMySQL.getSanctionsActive(playerId, playerIp);
 		} catch (SQLException e) {
 			event.setCancelReason(BungeeUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci la signaler au staff.\n§eCode d'erreur: §l#SQLBungeeSanction"));
+			event.setCancelled(true);
 			e.printStackTrace();
 			return;
 		}
@@ -60,18 +61,9 @@ public class SanctionListener implements Listener {
 
 		List<OlympaSanction> bans = sanctions.stream().filter(sanction -> sanction.getType() == OlympaSanctionType.BAN || sanction.getType() == OlympaSanctionType.BANIP).collect(Collectors.toList());
 		if (!bans.isEmpty()) {
-			OlympaSanction permanant = bans.stream().filter(ban -> ban.isPermanent()).findFirst().orElse(null);
-			Configuration config = OlympaBungee.getInstance().getConfig();
-			if (permanant != null)
-				event.setCancelReason(SpigotUtils.connectScreen(config.getString("ban.bandisconnect")
-						.replace("%reason%", permanant.getReason())
-						.replace("%id%", String.valueOf(permanant.getId()))));
-			OlympaSanction temp = bans.stream().filter(ban -> !ban.isPermanent()).findFirst().orElse(null);
-			if (temp != null)
-				event.setCancelReason(SpigotUtils.connectScreen(config.getString("ban.tempbandisconnect")
-						.replace("%reason%", temp.getReason())
-						.replace("%time%", Utils.timestampToDuration(temp.getExpires()))
-						.replace("%id%", String.valueOf(temp.getId()))));
+			OlympaSanction permanant = bans.stream().sorted((s1, s2) -> Boolean.compare(s2.isPermanent(), s1.isPermanent())).findFirst().orElse(null);
+			event.setCancelReason(SanctionExecuteTarget.getDisconnectScreen(permanant));
+			event.setCancelled(true);
 		}
 		sanctions.stream().filter(sanction -> sanction.getType() == OlympaSanctionType.MUTE).forEach(mute -> MuteUtils.addMute(mute));
 	}

@@ -31,8 +31,6 @@ public class OlympaSanction {
 	private List<OlympaSanctionHistory> history;
 	private List<OlympaPlayer> olympaPlayers;
 
-	private boolean permanant;
-
 	/**
 	 * @param player  UUID du joueur qui doit être ban
 	 * @param author  UUID de l'auteur du ban
@@ -49,7 +47,6 @@ public class OlympaSanction {
 		this.expires = expires;
 		status = OlympaSanctionStatus.ACTIVE;
 		history = new ArrayList<>();
-		permanant = this.expires == 0 ? true : false;
 	}
 
 	// ###########################################################################################################################################################
@@ -71,7 +68,6 @@ public class OlympaSanction {
 		this.expires = expires;
 		this.status = status;
 		history = new ArrayList<>();
-		permanant = this.expires == 0 ? true : false;
 	}
 
 	public OlympaSanction(int id, OlympaSanctionType type, Object player, long author, String reason, long created, long expires, OlympaSanctionStatus status) {
@@ -84,7 +80,6 @@ public class OlympaSanction {
 		this.expires = expires;
 		this.status = status;
 		history = new ArrayList<>();
-		permanant = this.expires == 0 ? true : false;
 	}
 
 	public void addHistory(OlympaSanctionHistory history) {
@@ -157,8 +152,8 @@ public class OlympaSanction {
 		return type;
 	}
 
-	public Boolean isPermanent() {
-		return permanant;
+	public boolean isPermanent() {
+		return expires == 0 && type != OlympaSanctionType.KICK;
 	}
 
 	public void removeHistory(OlympaSanctionHistory history) {

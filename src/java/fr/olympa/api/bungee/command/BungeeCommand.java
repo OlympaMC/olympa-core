@@ -356,11 +356,12 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 	}
 
 	private void build() {
-		usageString = args.entrySet().stream().map(entry -> {
-			boolean isMandatory = entry.getValue();
-			List<CommandArgument> ca = entry.getKey();
-			return (isMandatory ? "<" : "[") + ca.stream().map(c -> c.getArgName()).collect(Collectors.joining("|")) + (isMandatory ? ">" : "]");
-		}).collect(Collectors.joining(" "));
+		if (!args.isEmpty())
+			usageString = args.entrySet().stream().map(entry -> {
+				boolean isMandatory = entry.getValue();
+				List<CommandArgument> ca = entry.getKey();
+				return (isMandatory ? "<" : "[") + ca.stream().map(c -> c.getArgName()).collect(Collectors.joining("|")) + (isMandatory ? ">" : "]");
+			}).collect(Collectors.joining(" "));
 		if (minArg == 0)
 			minArg = (int) args.entrySet().stream().count();
 	}

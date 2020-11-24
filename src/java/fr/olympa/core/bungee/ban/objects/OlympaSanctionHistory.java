@@ -1,13 +1,8 @@
 package fr.olympa.core.bungee.ban.objects;
 
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.api.utils.spigot.SpigotUtils;
+import fr.olympa.core.bungee.utils.BungeeUtils;
 
 public class OlympaSanctionHistory {
 
@@ -15,53 +10,53 @@ public class OlympaSanctionHistory {
 		return GsonCustomizedObjectTypeAdapter.GSON.fromJson(json, OlympaSanctionHistory.class);
 	}
 
-	private UUID author;
+	private long author;
 	private long time;
 	private OlympaSanctionStatus status;
 
 	private String reason = null;
 
-	public OlympaSanctionHistory(UUID author, long time, OlympaSanctionStatus status) {
+	public OlympaSanctionHistory(long author, long time, OlympaSanctionStatus status) {
 		this.author = author;
 		this.time = time;
 		this.status = status;
 	}
 
-	public OlympaSanctionHistory(UUID author, OlympaSanctionStatus status) {
+	public OlympaSanctionHistory(long author, OlympaSanctionStatus status) {
 		this.author = author;
-		this.time = Utils.getCurrentTimeInSeconds();
+		time = Utils.getCurrentTimeInSeconds();
 		this.status = status;
 	}
 
-	public OlympaSanctionHistory(UUID author, OlympaSanctionStatus status, String reason) {
+	public OlympaSanctionHistory(long author, OlympaSanctionStatus status, String reason) {
 		this.author = author;
-		this.time = Utils.getCurrentTimeInSeconds();
+		time = Utils.getCurrentTimeInSeconds();
 		this.status = status;
 		this.reason = reason;
 	}
 
-	public Player getAuthor() {
-		return Bukkit.getPlayer(this.author);
-	}
+	//	public Player getAuthor() {
+	//		return Bukkit.getPlayer(author);
+	//	}
 
 	public String getAuthorName() {
-		return SpigotUtils.getName(this.author);
+		return BungeeUtils.getName(author);
 	}
 
-	public UUID getAuthorUUID() {
-		return this.author;
+	public long getAuthorId() {
+		return author;
 	}
 
 	public String getReason() {
-		return this.reason != null && !this.reason.isEmpty() ? this.reason : "Raison Inconnu";
+		return reason != null && !reason.isEmpty() ? reason : "Raison Inconnu";
 	}
 
 	public OlympaSanctionStatus getStatus() {
-		return this.status;
+		return status;
 	}
 
 	public long getTime() {
-		return this.time;
+		return time;
 	}
 
 	public String toJson() {

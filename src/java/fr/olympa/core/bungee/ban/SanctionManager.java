@@ -11,6 +11,7 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
@@ -58,7 +59,7 @@ public class SanctionManager {
 			sjAnnonce.add("pendant &4%s&c".replaceFirst("%s", duration));
 		sjAnnonce.add("pour &4" + reason + "&c.");
 
-		TextComponent msg = new TextComponent(TextComponent.fromLegacyText(sjAnnonce.toString()));
+		TextComponent msg = new TextComponent(TextComponent.fromLegacyText(ColorUtils.color(sjAnnonce.toString())));
 		TextComponent msgStaff = msg.duplicate();
 		msgStaff.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, sanction.toBaseComplement()));
 		msgStaff.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/hist " + sanction.getId()));

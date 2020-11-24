@@ -3,23 +3,18 @@ package fr.olympa.core.bungee.ban.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.SanctionUtils;
-import fr.olympa.core.bungee.ban.commands.methods.MuteIp;
-import fr.olympa.core.bungee.ban.commands.methods.MutePlayer;
+import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
+import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.bungee.ban.objects.SanctionExecute;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.config.Configuration;
 
 public class MuteCommand extends BungeeCommand {
 
@@ -31,33 +26,42 @@ public class MuteCommand extends BungeeCommand {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		long authorId;
+		SanctionExecute banArg = SanctionUtils.formatArgs(sender, args);
+		banArg.setSanctionType(OlympaSanctionType.MUTE);
 		if (sender instanceof ProxiedPlayer)
-			authorId = getOlympaPlayer().getId();
-		else
-			authorId = OlympaConsole.getId();
-		Configuration config = OlympaBungee.getInstance().getConfig();
-		if (RegexMatcher.USERNAME.is(args[0]))
-			MutePlayer.addMute(authorId, sender, args[0], null, args, olympaPlayer);
-		else if (RegexMatcher.FAKE_IP.is(args[0])) {
-			if (RegexMatcher.IP.is(args[0]))
-				MuteIp.addMute(authorId, sender, args[0], args, olympaPlayer);
-			else {
-				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.ipinvalid").replace("%ip%", args[0]));
-				return;
-			}
-		} else if (RegexMatcher.UUID.is(args[0])) {
-			if (RegexMatcher.UUID.is(args[0]))
-				MutePlayer.addMute(authorId, sender, null, UUID.fromString(args[0]), args, olympaPlayer);
-			else {
-				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.uuidinvalid").replace("%uuid%", args[0]));
-				return;
-			}
-		} else {
-			this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replace("%type%", args[0]));
-			return;
-		}
+			banArg.setAuthor(getOlympaPlayer());
+		banArg.launchSanction(this, OlympaSanctionStatus.ACTIVE);
 	}
+
+	//	@Override
+	//	public void onCommand(CommandSender sender, String[] args) {
+	//		long authorId;
+	//		if (sender instanceof ProxiedPlayer)
+	//			authorId = getOlympaPlayer().getId();
+	//		else
+	//			authorId = OlympaConsole.getId();
+	//		Configuration config = OlympaBungee.getInstance().getConfig();
+	//		if (RegexMatcher.USERNAME.is(args[0]))
+	//			MutePlayer.addMute(authorId, sender, args[0], null, args, olympaPlayer);
+	//		else if (RegexMatcher.FAKE_IP.is(args[0])) {
+	//			if (RegexMatcher.IP.is(args[0]))
+	//				MuteIp.addMute(authorId, sender, args[0], args, olympaPlayer);
+	//			else {
+	//				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.ipinvalid").replace("%ip%", args[0]));
+	//				return;
+	//			}
+	//		} else if (RegexMatcher.UUID.is(args[0])) {
+	//			if (RegexMatcher.UUID.is(args[0]))
+	//				MutePlayer.addMute(authorId, sender, null, UUID.fromString(args[0]), args, olympaPlayer);
+	//			else {
+	//				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.uuidinvalid").replace("%uuid%", args[0]));
+	//				return;
+	//			}
+	//		} else {
+	//			this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replace("%type%", args[0]));
+	//			return;
+	//		}
+	//	}
 
 	@Override
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {

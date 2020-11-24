@@ -12,7 +12,6 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionHistory;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.spigot.OlympaCore;
@@ -39,10 +38,10 @@ public class UnbanIp {
 
 		OlympaSanction ban = BanMySQL.getSanctionActive(ip, OlympaSanctionType.BANIP);
 		ban.setStatus(OlympaSanctionStatus.CANCEL);
-		if (!BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.CANCEL, reason), ban.getId())) {
-			sender.sendMessage(config.getString("ban.errordb"));
-			return;
-		}
+		//		if (!BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.CANCEL, reason), ban.getId())) {
+		//			sender.sendMessage(config.getString("ban.errordb"));
+		//			return;
+		//		}
 
 		TextComponent msg = new TextComponent(config.getString("ban.unbanannouncetostaff")
 				.replaceAll("%player%", emeraldTargetsName)

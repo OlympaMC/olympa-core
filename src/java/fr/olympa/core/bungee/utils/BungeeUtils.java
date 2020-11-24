@@ -12,6 +12,7 @@ import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import net.md_5.bungee.api.ChatColor;
@@ -24,7 +25,7 @@ import net.md_5.bungee.config.Configuration;
 public class BungeeUtils {
 
 	public static List<String> color(List<String> l) {
-		return l.stream().map(s -> BungeeUtils.color(s)).collect(Collectors.toList());
+		return l.stream().map(s -> ColorUtils.color(s)).collect(Collectors.toList());
 	}
 
 	public static String color(String s) {
@@ -33,12 +34,12 @@ public class BungeeUtils {
 
 	public static String connectScreen(String s) {
 		Configuration config = OlympaBungee.getInstance().getConfig();
-		return BungeeUtils.color(config.getString("default.connectscreenprefix") + s + config.getString("default.connectscreensuffix"));
+		return ColorUtils.color(config.getString("default.connectscreenprefix") + s + config.getString("default.connectscreensuffix"));
 	}
 
 	public static TextComponent formatStringToJSON(String s) {
 		TextComponent textcomponent = new TextComponent();
-		BaseComponent[] msgs = TextComponent.fromLegacyText(BungeeUtils.color(s));
+		BaseComponent[] msgs = TextComponent.fromLegacyText(ColorUtils.color(s));
 		for (final BaseComponent msg : msgs)
 			textcomponent.addExtra(msg);
 		return textcomponent;

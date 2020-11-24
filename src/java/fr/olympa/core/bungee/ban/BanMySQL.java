@@ -1,5 +1,7 @@
 package fr.olympa.core.bungee.ban;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
+import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.sql.statement.OlympaStatement;
 import fr.olympa.api.utils.Utils;
@@ -81,7 +84,7 @@ public class BanMySQL {
 	}
 
 	public static OlympaSanction expireSanction(OlympaSanction sanction) throws SQLException {
-		OlympaSanctionHistory banhistory = new OlympaSanctionHistory(OlympaConsole.getUniqueId(), OlympaSanctionStatus.EXPIRE);
+		OlympaSanctionHistory banhistory = new OlympaSanctionHistory(OlympaConsole.getId(), OlympaSanctionStatus.EXPIRE);
 		sanction.setStatus(OlympaSanctionStatus.EXPIRE);
 		sanction.addHistory(banhistory);
 		PreparedStatement pstate = OlympaBungee.getInstance().getDatabase().prepareStatement("UPDATE sanctions SET `status_id` = ?, `history` = CONCAT_WS(`;`, ?, history) WHERE `id` = ?;");
@@ -108,10 +111,23 @@ public class BanMySQL {
 	}
 
 	private static OlympaSanction getSanction(ResultSet resultSet) throws SQLException {
+		String targetDb = resultSet.getString("target");
+		Object target;
+		if (RegexMatcher.INT.is(targetDb))
+			target = RegexMatcher.INT.parse(targetDb);
+		else if (RegexMatcher.IP.is(targetDb))
+			try {
+				target = InetAddress.getByName(targetDb);
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+				return null;
+			}
+		else
+			throw new IllegalArgumentException(targetDb + " is not INT or IP.");
 		OlympaSanction sanction = new OlympaSanction(
 				resultSet.getInt("id"),
 				OlympaSanctionType.getByID(resultSet.getInt("type_id")),
-				UUID.fromString(resultSet.getString("target")),
+				target,
 				resultSet.getLong("author_id"),
 				resultSet.getString("reason"),
 				resultSet.getTimestamp("created").getTime() / 1000L,

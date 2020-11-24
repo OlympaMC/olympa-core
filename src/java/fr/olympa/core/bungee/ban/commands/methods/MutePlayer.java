@@ -69,7 +69,7 @@ public class MutePlayer {
 		//		java.util.regex.Matcher matcher2 = SanctionUtils.matchUnit(args[1]);
 		java.util.regex.Matcher matcher2 = null;
 		// Si la command contient un temps et une unité valide
-		if (matcher1.find() && matcher2.find()) {
+		if (matcher1.find()) {
 			// Si la command contient un motif
 			if (args.length > 2) {
 				String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));

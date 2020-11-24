@@ -2,26 +2,20 @@ package fr.olympa.core.bungee.ban.commands;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
-
-import org.bukkit.entity.Player;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaConsole;
-import fr.olympa.api.utils.Matcher;
-import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.ban.commands.methods.UnbanIp;
-import fr.olympa.core.bungee.ban.commands.methods.UnbanPlayer;
+import fr.olympa.core.bungee.ban.SanctionUtils;
+import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
+import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.bungee.ban.objects.SanctionExecute;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.config.Configuration;
 
-@SuppressWarnings("deprecation")
 public class UnbanCommand extends BungeeCommand {
 
 	public UnbanCommand(Plugin plugin) {
@@ -32,37 +26,46 @@ public class UnbanCommand extends BungeeCommand {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		UUID author;
-		if (sender instanceof Player)
-			author = ((Player) sender).getUniqueId();
-		else
-			author = OlympaConsole.getUniqueId();
-
-		Configuration config = OlympaBungee.getInstance().getConfig();
-		if (Matcher.isFakeIP(args[0])) {
-			if (Matcher.isIP(args[0]))
-				UnbanIp.unBan(author, sender, args[0], args);
-			else {
-				sendMessage(Prefix.DEFAULT_BAD, config.getString("default.ipinvalid").replace("%ip%", args[0]));
-				return;
-			}
-
-		} else if (Matcher.isUsername(args[0]))
-			UnbanPlayer.unBan(author, sender, null, args[0], args);
-		else if (Matcher.isFakeUUID(args[0])) {
-
-			if (Matcher.isUUID(args[0]))
-				UnbanPlayer.unBan(author, sender, UUID.fromString(args[0]), null, args);
-			else {
-				sendMessage(Prefix.DEFAULT_BAD, config.getString("default.uuidinvalid").replace("%uuid%", args[0]));
-				return;
-			}
-		} else {
-			sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replace("%type%", args[0]));
-			return;
-		}
-		return;
+		SanctionExecute banArg = SanctionUtils.formatArgs(sender, args);
+		banArg.setSanctionType(OlympaSanctionType.BAN);
+		if (sender instanceof ProxiedPlayer)
+			banArg.setAuthor(getOlympaPlayer());
+		banArg.launchSanction(this, OlympaSanctionStatus.CANCEL);
 	}
+
+	//	@Override
+	//	public void onCommand(CommandSender sender, String[] args) {
+	//		UUID author;
+	//		if (sender instanceof ProxiedPlayer)
+	//			author = ((Player) sender).getUniqueId();
+	//		else
+	//			author = OlympaConsole.getUniqueId();
+	//
+	//		Configuration config = OlympaBungee.getInstance().getConfig();
+	//		if (Matcher.isFakeIP(args[0])) {
+	//			if (Matcher.isIP(args[0]))
+	//				UnbanIp.unBan(author, sender, args[0], args);
+	//			else {
+	//				sendMessage(Prefix.DEFAULT_BAD, config.getString("default.ipinvalid").replace("%ip%", args[0]));
+	//				return;
+	//			}
+	//
+	//		} else if (Matcher.isUsername(args[0]))
+	//			UnbanPlayer.unBan(author, sender, null, args[0], args);
+	//		else if (Matcher.isFakeUUID(args[0])) {
+	//
+	//			if (Matcher.isUUID(args[0]))
+	//				UnbanPlayer.unBan(author, sender, UUID.fromString(args[0]), null, args);
+	//			else {
+	//				sendMessage(Prefix.DEFAULT_BAD, config.getString("default.uuidinvalid").replace("%uuid%", args[0]));
+	//				return;
+	//			}
+	//		} else {
+	//			sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replace("%type%", args[0]));
+	//			return;
+	//		}
+	//		return;
+	//	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {

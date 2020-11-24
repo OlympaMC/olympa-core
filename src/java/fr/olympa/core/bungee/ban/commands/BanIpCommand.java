@@ -9,6 +9,7 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.SanctionUtils;
+import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.bungee.ban.objects.SanctionExecute;
 import net.md_5.bungee.api.CommandSender;
@@ -31,7 +32,7 @@ public class BanIpCommand extends BungeeCommand {
 		banArg.setSanctionType(OlympaSanctionType.BANIP);
 		if (sender instanceof ProxiedPlayer)
 			banArg.setAuthor(getOlympaPlayer());
-		banArg.execute(this);
+		banArg.launchSanction(this, OlympaSanctionStatus.ACTIVE);
 	}
 
 	@Override

@@ -28,7 +28,7 @@ ban:
 
       &cId: &4%id%
 
-      &2&n&lSachez qu'il est impossible de faire une demande de débannissement.
+      &2&n&lSachez qu'il est impossible de faire une demande de débannissement pour ce type de ban.
    banannounce: '&2[&cBAN&2] &7%player% a été banni &npermanent&7 pour %reason%'
    banannouncetostaff: '&4%player% &ca été banni &npermanent&c par &4%author%&c pour &4%reason%&c.'
    bandisconnect: |-
@@ -48,7 +48,7 @@ ban:
 
       &cId: &4%id%
 
-      &2&n&lSachez qu'il est impossible de faire une demande de débannissement.
+      &2&n&lSachez qu'il est impossible de faire une demande de débannissement pour ce type de ban.
    banipannouncetoauthor: '&4%ip% &ca été banni &npermanent&c pour &4%reason%&c'
    banipdisconnecttoauthor: '&4%ip% &ca été banni &npermanent&c pour &4%reason%&c'
    banipdisconnect: |-
@@ -56,7 +56,8 @@ ban:
 
       &cId: &4%id%
    unbanannouncetoastaff: '&2Unban &7» &2%player% &aa été débanni par &2%author%&a pour &2%reason%&a.'
-   notbanned: '&4%player% &cn''est pas banni.'
+   bannotfound: '&4%s &cn''a pas de &4%s&c &4%s&c.'
+   notbanned: '&4%s &cn''est pas banni.'
    unmuteannouncetostaff: '&2Unmute &7» &2%player% &aa été démute par &2%author%&a pour &2%reason%&a.'
    notmuted: '&4%player% &cn''est pas mute.'
    tempmuteannounce: '&2[&cMUTE&2] &7%player% a été mute pendant %time% pour %reason%'
