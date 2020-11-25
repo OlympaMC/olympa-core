@@ -1,8 +1,8 @@
 package fr.olympa.core.bungee.ban.commands.methods;
 
-@SuppressWarnings("deprecation")
+@Deprecated(forRemoval = true)
 public class BanIp {
-	
+
 	//	public static void addBanIP(UUID author, CommandSender sender, String targetip, String[] args, OlympaPlayer olympaPlayer) throws SQLException {
 	//		java.util.regex.Matcher matcher1 = SanctionUtils.matchDuration(args[1]);
 	//		java.util.regex.Matcher matcher2 = SanctionUtils.matchUnit(args[1]);

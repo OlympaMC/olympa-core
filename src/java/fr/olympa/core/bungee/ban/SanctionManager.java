@@ -11,12 +11,10 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
-import fr.olympa.core.bungee.ban.objects.SanctionExecuteTarget;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -24,6 +22,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+@Deprecated
 public class SanctionManager {
 
 	public static int maxTimeBan = 527040;
@@ -34,38 +33,6 @@ public class SanctionManager {
 
 	public static boolean addAndApply(OlympaSanctionType type, long authorId, Object target, String reason, long timestamp) throws SQLException {
 		return addAndApply(type, authorId, target, reason, timestamp, OlympaSanctionStatus.ACTIVE, null);
-	}
-
-	@SuppressWarnings("deprecation")
-	public static void annonce(SanctionExecuteTarget banExecuteTarget) {
-		OlympaSanction sanction = banExecuteTarget.getSanction();
-		String reason = SanctionUtils.formatReason(sanction.getReason());
-
-		List<ProxiedPlayer> onlineTargets = banExecuteTarget.getPlayers();
-		List<String> playersNames = new ArrayList<>();
-		playersNames.addAll(banExecuteTarget.getOlympaPlayers().stream().map(OlympaPlayer::getName).collect(Collectors.toList()));
-		String duration = null;
-		if (!sanction.isPermanent())
-			duration = Utils.timestampToDuration(sanction.getExpires());
-		OlympaSanctionType type = sanction.getType();
-		StringJoiner sjAnnonce = new StringJoiner(" ");
-		sjAnnonce.add("&2[&c" + type.getName().toUpperCase() + "&2]");
-		if (playersNames.size() > 1)
-			sjAnnonce.add("&4%s&c ont été".replace("%s", String.join(", ", playersNames)));
-		else
-			sjAnnonce.add("&4" + playersNames.get(0) + "&c a été");
-		sjAnnonce.add(type.getName().toLowerCase());
-		if (!sanction.isPermanent())
-			sjAnnonce.add("pendant &4%s&c".replaceFirst("%s", duration));
-		sjAnnonce.add("pour &4" + reason + "&c.");
-
-		TextComponent msg = new TextComponent(TextComponent.fromLegacyText(ColorUtils.color(sjAnnonce.toString())));
-		TextComponent msgStaff = msg.duplicate();
-		msgStaff.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, sanction.toBaseComplement()));
-		msgStaff.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/hist " + sanction.getId()));
-		BungeeUtils.getPlayers(OlympaCorePermissions.BAN_SEEBANMSG, t -> t.forEach(p -> p.sendMessage(msgStaff)),
-				t -> t.stream().filter(p -> onlineTargets.stream().anyMatch(p2 -> p2.getServer().getInfo().getName().equals(p.getServer().getInfo().getName()))).forEach(p -> p.sendMessage(msg)));
-		ProxyServer.getInstance().getConsole().sendMessage(msgStaff);
 	}
 
 	public static boolean addAndApply(OlympaSanctionType type, long authorId, Object target, String reason, long timestamp, OlympaSanctionStatus status, List<OlympaPlayer> targets) throws SQLException {
@@ -126,12 +93,12 @@ public class SanctionManager {
 				return false;
 			}
 		OlympaSanction sanction = null;
-		if (targets == null || targets.isEmpty())
-			//			sanction = SanctionExecuteTarget.add(type, author, target, reason, timestamp);
-			sanction = SanctionExecuteTarget.add(type, authorId, target, reason, timestamp);
-		else
-			for (OlympaPlayer tr : targets)
-				sanction = SanctionExecuteTarget.add(type, authorId, tr.getId(), reason, timestamp);
+		//		if (targets == null || targets.isEmpty())
+		//			sanction = SanctionExecuteTarget.add(type, author, target, reason, timestamp);
+		//			sanction = SanctionExecuteTarget.add(type, authorId, target, reason, timestamp);
+		//		else
+		//			for (OlympaPlayer tr : targets)
+		//				sanction = SanctionExecuteTarget.add(type, authorId, tr.getId(), reason, timestamp);
 		String duration = null;
 		if (!sanction.isPermanent())
 			duration = Utils.timestampToDuration(sanction.getExpires());

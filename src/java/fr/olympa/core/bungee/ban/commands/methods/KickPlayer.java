@@ -1,6 +1,5 @@
 package fr.olympa.core.bungee.ban.commands.methods;
 
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -9,9 +8,6 @@ import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
-import fr.olympa.core.bungee.ban.objects.SanctionExecuteTarget;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -21,9 +17,9 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 
+@Deprecated(forRemoval = true)
 public class KickPlayer {
 
-	@SuppressWarnings("deprecation")
 	public static void addKick(long authorId, CommandSender sender, String targetname, UUID targetUUID, String[] args, OlympaPlayer olympaPlayer) {
 		ProxiedPlayer target = null;
 		OlympaPlayer olympaTarget = null;
@@ -50,14 +46,14 @@ public class KickPlayer {
 			return;
 		}
 
-		OlympaSanction kick;
-		try {
-			kick = SanctionExecuteTarget.add(OlympaSanctionType.KICK, authorId, olympaTarget.getUniqueId(), reason, 0, OlympaSanctionStatus.EXPIRE);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			sender.sendMessage(config.getString("ban.errordb"));
-			return;
-		}
+		OlympaSanction kick = null;
+		//		try {
+		//			kick = SanctionExecuteTarget.add(OlympaSanctionType.KICK, authorId, olympaTarget.getUniqueId(), reason, 0, OlympaSanctionStatus.EXPIRE);
+		//		} catch (SQLException e) {
+		//			e.printStackTrace();
+		//			sender.sendMessage(config.getString("ban.errordb"));
+		//			return;
+		//		}
 		// Envoyer un message à tous les joueurs du même serveur spigot
 		/*
 		 * for(ProxiedPlayer players : target.getServer().getInfo().getPlayers()) {

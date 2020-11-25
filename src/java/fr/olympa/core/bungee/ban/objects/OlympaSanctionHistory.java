@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.ban.objects;
 
+import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
@@ -15,6 +16,12 @@ public class OlympaSanctionHistory {
 	private OlympaSanctionStatus status;
 
 	private String reason = null;
+
+	public OlympaSanctionHistory(OlympaSanctionStatus status) {
+		author = OlympaConsole.getId();
+		time = Utils.getCurrentTimeInSeconds();
+		this.status = status;
+	}
 
 	public OlympaSanctionHistory(long author, long time, OlympaSanctionStatus status) {
 		this.author = author;

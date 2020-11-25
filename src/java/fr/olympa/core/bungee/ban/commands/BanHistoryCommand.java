@@ -18,8 +18,7 @@ public class BanHistoryCommand extends BungeeCommand {
 	public BanHistoryCommand(OlympaBungee plugin) {
 		super(plugin, "banhistory", OlympaCorePermissions.BAN_HISTORY_COMMAND, "banhist", "mutehist", "kickhist", "hist", "histban");
 		minArg = 1;
-		Configuration config = plugin.getConfig();
-		usageString = config.getString("ban.usagehistban");
+		usageString = plugin.getConfig().getString("ban.usagehistban");
 	}
 
 	@Override

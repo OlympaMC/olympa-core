@@ -66,7 +66,7 @@ public class BungeeUtils {
 		return "";
 	}
 
-	public static Set<ProxiedPlayer> getPlayers(List<String> l) {
+	public static Set<ProxiedPlayer> getPlayers() {
 		return OlympaBungee.getInstance().getProxy().getPlayers().stream().filter(p -> !DataHandler.isUnlogged(p)).collect(Collectors.toSet());
 	}
 

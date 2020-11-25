@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.hook.IProtocolSupport;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.VersionNameComparator;
 import fr.olympa.api.utils.spigot.ProtocolAPI;
 import fr.olympa.core.spigot.OlympaCore;
@@ -97,7 +98,7 @@ public class ProtocolSupportHook implements IProtocolSupport {
 		ProtocolVersion last = proto.get(0);
 		ProtocolVersion first = proto.get(proto.size() - 1);
 		List<String> protoAll = proto.stream().filter(pv -> pv.getId() > first.getId() && pv.getId() < last.getId() && !proto.contains(pv)).map(ProtocolVersion::getName).collect(Collectors.toList());
-		return String.join(", ", protoAll);
+		return ColorUtils.join(protoAll);
 
 	}
 

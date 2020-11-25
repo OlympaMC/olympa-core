@@ -4,6 +4,7 @@ import fr.olympa.api.player.OlympaPlayer;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 
+@Deprecated(forRemoval = true)
 public class KickIp {
 
 	@SuppressWarnings("deprecation")

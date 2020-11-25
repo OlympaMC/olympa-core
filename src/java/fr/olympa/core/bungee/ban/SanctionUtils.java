@@ -1,19 +1,21 @@
 package fr.olympa.core.bungee.ban;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import fr.olympa.api.match.RegexMatcher;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.ban.objects.SanctionExecute;
-import net.md_5.bungee.api.CommandSender;
+import fr.olympa.core.bungee.ban.objects.OlympaSanction;
+import fr.olympa.core.bungee.utils.BungeeUtils;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.config.Configuration;
 
 public class SanctionUtils {
@@ -69,57 +71,30 @@ public class SanctionUtils {
 		return Utils.capitalize(reason.replaceAll(" {2,}", " "));
 	}
 
-	public static SanctionExecute formatArgs(CommandSender author, String[] args) {
-		SanctionExecute banExecute = new SanctionExecute();
-		List<String> targetsNames = Arrays.asList(args[0].split(","));
-		banExecute.setTargetsString(targetsNames);
-		List<Object> targets = new ArrayList<>();
-		targetsNames.forEach(t -> {
-			if (RegexMatcher.IP.is(t))
-				try {
-					targets.add(InetAddress.getByName(t));
-				} catch (UnknownHostException e) {
-					e.printStackTrace();
-				}
-			else if (RegexMatcher.UUID.is(t))
-				targets.add(RegexMatcher.UUID.parse(t));
-			else if (RegexMatcher.USERNAME.is(t))
-				targets.add(t);
-			else if (RegexMatcher.LONG.is(t))
-				targets.add(RegexMatcher.LONG.parse(t));
-		});
-		banExecute.setTargets(targets);
-		long expire = 0;
+	public static BaseComponent[] getDisconnectScreen(OlympaSanction sanction) {
+		return getDisconnectScreen(Arrays.asList(sanction));
+	}
 
-		String allArgs = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-		String newAllArgs = null;
-		Matcher matcherDuration = SanctionUtils.matchDuration(allArgs);
-		if (matcherDuration.find()) {
-			String time = matcherDuration.group(1);
-			String unit = matcherDuration.group(2);
-			newAllArgs = allArgs.replace(" " + matcherDuration.group() + " ", "");
-			if (newAllArgs.length() == allArgs.length()) {
-				newAllArgs = newAllArgs.replace(" " + time, "");
-				newAllArgs = newAllArgs.replace(unit + " ", "");
-			}
-			expire = SanctionUtils.toTimeStamp(Integer.parseInt(time), unit);
-
-			banExecute.setExpire(expire);
-		} else
-			newAllArgs = allArgs;
-		banExecute.setReason(newAllArgs);
-		//		Configuration config = OlympaBungee.getInstance().getConfig();
-		//		if (OlympaCorePermissions.BAN_BYPASS_BAN.hasSenderPermissionBungee(author)) {
-		//			author.sendMessage(ColorUtils.color(config.getString("ban.cantbanstaffmembers")));
-		//			return null;
-		//		}
-		//		if (seconds <= SanctionManager.minTimeBan) {
-		//			author.sendMessage(ColorUtils.color(config.getString("ban.cantbypasstime").replace("%sanction", "ban").replace("%duration", Utils.timeToDuration(SanctionManager.minTimeBan))));
-		//			return null;
-		//		} else if (seconds >= SanctionManager.maxTimeBan) {
-		//			author.sendMessage(ColorUtils.color(config.getString("ban.cantbypasstime").replace("%sanction", "ban").replace("%duration", Utils.timeToDuration(SanctionManager.maxTimeBan))));
-		//			return null;
-		//		}
-		return banExecute;
+	public static BaseComponent[] getDisconnectScreen(List<OlympaSanction> bans) {
+		OlympaSanction sanction = bans.stream().sorted((s1, s2) -> Boolean.compare(s2.isPermanent(), s1.isPermanent())).findFirst().orElse(null);
+		StringJoiner sjDisconnect = new StringJoiner("\n");
+		String typeAction = sanction.getType().getNameForPlayer();
+		boolean permanant = false;
+		if (sanction.isPermanent()) {
+			permanant = true;
+			typeAction += " &npermanent&c";
+		}
+		sjDisconnect.add(String.format("&cTu a été %s", typeAction));
+		sjDisconnect.add("");
+		sjDisconnect.add(String.format("&cRaison : &4%s", ColorUtils.joinRedEt(bans.stream().map(OlympaSanction::getReason).collect(Collectors.toList()))));
+		sjDisconnect.add("");
+		if (permanant) {
+			sjDisconnect.add(String.format("&cDurée restante : &4%s&c", Utils.timestampToDuration(sanction.getExpires())));
+			sjDisconnect.add("");
+		}
+		sjDisconnect.add(String.format("&cID : &4%s&c", ColorUtils.joinRedEt(bans.stream().map(String::valueOf).collect(Collectors.toList()))));
+		sjDisconnect.add("");
+		BaseComponent[] msgDisconnect = TextComponent.fromLegacyText(BungeeUtils.connectScreen(sjDisconnect.toString()));
+		return msgDisconnect;
 	}
 }

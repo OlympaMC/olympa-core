@@ -1,4 +1,4 @@
-version: 1.3
+version: 1.4
 status: 'Développement'
 maintenance:
    messages:
@@ -63,7 +63,7 @@ ban:
    tempmuteannounce: '&2[&cMUTE&2] &7%player% a été mute pendant %time% pour %reason%'
    tempmuteannouncetotarget: '&cTu a été mute pendant &4%time%&c pour &4%reason%&c.'
    tempmuteannouncetoauthor: '&c%player% a été mute pendant &4%time%&c pour &4%reason%&c.'
-   youaremuted: '&cTu êtes mute pour &4%reason% &cpendant encore &4%expire%&c.'
+   youaremuted: '&cTu es mute pour &4%reason% &cpendant encore &4%expire%&c.'
    alreadymute: '&4%player% &cest déjà mute.'
    kicknotconnected: '&cLe joueur &4%player%&c n''est pas connecté.'
    kickannounce: '&2[&cKICK&2] &7%player% a été kick pour %reason%'
@@ -84,6 +84,10 @@ ban:
    idinvalid: '&4%id%&c n''est pas un Id de ban valide.'
    typeunknown: '&4%type% &cn''est ni un uuid, ni un joueur, ni une IP.'
    units:
+      month:
+      - month
+      - months
+      - mois
       second:
       - second
       - seconds
@@ -111,11 +115,6 @@ ban:
       - jour
       - jours
       - j
-      month:
-      - month
-      - months
-      - mo
-      - mois
       year:
       - year
       - years

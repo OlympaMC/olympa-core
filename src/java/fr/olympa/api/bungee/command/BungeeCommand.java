@@ -17,6 +17,7 @@ import fr.olympa.api.command.IOlympaCommand;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
@@ -350,7 +351,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 	}
 
 	public void sendHelp(CommandSender sender) {
-		sendMessage(sender, Prefix.DEFAULT, "§eCommande §6%s", command + (aliases == null || aliases.length == 0 ? "" : " §e(" + String.join(", ", aliases) + ")"));
+		sendMessage(sender, Prefix.DEFAULT, "§eCommande §6%s", command + (aliases == null || aliases.length == 0 ? "" : " §e(" + ColorUtils.joinGold(aliases) + ")"));
 		if (description != null)
 			sendMessage(sender, Prefix.DEFAULT, "§e%s", description);
 	}

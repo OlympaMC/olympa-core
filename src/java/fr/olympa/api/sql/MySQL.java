@@ -67,7 +67,7 @@ public class MySQL {
 	// Pour pas surcharger les requettes MySQL
 	// TODO -> cache redis pour le cache multi-server
 	static Set<String> allPlayersNamesCache = null;
-	
+
 	public static Set<String> getAllPlayersNames() {
 		if (allPlayersNamesCache != null)
 			return allPlayersNamesCache;
@@ -189,7 +189,26 @@ public class MySQL {
 			statement.setLong(1, id);
 			ResultSet resultSet = statement.executeQuery();
 			if (resultSet.next())
-				return new OlympaPlayerInformationsObject(id, resultSet.getString("pseudo"), Utils.getUUID(resultSet.getString("uuid_server")));
+				return new OlympaPlayerInformationsObject(id, resultSet.getString("pseudo"), (UUID) RegexMatcher.UUID.parse(resultSet.getString("uuid_server")));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private static OlympaStatement getPlayerInformationsByUUIDStatement = new OlympaStatement("SELECT `pseudo`, `id` FROM " + tableName + " WHERE `uuid_server` = ?");
+
+	/**
+	 * Permet de récupérer les informations d'un joueur dans la base de données grâce à
+	 * son id
+	 */
+	public static OlympaPlayerInformations getPlayerInformations(UUID uuid) {
+		try {
+			PreparedStatement statement = getPlayerInformationsByUUIDStatement.getStatement();
+			statement.setString(1, Utils.getUUIDString(uuid));
+			ResultSet resultSet = statement.executeQuery();
+			if (resultSet.next())
+				return new OlympaPlayerInformationsObject(resultSet.getLong("id"), resultSet.getString("pseudo"), uuid);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

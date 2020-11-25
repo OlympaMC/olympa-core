@@ -10,11 +10,9 @@ import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.ban.MuteUtils;
+import fr.olympa.core.bungee.ban.SanctionHandler;
 import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
-import fr.olympa.core.bungee.ban.objects.SanctionExecuteTarget;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -24,9 +22,9 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 
+@Deprecated(forRemoval = true)
 public class MutePlayer {
 
-	@SuppressWarnings("deprecation")
 	public static void addMute(long authorId, CommandSender sender, String targetname, UUID targetUUID, String[] args, OlympaPlayer olymaPlayer) {
 		ProxiedPlayer target = null;
 		OlympaPlayer olympaTarget = null;
@@ -51,8 +49,8 @@ public class MutePlayer {
 				olympaTarget = AccountProvider.getFromDatabase(targetname);
 
 			// Si le joueur n'est pas mute
-			OlympaSanction alreadymute = MuteUtils.getMute(olympaTarget.getUniqueId());
-			if (alreadymute != null && !MuteUtils.chechExpireBan(alreadymute)) {
+			OlympaSanction alreadymute = SanctionHandler.getMute(olympaTarget.getId());
+			if (alreadymute != null && !SanctionHandler.chechExpireBan(alreadymute)) {
 				// Sinon annuler le ban
 				TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("bungee.ban.messages.alreadymute").replace("%player%", olympaTarget.getName()));
 				msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, alreadymute.toBaseComplement()));
@@ -94,15 +92,15 @@ public class MutePlayer {
 				}
 
 				String Stimestamp = Utils.timestampToDuration(timestamp);
-				OlympaSanction mute;
-				try {
-					mute = SanctionExecuteTarget.add(OlympaSanctionType.MUTE, authorId, olympaTarget.getUniqueId(), reason, timestamp);
-				} catch (SQLException e) {
-					e.printStackTrace();
-					sender.sendMessage(config.getString("ban.errordb"));
-					return;
-				}
-				MuteUtils.addMute(mute);
+				OlympaSanction mute = null;
+				//				try {
+				//					mute = SanctionExecuteTarget.add(OlympaSanctionType.MUTE, authorId, olympaTarget.getUniqueId(), reason, timestamp);
+				//				} catch (SQLException e) {
+				//					e.printStackTrace();
+				//					sender.sendMessage(config.getString("ban.errordb"));
+				//					return;
+				//				}
+				SanctionHandler.addMute(mute);
 				// Si Target est connecté
 				if (target != null) {
 					// Envoyer un message à tous les joueurs du même serveur spigot
@@ -130,14 +128,14 @@ public class MutePlayer {
 			sender.sendMessage(config.getString("ban.messages.usagemute"));
 			String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-			OlympaSanction mute;
-			try {
-				mute = SanctionExecuteTarget.add(OlympaSanctionType.MUTE, authorId, olympaTarget.getUniqueId(), reason, 0);
-			} catch (SQLException e) {
-				e.printStackTrace();
-				sender.sendMessage(config.getString("bungee.ban.messages.errordb"));
-				return;
-			}
+			OlympaSanction mute = null;
+			//			try {
+			//				mute = SanctionExecuteTarget.add(OlympaSanctionType.MUTE, authorId, olympaTarget.getUniqueId(), reason, 0);
+			//			} catch (SQLException e) {
+			//				e.printStackTrace();
+			//				sender.sendMessage(config.getString("bungee.ban.messages.errordb"));
+			//				return;
+			//			}
 			if (target != null)
 				for (ProxiedPlayer players : target.getServer().getInfo().getPlayers())
 					players.sendMessage(config.getString("bungee.ban.messages.muteannounce").replace("%player%", olympaTarget.getName()).replace("%reason%", reason));

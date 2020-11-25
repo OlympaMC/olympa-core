@@ -7,10 +7,9 @@ import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.ban.SanctionUtils;
+import fr.olympa.core.bungee.ban.execute.SanctionExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
-import fr.olympa.core.bungee.ban.objects.SanctionExecute;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -25,11 +24,11 @@ public class KickCommand extends BungeeCommand {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		SanctionExecute banArg = SanctionUtils.formatArgs(sender, args);
+		SanctionExecute banArg = SanctionExecute.formatArgs(args);
 		banArg.setSanctionType(OlympaSanctionType.KICK);
 		if (sender instanceof ProxiedPlayer)
 			banArg.setAuthor(getOlympaPlayer());
-		banArg.launchSanction(this, OlympaSanctionStatus.EXPIRE);
+		banArg.launchSanction(this, OlympaSanctionStatus.END);
 	}
 
 	//	@Override

@@ -9,7 +9,7 @@ import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
-import fr.olympa.core.bungee.ban.MuteUtils;
+import fr.olympa.core.bungee.ban.SanctionHandler;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
@@ -22,9 +22,9 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 
+@Deprecated(forRemoval = true)
 public class UnmutePlayer {
 
-	@SuppressWarnings("deprecation")
 	public static void unBan(UUID author, CommandSender sender, UUID targetUUID, String targetname, String[] args) {
 		// /ban <pseudo> <time unit> <reason>
 		// args[0] = target
@@ -55,7 +55,7 @@ public class UnmutePlayer {
 		}
 		OlympaSanction mute;
 		if (target != null) {
-			mute = MuteUtils.getMute(target.getUniqueId());
+			mute = SanctionHandler.getMute(olympaTarget.getId());
 			// Si le joueur n'est pas mute
 			if (mute == null) {
 				sender.sendMessage(config.getString("bungee.ban.messages.notmuted").replaceAll("%player%", targetname));
@@ -72,14 +72,14 @@ public class UnmutePlayer {
 
 		String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-		MuteUtils.getMute(olympaTarget.getUniqueId());
+		//		SanctionHandler.getMute(olympaTarget.getUniqueId());
 		mute.setStatus(OlympaSanctionStatus.CANCEL);
 		//		if (!BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.CANCEL), mute.getId())) {
 		//			sender.sendMessage(config.getString("bungee.ban.messages.errordb"));
 		//			return;
 		//		}
 
-		MuteUtils.removeMute(olympaTarget.getUniqueId());
+		//		SanctionHandler.removeMute(olympaTarget);
 
 		// Envoye un message au staff
 		TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("bungee.ban.messages.unmuteannouncetoauthor")

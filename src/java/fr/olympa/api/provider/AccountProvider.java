@@ -106,6 +106,15 @@ public class AccountProvider implements OlympaAccount {
 		return info;
 	}
 
+	public synchronized static OlympaPlayerInformations getPlayerInformations(UUID uuid) {
+		OlympaPlayerInformations info = cachedInformations.values().stream().filter(opi -> opi.getUUID().equals(uuid)).findFirst().orElse(null);
+		if (info == null) {
+			info = MySQL.getPlayerInformations(uuid);
+			cachedInformations.put(info.getId(), info);
+		}
+		return info;
+	}
+
 	public synchronized static OlympaPlayerInformations getPlayerInformations(OlympaPlayer player) {
 		OlympaPlayerInformations info = cachedInformations.get(player.getId());
 		if (info == null) {

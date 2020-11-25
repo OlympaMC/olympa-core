@@ -8,10 +8,9 @@ import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.ban.SanctionUtils;
+import fr.olympa.core.bungee.ban.execute.SanctionExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
-import fr.olympa.core.bungee.ban.objects.SanctionExecute;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -21,14 +20,13 @@ public class BanIpCommand extends BungeeCommand {
 
 	public BanIpCommand(OlympaBungee plugin) {
 		super(plugin, "banip", OlympaCorePermissions.BAN_BANIP_COMMAND, "tempbanip");
-		permToBandef = OlympaCorePermissions.BAN_BANIPDEF_COMMAND;
 		minArg = 2;
-		usageString = plugin.getConfig().getString("ban.messages.usageban");
+		usageString = plugin.getConfig().getString("ban.usageban");
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		SanctionExecute banArg = SanctionUtils.formatArgs(sender, args);
+		SanctionExecute banArg = SanctionExecute.formatArgs(args);
 		banArg.setSanctionType(OlympaSanctionType.BANIP);
 		if (sender instanceof ProxiedPlayer)
 			banArg.setAuthor(getOlympaPlayer());

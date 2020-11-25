@@ -14,7 +14,7 @@ public class ForceKickCommand extends BungeeCommand {
 	public ForceKickCommand(OlympaBungee plugin) {
 		super(plugin, "forcekick", OlympaCorePermissions.BAN_FORCEKICK_COMMAND, "forceeject");
 		minArg = 1;
-		usageString = plugin.getConfig().getString("ban.messages.usagekick");
+		usageString = plugin.getConfig().getString("ban.usagekick");
 	}
 
 	@Override

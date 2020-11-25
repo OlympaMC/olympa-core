@@ -26,6 +26,7 @@ import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.api.utils.UtilsCore;
@@ -97,7 +98,7 @@ public class GroupCommand extends OlympaCommand {
 				if (pentialsGroup.isEmpty())
 					this.sendError("Le groupe &4%s&c n'existe pas.", arg1);
 				else
-					this.sendError("Le groupe &4%s&c n'existe pas. Essayez plutôt avec &4%s&c.", arg1, String.join(", ", pentialsGroup));
+					this.sendError("Le groupe &4%s&c n'existe pas. Essayez plutôt avec &4%s&c.", arg1, ColorUtils.joinRed(pentialsGroup));
 				return true;
 			}
 
