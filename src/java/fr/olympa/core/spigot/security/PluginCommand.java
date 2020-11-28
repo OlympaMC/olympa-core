@@ -25,7 +25,7 @@ public class PluginCommand extends OlympaCommand {
 		List<String> plugins = new ArrayList<>();
 		for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
 			String name = p.getName();
-			if (name.contains("Olympa")) {
+			if (name.contains("Olympa") || p.getDescription().getAuthors().stream().anyMatch(x -> x.contains("SkytAsul") || x.contains("Tristiisch"))) {
 				//plugins.add("§o*redacted*");
 				pluginsOlympa.add(name);
 			}else {
