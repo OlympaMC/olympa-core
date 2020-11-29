@@ -11,8 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
@@ -66,13 +66,14 @@ public class GroupListener implements Listener {
 	}
 	
 	private void calculatePermissions(OlympaPlayer olympaPlayer, Player player) {
-		if (player.hasMetadata("permAttachment")) {
-			PermissionAttachment attachment = (PermissionAttachment) player.getMetadata("permAttachment").remove(0).value();
-			attachment.remove();
-			OlympaCore.getInstance().sendMessage("Mise à jour des permissions Bukkit du joueur §6%s", player.getName());
+		for (PermissionAttachmentInfo attachmentInfo : player.getEffectivePermissions()) {
+			if (attachmentInfo.getAttachment() != null && (attachmentInfo.getAttachment().getPlugin() == OlympaCore.getInstance())) {
+				attachmentInfo.getAttachment().remove();
+				OlympaCore.getInstance().sendMessage("Mise à jour des permissions Bukkit du joueur §6%s", player.getName());
+				break;
+			}
 		}
 		PermissionAttachment attachment = player.addAttachment(OlympaCore.getInstance());
-		player.setMetadata("permAttachment", new FixedMetadataValue(OlympaCore.getInstance(), attachment));
 		olympaPlayer.getGroup().getAllGroups().forEach(group -> group.runtimePermissions.forEach((perm, value) -> attachment.setPermission(perm, value)));
 		player.recalculatePermissions();
 		((CraftServer) Bukkit.getServer()).getHandle().getServer().getCommandDispatcher().a(((CraftPlayer) player).getHandle());
