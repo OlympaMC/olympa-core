@@ -4,8 +4,6 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,7 +12,6 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.permissions.PermissionAttachment;
 
 import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.player.OlympaPlayer;
@@ -123,11 +120,6 @@ public class DataManagmentListener implements Listener {
 		OlympaCore.getInstance().launchAsync(() -> {
 			try {
 				MySQL.loadPlayerPluginDatas(olympaPlayer);
-
-				PermissionAttachment attachment = player.addAttachment(OlympaCore.getInstance());
-				olympaPlayer.getGroup().getAllGroups().forEach(group -> group.runtimePermissions.forEach(perm -> attachment.setPermission(perm, true)));
-				player.recalculatePermissions();
-				((CraftServer) Bukkit.getServer()).getHandle().getServer().getCommandDispatcher().a(((CraftPlayer) player).getHandle());
 
 				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
 				Bukkit.getPluginManager().callEvent(loginevent);
