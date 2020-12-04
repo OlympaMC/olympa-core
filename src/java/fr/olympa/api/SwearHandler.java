@@ -18,6 +18,7 @@ public class SwearHandler {
 	private Map<String, Pattern> regexSwear;
 
 	public SwearHandler(List<String> swears) {
+
 		regexSwear = new HashMap<>();
 		for (String swear : swears) {
 			StringBuilder sb = new StringBuilder();
