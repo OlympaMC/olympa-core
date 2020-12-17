@@ -515,22 +515,24 @@ public class MySQL {
 		statement.executeUpdate();
 	}
 
-	public static void loadPlayerPluginDatas(OlympaPlayer olympaPlayer) throws SQLException {
-		if (getPlayerPluginDatas == null)
-			return;
+	public static boolean loadPlayerPluginDatas(OlympaPlayer olympaPlayer) throws SQLException {
+		if (getPlayerPluginDatas == null) return false;
 		PreparedStatement statement = getPlayerPluginDatas.getStatement();
 		statement.setLong(1, olympaPlayer.getId());
 		ResultSet pluginSet = statement.executeQuery();
-		if (pluginSet.next())
+		if (pluginSet.next()) {
 			olympaPlayer.loadDatas(pluginSet);
-		else { // pas de données avant : insérer les données par défaut
+			pluginSet.close();
+			return false;
+		}else { // pas de données avant : insérer les données par défaut
 			statement = insertPlayerPluginDatas.getStatement();
 			olympaPlayer.saveDatas(statement);
 			statement.setLong(updatePlayerPluginDatasID, olympaPlayer.getId());
 			statement.executeUpdate();
-			OlympaCore.getInstance().sendMessage("Données créées pour le joueur " + olympaPlayer.getName());
+			OlympaCore.getInstance().sendMessage("Données créées pour le joueur §6" + olympaPlayer.getName());
+			pluginSet.close();
+			return true;
 		}
-		pluginSet.close();
 	}
 
 	private static OlympaStatement savePlayerPasswordEmail = new OlympaStatement("UPDATE " + tableName + " SET `email` = ?, `password` = ? WHERE `id` = ?");

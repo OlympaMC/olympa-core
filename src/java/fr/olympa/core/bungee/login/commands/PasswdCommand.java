@@ -32,7 +32,7 @@ public class PasswdCommand extends BungeeCommand {
 		}
 
 		if (args.length == 0) {
-			this.sendMessage(Prefix.DEFAULT_GOOD, "Cette commande de changer ton mot de passe Olympa: valable en jeux, sur le site et le forum.");
+			this.sendMessage(Prefix.DEFAULT_GOOD, "Cette commande permet de changer ton mot de passe Olympa: valable en jeux, sur le site et le forum.");
 			return;
 		}
 
@@ -57,7 +57,7 @@ public class PasswdCommand extends BungeeCommand {
 			}
 			Set<String> disallowPassword = new HashSet<>(Arrays.asList("azerty", "qwerty", "12345", "01234"));
 			if (disallowPassword.stream().anyMatch(dis -> dis.equalsIgnoreCase(newPassword) || newPassword.startsWith(dis))) {
-				this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, ce mot de passe n'est pas possible car trop risqué.");
+				this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, ce mot de passe n'est pas disponible car trop risqué.");
 				return;
 			}
 		} else {

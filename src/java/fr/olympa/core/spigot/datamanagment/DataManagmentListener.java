@@ -119,7 +119,7 @@ public class DataManagmentListener implements Listener {
 
 		OlympaCore.getInstance().launchAsync(() -> {
 			try {
-				MySQL.loadPlayerPluginDatas(olympaPlayer);
+				if (MySQL.loadPlayerPluginDatas(olympaPlayer)) Bukkit.broadcastMessage("§d§k##§6 Bienvenue au joueur " + olympaPlayer.getGroup().getColor() + "§l" + player.getName() + "§6 qui rejoint le mode de jeu ! §d§k##");
 
 				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
 				Bukkit.getPluginManager().callEvent(loginevent);
@@ -145,7 +145,7 @@ public class DataManagmentListener implements Listener {
 			event.setQuitMessage(null);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler (priority = EventPriority.MONITOR)
 	public void onPlayerQuitHighest(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		AccountProvider account = new AccountProvider(player.getUniqueId());

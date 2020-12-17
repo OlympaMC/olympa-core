@@ -25,7 +25,6 @@ public class AfkCommand extends OlympaCommand {
 		AfkPlayer afkPlayer = afkHandler.get(player);
 		AfkPlayerToggleEvent event = new AfkPlayerToggleEvent(player, afkPlayer);
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(event);
-		afkHandler.updateLastAction(player, !event.getAfkPlayer().isAfk());
 		return false;
 	}
 
