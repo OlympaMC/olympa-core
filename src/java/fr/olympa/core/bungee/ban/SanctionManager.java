@@ -25,12 +25,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 @Deprecated
 public class SanctionManager {
 
-	public static int maxTimeBan = 527040;
-	public static int minTimeBan = 600;
-
-	public static int maxTimeMute;
-	public static int minTimeMute;
-
 	public static boolean addAndApply(OlympaSanctionType type, long authorId, Object target, String reason, long timestamp) throws SQLException {
 		return addAndApply(type, authorId, target, reason, timestamp, OlympaSanctionStatus.ACTIVE, null);
 	}
@@ -113,7 +107,7 @@ public class SanctionManager {
 			sjAnnonce.add("&4%s&c ont été".replace("%s", String.join(", ", playersNames)));
 		else
 			sjAnnonce.add("&4" + playersNames.get(0) + "&c a été");
-		sjAnnonce.add(type.getName().toLowerCase());
+		sjAnnonce.add(type.getNameForPlayer(!sanction.isPermanent()).toLowerCase());
 		if (!sanction.isPermanent())
 			sjAnnonce.add("pendant &4%s&c".replaceFirst("%s", duration));
 		sjAnnonce.add("pour &4" + reason + "&c.");

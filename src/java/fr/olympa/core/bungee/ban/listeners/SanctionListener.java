@@ -97,9 +97,9 @@ public class SanctionListener implements Listener {
 		ProxiedPlayer player = (ProxiedPlayer) event.getSender();
 		OlympaSanction mute = SanctionHandler.isMutedThenEnd(player);
 		if (mute != null) {
+			event.setCancelled(true);
 			Configuration config = OlympaBungee.getInstance().getConfig();
 			player.sendMessage(ColorUtils.format(config.getString("ban.youaremuted"), mute.getReason(), Utils.timestampToDuration(mute.getExpires())));
-			event.setCancelled(true);
 		}
 	}
 }

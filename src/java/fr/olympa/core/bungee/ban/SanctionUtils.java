@@ -31,7 +31,7 @@ public class SanctionUtils {
 		List<String> units2 = new ArrayList<>();
 		for (List<String> s2 : units)
 			units2.add(String.join("|", s2));
-		matchDuration = Pattern.compile("(?i)(\\d+)\\s*(" + String.join("|", units2) + ")");
+		matchDuration = Pattern.compile("^(?i)(\\d+)(\\s*)(" + String.join("|", units2) + ")\\s");
 	}
 
 	public static Matcher matchDuration(String s) {
@@ -92,7 +92,7 @@ public class SanctionUtils {
 			sjDisconnect.add(String.format("&cDurée restante : &4%s&c", Utils.timestampToDuration(sanction.getExpires())));
 			sjDisconnect.add("");
 		}
-		sjDisconnect.add(String.format("&cID : &4%s&c", ColorUtils.joinRedEt(bans.stream().map(String::valueOf).collect(Collectors.toList()))));
+		sjDisconnect.add(String.format("&cID : &4%s&c", ColorUtils.joinRedEt(bans.stream().map(OlympaSanction::getId).map(String::valueOf).collect(Collectors.toList()))));
 		sjDisconnect.add("");
 		BaseComponent[] msgDisconnect = TextComponent.fromLegacyText(BungeeUtils.connectScreen(sjDisconnect.toString()));
 		return msgDisconnect;

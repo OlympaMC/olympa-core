@@ -8,8 +8,6 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
@@ -34,7 +32,7 @@ public class BanMySQL {
 	`status_id` INT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
-	
+
 	 */
 	/**
 	 * Ajoute un sanction/mute
@@ -62,7 +60,7 @@ public class BanMySQL {
 	}
 
 	public static boolean changeStatus(OlympaSanctionHistory banhistory, long id) {
-		OlympaStatement statement = new OlympaStatement("UPDATE sanctions SET `status_id` = ?, `history` = CONCAT_WS(`;`, ?, history) WHERE `id` = ?;");
+		OlympaStatement statement = new OlympaStatement("UPDATE sanctions SET `status_id` = ?, `history` = CONCAT_WS(';', ?, history) WHERE `id` = ?;");
 		try {
 			PreparedStatement pstate = statement.getStatement();
 			pstate.setInt(1, banhistory.getStatus().getId());
@@ -129,7 +127,6 @@ public class BanMySQL {
 				resultSet.getTimestamp("expires").getTime() / 1000L,
 				OlympaSanctionStatus.getStatus(resultSet.getInt("status_id")));
 		String history = resultSet.getString("history");
-		resultSet.close();
 		if (history != null)
 			for (String hist : history.split(","))
 				sanction.addHistory(OlympaSanctionHistory.fromJson(hist));
@@ -210,7 +207,7 @@ public class BanMySQL {
 			ResultSet resultSet = state.executeQuery("SELECT * FROM sanctions WHERE `target` = '" + target + "' AND `status_id` = " + OlympaSanctionStatus.ACTIVE);
 			while (resultSet.next()) {
 				OlympaSanction sanction = getSanction(resultSet);
-				if (sanction != null)
+				if (sanction != null && sanction.getStatus().isStatus(OlympaSanctionStatus.ACTIVE))
 					sanctions.add(sanction);
 			}
 			state.close();
@@ -218,7 +215,7 @@ public class BanMySQL {
 			e.printStackTrace();
 			return null;
 		}
-		return sanctions;
+		return Lists.reverse(sanctions);
 	}
 
 	public static List<OlympaSanction> getSanctionsActive(long targetId, String targetIp) throws SQLException {
@@ -230,22 +227,25 @@ public class BanMySQL {
 		pstate.setString(i++, targetIp);
 		pstate.setInt(i, OlympaSanctionStatus.ACTIVE.getId());
 		ResultSet resultSet = pstate.executeQuery();
-		while (resultSet.next())
-			sanctions.add(getSanction(resultSet));
+		while (resultSet.next()) {
+			OlympaSanction sanction = getSanction(resultSet);
+			if (sanction != null && sanction.getStatus().isStatus(OlympaSanctionStatus.ACTIVE))
+				sanctions.add(sanction);
+		}
 		pstate.close();
-		return Lists.reverse(sanctions.stream().filter(sanction -> !sanction.getStatus().isStatus(OlympaSanctionStatus.EXPIRE)).collect(Collectors.toList()));
+		return Lists.reverse(sanctions);
 	}
 
 	public static boolean isBanned(String ip) {
 		return isSanctionActive(ip, OlympaSanctionType.BANIP);
 	}
 
-	public static boolean isBanned(UUID targetUUID) {
-		return isSanctionActive(targetUUID, OlympaSanctionType.BAN);
+	public static boolean isBanned(long olympaId) {
+		return isSanctionActive(olympaId, OlympaSanctionType.BAN);
 	}
 
-	public static boolean isMuted(UUID targetUUID) {
-		return isSanctionActive(targetUUID, OlympaSanctionType.MUTE);
+	public static boolean isMuted(long olympaId) {
+		return isSanctionActive(olympaId, OlympaSanctionType.MUTE);
 	}
 
 	public static boolean isSanctionActive(Object target, OlympaSanctionType banType) {

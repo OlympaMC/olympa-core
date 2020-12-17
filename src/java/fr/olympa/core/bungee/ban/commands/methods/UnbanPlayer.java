@@ -30,7 +30,7 @@ public class UnbanPlayer {
 	public static void unBan(UUID author, CommandSender sender, UUID targetUUID, String targetname, String[] args) {
 
 		ProxiedPlayer target = null;
-		OlympaPlayer emeraldTarget = null;
+		OlympaPlayer olympaTarget = null;
 		if (targetUUID != null)
 			target = ProxyServer.getInstance().getPlayer(targetUUID);
 		else if (targetname != null)
@@ -41,10 +41,10 @@ public class UnbanPlayer {
 		Configuration config = OlympaBungee.getInstance().getConfig();
 		try {
 			if (target != null)
-				emeraldTarget = new AccountProvider(target.getUniqueId()).get();
+				olympaTarget = new AccountProvider(target.getUniqueId()).get();
 			else {
-				emeraldTarget = MySQL.getPlayer(targetUUID);
-				if (emeraldTarget == null) {
+				olympaTarget = MySQL.getPlayer(targetUUID);
+				if (olympaTarget == null) {
 					sender.sendMessage(config.getString("ban.messages.playerneverjoin").replace("%player%", args[0]));
 					return;
 				}
@@ -56,13 +56,13 @@ public class UnbanPlayer {
 		}
 
 		// Si le joueur n'est pas banni
-		if (!BanMySQL.isBanned(emeraldTarget.getUniqueId())) {
+		if (!BanMySQL.isBanned(olympaTarget.getId())) {
 			sender.sendMessage(config.getString("ban.messages.notbanned").replace("%player%", targetname));
 			return;
 		}
 		String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-		OlympaSanction ban = BanMySQL.getSanctionActive(emeraldTarget.getUniqueId(), OlympaSanctionType.BAN);
+		OlympaSanction ban = BanMySQL.getSanctionActive(olympaTarget.getUniqueId(), OlympaSanctionType.BAN);
 		ban.setStatus(OlympaSanctionStatus.CANCEL);
 		//		if (!BanMySQL.changeCurrentSanction(new OlympaSanctionHistory(author, OlympaSanctionStatus.CANCEL, reason), ban.getId())) {
 		//			sender.sendMessage(config.getString("ban.messages.errordb"));

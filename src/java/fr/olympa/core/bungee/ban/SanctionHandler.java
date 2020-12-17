@@ -1,6 +1,5 @@
 package fr.olympa.core.bungee.ban;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +15,12 @@ import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class SanctionHandler {
+
+	public static int maxTimeBan = 527040;
+	public static int minTimeBan = 60;
+
+	public static int maxTimeMute = 10080;
+	public static int minTimeMute = 900;
 
 	static private List<OlympaSanction> mutes = new ArrayList<>();
 
@@ -40,26 +45,26 @@ public class SanctionHandler {
 		return isMuted(player, SanctionHandler::endIfNeeded);
 	}
 
-	@Deprecated
-	public static boolean chechExpireBan(OlympaSanction mute) throws SQLException {
-		if (mute.getExpires() != 0 && Utils.getCurrentTimeInSeconds() > mute.getExpires()) {
-			removeMute(mute);
-			BanMySQL.changeStatus(new OlympaSanctionHistory(OlympaSanctionStatus.EXPIRE), mute.getId());
-			return true;
-		}
-		return false;
-	}
+	//	@Deprecated
+	//	public static boolean chechExpireBan(OlympaSanction mute) throws SQLException {
+	//		if (mute.getExpires() != 0 && Utils.getCurrentTimeInSeconds() > mute.getExpires()) {
+	//			removeMute(mute);
+	//			BanMySQL.changeStatus(new OlympaSanctionHistory(OlympaSanctionStatus.EXPIRE), mute.getId());
+	//			return true;
+	//		}
+	//		return false;
+	//	}
 
 	public static OlympaSanction expireIfNeeded(OlympaSanction sanction) {
 		OlympaSanctionStatus status = sanction.getStatus();
-		if (status != OlympaSanctionStatus.ACTIVE && sanction.getExpires() != 0 && Utils.getCurrentTimeInSeconds() > sanction.getExpires())
+		if (status == OlympaSanctionStatus.ACTIVE && sanction.getExpires() != 0 && Utils.getCurrentTimeInSeconds() >= sanction.getExpires())
 			return changeStatus(sanction, new OlympaSanctionHistory(OlympaSanctionStatus.EXPIRE));
 		return sanction;
 	}
 
 	public static OlympaSanction endIfNeeded(OlympaSanction sanction) {
 		OlympaSanctionStatus status = sanction.getStatus();
-		if (status != OlympaSanctionStatus.ACTIVE && sanction.getExpires() != 0 && Utils.getCurrentTimeInSeconds() > sanction.getExpires())
+		if ((status == OlympaSanctionStatus.ACTIVE || status == OlympaSanctionStatus.EXPIRE) && sanction.getExpires() != 0 && Utils.getCurrentTimeInSeconds() >= sanction.getExpires())
 			return changeStatus(sanction, new OlympaSanctionHistory(OlympaSanctionStatus.END));
 		return sanction;
 	}

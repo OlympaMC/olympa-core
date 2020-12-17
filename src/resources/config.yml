@@ -1,4 +1,4 @@
-version: 1.4
+version: 1.41
 status: 'Développement'
 maintenance:
    messages:
@@ -35,7 +35,7 @@ ban:
       &cTu a été banni &npermanent&c pour &4%reason%
 
       &cId: &4%id%
-   alreadysanctionned: '&4%s &cest déjà sanctionné pour %s.'
+   alreadysanctionned: '&4%s&c est déjà %s pour %s.'
    alreadyban: '&4%player% &cest déjà banni.'
    muteannounce: '&2[&cBAN&2] &7%player% a été banni &npermanent&7 pour %reason%'
    muteannouncetotarget: '&cTu a été mute &npermanent&c pour &4%reason%&c.'
@@ -63,7 +63,7 @@ ban:
    tempmuteannounce: '&2[&cMUTE&2] &7%player% a été mute pendant %time% pour %reason%'
    tempmuteannouncetotarget: '&cTu a été mute pendant &4%time%&c pour &4%reason%&c.'
    tempmuteannouncetoauthor: '&c%player% a été mute pendant &4%time%&c pour &4%reason%&c.'
-   youaremuted: '&cTu es mute pour &4%reason% &cpendant encore &4%expire%&c.'
+   youaremuted: '&cTu es mute pour &4%s&c pendant encore &4%s&c.'
    alreadymute: '&4%player% &cest déjà mute.'
    kicknotconnected: '&cLe joueur &4%player%&c n''est pas connecté.'
    kickannounce: '&2[&cKICK&2] &7%player% a été kick pour %reason%'
@@ -74,7 +74,7 @@ ban:
       &cID: &4%id%
    playerneverjoin: '&cLe joueur &4%player% &cn''a jamais rejoinds le serveur.'
    errordb: '&cUne erreur avec la base de donnés est survenu.'
-   cantbypasstime: '&cTu ne dois pas dépasser la durée maximale de %sanction qui est de &4%duration.'
+   cantbypasstime: '&cTu ne dois pas dépasser la durée %s de %s qui est de &4%s&c.'
    cantbanstaffmembers: '&cTu ne dois pas bannir un membre du staff. En cas de problèmes, merci de contacter un &4Responsable
       &cou un &4Admin&c.'
    cantmutestaffmembers: '&cTu ne dois pas mute un membre du staff. En cas de problèmes, merci de contacter un &4Responsable

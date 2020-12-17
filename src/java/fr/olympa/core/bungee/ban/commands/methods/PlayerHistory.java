@@ -68,14 +68,14 @@ public class PlayerHistory {
 		msg.addExtra(BungeeUtils.color("&6Mute: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.MUTE).count() + " "));
 		msg.addExtra(BungeeUtils.color("&6Kick: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.KICK).count() + "\n"));
 
-		String sanctions = bans.stream().filter(b -> b.getStatus() == OlympaSanctionStatus.ACTIVE).map(b -> "&c" + b.getType().getName()).collect(Collectors.joining("&7, "));
+		String sanctions = bans.stream().filter(b -> b.getStatus() == OlympaSanctionStatus.ACTIVE).map(b -> "&c" + b.getType().getName(!b.isPermanent())).collect(Collectors.joining("&7, "));
 		msg.addExtra(BungeeUtils.color("&6Sanction Active: " + (sanctions.isEmpty() ? "&aAucune" : sanctions) + "\n"));
 
 		msg.addExtra(BungeeUtils.color("&6Historique: "));
 
 		bans.stream().forEach(b -> {
 			BaseComponent[] comp = new ComponentBuilder(
-					BungeeUtils.color(b.getStatus().getColor() + b.getType().getName().toUpperCase() + " " + b.getStatus().getName().toUpperCase() + " " + b.getReason() + "\n"))
+					BungeeUtils.color(b.getStatus().getColor() + b.getType().getName(!b.isPermanent()).toUpperCase() + " " + b.getStatus().getName().toUpperCase() + " " + b.getReason() + "\n"))
 							.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, b.toBaseComplement()))
 							.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + b.getId()))
 							.create();

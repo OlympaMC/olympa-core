@@ -18,7 +18,7 @@ public class UnmuteCommand extends BungeeCommand {
 
 	public UnmuteCommand(OlympaBungee plugin) {
 		super(plugin, "unmute", OlympaCorePermissions.BAN_UNMUTE_COMMAND, "umute");
-		usageString = plugin.getConfig().getString("ban.usageunmute");
+		usageString = "<joueur|uuid|id|ip> <motif>";
 		minArg = 2;
 	}
 

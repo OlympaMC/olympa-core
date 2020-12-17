@@ -221,9 +221,9 @@ public class OlympaSanction {
 
 	public BaseComponent[] toBaseComplement() {
 		return new ComponentBuilder(BungeeUtils.color("&6Information sanction n°&e" + getId() + "\n\n"))
-				.append(BungeeUtils.color("&6Joueur: &e" + getPlayersNames()))
+				.append(BungeeUtils.color("&6Joueur: &e" + getPlayersNames() + "\n"))
 				.append(BungeeUtils.color("&6Auteur: &e" + BungeeUtils.getName(getAuthor()) + "\n"))
-				.append(BungeeUtils.color("&6Type: &e" + getType().getName() + "\n"))
+				.append(BungeeUtils.color("&6Type: &e" + getType().getName(isPermanent()) + "\n"))
 				.append(BungeeUtils.color("&6Raison: &e" + getReason() + "\n"))
 				.append(BungeeUtils.color("&6Crée: &e" + Utils.timestampToDateAndHour(getCreated()) + "\n"))
 				.append(BungeeUtils.color("&6Expire: &e" + (getExpires() != 0 ? Utils.timestampToDateAndHour(getExpires()) + "\n&6Durée de base: &e" + Utils

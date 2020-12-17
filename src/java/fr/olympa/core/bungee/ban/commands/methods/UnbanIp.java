@@ -25,13 +25,13 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class UnbanIp {
 
 	public static void unBan(UUID author, CommandSender sender, String ip, String[] args) {
-		List<OlympaPlayer> emeraldTargets = MySQL.getPlayersByIp(ip);
-		String emeraldTargetsName = emeraldTargets.stream().map(OlympaPlayer::getName).collect(Collectors.joining(", "));
+		List<OlympaPlayer> olympaTargets = MySQL.getPlayersByIp(ip);
+		String olympaTargetsName = olympaTargets.stream().map(OlympaPlayer::getName).collect(Collectors.joining(", "));
 
 		CustomConfig config = OlympaCore.getInstance().getConfig();
 		// Si le joueur n'est pas banni
 		if (!BanMySQL.isBanned(ip)) {
-			sender.sendMessage(config.getString("ban.notbanned").replaceAll("%player%", emeraldTargetsName));
+			sender.sendMessage(config.getString("ban.notbanned").replaceAll("%player%", olympaTargetsName));
 			return;
 		}
 		String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
@@ -44,7 +44,7 @@ public class UnbanIp {
 		//		}
 
 		TextComponent msg = new TextComponent(config.getString("ban.unbanannouncetostaff")
-				.replaceAll("%player%", emeraldTargetsName)
+				.replaceAll("%player%", olympaTargetsName)
 				.replaceAll("%reason%", reason)
 				.replaceAll("%author%", SpigotUtils.getName(author)));
 		msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));

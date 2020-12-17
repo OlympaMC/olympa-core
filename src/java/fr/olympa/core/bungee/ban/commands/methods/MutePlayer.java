@@ -50,14 +50,14 @@ public class MutePlayer {
 
 			// Si le joueur n'est pas mute
 			OlympaSanction alreadymute = SanctionHandler.getMute(olympaTarget.getId());
-			if (alreadymute != null && !SanctionHandler.chechExpireBan(alreadymute)) {
-				// Sinon annuler le ban
-				TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("bungee.ban.messages.alreadymute").replace("%player%", olympaTarget.getName()));
-				msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, alreadymute.toBaseComplement()));
-				msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + alreadymute.getId()));
-				sender.sendMessage(msg);
-				return;
-			}
+			//			if (alreadymute != null && !SanctionHandler.chechExpireBan(alreadymute)) {
+			// Sinon annuler le ban
+			TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("bungee.ban.messages.alreadymute").replace("%player%", olympaTarget.getName()));
+			msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, alreadymute.toBaseComplement()));
+			msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + alreadymute.getId()));
+			sender.sendMessage(msg);
+			//			return;
+			//			}
 		} catch (SQLException e) {
 			sender.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color(config.getString("ban.messages.errordb")));
 			e.printStackTrace();

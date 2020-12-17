@@ -28,6 +28,10 @@ public class BungeeUtils {
 		return l.stream().map(s -> ColorUtils.color(s)).collect(Collectors.toList());
 	}
 
+	public static BaseComponent[] format(String format, Object... args) {
+		return TextComponent.fromLegacyText(ColorUtils.format(format, args));
+	}
+
 	public static String color(String s) {
 		return s != null ? ChatColor.translateAlternateColorCodes('&', s) : "";
 	}
@@ -83,6 +87,7 @@ public class BungeeUtils {
 		if (!playersWithPerm.isEmpty() && success != null)
 			success.accept(playersWithPerm);
 		if (!playersWithNoPerm.isEmpty() && noPerm != null)
-			noPerm.accept(playersWithPerm);
+			noPerm.accept(playersWithNoPerm);
 	}
+
 }

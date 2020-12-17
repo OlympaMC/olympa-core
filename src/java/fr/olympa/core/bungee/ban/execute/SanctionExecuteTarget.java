@@ -76,31 +76,32 @@ public class SanctionExecuteTarget {
 			new Exception("More than 1 OlympaPlayer for UUID, String or ID.").printStackTrace();
 			return false;
 		}
-		banExecute.reason = SanctionUtils.formatReason(banExecute.reason);
 		players = olympaPlayers.stream().map(op -> ProxyServer.getInstance().getPlayer(op.getUniqueId())).filter(p -> p != null && p.isConnected()).collect(Collectors.toList());
 
 		Configuration config = OlympaBungee.getInstance().getConfig();
 		OlympaSanction alreadyban = BanMySQL.getSanctionActive(banIdentifier, banExecute.sanctionType);
 		if (newStatus == OlympaSanctionStatus.ACTIVE) {
 			if (alreadyban != null) {
-				TextComponent msg = new TextComponent(ColorUtils.format(config.getString("ban.alreadysanctionned"), banIdentifier, banExecute.sanctionType.getName()));
+				TextComponent msg = new TextComponent(Prefix.DEFAULT_BAD.formatMessageB(config.getString("ban.alreadysanctionned"), identifier, banExecute.sanctionType.getName(!alreadyban.isPermanent()), alreadyban.getReason()));
 				msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, alreadyban.toBaseComplement()));
 				msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + alreadyban.getId()));
 				banExecute.getAuthorSender().sendMessage(msg);
 				return false;
 			}
 			if (banExecute.expire != 0) {
-				long seconds = banExecute.expire - Utils.getCurrentTimeInSeconds();
-				if (seconds <= config.getInt("ban.minmutetime")) {
-					banExecute.getAuthorSender().sendMessage(ColorUtils.color(config.getString("ban.cantbypassmaxmutetime")));
+				long mins = (banExecute.expire - Utils.getCurrentTimeInSeconds()) / 60;
+				if (banExecute.sanctionType.isBanType() && mins < SanctionHandler.minTimeBan || banExecute.sanctionType.isMuteType() && mins < SanctionHandler.minTimeMute) {
+					banExecute.getAuthorSender()
+							.sendMessage(BungeeUtils.format(config.getString("ban.cantbypasstime"), "minimal", banExecute.sanctionType.getName(!banExecute.isPermanant()), Utils.timeToDuration(SanctionHandler.minTimeMute * 60)));
 					return false;
 				}
-				if (seconds >= config.getInt("ban.maxmutetime")) {
-					banExecute.getAuthorSender().sendMessage(ColorUtils.color(config.getString("ban.cantbypassmminmutetime")));
+				if (banExecute.sanctionType.isBanType() && mins > SanctionHandler.maxTimeBan || banExecute.sanctionType.isMuteType() && mins > SanctionHandler.maxTimeMute) {
+					banExecute.getAuthorSender()
+							.sendMessage(BungeeUtils.format(config.getString("ban.cantbypasstime"), "maximal", banExecute.sanctionType.getName(!banExecute.isPermanant()), Utils.timeToDuration(SanctionHandler.maxTimeBan * 60)));
 					return false;
 				}
 				if (banExecute.sanctionType != OlympaSanctionType.BANIP && OlympaCorePermissions.STAFF.hasPermission(olympaPlayers.get(0)) && !OlympaCorePermissions.BAN_BYPASS_SANCTION_STAFF.hasPermission(banExecute.getAuthor())) {
-					banExecute.getAuthorSender().sendMessage(ColorUtils.color(config.getString("ban.cantmutestaffmembers")));
+					banExecute.getAuthorSender().sendMessage(BungeeUtils.format(config.getString("ban.cantmutestaffmembers")));
 					return false;
 				}
 			}
@@ -110,7 +111,7 @@ public class SanctionExecuteTarget {
 			if (alreadyban != null)
 				sanction = alreadyban;
 			else {
-				banExecute.getAuthorSender().sendMessage(ColorUtils.format(config.getString("ban.bannotfound"), banIdentifier, banExecute.sanctionType.getName(), OlympaSanctionStatus.ACTIVE.getNameColored()));
+				banExecute.getAuthorSender().sendMessage(ColorUtils.format(config.getString("ban.bannotfound"), identifier, banExecute.sanctionType.getName(!banExecute.isPermanant()), OlympaSanctionStatus.ACTIVE.getNameColored()));
 				return false;
 			}
 			sanction.setStatus(newStatus);
@@ -144,7 +145,7 @@ public class SanctionExecuteTarget {
 			if (type == OlympaSanctionType.BAN || type == OlympaSanctionType.BANIP) {
 
 			} else if (type == OlympaSanctionType.MUTE)
-				SanctionHandler.addMute(sanction);
+				SanctionHandler.removeMute(sanction);
 	}
 
 	@SuppressWarnings("deprecation")

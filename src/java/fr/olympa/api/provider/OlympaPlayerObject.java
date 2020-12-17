@@ -76,7 +76,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Expose
 	UUID premiumUuid;
 	@Expose
-	Gender gender = Gender.MALE;
+	Gender gender = Gender.UNSPECIFIED;
 	@Expose
 	String password;
 	@Expose

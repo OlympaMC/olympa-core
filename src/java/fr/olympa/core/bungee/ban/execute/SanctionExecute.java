@@ -51,16 +51,12 @@ public class SanctionExecute {
 		Matcher matcherDuration = SanctionUtils.matchDuration(allArgs);
 		if (matcherDuration.find()) {
 			String time = matcherDuration.group(1);
-			String unit = matcherDuration.group(2);
-			reason = allArgs.replace(" " + matcherDuration.group() + " ", "");
-			if (reason.length() == allArgs.length()) {
-				reason = reason.replace(" " + time, "");
-				reason = reason.replace(unit + " ", "");
-			}
+			String unit = matcherDuration.group(3);
+			reason = allArgs.substring(matcherDuration.group().length() + 1);
 			me.setExpire(SanctionUtils.toTimeStamp(Integer.parseInt(time), unit));
 		} else
 			reason = allArgs;
-		me.setReason(reason);
+		me.setReason(SanctionUtils.formatReason(reason));
 		return me;
 	}
 
@@ -143,7 +139,7 @@ public class SanctionExecute {
 		for (SanctionExecuteTarget target : targets)
 			try {
 				if (!target.save(this))
-					return;
+					continue;
 				target.execute(this);
 				target.annonce(this);
 			} catch (SQLException e) {

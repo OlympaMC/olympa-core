@@ -7,7 +7,10 @@ public enum OlympaSanctionType {
 	BAN(1, "Ban"),
 	BANIP(2, "BanIP"),
 	MUTE(3, "Mute"),
-	KICK(4, "Kick");
+	MUTEIP(4, "Mute"),
+	KICK(5, "Kick");
+
+	private static final String TEMP = "Temp";
 
 	public static OlympaSanctionType getByID(int i) {
 		return Arrays.stream(OlympaSanctionType.values()).filter(id -> id.getId() == i).findFirst().orElse(null);
@@ -25,13 +28,33 @@ public enum OlympaSanctionType {
 		return id;
 	}
 
+	public boolean isBanType() {
+		return id == BAN.id || id == BANIP.id;
+	}
+
+	public boolean isMuteType() {
+		return id == MUTE.id || id == MUTEIP.id;
+	}
+
+	public boolean isKickType() {
+		return id == KICK.id;
+	}
+
 	public String getName() {
 		return s;
+	}
+
+	public String getName(boolean isTemp) {
+		return isTemp ? TEMP + s : s;
 	}
 
 	public String getNameForPlayer() {
 		if (this == BANIP)
 			return BAN.s;
 		return s;
+	}
+
+	public String getNameForPlayer(boolean isTemp) {
+		return isTemp ? TEMP + getNameForPlayer() : getNameForPlayer();
 	}
 }
