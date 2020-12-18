@@ -17,7 +17,6 @@ import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.server.ServerStatus;
-import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.task.OlympaTask;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.spigot.SpigotUtils;
@@ -33,7 +32,7 @@ public class DataManagmentListener implements Listener {
 				OlympaPlayer olympaPlayer;
 				try {
 					olympaPlayer = olympaAccountObject.get();
-					MySQL.loadPlayerPluginDatas(olympaPlayer);
+					AccountProvider.loadPlayerDatas(olympaPlayer);
 				} catch (SQLException e) {
 					player.kickPlayer("§cUne erreur est survenue. Merci de réessayer\n\n§e§lSi le problème persiste, signale-le au staff.\n§eCode d'erreur: §l#SQLSpigotReload");
 					e.printStackTrace();
@@ -119,7 +118,7 @@ public class DataManagmentListener implements Listener {
 
 		OlympaCore.getInstance().launchAsync(() -> {
 			try {
-				if (MySQL.loadPlayerPluginDatas(olympaPlayer)) Bukkit.broadcastMessage("§d§k##§6 Bienvenue au joueur " + olympaPlayer.getGroup().getColor() + "§l" + player.getName() + "§6 qui rejoint le mode de jeu ! §d§k##");
+				if (AccountProvider.loadPlayerDatas(olympaPlayer)) Bukkit.broadcastMessage("§d§k##§6 Bienvenue au joueur " + olympaPlayer.getGroup().getColor() + "§l" + player.getName() + "§6 qui rejoint le mode de jeu ! §d§k##");
 
 				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
 				Bukkit.getPluginManager().callEvent(loginevent);
@@ -150,13 +149,10 @@ public class DataManagmentListener implements Listener {
 		Player player = event.getPlayer();
 		AccountProvider account = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = account.getFromCache();
-		if (olympaPlayer != null)
-			try {
-				MySQL.savePlayerPluginDatas(olympaPlayer);
-				account.saveToRedis(olympaPlayer);
-				account.removeFromCache();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		if (olympaPlayer != null) {
+			//MySQL.savePlayerPluginDatas(olympaPlayer); maintenant c'est update en temps-réel
+			account.saveToRedis(olympaPlayer);
+			account.removeFromCache();
+		}
 	}
 }

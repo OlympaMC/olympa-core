@@ -1,10 +1,15 @@
 package fr.olympa.api.provider;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import org.apache.commons.lang3.Validate;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.groups.OlympaGroup;
@@ -14,7 +19,10 @@ import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.player.OlympaPlayerProvider;
 import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.sql.SQLColumn;
+import fr.olympa.api.sql.SQLTable;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
+import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
 
 public class AccountProvider implements OlympaAccount {
@@ -26,7 +34,7 @@ public class AccountProvider implements OlympaAccount {
 
 	public static Class<? extends OlympaPlayer> playerClass = OlympaPlayerObject.class;
 	public static OlympaPlayerProvider playerProvider = OlympaPlayerObject::new;
-	private static String providerTableName = null;
+	private static SQLTable<? extends OlympaPlayer> playerTable = null;
 
 	@SuppressWarnings("unchecked")
 	public static <T extends OlympaPlayer> T get(String name) throws SQLException {
@@ -124,20 +132,33 @@ public class AccountProvider implements OlympaAccount {
 		return info;
 	}
 
-	public static String getPlayerProviderTableName() {
-		return providerTableName;
+	public static SQLTable<? extends OlympaPlayer> getPlayerTable() {
+		return playerTable;
 	}
 
-	public static void setPlayerProvider(Class<? extends OlympaPlayerObject> playerClass, OlympaPlayerProvider provider, String pluginName, Map<String, String> columns) {
+	public static <T extends OlympaPlayer> void setPlayerProvider(Class<T> playerClass, OlympaPlayerProvider provider, String pluginName, List<SQLColumn<T>> columns) {
+		Validate.isTrue(columns.stream().noneMatch(SQLColumn::isNotDefault), "All columns must have default values");
 		try {
-			providerTableName = pluginName.toLowerCase() + "_players";
-			MySQL.setDatasTable(providerTableName, columns);
+			columns.add(0, new SQLColumn<T>("player_id", "BIGINT NOT NULL", Types.BIGINT).setPrimaryKey(T::getId));
+			playerTable = new SQLTable<>(pluginName.toLowerCase() + "_players", columns).createOrAlter();
+			//MySQL.setDatasTable(providerTableName, columns);
 			AccountProvider.playerClass = playerClass;
 			playerProvider = provider;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			providerTableName = null;
+			playerTable = null;
 		}
+	}
+	
+	public static boolean loadPlayerDatas(OlympaPlayer player) throws SQLException {
+		ResultSet resultSet = playerTable.get(player.getId());
+		if (resultSet.next()) {
+			player.loadDatas(resultSet);
+			return false;
+		}
+		playerTable.insert(player.getId());
+		OlympaCore.getInstance().sendMessage("Données créées pour le joueur §6" + player.getName());
+		return true;
 	}
 
 	RedisAccess redisAccesss;

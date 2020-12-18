@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.sql.SQLException;
 import java.util.Collection;
 
 import org.bukkit.Bukkit;
@@ -294,14 +293,11 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			players.forEach(p -> {
 				AccountProvider account = new AccountProvider(p.getUniqueId());
 				OlympaPlayer olympaPlayer = account.getFromCache();
-				if (olympaPlayer != null)
-					try {
-						MySQL.savePlayerPluginDatas(olympaPlayer);
-						account.saveToRedis(olympaPlayer);
-						account.removeFromCache();
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
+				if (olympaPlayer != null) {
+					//MySQL.savePlayerPluginDatas(olympaPlayer);
+					account.saveToRedis(olympaPlayer);
+					account.removeFromCache();
+				}
 				System.out.println("Succes save " + p.getName());
 			});
 		}));

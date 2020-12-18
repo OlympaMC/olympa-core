@@ -7,13 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -28,7 +24,6 @@ import fr.olympa.api.sql.statement.OlympaStatement;
 import fr.olympa.api.sql.statement.StatementType;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.spigot.OlympaCore;
 
 public class MySQL extends SQLClass {
 
@@ -140,43 +135,42 @@ public class MySQL extends SQLClass {
 		return null;
 	}
 
-	private static OlympaStatement getPlayerPluginDatas;
+	/*private static OlympaStatement getPlayerPluginDatas;
 	private static OlympaStatement insertPlayerPluginDatas;
 	private static OlympaStatement updatePlayerPluginDatas;
 	private static int updatePlayerPluginDatasID;
-
-	public static void setDatasTable(String table, Map<String, String> columns) throws SQLException {
+	
+	public static void setDatasTable(String table, List<SQLColumn<?>> columns) throws SQLException {
 		Statement statement = OlympaCore.getInstance().getDatabase().createStatement();
-
+	
 		ResultSet columnsSet = OlympaCore.getInstance().getDatabase().getMetaData().getColumns(null, null, table, "%");
 		if (columnsSet.first()) { // la table existe : il faut vérifier si toutes les colonnes sont présentes
-			Map<String, String> missingColumns = new HashMap<>(columns);
+			List<SQLColumn<?>> missingColumns = new ArrayList<>(columns);
 			while (columnsSet.next()) {
 				String columnName = columnsSet.getString(4);
-				if (missingColumns.remove(columnName) == null)
+				if (!missingColumns.removeIf(column -> column.getName().equals(columnName)))
 					OlympaCore.getInstance().sendMessage("§cColonne " + columnName + " présente dans la table " + table + " mais pas dans la déclaration des données joueurs.");
 			}
-			for (Entry<String, String> column : missingColumns.entrySet()) {
-				String columnValue = "`" + column.getKey() + "` " + column.getValue();
-				statement.executeUpdate("ALTER TABLE `" + table + "` ADD " + columnValue);
-				OlympaCore.getInstance().sendMessage("La colonne §6" + columnValue + " §ea été créée dans la table de données joueurs §6" + table + "§e.");
+			for (SQLColumn<?> column : missingColumns) {
+				statement.executeUpdate("ALTER TABLE `" + table + "` ADD " + column.toDeclaration());
+				OlympaCore.getInstance().sendMessage("La colonne §6" + column.toDeclaration() + " §ea été créée dans la table de données joueurs §6" + table + "§e.");
 			}
 		} else { // la table n'existe pas : il faut la créer
 			StringJoiner creationJoiner = new StringJoiner(", ", "CREATE TABLE IF NOT EXISTS `" + table + "` (", ")");
 			creationJoiner.add("`player_id` BIGINT NOT NULL");
-			for (Entry<String, String> column : columns.entrySet())
-				creationJoiner.add("`" + column.getKey() + "` " + column.getValue());
+			for (SQLColumn<?> column : columns)
+				creationJoiner.add(column.toDeclaration());
 			creationJoiner.add("PRIMARY KEY (`player_id`)");
 			statement.executeUpdate(creationJoiner.toString());
 			OlympaCore.getInstance().sendMessage("Table des données joueurs §6" + table + " §ecréée !");
 		}
-
+	
 		StringJoiner updateJoiner = new StringJoiner(", ", "UPDATE `" + table + "` SET ", " WHERE `player_id` = ?");
 		StringJoiner insertJoinerKeys = new StringJoiner(", ", "INSERT INTO `" + table + "` (", " )");
 		StringJoiner insertJoinerValues = new StringJoiner(", ", " VALUES (", " )");
-		for (String columnName : columns.keySet()) {
-			updateJoiner.add("`" + columnName + "` = ?");
-			insertJoinerKeys.add("`" + columnName + "`");
+		for (SQLColumn<?> column : columns) {
+			updateJoiner.add("`" + column.getName() + "` = ?");
+			insertJoinerKeys.add("`" + column.getName() + "`");
 			insertJoinerValues.add("?");
 		}
 		insertJoinerKeys.add("`player_id`");
@@ -184,12 +178,12 @@ public class MySQL extends SQLClass {
 		updatePlayerPluginDatas = new OlympaStatement(updateJoiner.toString());
 		updatePlayerPluginDatasID = columns.size() + 1;
 		insertPlayerPluginDatas = new OlympaStatement(insertJoinerKeys.toString() + insertJoinerValues.toString());
-
+	
 		getPlayerPluginDatas = new OlympaStatement("SELECT * FROM `" + table + "` WHERE `player_id` = ?");
-
+	
 		statement.close();
 		OlympaCore.getInstance().sendMessage("La table §6" + table + " §egère les données joueurs.");
-	}
+	}*/
 
 	private static OlympaStatement getPlayerInformationsByIdStatement = new OlympaStatement("SELECT `pseudo`, `uuid_server` FROM " + table + " WHERE `id` = ?");
 
@@ -543,7 +537,7 @@ public class MySQL extends SQLClass {
 		return player;
 	}
 
-	public static void savePlayerPluginDatas(OlympaPlayer olympaPlayer) throws SQLException {
+	/*public static void savePlayerPluginDatas(OlympaPlayer olympaPlayer) throws SQLException {
 		if (updatePlayerPluginDatas == null)
 			return;
 		PreparedStatement statement = updatePlayerPluginDatas.getStatement();
@@ -551,7 +545,7 @@ public class MySQL extends SQLClass {
 		statement.setLong(updatePlayerPluginDatasID, olympaPlayer.getId());
 		statement.executeUpdate();
 	}
-
+	
 	public static boolean loadPlayerPluginDatas(OlympaPlayer olympaPlayer) throws SQLException {
 		if (getPlayerPluginDatas == null)
 			return false;
@@ -571,7 +565,7 @@ public class MySQL extends SQLClass {
 			pluginSet.close();
 			return true;
 		}
-	}
+	}*/
 
 	private static OlympaStatement savePlayerPasswordEmail = new OlympaStatement("UPDATE " + table + " SET `email` = ?, `password` = ? WHERE `id` = ?");
 
