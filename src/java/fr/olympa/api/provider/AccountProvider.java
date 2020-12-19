@@ -5,13 +5,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang.Validate;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.groups.OlympaGroup;
@@ -148,8 +149,10 @@ public class AccountProvider implements OlympaAccount {
 	public static <T extends OlympaPlayer> void setPlayerProvider(Class<T> playerClass, OlympaPlayerProvider provider, String pluginName, List<SQLColumn<T>> columns) {
 		Validate.isTrue(columns.stream().noneMatch(SQLColumn::isNotDefault), "All columns must have default values");
 		try {
-			columns.add(0, new SQLColumn<T>("player_id", "BIGINT NOT NULL", Types.BIGINT).setPrimaryKey(T::getId));
-			pluginPlayerTable = new SQLTable<>(pluginName.toLowerCase() + "_players", columns).createOrAlter();
+			List<SQLColumn<T>> newColumns = new ArrayList<>(columns.size() + 1);
+			newColumns.add(new SQLColumn<T>("player_id", "BIGINT NOT NULL", Types.BIGINT).setPrimaryKey(T::getId));
+			newColumns.addAll(columns);
+			pluginPlayerTable = new SQLTable<>(pluginName.toLowerCase() + "_players", newColumns).createOrAlter();
 			//MySQL.setDatasTable(providerTableName, columns);
 			AccountProvider.playerClass = playerClass;
 			pluginPlayerProvider = provider;

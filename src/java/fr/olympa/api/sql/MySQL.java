@@ -39,9 +39,12 @@ public class MySQL extends SQLClass {
 	//			}
 	//
 	//	}
+	
+	static {
+		init("commun", "players");
+	}
 
 	public MySQL(DbConnection dbConnection) {
-		init("commun", "players");
 		MySQL.dbConnection = dbConnection;
 		//		registerKeys(MySQL.class);
 	}
