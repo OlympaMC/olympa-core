@@ -1,7 +1,9 @@
 package fr.olympa.api.provider;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.sql.SQLColumn;
 import fr.olympa.api.sql.SQLTable;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
 
@@ -33,9 +36,15 @@ public class AccountProvider implements OlympaAccount {
 	private static Map<Long, OlympaPlayerInformations> cachedInformations = new HashMap<>();
 
 	public static Class<? extends OlympaPlayer> playerClass = OlympaPlayerObject.class;
-	public static OlympaPlayerProvider playerProvider = OlympaPlayerObject::new;
-	private static SQLTable<? extends OlympaPlayer> playerTable = null;
+	public static OlympaPlayerProvider pluginPlayerProvider = OlympaPlayerObject::new;
+	private static SQLTable<? extends OlympaPlayer> pluginPlayerTable = null;
+	
+	private static SQLTable<OlympaPlayerObject> olympaPlayerTable;
 
+	public static void init(MySQL mysql) throws SQLException {
+		olympaPlayerTable = new SQLTable<>(mysql.getTable(), OlympaPlayerObject.COLUMNS).createOrAlter();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <T extends OlympaPlayer> T get(String name) throws SQLException {
 		OlympaPlayer olympaPlayer = AccountProvider.getFromCache(name);
@@ -132,31 +141,31 @@ public class AccountProvider implements OlympaAccount {
 		return info;
 	}
 
-	public static SQLTable<? extends OlympaPlayer> getPlayerTable() {
-		return playerTable;
+	public static SQLTable<? extends OlympaPlayer> getPluginPlayerTable() {
+		return pluginPlayerTable;
 	}
 
 	public static <T extends OlympaPlayer> void setPlayerProvider(Class<T> playerClass, OlympaPlayerProvider provider, String pluginName, List<SQLColumn<T>> columns) {
 		Validate.isTrue(columns.stream().noneMatch(SQLColumn::isNotDefault), "All columns must have default values");
 		try {
 			columns.add(0, new SQLColumn<T>("player_id", "BIGINT NOT NULL", Types.BIGINT).setPrimaryKey(T::getId));
-			playerTable = new SQLTable<>(pluginName.toLowerCase() + "_players", columns).createOrAlter();
+			pluginPlayerTable = new SQLTable<>(pluginName.toLowerCase() + "_players", columns).createOrAlter();
 			//MySQL.setDatasTable(providerTableName, columns);
 			AccountProvider.playerClass = playerClass;
-			playerProvider = provider;
+			pluginPlayerProvider = provider;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			playerTable = null;
+			pluginPlayerTable = null;
 		}
 	}
 	
 	public static boolean loadPlayerDatas(OlympaPlayer player) throws SQLException {
-		ResultSet resultSet = playerTable.get(player.getId());
+		ResultSet resultSet = pluginPlayerTable.get(player.getId());
 		if (resultSet.next()) {
 			player.loadDatas(resultSet);
 			return false;
 		}
-		playerTable.insert(player.getId());
+		pluginPlayerTable.insert(player.getId());
 		OlympaCore.getInstance().sendMessage("Données créées pour le joueur §6" + player.getName());
 		return true;
 	}
@@ -185,13 +194,23 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	public OlympaPlayer createNew(OlympaPlayer olympaPlayer) throws SQLException {
-		olympaPlayer.setId(MySQL.createPlayer(olympaPlayer));
+		ResultSet resultSet = olympaPlayerTable.insert(
+				olympaPlayer.getName(),
+				Utils.getUUIDString(olympaPlayer.getUniqueId()),
+				Utils.getUUIDString(olympaPlayer.getPremiumUniqueId()),
+				olympaPlayer.getGroupsToString(),
+				olympaPlayer.getPassword(),
+				new Date(olympaPlayer.getFirstConnection() * 1000),
+				new Timestamp(olympaPlayer.getLastConnection() * 1000));
+		resultSet.next();
+		olympaPlayer.setId(resultSet.getInt("id"));
+		resultSet.close();
 		return olympaPlayer;
 	}
 
 	@Override
 	public OlympaPlayer createOlympaPlayer(String name, String ip) {
-		OlympaPlayer newOlympaPlayer = playerProvider.create(uuid, name, ip);
+		OlympaPlayer newOlympaPlayer = pluginPlayerProvider.create(uuid, name, ip);
 		newOlympaPlayer.setGroup(OlympaGroup.PLAYER);
 		return newOlympaPlayer;
 	}
@@ -246,10 +265,10 @@ public class AccountProvider implements OlympaAccount {
 		cache.put(uuid, olympaPlayer);
 	}
 
-	@Override
+	/*@Override
 	public void saveToDb(OlympaPlayer olympaPlayer) {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> MySQL.savePlayer(olympaPlayer));
-	}
+	}*/
 
 	@Override
 	public void saveToRedis(OlympaPlayer olympaPlayer) {

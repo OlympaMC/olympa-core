@@ -185,7 +185,7 @@ public class AuthListener implements Listener {
 			return;
 		}
 		OlympaPlayer olympaPlayer = cache.getOlympaPlayer();
-		OlympaBungee.getInstance().sendMessage("§7LoginEvent §6" + (connection.isOnlineMode() ? "online" : "offline/cracked") + "§7 du joueur §e" + name + "§7. Json: §f" + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
+		OlympaBungee.getInstance().sendMessage("§7LoginEvent §6%s§7 du joueur §e%s§7. Json: §f%s", connection.isOnlineMode() ? "online" : "offline", name, GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 		String ip = connection.getAddress().getAddress().getHostAddress();
 		AccountProvider olympaAccount;
 		// Si le joueur s'est déjà connecté
@@ -214,6 +214,7 @@ public class AuthListener implements Listener {
 					event.setCancelled(true);
 					return;
 				}
+				OlympaBungee.getInstance().sendMessage("Création du compte de §6%s", name);
 				UUID uuidPremium = cache.getPremiumUUID();
 				if (uuidPremium != null)
 					olympaPlayer.setPremiumUniqueId(uuidPremium);
@@ -273,7 +274,7 @@ public class AuthListener implements Listener {
 			olympaPlayer.setLastConnection(Utils.getCurrentTimeInSeconds());
 			olympaPlayer.setConnected(false);
 			olympaAccount.removeFromRedis();
-			olympaAccount.saveToDb(olympaPlayer);
+			//olympaAccount.saveToDb(olympaPlayer);
 		}, 4, TimeUnit.SECONDS);
 	}
 

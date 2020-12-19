@@ -173,14 +173,14 @@ public class GroupCommand extends OlympaCommand {
 						sendInfo("&cLe joueur &2%s&a n'est pas connecté, &cle changement de grade a bien été reçu (dont discord).", olympaTarget.getName());
 						AccountProvider olympaAccount2 = new AccountProvider(olympaTarget.getUniqueId());
 						olympaAccount2.removeFromRedis();
-						olympaAccount2.saveToDb(olympaTarget);
+						//olympaAccount2.saveToDb(olympaTarget);
 					}
 				};
 				RedisSpigotSend.sendOlympaGroupChange(olympaTarget, newGroup, timestamp, state, done);
 				olympaAccount.removeFromCache();
 			} else {
 				olympaAccount.saveToRedis(olympaTarget);
-				olympaAccount.saveToDb(olympaTarget);
+				//olympaAccount.saveToDb(olympaTarget);
 				olympaAccount.saveToCache(olympaTarget);
 				Prefix.DEFAULT.sendMessage(target, msg.replace("%group", newGroup.getName()).replace("%time", timestampString));
 				OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(target, state, olympaTarget, null, timestamp, newGroup));

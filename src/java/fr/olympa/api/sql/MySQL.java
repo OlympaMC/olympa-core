@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.UUID;
 
 import fr.olympa.api.groups.OlympaGroup;
@@ -22,7 +21,6 @@ import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.provider.OlympaPlayerInformationsObject;
 import fr.olympa.api.sql.statement.OlympaStatement;
 import fr.olympa.api.sql.statement.StatementType;
-import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 
 public class MySQL extends SQLClass {
@@ -471,7 +469,7 @@ public class MySQL extends SQLClass {
 	/**
 	 * Sauvegarde les infos du olympaPlayer
 	 */
-	public static void savePlayer(OlympaPlayer olympaPlayer) {
+	/*public static void savePlayer(OlympaPlayer olympaPlayer) {
 		try {
 			PreparedStatement pstate = savePlayerStatement.getStatement();
 			int i = 1;
@@ -512,14 +510,14 @@ public class MySQL extends SQLClass {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	public static OlympaPlayer getOlympaPlayer(ResultSet resultSet) throws SQLException {
 		String uuidPremiumString = resultSet.getString("uuid_premium");
 		UUID uuidPremium = null;
 		if (uuidPremiumString != null)
 			uuidPremium = (UUID) RegexMatcher.UUID.parse(uuidPremiumString);
-		OlympaPlayer player = AccountProvider.playerProvider.create((UUID) RegexMatcher.UUID.parse(resultSet.getString("uuid_server")), resultSet.getString("pseudo"), resultSet.getString("ip"));
+		OlympaPlayer player = AccountProvider.pluginPlayerProvider.create((UUID) RegexMatcher.UUID.parse(resultSet.getString("uuid_server")), resultSet.getString("pseudo"), resultSet.getString("ip"));
 		player.loadSavedDatas(
 				resultSet.getLong("id"),
 				uuidPremium,

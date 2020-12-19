@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.sql.SQLException;
 import java.util.Collection;
 
 import org.bukkit.Bukkit;
@@ -202,7 +203,14 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 		imageFrameManager = new ImageFrameManager(this, "maps.yml", "images");
-		new MySQL(database);
+		try {
+			AccountProvider.init(new MySQL(database));
+		}catch (SQLException ex) {
+			sendMessage("§cUne erreur est survenue lors du chargement du MySQL. Arrêt du plugin.");
+			ex.printStackTrace();
+			setEnabled(false);
+			return;
+		}
 		new ReportMySQL(database);
 
 		TestCommand test = new TestCommand(this);
