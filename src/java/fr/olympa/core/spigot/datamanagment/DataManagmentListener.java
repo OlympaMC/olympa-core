@@ -118,7 +118,7 @@ public class DataManagmentListener implements Listener {
 
 		OlympaCore.getInstance().launchAsync(() -> {
 			try {
-				if (AccountProvider.loadPlayerDatas(olympaPlayer)) Bukkit.broadcastMessage("§d§k##§6 Bienvenue au joueur " + olympaPlayer.getGroup().getColor() + "§l" + player.getName() + "§6 qui rejoint le mode de jeu ! §d§k##");
+				if (AccountProvider.loadPlayerDatas(olympaPlayer)) Bukkit.broadcastMessage("§d§k##§6 Bienvenue au joueur " + olympaPlayer.getGroup().getColor() + "§l" + player.getName() + "§6 qui rejoint le serveur ! §d§k##");
 
 				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
 				Bukkit.getPluginManager().callEvent(loginevent);

@@ -140,11 +140,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	private void updateGroups() {
-		try {
-			COLUMN_GROUPS.updateValue(this, getGroupsToString());
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
+		COLUMN_GROUPS.updateAsync(this, getGroupsToString(), null, null);
 	}
 	
 	@Override
@@ -392,21 +388,13 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void setEmail(String email) {
 		this.email = email;
-		try {
-			COLUMN_EMAIL.updateValue(this, email);
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
+		COLUMN_EMAIL.updateAsync(this, email, null, null);
 	}
 
 	@Override
 	public void setGender(Gender gender) {
 		this.gender = gender;
-		try {
-			COLUMN_GENDER.updateValue(this, gender.ordinal());
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
+		COLUMN_GENDER.updateAsync(this, gender.ordinal(), null, null);
 	}
 
 	@Override
@@ -428,71 +416,43 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void setIp(String ip) {
 		this.ip = ip;
-		try {
-			COLUMN_IP.updateValue(this, ip);
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
+		COLUMN_IP.updateAsync(this, ip, null, null);
 	}
 
 	@Override
 	public void setLastConnection(long lastConnection) {
 		this.lastConnection = lastConnection;
-		try {
-			COLUMN_LAST_CONNECTION.updateValue(this, new Timestamp(lastConnection * 1000));
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
+		COLUMN_LAST_CONNECTION.updateAsync(this, new Timestamp(lastConnection * 1000), null, null);
 	}
 
 	@Override
 	public void setName(String name) {
 		this.name = name;
-		try {
-			COLUMN_PSEUDO.updateValue(this, name);
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
+		COLUMN_PSEUDO.updateAsync(this, name, null, null);
 	}
 
 	@Override
 	public void setPassword(String password) {
 		this.password = Passwords.getPBKDF2(password);
-		try {
-			COLUMN_PASSWORD.updateValue(this, password);
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
+		COLUMN_PASSWORD.updateAsync(this, password, null, null);
 	}
 
 	@Override
 	public void setPremiumUniqueId(UUID premium_uuid) {
 		premiumUuid = premium_uuid;
-		try {
-			COLUMN_UUID_PREMIUM.updateValue(this, Utils.getUUIDString(premiumUuid));
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
+		COLUMN_UUID_PREMIUM.updateAsync(this, Utils.getUUIDString(premiumUuid), null, null);
 	}
 
 	@Override
 	public void setTeamspeakId(int teamspeakId) {
 		this.teamspeakId = teamspeakId;
-		try {
-			COLUMN_TS3_ID.updateValue(this, teamspeakId);
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
+		COLUMN_TS3_ID.updateAsync(this, teamspeakId, null, null);
 	}
 
 	@Override
 	public void setVanish(boolean vanish) {
 		this.vanish = vanish;
-		try {
-			COLUMN_VANISH.updateValue(this, vanish);
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
+		COLUMN_VANISH.updateAsync(this, vanish, null, null);
 	}
 
 	@Override
@@ -503,10 +463,6 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void setDiscordOlympaId(int discordOlympaId) {
 		this.discordOlympaId = discordOlympaId;
-		try {
-			COLUMN_DISCORD_ID.updateValue(this, discordOlympaId);
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
+		COLUMN_DISCORD_ID.updateAsync(this, discordOlympaId, null, null);
 	}
 }

@@ -163,6 +163,7 @@ public class AccountProvider implements OlympaAccount {
 	}
 	
 	public static boolean loadPlayerDatas(OlympaPlayer player) throws SQLException {
+		if (pluginPlayerTable == null) return false;
 		ResultSet resultSet = pluginPlayerTable.get(player.getId());
 		if (resultSet.next()) {
 			player.loadDatas(resultSet);
