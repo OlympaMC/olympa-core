@@ -46,6 +46,7 @@ import fr.olympa.api.plugin.OlympaSpigot;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.scoreboard.tab.INametagApi;
+import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.ErrorLoggerHandler;
@@ -96,6 +97,15 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	private AfkHandler afkHandler;
 	private String lastVersion = "unknown";
 	private String firstVersion = "unknown";
+	private OlympaServer olympaServer = OlympaServer.ALL;
+
+	public OlympaServer getOlympaServer() {
+		return olympaServer;
+	}
+
+	public void setOlympaServer(OlympaServer olympaServer) {
+		this.olympaServer = olympaServer;
+	}
 
 	public String getLastVersion() {
 		return lastVersion;
@@ -205,7 +215,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		imageFrameManager = new ImageFrameManager(this, "maps.yml", "images");
 		try {
 			AccountProvider.init(new MySQL(database));
-		}catch (SQLException ex) {
+		} catch (SQLException ex) {
 			sendMessage("§cUne erreur est survenue lors du chargement du MySQL. Arrêt du plugin.");
 			ex.printStackTrace();
 			setEnabled(false);
@@ -258,7 +268,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 		try {
 			pluginManager.registerEvents(hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml")), this);
-		}catch (IOException | ReflectiveOperationException e) {
+		} catch (IOException | ReflectiveOperationException e) {
 			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
 			e.printStackTrace();
 		}
