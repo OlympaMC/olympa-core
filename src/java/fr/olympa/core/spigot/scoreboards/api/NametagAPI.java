@@ -58,8 +58,13 @@ public final class NametagAPI implements INametagApi {
 				continue;
 			Nametag tag = new Nametag();
 			for (Entry<EventPriority, NametagHandler> handlerEntry : handlers) {
-				NametagHandler handler = handlerEntry.getValue();
-				handler.updateNameTag(tag, player, to);
+				try {
+					NametagHandler handler = handlerEntry.getValue();
+					handler.updateNameTag(tag, player, to);
+				}catch (Exception ex) {
+					OlympaCore.getInstance().sendMessage("§cUne erreur est survenue lors de la mise à jour du nametag de %s", player.getName());
+					ex.printStackTrace();
+				}
 			}
 			List<Player> similarTags = nametags.get(tag);
 			if (similarTags == null) {

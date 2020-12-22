@@ -7,9 +7,9 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -33,7 +33,6 @@ import fr.olympa.api.sql.SQLColumn;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.login.Passwords;
-import fr.olympa.core.spigot.OlympaCore;
 
 @SuppressWarnings("unchecked")
 public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
@@ -206,20 +205,12 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public OlympaGroup getGroup() {
-		OlympaGroup tmp = groups.firstKey();
-		if (!OlympaServer.ALL.equals(tmp.getServer())) {
-			OlympaGroup gr = null;
-			int secure = groups.size() + 1;
-			while (gr == null && secure-- > 0) {
-				tmp = groups.lowerKey(tmp);
-				if (Objects.equals(OlympaCore.getInstance().getOlympaServer(), tmp.getServer())) {
-					gr = tmp;
-					break;
-				}
-			}
-			return gr;
-		} else
-			return tmp;
+		OlympaGroup olympaGroup = null;
+		for (Iterator<OlympaGroup> iterator = groups.keySet().iterator(); iterator.hasNext();) {
+			olympaGroup = iterator.next();
+			if (OlympaServer.ALL.equals(olympaGroup.getServer())) break;
+		}
+		return olympaGroup;
 	}
 
 	@Override
