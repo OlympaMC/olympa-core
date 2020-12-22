@@ -204,6 +204,7 @@ public class AccountProvider implements OlympaAccount {
 				Utils.getUUIDString(olympaPlayer.getPremiumUniqueId()),
 				olympaPlayer.getGroupsToString(),
 				olympaPlayer.getPassword(),
+				olympaPlayer.getIp(),
 				new Date(olympaPlayer.getFirstConnection() * 1000),
 				new Timestamp(olympaPlayer.getLastConnection() * 1000));
 		resultSet.next();

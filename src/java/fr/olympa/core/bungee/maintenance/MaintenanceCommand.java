@@ -2,15 +2,13 @@ package fr.olympa.core.bungee.maintenance;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.bungee.config.BungeeCustomConfig;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.server.ServerStatus;
-import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -139,7 +137,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 					return Utils.startWords(args[1], maintconfig.getStringList("whitelist"));
 				break;
 			case "add":
-				return MySQL.getPlayersBySimilarName(args[1]).stream().map(OlympaPlayer::getName).collect(Collectors.toList());
+				return /*MySQL.getPlayersBySimilarName(args[1]).stream().map(OlympaPlayer::getName).collect(Collectors.toList());*/ Collections.EMPTY_LIST;
 			}
 			break;
 		}
