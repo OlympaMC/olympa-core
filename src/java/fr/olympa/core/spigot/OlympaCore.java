@@ -240,7 +240,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		//		pluginManager.registerEvents(new TestListener(), this);
 
 		nameTagApi = new NametagAPI(new NametagManager());
-		nameTagApi.addNametagHandler(EventPriority.LOWEST, (nametag, player, to) -> nametag.appendPrefix(player.getGroupPrefix()));
+		nameTagApi.addNametagHandler(EventPriority.LOW, (nametag, player, to) -> nametag.appendPrefix(player.getGroupPrefix()));
 		((NametagAPI) nameTagApi).testCompat();
 
 		pluginManager.registerEvents(this, this);

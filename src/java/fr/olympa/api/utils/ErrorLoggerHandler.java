@@ -17,7 +17,7 @@ public class ErrorLoggerHandler extends Handler {
 	@Override
 	public void publish(LogRecord record) {
 		if (record.getThrown() != null) {
-			sendError.accept(record.getLevel().getName() + " [" + record.getLoggerName() + "] " + record.getMessage() + "\n" + ExceptionUtils.getStackTrace(record.getThrown()));
+			sendError.accept(record.getLevel().getName() + " [" + record.getLoggerName() + "] " + record.getMessage().replaceAll("executing task \\d*", "executing task XXX") + "\n" + ExceptionUtils.getStackTrace(record.getThrown()));
 		}
 	}
 	
