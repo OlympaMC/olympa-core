@@ -27,10 +27,12 @@ import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.player.OlympaPlayerInformations;
+import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.sql.SQLColumn;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.login.Passwords;
+import fr.olympa.core.spigot.OlympaCore;
 
 @SuppressWarnings("unchecked")
 public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
@@ -71,15 +73,15 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		}
 
 	}
-	
+
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_ID = new SQLColumn<OlympaPlayerObject>("id", "INT(20) unsigned NOT NULL AUTO_INCREMENT", Types.INTEGER).setPrimaryKey(OlympaPlayerObject::getId);
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_PSEUDO = new SQLColumn<OlympaPlayerObject>("pseudo", "VARCHAR(255) NOT NULL", Types.VARCHAR).setUpdatable();
-	private static final SQLColumn<OlympaPlayerObject> COLUMN_UUID_SERVER = new SQLColumn<OlympaPlayerObject>("uuid_server", "VARCHAR(36) NOT NULL", Types.VARCHAR);
-	private static final SQLColumn<OlympaPlayerObject> COLUMN_UUID_PREMIUM = new SQLColumn<OlympaPlayerObject>("uuid_premium", "VARCHAR(36) DEFAULT NULL", Types.VARCHAR).setUpdatable().setNotDefault();;
+	private static final SQLColumn<OlympaPlayerObject> COLUMN_UUID_SERVER = new SQLColumn<>("uuid_server", "VARCHAR(36) NOT NULL", Types.VARCHAR);
+	private static final SQLColumn<OlympaPlayerObject> COLUMN_UUID_PREMIUM = new SQLColumn<OlympaPlayerObject>("uuid_premium", "VARCHAR(36) DEFAULT NULL", Types.VARCHAR).setUpdatable().setNotDefault();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_GROUPS = new SQLColumn<OlympaPlayerObject>("groups", "VARCHAR(45) DEFAULT '20'", Types.VARCHAR).setUpdatable().setNotDefault();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_EMAIL = new SQLColumn<OlympaPlayerObject>("email", "VARCHAR(255) DEFAULT NULL", Types.VARCHAR).setUpdatable();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_PASSWORD = new SQLColumn<OlympaPlayerObject>("password", "VARCHAR(512) DEFAULT NULL", Types.VARCHAR).setUpdatable().setNotDefault();
-	private static final SQLColumn<OlympaPlayerObject> COLUMN_MONEY = new SQLColumn<OlympaPlayerObject>("money", "VARCHAR(20) DEFAULT '0'", Types.VARCHAR); // unused?
+	private static final SQLColumn<OlympaPlayerObject> COLUMN_MONEY = new SQLColumn<>("money", "VARCHAR(20) DEFAULT '0'", Types.VARCHAR); // unused?
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_IP = new SQLColumn<OlympaPlayerObject>("ip", "VARCHAR(39) NOT NULL", Types.VARCHAR).setUpdatable();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_CREATED = new SQLColumn<OlympaPlayerObject>("created", "DATE NOT NULL", Types.DATE).setUpdatable().setNotDefault();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_LAST_CONNECTION = new SQLColumn<OlympaPlayerObject>("last_connection", "TIMESTAMP NULL DEFAULT current_timestamp()", Types.TIMESTAMP).setUpdatable().setNotDefault();
@@ -90,9 +92,9 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_GENDER = new SQLColumn<OlympaPlayerObject>("gender", "TINYINT(1) DEFAULT NULL", Types.TINYINT).setUpdatable();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_VANISH = new SQLColumn<OlympaPlayerObject>("vanish", "TINYINT(1) DEFAULT 0", Types.TINYINT).setUpdatable();
 
-	static final List<SQLColumn<OlympaPlayerObject>> COLUMNS =
-			Arrays.asList(COLUMN_ID, COLUMN_PSEUDO, COLUMN_UUID_SERVER, COLUMN_UUID_PREMIUM, COLUMN_GROUPS, COLUMN_EMAIL, COLUMN_PASSWORD, COLUMN_MONEY, COLUMN_IP, COLUMN_CREATED, COLUMN_LAST_CONNECTION, COLUMN_TS3_ID, COLUMN_DISCORD_ID, COLUMN_NAME_HISTORY, COLUMN_IP_HISTORY, COLUMN_GENDER, COLUMN_VANISH);
-	
+	static final List<SQLColumn<OlympaPlayerObject>> COLUMNS = Arrays.asList(COLUMN_ID, COLUMN_PSEUDO, COLUMN_UUID_SERVER, COLUMN_UUID_PREMIUM, COLUMN_GROUPS, COLUMN_EMAIL, COLUMN_PASSWORD, COLUMN_MONEY, COLUMN_IP, COLUMN_CREATED,
+			COLUMN_LAST_CONNECTION, COLUMN_TS3_ID, COLUMN_DISCORD_ID, COLUMN_NAME_HISTORY, COLUMN_IP_HISTORY, COLUMN_GENDER, COLUMN_VANISH);
+
 	@Expose
 	long id;
 	@Expose
@@ -142,7 +144,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	private void updateGroups() {
 		COLUMN_GROUPS.updateAsync(this, getGroupsToString(), null, null);
 	}
-	
+
 	@Override
 	public void addGroup(OlympaGroup group) {
 		this.addGroup(group, 0l);
@@ -159,7 +161,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		histIp.put(Utils.getCurrentTimeInSeconds(), this.ip);
 		try {
 			COLUMN_IP_HISTORY.updateValue(this, GsonCustomizedObjectTypeAdapter.GSON.toJson(histIp));
-		}catch (SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		setIp(ip);
@@ -170,7 +172,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		histName.put(Utils.getCurrentTimeInSeconds(), this.name);
 		try {
 			COLUMN_NAME_HISTORY.updateValue(this, GsonCustomizedObjectTypeAdapter.GSON.toJson(histName));
-		}catch (SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		setName(name);
@@ -203,7 +205,20 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public OlympaGroup getGroup() {
-		return groups.firstKey();
+		OlympaGroup tmp = groups.firstKey();
+		if (!tmp.getServer().equals(OlympaServer.ALL)) {
+			OlympaGroup gr = null;
+			int secure = groups.size();
+			while (gr == null && secure-- > 0) {
+				tmp = groups.lowerKey(tmp);
+				if (tmp.getServer().equals(OlympaCore.getInstance().getOlympaServer())) {
+					gr = tmp;
+					break;
+				}
+			}
+			return gr;
+		} else
+			return tmp;
 	}
 
 	@Override
