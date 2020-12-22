@@ -9,6 +9,7 @@ import fr.olympa.api.bungee.command.BungeeCommandListener;
 import fr.olympa.api.bungee.config.BungeeCustomConfig;
 import fr.olympa.api.bungee.task.BungeeTaskManager;
 import fr.olympa.api.groups.SQLGroup;
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.server.ServerStatus;
@@ -125,7 +126,12 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		maintConfig.loadSafe();
 		status = ServerStatus.get(maintConfig.getConfig().getString("settings.status"));
 		setupDatabase();
-		new MySQL(database);
+		try {
+			AccountProvider.init(new MySQL(database));
+		}catch (SQLException ex) {
+			sendMessage("§cUne erreur est survenue lors du chargement du MySQL.");
+			ex.printStackTrace();
+		}
 		new VpnSql(database);
 		setupRedis();
 
