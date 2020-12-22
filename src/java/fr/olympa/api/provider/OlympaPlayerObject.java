@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -206,12 +207,12 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public OlympaGroup getGroup() {
 		OlympaGroup tmp = groups.firstKey();
-		if (!tmp.getServer().equals(OlympaServer.ALL)) {
+		if (!OlympaServer.ALL.equals(tmp.getServer())) {
 			OlympaGroup gr = null;
-			int secure = groups.size();
+			int secure = groups.size() + 1;
 			while (gr == null && secure-- > 0) {
 				tmp = groups.lowerKey(tmp);
-				if (tmp.getServer().equals(OlympaCore.getInstance().getOlympaServer())) {
+				if (Objects.equals(OlympaCore.getInstance().getOlympaServer(), tmp.getServer())) {
 					gr = tmp;
 					break;
 				}

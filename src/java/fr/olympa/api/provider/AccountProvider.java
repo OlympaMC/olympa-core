@@ -201,7 +201,7 @@ public class AccountProvider implements OlympaAccount {
 		ResultSet resultSet = olympaPlayerTable.insert(
 				olympaPlayer.getName(),
 				Utils.getUUIDString(olympaPlayer.getUniqueId()),
-				Utils.getUUIDString(olympaPlayer.getPremiumUniqueId()),
+				olympaPlayer.getPremiumUniqueId() == null ? null : Utils.getUUIDString(olympaPlayer.getPremiumUniqueId()),
 				olympaPlayer.getGroupsToString(),
 				olympaPlayer.getPassword(),
 				olympaPlayer.getIp(),
