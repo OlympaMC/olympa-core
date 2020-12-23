@@ -2,6 +2,7 @@ package fr.olympa.api.bungee.command;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -300,14 +301,16 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 	}
 
 	@Override
-	public void broadcast(Prefix prefix, String text, Object... args) {
-		sendMessage(ProxyServer.getInstance().getPlayers(), prefix, text, args);
+	public int broadcast(Prefix prefix, String text, Object... args) {
+		Collection<ProxiedPlayer> players = ProxyServer.getInstance().getPlayers();
+		sendMessage(players, prefix, text, args);
+		return players.size();
 	}
 
 	@Override
-	public void broadcastToAll(Prefix prefix, String text, Object... args) {
-		sendMessage(ProxyServer.getInstance().getPlayers(), prefix, text, args);
+	public int broadcastToAll(Prefix prefix, String text, Object... args) {
 		sendMessage(ProxyServer.getInstance().getConsole(), prefix, text, args);
+		return broadcast(prefix, text, args) + 1;
 	}
 
 	@Override
