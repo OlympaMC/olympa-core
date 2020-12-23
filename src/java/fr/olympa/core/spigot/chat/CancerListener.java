@@ -72,8 +72,7 @@ public class CancerListener implements Listener {
 		// Si le chat est slow, met un cooldown entre chaque message
 		if (serverSettings.isChatSlow() && time < serverSettings.getTimeCooldown()) {
 			event.setCancelled(true);
-			player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci de patienter %second secondes entre chaque messages."
-					.replaceFirst("%second", String.valueOf(serverSettings.getTimeCooldown()))));
+			player.sendMessage(ColorUtils.join(Prefix.BAD + "Merci de patienter %s secondes entre chaque messages.", String.valueOf(serverSettings.getTimeCooldown())));
 			olympaTchat.setLastMsgTime(currentTime);
 			return;
 		}
@@ -141,6 +140,7 @@ public class CancerListener implements Listener {
 
 			if (Math.round(uppers * 1.0 / (msgNFD.length() * 1.0) * 100.0) > serverSettings.getMaxCaps()) {
 				message = message.toLowerCase().replaceFirst(".", String.valueOf(message.toLowerCase().charAt(0)).toUpperCase());
+				//				message = String.valueOf(message.toLowerCase().charAt(0)).toUpperCase() + message.substring(0);
 				event.setMessage(message);
 				player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci d'éviter de mettre trop de majuscules."));
 			}
@@ -164,7 +164,7 @@ public class CancerListener implements Listener {
 						String wordWithoutFlood = wordFlooded.replace(charsFlooded, charFlooded);
 						message = message.replace(wordFlooded, wordWithoutFlood);
 						find = true;
-						if (++i > 10) {
+						if (++i > 50) {
 							OlympaCore.getInstance().sendMessage("&4ERROR &cBoucle infini dans la gestion de chat pour le flood.");
 							break;
 						}
@@ -181,7 +181,7 @@ public class CancerListener implements Listener {
 			while (matcher.find()) {
 				String chars = matcher.group();
 				message = message.replace(chars, "");
-				if (++i > 100) {
+				if (++i > 200) {
 					OlympaCore.getInstance().sendMessage("&4ERROR &cBoucle infini dans la gestion de chat pour les symboles interdits.");
 					break;
 				}

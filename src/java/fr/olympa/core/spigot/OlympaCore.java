@@ -46,7 +46,6 @@ import fr.olympa.api.plugin.OlympaSpigot;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.scoreboard.tab.INametagApi;
-import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.ErrorLoggerHandler;
@@ -98,17 +97,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	private AfkHandler afkHandler;
 	private String lastVersion = "unknown";
 	private String firstVersion = "unknown";
-	private OlympaServer olympaServer = OlympaServer.ALL;
-
-	@Override
-	public OlympaServer getOlympaServer() {
-		return olympaServer;
-	}
-
-	@Override
-	public void setOlympaServer(OlympaServer olympaServer) {
-		this.olympaServer = olympaServer;
-	}
 
 	public String getLastVersion() {
 		return lastVersion;

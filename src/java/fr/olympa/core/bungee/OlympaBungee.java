@@ -37,7 +37,6 @@ import fr.olympa.core.bungee.connectionqueue.BungeeQueueCommand;
 import fr.olympa.core.bungee.connectionqueue.ConnectionQueueListener;
 import fr.olympa.core.bungee.connectionqueue.LeaveQueueCommand;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
-import fr.olympa.core.bungee.datamanagment.GetUUIDCommand;
 import fr.olympa.core.bungee.login.commands.EmailCommand;
 import fr.olympa.core.bungee.login.commands.LoginCommand;
 import fr.olympa.core.bungee.login.commands.PasswdCommand;
@@ -128,7 +127,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		setupDatabase();
 		try {
 			AccountProvider.init(new MySQL(database));
-		}catch (SQLException ex) {
+		} catch (SQLException ex) {
 			sendMessage("§cUne erreur est survenue lors du chargement du MySQL.");
 			ex.printStackTrace();
 		}
@@ -171,7 +170,6 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new MuteCommand(this).register();
 		new UnbanCommand(this).register();
 		new UnmuteCommand(this).register();
-		new GetUUIDCommand(this).register();
 		new ReplyCommand(this).register();
 		new PrivateMessageCommand(this).register();
 		new PrivateMessageToggleCommand(this).register();
