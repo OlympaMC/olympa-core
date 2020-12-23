@@ -139,7 +139,7 @@ public class UtilsCommand extends ComplexCommand {
 			uuidPremium = op.getPremiumUniqueId();
 			uuidActual = op.getUniqueId();
 		} catch (SQLException e) {
-			sendMessage(Prefix.DEFAULT_BAD, "Une erreur est survenue avec la récupération des donnés du joueur %s.", arg1);
+			sendMessage(Prefix.DEFAULT_BAD, "Une erreur est survenue avec la récupération des données du joueur %s.", arg1);
 			e.printStackTrace();
 			return;
 		}
