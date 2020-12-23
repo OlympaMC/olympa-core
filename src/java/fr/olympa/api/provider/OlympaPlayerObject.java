@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ import fr.olympa.api.sql.SQLColumn;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.login.Passwords;
+import fr.olympa.core.spigot.OlympaCore;
 
 @SuppressWarnings("unchecked")
 public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
@@ -209,6 +211,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		for (Iterator<OlympaGroup> iterator = groups.keySet().iterator(); iterator.hasNext();) {
 			olympaGroup = iterator.next();
 			if (OlympaServer.ALL.equals(olympaGroup.getServer())) break;
+			if (Objects.equals(olympaGroup.getServer(), OlympaCore.getInstance().getOlympaServer())) break;
 		}
 		return olympaGroup;
 	}
