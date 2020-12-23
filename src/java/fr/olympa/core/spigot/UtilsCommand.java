@@ -136,6 +136,10 @@ public class UtilsCommand extends ComplexCommand {
 		}
 		try {
 			OlympaPlayer op = AccountProvider.get(arg1);
+			if (op == null) {
+				sendMessage(Prefix.DEFAULT_GOOD, "UUID Crack théorique (générer à partir du pseudo actuel %s) : %s\nCe joueur n'a pas de données en bdd.", playerName, uuidCrack);
+				return;
+			}
 			uuidPremium = op.getPremiumUniqueId();
 			uuidActual = op.getUniqueId();
 		} catch (SQLException e) {
@@ -143,7 +147,7 @@ public class UtilsCommand extends ComplexCommand {
 			e.printStackTrace();
 			return;
 		}
-		sendMessage(Prefix.DEFAULT_GOOD, "UUID Crack théorique : %s\nUUID crack %s\nUUID Premium %s.", uuidCrack, uuidActual, uuidPremium);
+		sendMessage(Prefix.DEFAULT_GOOD, "UUID Crack théorique (générer à partir du pseudo actuel %s) : %s\nUUID serveur (en bdd) %s\nUUID Premium (en bdd) %s.", playerName, uuidCrack, uuidActual, uuidPremium);
 	}
 
 	@Cmd(player = true)

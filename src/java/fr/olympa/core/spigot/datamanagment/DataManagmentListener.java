@@ -118,7 +118,8 @@ public class DataManagmentListener implements Listener {
 
 		OlympaCore.getInstance().launchAsync(() -> {
 			try {
-				if (AccountProvider.loadPlayerDatas(olympaPlayer)) Bukkit.broadcastMessage("§d§k##§6 Bienvenue au joueur " + olympaPlayer.getGroup().getColor() + "§l" + player.getName() + "§6 qui rejoint le serveur ! §d§k##");
+				if (AccountProvider.loadPlayerDatas(olympaPlayer))
+					Bukkit.broadcastMessage("§d§k##§6 Bienvenue au joueur " + olympaPlayer.getGroup().getColor() + "§l" + player.getName() + "§6 qui rejoint le serveur ! §d§k##");
 
 				OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
 				Bukkit.getPluginManager().callEvent(loginevent);
@@ -139,12 +140,12 @@ public class DataManagmentListener implements Listener {
 		AccountProvider account = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = account.getFromCache();
 		if (olympaPlayer != null)
-			event.setQuitMessage(ColorUtils.color(String.format("&7[&c-&7] %s%s", olympaPlayer.getGroupPrefix(), player.getDisplayName())));
+			event.setQuitMessage(ColorUtils.format("&7[&c-&7] %s%s", olympaPlayer.getGroupPrefix(), player.getDisplayName()));
 		else
 			event.setQuitMessage(null);
 	}
 
-	@EventHandler (priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerQuitHighest(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		AccountProvider account = new AccountProvider(player.getUniqueId());
