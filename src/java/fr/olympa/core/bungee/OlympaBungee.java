@@ -28,6 +28,7 @@ import fr.olympa.core.bungee.ban.commands.MuteCommand;
 import fr.olympa.core.bungee.ban.commands.UnbanCommand;
 import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
+import fr.olympa.core.bungee.commands.BungeeBroadcastCommand;
 import fr.olympa.core.bungee.commands.BungeeConfigCommand;
 import fr.olympa.core.bungee.commands.BungeeLagCommand;
 import fr.olympa.core.bungee.commands.BungeePingCommand;
@@ -192,6 +193,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new BungeePingCommand(this).register();
 		new BungeeQueueCommand(this).register();
 		new BungeeConfigCommand(this).register();
+		new BungeeBroadcastCommand(this).register();
 
 		new MonitorServers(this);
 		SQLGroup.init();
