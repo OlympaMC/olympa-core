@@ -42,6 +42,7 @@ public class AuthListener implements Listener {
 	public void on1PreLogin(PreLoginEvent event) {
 		if (event.isCancelled())
 			return;
+		
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
 		if (wait.contains(name))
@@ -54,6 +55,7 @@ public class AuthListener implements Listener {
 		if (oldCache != null)
 			DataHandler.removePlayer(oldCache);
 		CachePlayer cache = new CachePlayer(name);
+		
 		OlympaPlayer olympaPlayer;
 		try {
 			olympaPlayer = AccountProvider.get(name);
@@ -63,6 +65,7 @@ public class AuthListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+		
 		// Si le joueur ne s'est jamais connecté
 		if (olympaPlayer == null) {
 			if (QueueHandler.getQueueSize() > 10 || AntiBotHandler.isEnable()) {
@@ -87,13 +90,12 @@ public class AuthListener implements Listener {
 			if (response != null) {
 				connection.setOnlineMode(true);
 				// Si la connection est crack
-				//				if (!connection.isOnlineMode()) {
-				//					event.setCancelReason(BungeeUtils.connectScreen("&cLe pseudo &4" + response.getName() + "&c est un compte premium.\n&c&nTu ne peux pas l'utiliser."));
-				//					event.setCancelled(true);
-				//					return;
-				//				}
+				/*if (!connection.isOnlineMode()) {
+					event.setCancelReason(BungeeUtils.connectScreen("&cLe pseudo &4" + response.getName() + "&c est un compte premium.\n&c&nTu ne peux pas l'utiliser."));
+					event.setCancelled(true);
+					return;
+				}*/
 				uuidPremium = response.getUuid();
-				// cachePremiumUUID.put(name, uuidPremium);
 				cache.setPremiumUUID(uuidPremium);
 
 				// Vérifie si le joueur n'a pas changé de nom.
@@ -113,9 +115,9 @@ public class AuthListener implements Listener {
 						event.setCancelled(true);
 						return;
 					}
-					OlympaBungee.getInstance().sendMessage("&cChangement de pseudo  " + name + " HAS PREMIUM ? " + uuidPremium);
+					OlympaBungee.getInstance().sendMessage("§cChangement de pseudo de %s (anciennement %s), UUID: ", name, olympaPlayer.getName(), uuidPremium);
 				} else
-					OlympaBungee.getInstance().sendMessage("&cNouveau Joueur  " + name + " HAS PREMIUM ? " + uuidPremium);
+					OlympaBungee.getInstance().sendMessage("§cNouveau Joueur %s, UUID: %s", name, uuidPremium);
 			} else {
 				connection.setOnlineMode(false);
 				OlympaBungee.getInstance().sendMessage("§7Joueur crack sans données §e" + name);
@@ -126,8 +128,6 @@ public class AuthListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}*/
-			//				event.setCancelReason(BungeeUtils.connectScreen("&eLes cracks ne sont pas encore autoriser."));
-			//				event.setCancelled(true);
 		}
 
 		// Si le joueur s'est déjà connecté
@@ -217,10 +217,10 @@ public class AuthListener implements Listener {
 					return;
 				}
 				OlympaBungee.getInstance().sendMessage("Création du compte de §6%s", name);
+				olympaPlayer = olympaAccount.createNew(olympaPlayer);
 				UUID uuidPremium = cache.getPremiumUUID();
 				if (uuidPremium != null)
 					olympaPlayer.setPremiumUniqueId(uuidPremium);
-				olympaPlayer = olympaAccount.createNew(olympaPlayer);
 				cache.setOlympaPlayer(olympaPlayer);
 			} catch (Exception e) {
 				e.printStackTrace();
