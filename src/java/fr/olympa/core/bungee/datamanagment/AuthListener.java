@@ -190,10 +190,12 @@ public class AuthListener implements Listener {
 		AccountProvider olympaAccount;
 		// Si le joueur s'est déjà connecté
 		if (olympaPlayer != null) {
-			if (!olympaPlayer.getName().equals(name))
+			if (!olympaPlayer.getName().equals(name)) {
+				OlympaBungee.getInstance().sendMessage("Changement de nom du joueur %s (ancien: %s)", olympaPlayer.getName(), name);
 				olympaPlayer.addNewName(name);
+			}
 			olympaAccount = new AccountProvider(olympaPlayer.getUniqueId());
-		} else
+		}else {
 			// Si le joueur ne s'est jamais connecté
 			try {
 				UUID uuidCrack = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes("UTF-8"));
@@ -227,6 +229,7 @@ public class AuthListener implements Listener {
 				DataHandler.removePlayer(name);
 				return;
 			}
+		}
 		try {
 			Class<?> initialHandlerClass = connection.getClass();
 			Field uniqueIdField = initialHandlerClass.getDeclaredField("uniqueId");

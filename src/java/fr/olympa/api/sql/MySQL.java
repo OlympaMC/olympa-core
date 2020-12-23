@@ -1,11 +1,9 @@
 package fr.olympa.api.sql;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +18,6 @@ import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.provider.OlympaPlayerInformationsObject;
 import fr.olympa.api.sql.statement.OlympaStatement;
-import fr.olympa.api.sql.statement.StatementType;
 import fr.olympa.api.utils.Utils;
 
 public class MySQL extends SQLClass {
@@ -68,33 +65,6 @@ public class MySQL extends SQLClass {
 
 	static DbConnection dbConnection;
 
-	private static OlympaStatement insertPlayerStatement = new OlympaStatement(
-			"INSERT INTO %s (`uuid_server`, `uuid_premium`, `pseudo`, `ip`, `groups`, `created`, `last_connection`, `password`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", table, true);
-
-	public static long createPlayer(OlympaPlayer olympaPlayer) throws SQLException {
-		PreparedStatement statement = insertPlayerStatement.getStatement();
-		int i = 1;
-		statement.setString(i++, Utils.getUUIDString(olympaPlayer.getUniqueId()));
-		UUID premiumUuid = olympaPlayer.getPremiumUniqueId();
-		if (premiumUuid != null)
-			statement.setString(i++, Utils.getUUIDString(premiumUuid));
-		else
-			statement.setString(i++, null);
-		statement.setString(i++, olympaPlayer.getName());
-		statement.setString(i++, olympaPlayer.getIp());
-		statement.setString(i++, olympaPlayer.getGroupsToString());
-		statement.setDate(i++, new Date(olympaPlayer.getFirstConnection() * 1000L));
-		statement.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
-		statement.setString(i, olympaPlayer.getPassword());
-
-		statement.executeUpdate();
-		ResultSet resultSet = statement.getGeneratedKeys();
-		resultSet.next();
-		long id = resultSet.getLong("id");
-		resultSet.close();
-		return id;
-	}
-
 	/* Idée bof TODO
 	 private static OlympaStatement getPlayerNamesStatement = new OlympaStatement("SELECT `pseudo` FROM " + table);
 	// Pour pas surcharger les requettes MySQL
@@ -135,56 +105,6 @@ public class MySQL extends SQLClass {
 			return resultSet.getString(1);
 		return null;
 	}
-
-	/*private static OlympaStatement getPlayerPluginDatas;
-	private static OlympaStatement insertPlayerPluginDatas;
-	private static OlympaStatement updatePlayerPluginDatas;
-	private static int updatePlayerPluginDatasID;
-	
-	public static void setDatasTable(String table, List<SQLColumn<?>> columns) throws SQLException {
-		Statement statement = OlympaCore.getInstance().getDatabase().createStatement();
-	
-		ResultSet columnsSet = OlympaCore.getInstance().getDatabase().getMetaData().getColumns(null, null, table, "%");
-		if (columnsSet.first()) { // la table existe : il faut vérifier si toutes les colonnes sont présentes
-			List<SQLColumn<?>> missingColumns = new ArrayList<>(columns);
-			while (columnsSet.next()) {
-				String columnName = columnsSet.getString(4);
-				if (!missingColumns.removeIf(column -> column.getName().equals(columnName)))
-					OlympaCore.getInstance().sendMessage("§cColonne " + columnName + " présente dans la table " + table + " mais pas dans la déclaration des données joueurs.");
-			}
-			for (SQLColumn<?> column : missingColumns) {
-				statement.executeUpdate("ALTER TABLE `" + table + "` ADD " + column.toDeclaration());
-				OlympaCore.getInstance().sendMessage("La colonne §6" + column.toDeclaration() + " §ea été créée dans la table de données joueurs §6" + table + "§e.");
-			}
-		} else { // la table n'existe pas : il faut la créer
-			StringJoiner creationJoiner = new StringJoiner(", ", "CREATE TABLE IF NOT EXISTS `" + table + "` (", ")");
-			creationJoiner.add("`player_id` BIGINT NOT NULL");
-			for (SQLColumn<?> column : columns)
-				creationJoiner.add(column.toDeclaration());
-			creationJoiner.add("PRIMARY KEY (`player_id`)");
-			statement.executeUpdate(creationJoiner.toString());
-			OlympaCore.getInstance().sendMessage("Table des données joueurs §6" + table + " §ecréée !");
-		}
-	
-		StringJoiner updateJoiner = new StringJoiner(", ", "UPDATE `" + table + "` SET ", " WHERE `player_id` = ?");
-		StringJoiner insertJoinerKeys = new StringJoiner(", ", "INSERT INTO `" + table + "` (", " )");
-		StringJoiner insertJoinerValues = new StringJoiner(", ", " VALUES (", " )");
-		for (SQLColumn<?> column : columns) {
-			updateJoiner.add("`" + column.getName() + "` = ?");
-			insertJoinerKeys.add("`" + column.getName() + "`");
-			insertJoinerValues.add("?");
-		}
-		insertJoinerKeys.add("`player_id`");
-		insertJoinerValues.add("?");
-		updatePlayerPluginDatas = new OlympaStatement(updateJoiner.toString());
-		updatePlayerPluginDatasID = columns.size() + 1;
-		insertPlayerPluginDatas = new OlympaStatement(insertJoinerKeys.toString() + insertJoinerValues.toString());
-	
-		getPlayerPluginDatas = new OlympaStatement("SELECT * FROM `" + table + "` WHERE `player_id` = ?");
-	
-		statement.close();
-		OlympaCore.getInstance().sendMessage("La table §6" + table + " §egère les données joueurs.");
-	}*/
 
 	private static OlympaStatement getPlayerInformationsByIdStatement = new OlympaStatement("SELECT `pseudo`, `uuid_server` FROM " + table + " WHERE `id` = ?");
 
@@ -464,57 +384,6 @@ public class MySQL extends SQLClass {
 		return false;
 	}
 
-	//	private static OlympaStatement savePlayerStatement = new OlympaStatement("UPDATE " + table + " SET `pseudo` = ?, `uuid_server` = ?,"
-	//			+ " `uuid_premium` = ?, `ip` = ?, `groups` = ?, `last_connection` = ?, `name_history` = ?, `ip_history` = ?, `gender` = ? WHERE `id` = ?");
-	private static OlympaStatement savePlayerStatement = new OlympaStatement(StatementType.UPDATE, table, "id",
-			new String[] { "pseudo", "uuid_server", "uuid_premium", "ip", "groups", "last_connection", "name_history", "ip_history", "gender", "ts3_id", "discord_olympa_id", "vanish" });
-
-	/**
-	 * Sauvegarde les infos du olympaPlayer
-	 */
-	/*public static void savePlayer(OlympaPlayer olympaPlayer) {
-		try {
-			PreparedStatement pstate = savePlayerStatement.getStatement();
-			int i = 1;
-			pstate.setString(i++, olympaPlayer.getName());
-			pstate.setString(i++, Utils.getUUIDString(olympaPlayer.getUniqueId()));
-			UUID premiumUuid = olympaPlayer.getPremiumUniqueId();
-			if (premiumUuid != null)
-				pstate.setString(i++, Utils.getUUIDString(premiumUuid));
-			else
-				pstate.setString(i++, null);
-			pstate.setString(i++, olympaPlayer.getIp());
-			pstate.setString(i++, olympaPlayer.getGroupsToString());
-			pstate.setTimestamp(i++, new Timestamp(olympaPlayer.getLastConnection() * 1000L));
-			TreeMap<Long, String> histName = olympaPlayer.getHistHame();
-			if (!histName.isEmpty())
-				pstate.setString(i++, GsonCustomizedObjectTypeAdapter.GSON.toJson(histName));
-			else
-				pstate.setString(i++, null);
-			TreeMap<Long, String> histIp = olympaPlayer.getHistIp();
-			if (!histIp.isEmpty())
-				pstate.setString(i++, GsonCustomizedObjectTypeAdapter.GSON.toJson(histIp));
-			else
-				pstate.setString(i++, null);
-			pstate.setInt(i++, olympaPlayer.getGender().ordinal());
-			if (olympaPlayer.getTeamspeakId() != 0)
-				pstate.setInt(i++, olympaPlayer.getTeamspeakId());
-			else
-				pstate.setObject(i++, null);
-			if (olympaPlayer.getDiscordOlympaId() != 0)
-				pstate.setInt(i++, olympaPlayer.getDiscordOlympaId());
-			else
-				pstate.setObject(i++, null);
-			pstate.setBoolean(i++, olympaPlayer.isVanish());
-			pstate.setLong(i, olympaPlayer.getId());
-			i = pstate.executeUpdate();
-			pstate.close();
-			//			LinkSpigotBungee.Provider.link.sendMessage("&2Sauvegarde DB pour %s %s : %s row affected (%s)", olympaPlayer.getName(), GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer), i, savePlayerStatement.getStatementCommand());
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}*/
-
 	public static OlympaPlayer getOlympaPlayer(ResultSet resultSet) throws SQLException {
 		String uuidPremiumString = resultSet.getString("uuid_premium");
 		UUID uuidPremium = null;
@@ -536,48 +405,6 @@ public class MySQL extends SQLClass {
 				resultSet.getInt("discord_olympa_id"),
 				resultSet.getBoolean("vanish"));
 		return player;
-	}
-
-	/*public static void savePlayerPluginDatas(OlympaPlayer olympaPlayer) throws SQLException {
-		if (updatePlayerPluginDatas == null)
-			return;
-		PreparedStatement statement = updatePlayerPluginDatas.getStatement();
-		olympaPlayer.saveDatas(statement);
-		statement.setLong(updatePlayerPluginDatasID, olympaPlayer.getId());
-		statement.executeUpdate();
-	}
-	
-	public static boolean loadPlayerPluginDatas(OlympaPlayer olympaPlayer) throws SQLException {
-		if (getPlayerPluginDatas == null)
-			return false;
-		PreparedStatement statement = getPlayerPluginDatas.getStatement();
-		statement.setLong(1, olympaPlayer.getId());
-		ResultSet pluginSet = statement.executeQuery();
-		if (pluginSet.next()) {
-			olympaPlayer.loadDatas(pluginSet);
-			pluginSet.close();
-			return false;
-		} else { // pas de données avant : insérer les données par défaut
-			statement = insertPlayerPluginDatas.getStatement();
-			olympaPlayer.saveDatas(statement);
-			statement.setLong(updatePlayerPluginDatasID, olympaPlayer.getId());
-			statement.executeUpdate();
-			OlympaCore.getInstance().sendMessage("Données créées pour le joueur §6" + olympaPlayer.getName());
-			pluginSet.close();
-			return true;
-		}
-	}*/
-
-	private static OlympaStatement savePlayerPasswordEmail = new OlympaStatement("UPDATE " + table + " SET `email` = ?, `password` = ? WHERE `id` = ?");
-
-	public static void savePlayerPassOrEmail(OlympaPlayer olympaPlayer) throws SQLException {
-		PreparedStatement pstate = savePlayerPasswordEmail.getStatement();
-		int i = 1;
-		pstate.setString(i++, olympaPlayer.getEmail());
-		pstate.setString(i++, olympaPlayer.getPassword());
-		pstate.setLong(i, olympaPlayer.getId());
-		pstate.executeUpdate();
-		pstate.close();
 	}
 
 	/**

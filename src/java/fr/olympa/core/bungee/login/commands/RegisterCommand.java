@@ -1,13 +1,11 @@
 package fr.olympa.core.bungee.login.commands;
 
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.HandlerLogin;
@@ -64,14 +62,14 @@ public class RegisterCommand extends BungeeCommand {
 			return;
 		}
 		olympaPlayer.setPassword(password);
-		try {
+		/*try {
 			MySQL.savePlayerPassOrEmail(olympaPlayer);
 		} catch (SQLException e) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Impossible de sauvegarder le mot de passe. Contacte un membre de staff.");
 			System.err.println("Password can't be save to db for %s1".replace("%s1", olympaPlayer.getName()));
 			e.printStackTrace();
 			return;
-		}
+		}*/
 		AccountProvider account = new AccountProvider(olympaPlayer.getUniqueId());
 		account.saveToRedis(olympaPlayer);
 		RedisBungeeSend.sendOlympaPlayer(proxiedPlayer.getServer().getInfo(), olympaPlayer);

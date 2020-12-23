@@ -7,7 +7,6 @@ import java.util.Set;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Prefix;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -74,13 +73,13 @@ public class PasswdCommand extends BungeeCommand {
 			}
 		}
 		olympaPlayer.setPassword(newPassword);
-		try {
+		/*try {
 			MySQL.savePlayerPassOrEmail(olympaPlayer);
 		} catch (SQLException e) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Impossible de sauvegarder le mot de passe. Contacte un membre de staff.");
 			e.printStackTrace();
 			return;
-		}
+		}*/
 		AccountProvider account = new AccountProvider(olympaPlayer.getUniqueId());
 		account.saveToRedis(olympaPlayer);
 		if (sender instanceof ProxiedPlayer)
