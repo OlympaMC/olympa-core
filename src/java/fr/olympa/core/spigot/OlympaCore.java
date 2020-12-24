@@ -187,6 +187,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			plugin.getLogger().addHandler(errorHandler);
 			sendMessage("Hooked error stream handler into §6%s§e's logger!", plugin.getName());
 		}
+		Bukkit.getLogger().addHandler(errorHandler);
+		sendMessage("Hooked error stream handler into §6server§e logger!");
 		sendMessage("§6" + getDescription().getName() + "§e (" + getDescription().getVersion() + ") est chargé.");
 		SpigotConfig.sendNamespaced = false;
 	}
