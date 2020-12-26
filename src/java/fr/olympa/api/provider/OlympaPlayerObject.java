@@ -25,6 +25,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.annotations.Expose;
 
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
@@ -34,7 +35,6 @@ import fr.olympa.api.sql.SQLColumn;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.login.Passwords;
-import fr.olympa.core.spigot.OlympaCore;
 
 @SuppressWarnings("unchecked")
 public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
@@ -211,7 +211,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		for (Iterator<OlympaGroup> iterator = groups.keySet().iterator(); iterator.hasNext();) {
 			olympaGroup = iterator.next();
 			if (OlympaServer.ALL.equals(olympaGroup.getServer())) break;
-			if (Objects.equals(olympaGroup.getServer(), OlympaCore.getInstance().getOlympaServer())) break;
+			if (Objects.equals(olympaGroup.getServer(), LinkSpigotBungee.Provider.link.getOlympaServer())) break;
 		}
 		return olympaGroup;
 	}

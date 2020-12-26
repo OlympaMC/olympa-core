@@ -12,6 +12,7 @@ import fr.olympa.api.groups.SQLGroup;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
+import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
@@ -203,6 +204,11 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	@Override
 	public void sendMessage(String message, Object... args) {
 		getProxy().getConsole().sendMessage(TextComponent.fromLegacyText(String.format(ColorUtils.color(getPrefixConsole() + message), args)));
+	}
+	
+	@Override
+	public OlympaServer getOlympaServer() {
+		return OlympaServer.BUNGEE;
 	}
 
 	public void setDefaultConfig(BungeeCustomConfig defaultConfig) {
