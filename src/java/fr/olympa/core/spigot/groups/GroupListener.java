@@ -1,5 +1,6 @@
 package fr.olympa.core.spigot.groups;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -74,7 +75,7 @@ public class GroupListener implements Listener {
 			}
 		}
 		PermissionAttachment attachment = player.addAttachment(OlympaCore.getInstance());
-		olympaPlayer.getGroup().getAllGroups().forEach(group -> group.runtimePermissions.forEach((perm, value) -> attachment.setPermission(perm, value)));
+		olympaPlayer.getGroup().getAllGroups().sorted(Comparator.comparing(OlympaGroup::getPower)).forEach(group -> group.runtimePermissions.forEach((perm, value) -> attachment.setPermission(perm, value)));
 		player.recalculatePermissions();
 		((CraftServer) Bukkit.getServer()).getHandle().getServer().getCommandDispatcher().a(((CraftPlayer) player).getHandle());
 	}
