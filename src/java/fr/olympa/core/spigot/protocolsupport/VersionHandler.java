@@ -45,6 +45,8 @@ public class VersionHandler {
 			first = ProtocolAPI.getVersion();
 		if (viaVersion != null)
 			last = viaVersion.getHighVersion();
+		else
+			last = ProtocolAPI.getVersion();
 		return new String[] { last, first };
 	}
 }

@@ -50,7 +50,7 @@ public class MonitorInfo {
 			Players players = serverPing.getPlayers();
 			onlinePlayers = players.getOnline();
 			maxPlayers = players.getMax();
-			String allMotd = serverPing.getDescriptionComponent().toLegacyText();
+			String allMotd = serverPing.getDescriptionComponent().toPlainText();
 			if (allMotd.startsWith("§"))
 				allMotd = allMotd.substring(2);
 			String[] motd = allMotd.split(" ");

@@ -3,6 +3,7 @@ package fr.olympa.core.spigot.status;
 import java.util.StringJoiner;
 
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
 
@@ -14,7 +15,7 @@ import fr.olympa.core.spigot.OlympaCore;
 
 public class StatusMotdListener implements Listener {
 
-	@EventHandler
+	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onPing(ServerListPingEvent event) {
 		ServerStatus status = OlympaCore.getInstance().getStatus();
 		MachineInfo machineInfo = new MachineInfo();
@@ -22,11 +23,10 @@ public class StatusMotdListener implements Listener {
 		StringJoiner sj = new StringJoiner(" ");
 		sj.add(status.getName());
 		sj.add(String.valueOf(TPS.getTPS()));
-		sj.add(machineInfo.getMemUsage());
+		sj.add(String.valueOf(machineInfo.getRawMemUsage()));
 		sj.add(core.getFirstVersion());
 		sj.add(core.getLastVersion());
 		sj.add(Utils.timestampToDuration(core.getLastModifiedTime()));
 		event.setMotd(sj.toString());
-
 	}
 }
