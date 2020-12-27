@@ -23,9 +23,9 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.craftbukkit.v1_15_R1.CraftChunk;
-import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R3.CraftChunk;
+import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Shulker;
 import org.bukkit.plugin.Plugin;
@@ -47,9 +47,9 @@ import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.region.tracking.TrackedRegion;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.spigot.SpigotUtils;
-import net.minecraft.server.v1_15_R1.BlockPosition;
-import net.minecraft.server.v1_15_R1.TileEntity;
-import net.minecraft.server.v1_15_R1.TileEntityTypes;
+import net.minecraft.server.v1_16_R3.BlockPosition;
+import net.minecraft.server.v1_16_R3.TileEntity;
+import net.minecraft.server.v1_16_R3.TileEntityTypes;
 
 public class UtilsCommand extends ComplexCommand {
 
@@ -63,11 +63,11 @@ public class UtilsCommand extends ComplexCommand {
 
 	@Cmd(player = true)
 	public void chunkfix(CommandContext cmd) {
-		net.minecraft.server.v1_15_R1.World world = ((CraftPlayer) sender).getHandle().world;
+		net.minecraft.server.v1_16_R3.World world = ((CraftPlayer) sender).getHandle().world;
 		Chunk oriChunk = getPlayer().getLocation().getChunk();
 		for (int x = oriChunk.getX() - 16; x < oriChunk.getX() + 16; x++)
 			for (int z = oriChunk.getZ() - 16; z < oriChunk.getZ() + 16; z++) {
-				net.minecraft.server.v1_15_R1.Chunk chunk = ((CraftChunk) getPlayer().getWorld().getChunkAt(x, z)).getHandle();
+				net.minecraft.server.v1_16_R3.Chunk chunk = ((CraftChunk) getPlayer().getWorld().getChunkAt(x, z)).getHandle();
 				for (Iterator<Entry<BlockPosition, TileEntity>> iterator = chunk.getTileEntities().entrySet().iterator(); iterator.hasNext();) {
 					Entry<BlockPosition, TileEntity> tile = iterator.next();
 					if (!tile.getValue().getTileType().isValidBlock(world.getType(tile.getKey()).getBlock())) {
@@ -91,7 +91,7 @@ public class UtilsCommand extends ComplexCommand {
 	public void blockData(CommandContext cmd) {
 		Block block = player.getTargetBlockExact(5);
 		CraftBlock cblock = (CraftBlock) block;
-		net.minecraft.server.v1_15_R1.Block nms = cblock.getNMS().getBlock();
+		net.minecraft.server.v1_16_R3.Block nms = cblock.getNMS().getBlock();
 		TileEntity tileEntity = cblock.getCraftWorld().getHandle().getTileEntity(cblock.getPosition());
 		sendInfo("Position : %s", cblock.getPosition().toString());
 		sendInfo("Bukkit Material : %s", block.getType().name());
@@ -104,7 +104,7 @@ public class UtilsCommand extends ComplexCommand {
 
 	@Cmd(player = true)
 	public void fixTileEntities(CommandContext cmd) {
-		net.minecraft.server.v1_15_R1.World world = ((CraftPlayer) sender).getHandle().world;
+		net.minecraft.server.v1_16_R3.World world = ((CraftPlayer) sender).getHandle().world;
 		sendInfo("Sélectionnez la région.");
 		Player p = player;
 		new RegionEditor(player, (region) -> {
