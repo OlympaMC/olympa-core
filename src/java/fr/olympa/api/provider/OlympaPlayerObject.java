@@ -150,12 +150,12 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void addGroup(OlympaGroup group) {
 		this.addGroup(group, 0l);
-		updateGroups();
 	}
 
 	@Override
 	public void addGroup(OlympaGroup group, long time) {
 		groups.put(group, time);
+		updateGroups();
 	}
 
 	@Override

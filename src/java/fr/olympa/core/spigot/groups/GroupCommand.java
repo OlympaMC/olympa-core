@@ -25,7 +25,6 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.provider.OlympaPlayerObject;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
@@ -176,7 +175,7 @@ public class GroupCommand extends OlympaCommand {
 						sendInfo("&cLe joueur &4%s&c n'est pas connecté, &cle changement de grade a bien été reçu (dont discord).", olympaTarget.getName());
 						AccountProvider olympaAccount2 = new AccountProvider(olympaTarget.getUniqueId());
 						olympaAccount2.removeFromRedis();
-						((OlympaPlayerObject) olympaTarget).updateGroups();
+						//((OlympaPlayerObject) olympaTarget).updateGroups();
 						//						olympaAccount2.saveToDb(olympaTarget);
 					}
 				};
