@@ -72,7 +72,7 @@ public class MySQL extends SQLClass {
 	// Pour pas surcharger les requettes MySQL
 	// TODO -> cache redis pour le cache multi-server
 	static Set<String> allPlayersNamesCache = null;
-	
+
 	public static Set<String> getAllPlayersNames() {
 		if (allPlayersNamesCache != null)
 			return allPlayersNamesCache;
@@ -327,19 +327,11 @@ public class MySQL extends SQLClass {
 	public static Set<OlympaPlayer> getPlayersByGroupsIds(List<OlympaGroup> groups) {
 		List<Integer> groupsIds = groups.stream().map(OlympaGroup::getId).collect(Collectors.toList());
 		Set<OlympaPlayer> olympaPlayers = new HashSet<>();
-		String like = "`groups` LIKE ?";
-		StringBuilder sb = new StringBuilder("SELECT * FROM " + table + " WHERE " + like);
-		int i1 = 1;
-		while (groups.size() > i1) {
-			sb.append(" OR " + like);
-			i1++;
-		}
+		StringBuilder sb = new StringBuilder("SELECT * FROM " + table + " WHERE `groups` REGEXP ?");
 		OlympaStatement newGetPlayerByGroupStatement = new OlympaStatement(sb.toString());
 		try {
 			PreparedStatement statement = newGetPlayerByGroupStatement.getStatement();
-			int i2 = 1;
-			for (OlympaGroup grp : groups)
-				statement.setString(i2++, "%" + grp.getId() + "%");
+			statement.setString(1, String.format("\b(%s)\b", groups.stream().map(g -> String.valueOf(g.getId())).collect(Collectors.joining("|"))));
 			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
 				OlympaPlayer op = getOlympaPlayer(resultSet);
@@ -386,12 +378,12 @@ public class MySQL extends SQLClass {
 		return null;
 	}
 
-	public static int getRankIdSite(OlympaGroup group) {
-		List<?> list = MySQL.selectTable("SELECT `rank_id` FROM" + "`olympa.ranks`" + "WHERE `pseudo` = " + group.getName());
-		if (!list.isEmpty())
-			return (Integer) list.get(0);
-		return -1;
-	}
+	//	public static int getRankIdSite(OlympaGroup group) {
+	//		List<?> list = MySQL.selectTable("SELECT `rank_id` FROM" + "`olympa.ranks`" + "WHERE `pseudo` = " + group.getName());
+	//		if (!list.isEmpty())
+	//			return (Integer) list.get(0);
+	//		return -1;
+	//	}
 
 	private static OlympaStatement getDuplicatePasswordStatement = new OlympaStatement("SELECT * FROM " + table + " ORDER BY password HAVING COUNT(password) > 1");
 
@@ -404,7 +396,7 @@ public class MySQL extends SQLClass {
 		return olympaPlayers;
 	}
 
-	private static OlympaStatement playerExistStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `uuid_server` = ?");
+	private static OlympaStatement playerExistStatement = new OlympaStatement("SELECT `id` FROM " + table + " WHERE `uuid_server` = ?");
 
 	public static boolean playerExist(UUID playerUUID) {
 		try {

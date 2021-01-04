@@ -190,7 +190,7 @@ public class GroupCommand extends OlympaCommand {
 				RedisSpigotSend.sendOlympaGroupChange(olympaTarget, newGroup, timestamp, state, null);
 			}
 			if (player != null && (target == null || !SpigotUtils.isSamePlayer(player, target)))
-				if (msg == null)
+				if (!olympaTarget.getGroups().containsKey(newGroup))
 					sendSuccess("&cLe joueur &4%s&c n'est plus dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName(gender));
 				else
 					sendSuccess("&aLe joueur &2%s&a est désormais dans le groupe &2%s&a%s.", olympaTarget.getName(), newGroup.getName(gender), timestampString);

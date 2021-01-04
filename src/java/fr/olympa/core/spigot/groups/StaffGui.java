@@ -22,7 +22,9 @@ public class StaffGui extends OlympaGUI {
 		int i = 0;
 		for (OlympaPlayer s : staff)
 			inv.setItem(i++, new OlympaItemBuild(s.getGroup().getPrefix(s.getGender()) + s.getName()).skullowner(s.getName()).addLore(
-					"", "&7" + s.getGroupsToHumainString(), "", "Dernière connexion " + Utils.timestampToDuration(s.getLastConnection())).build());
+					"", "&7" + s.getGroupsToHumainString(),
+					"&8Dernière connexion " + Utils.timestampToDuration(s.getLastConnection()),
+					"&7Premium " + (s.getPremiumUniqueId() != null ? "Oui" : "Non")).build());
 	}
 
 	@Override
