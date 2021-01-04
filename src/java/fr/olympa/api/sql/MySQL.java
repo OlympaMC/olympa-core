@@ -5,10 +5,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.match.RegexMatcher;
@@ -36,7 +38,7 @@ public class MySQL extends SQLClass {
 	//			}
 	//
 	//	}
-	
+
 	static {
 		init("commun", "players");
 	}
@@ -70,7 +72,7 @@ public class MySQL extends SQLClass {
 	// Pour pas surcharger les requettes MySQL
 	// TODO -> cache redis pour le cache multi-server
 	static Set<String> allPlayersNamesCache = null;
-
+	
 	public static Set<String> getAllPlayersNames() {
 		if (allPlayersNamesCache != null)
 			return allPlayersNamesCache;
@@ -312,6 +314,38 @@ public class MySQL extends SQLClass {
 			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next())
 				olympaPlayers.add(getOlympaPlayer(resultSet));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return olympaPlayers;
+	}
+
+	public static Set<OlympaPlayer> getPlayersByGroupsIds(OlympaGroup... groups) {
+		return getPlayersByGroupsIds(Arrays.stream(groups).collect(Collectors.toList()));
+	}
+
+	public static Set<OlympaPlayer> getPlayersByGroupsIds(List<OlympaGroup> groups) {
+		List<Integer> groupsIds = groups.stream().map(OlympaGroup::getId).collect(Collectors.toList());
+		Set<OlympaPlayer> olympaPlayers = new HashSet<>();
+		String like = "`groups` LIKE ?";
+		StringBuilder sb = new StringBuilder("SELECT * FROM " + table + " WHERE " + like);
+		int i1 = 1;
+		while (groups.size() > i1) {
+			sb.append(" OR " + like);
+			i1++;
+		}
+		OlympaStatement newGetPlayerByGroupStatement = new OlympaStatement(sb.toString());
+		try {
+			PreparedStatement statement = newGetPlayerByGroupStatement.getStatement();
+			int i2 = 1;
+			for (OlympaGroup grp : groups)
+				statement.setString(i2++, "%" + grp.getId() + "%");
+			ResultSet resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				OlympaPlayer op = getOlympaPlayer(resultSet);
+				if (op.getGroups().keySet().stream().anyMatch(gr -> groupsIds.contains(gr.getId())))
+					olympaPlayers.add(getOlympaPlayer(resultSet));
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

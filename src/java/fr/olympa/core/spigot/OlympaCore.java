@@ -65,6 +65,7 @@ import fr.olympa.core.spigot.datamanagment.DataManagmentListener;
 import fr.olympa.core.spigot.datamanagment.OnLoadListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
+import fr.olympa.core.spigot.groups.StaffCommand;
 import fr.olympa.core.spigot.protocolsupport.VersionHandler;
 import fr.olympa.core.spigot.protocolsupport.ViaVersionHook;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
@@ -287,6 +288,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new HologramsCommand(hologramsManager).register();
 		new TpCommand(this).register();
 		new ToggleErrors(this).register();
+		new StaffCommand(this).register();
 
 		new AntiWD(this);
 		getTask().runTask(() -> versionHandler = new VersionHandler(this));

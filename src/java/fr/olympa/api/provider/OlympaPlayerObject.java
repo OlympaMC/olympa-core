@@ -143,7 +143,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		lastConnection = Utils.getCurrentTimeInSeconds();
 	}
 
-	private void updateGroups() {
+	public void updateGroups() {
 		COLUMN_GROUPS.updateAsync(this, getGroupsToString(), null, null);
 	}
 
@@ -210,8 +210,10 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		OlympaGroup olympaGroup = null;
 		for (Iterator<OlympaGroup> iterator = groups.keySet().iterator(); iterator.hasNext();) {
 			olympaGroup = iterator.next();
-			if (OlympaServer.ALL.equals(olympaGroup.getServer())) break;
-			if (Objects.equals(olympaGroup.getServer(), LinkSpigotBungee.Provider.link.getOlympaServer())) break;
+			if (OlympaServer.ALL.equals(olympaGroup.getServer()))
+				break;
+			if (Objects.equals(olympaGroup.getServer(), LinkSpigotBungee.Provider.link.getOlympaServer()))
+				break;
 		}
 		return olympaGroup;
 	}

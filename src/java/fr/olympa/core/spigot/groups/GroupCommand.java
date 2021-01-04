@@ -25,6 +25,7 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.provider.OlympaPlayerObject;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
@@ -102,18 +103,20 @@ public class GroupCommand extends OlympaCommand {
 				return true;
 			}
 
+			int nextArg = 2;
+
 			long timestamp = 0;
-			if (args.length >= 3)
-				if (RegexMatcher.INT.is(args[2])) {
-					timestamp = Long.parseLong(args[2]);
+			if (args.length >= nextArg + 1)
+				if (RegexMatcher.INT.is(args[nextArg])) {
+					timestamp = Long.parseLong(args[nextArg]);
 					if (timestamp != 0 && timestamp < Utils.getCurrentTimeInSeconds()) {
 						this.sendError("&4%s&c est plus petit que le timestamp actuel: &4%d&c.", args[2], Utils.getCurrentTimeInSeconds());
 						return true;
 					}
-				} else {
-					this.sendError("&4%s&c doit être un timestamp tel que &4%d&c.", args[2], Utils.getCurrentTimeInSeconds());
-					return true;
+					nextArg++;
 				}
+			//					this.sendError("&4%s&c doit être un timestamp tel que &4%d&c.", args[2], Utils.getCurrentTimeInSeconds());
+			//					return true;
 
 			Gender gender = olympaTarget.getGender();
 			TreeMap<OlympaGroup, Long> oldGroups = olympaTarget.getGroups();
@@ -123,8 +126,8 @@ public class GroupCommand extends OlympaCommand {
 
 			ChangeType state;
 			String msg = "&aTu es désormais dans le groupe &2%group&a%time.";
-			if (args.length >= 4) {
-				if (args[3].equalsIgnoreCase("add")) {
+			if (args.length >= nextArg + 1) {
+				if (args[nextArg].equalsIgnoreCase("add")) {
 					Entry<OlympaGroup, Long> oldGroup = oldGroups.entrySet().stream().filter(entry -> entry.getKey().getId() == newGroup.getId()).findFirst().orElse(null);
 					if (oldGroup != null && oldGroup.getValue() == timestamp) {
 						this.sendError("%s&c est déjà dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName(gender));
@@ -139,7 +142,7 @@ public class GroupCommand extends OlympaCommand {
 					if (timestamp2 != 0)
 						timestampString2 = "pendant &2" + Utils.timestampToDuration(timestamp2) + "&a";
 					msg = "&aTu es désormais en plus dans le groupe &2%group&a%time. Ton grade principale est &2%group2&a%time2.".replace("%time2", timestampString2).replace("%group2", principalGroup.getName(gender));
-				} else if (args[3].equalsIgnoreCase("remove")) {
+				} else if (args[nextArg].equalsIgnoreCase("remove")) {
 					if (!oldGroups.containsKey(newGroup)) {
 						this.sendError("%s&c n'est pas dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName(gender));
 						return true;
@@ -170,10 +173,11 @@ public class GroupCommand extends OlympaCommand {
 					if (b)
 						sendInfo("&6Le joueur est connecté sur un autre serveur. &aLe changement de grade de &2%s&a bien été reçu sur l'infrastructure (dont discord).", olympaTarget.getName());
 					else {
-						sendInfo("&cLe joueur &2%s&a n'est pas connecté, &cle changement de grade a bien été reçu (dont discord).", olympaTarget.getName());
+						sendInfo("&cLe joueur &4%s&c n'est pas connecté, &cle changement de grade a bien été reçu (dont discord).", olympaTarget.getName());
 						AccountProvider olympaAccount2 = new AccountProvider(olympaTarget.getUniqueId());
 						olympaAccount2.removeFromRedis();
-						//olympaAccount2.saveToDb(olympaTarget);
+						((OlympaPlayerObject) olympaTarget).updateGroups();
+						//						olympaAccount2.saveToDb(olympaTarget);
 					}
 				};
 				RedisSpigotSend.sendOlympaGroupChange(olympaTarget, newGroup, timestamp, state, done);
