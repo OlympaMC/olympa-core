@@ -205,7 +205,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	public void sendMessage(String message, Object... args) {
 		getProxy().getConsole().sendMessage(TextComponent.fromLegacyText(String.format(ColorUtils.color(getPrefixConsole() + message), args)));
 	}
-	
+
 	@Override
 	public OlympaServer getOlympaServer() {
 		return OlympaServer.BUNGEE;

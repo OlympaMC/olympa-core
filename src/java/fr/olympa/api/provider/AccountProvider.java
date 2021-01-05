@@ -22,6 +22,7 @@ import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.player.OlympaPlayerProvider;
 import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.sql.SQLClass;
 import fr.olympa.api.sql.SQLColumn;
 import fr.olympa.api.sql.SQLTable;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
@@ -39,13 +40,13 @@ public class AccountProvider implements OlympaAccount {
 	public static Class<? extends OlympaPlayer> playerClass = OlympaPlayerObject.class;
 	public static OlympaPlayerProvider pluginPlayerProvider = OlympaPlayerObject::new;
 	private static SQLTable<? extends OlympaPlayer> pluginPlayerTable = null;
-	
+
 	private static SQLTable<OlympaPlayerObject> olympaPlayerTable;
 
-	public static void init(MySQL mysql) throws SQLException {
-		olympaPlayerTable = new SQLTable<>(mysql.getTable(), OlympaPlayerObject.COLUMNS).createOrAlter();
+	public static void init(SQLClass sqlClass) throws SQLException {
+		olympaPlayerTable = new SQLTable<>(sqlClass.getTableCleanName(), OlympaPlayerObject.COLUMNS).createOrAlter();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T extends OlympaPlayer> T get(String name) throws SQLException {
 		OlympaPlayer olympaPlayer = AccountProvider.getFromCache(name);
@@ -161,9 +162,10 @@ public class AccountProvider implements OlympaAccount {
 			pluginPlayerTable = null;
 		}
 	}
-	
+
 	public static boolean loadPlayerDatas(OlympaPlayer player) throws SQLException {
-		if (pluginPlayerTable == null) return false;
+		if (pluginPlayerTable == null)
+			return false;
 		ResultSet resultSet = pluginPlayerTable.get(player.getId());
 		if (resultSet.next()) {
 			player.loadDatas(resultSet);
@@ -201,6 +203,7 @@ public class AccountProvider implements OlympaAccount {
 		ResultSet resultSet = olympaPlayerTable.insert(
 				olympaPlayer.getName(),
 				Utils.getUUIDString(olympaPlayer.getUniqueId()),
+				Utils.getUUIDString(olympaPlayer.getPremiumUniqueId()),
 				olympaPlayer.getGroupsToString(),
 				olympaPlayer.getPassword(),
 				olympaPlayer.getIp(),

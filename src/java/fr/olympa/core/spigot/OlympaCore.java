@@ -26,6 +26,7 @@ import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
 import fr.olympa.api.afk.AfkHandler;
 import fr.olympa.api.command.CommandListener;
+import fr.olympa.api.command.essentials.ColorCommand;
 import fr.olympa.api.command.essentials.EcseeCommand;
 import fr.olympa.api.command.essentials.FlyCommand;
 import fr.olympa.api.command.essentials.GamemodeCommand;
@@ -287,6 +288,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new PingCommand(this).register();
 		new HologramsCommand(hologramsManager).register();
 		new TpCommand(this).register();
+		new ColorCommand(this).register();
 		new ToggleErrors(this).register();
 		new StaffCommand(this).register();
 

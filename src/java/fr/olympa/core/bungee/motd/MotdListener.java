@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.imageio.ImageIO;
 
 import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.utils.Chat;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.utils.BungeeUtils;
@@ -24,7 +25,7 @@ import net.md_5.bungee.event.EventHandler;
 public class MotdListener implements Listener {
 
 	String prefix = "§e-------------§6 Olympa §e-------------";
-	String motd_base = "§3⬣ §e§lOlympa §61.9 à 1.16+§3 ⬣\n";
+	String motd_base = Chat.centerMotD("§3⬣ §e§lOlympa §61.9 à 1.16+§3 ⬣") + "\n";
 	// §6Fun \u2606 Tryhard \u2606 Ranked
 	String teamspeak = "§6Teamspeak: §e§nts.olympa.fr";
 	String site = "§6Site: §e§nwww.olympa.fr";
@@ -67,12 +68,12 @@ public class MotdListener implements Listener {
 				String connectDomain = Utils.getAfterFirst(connectIp, ".");
 				// Vérifie si l'adresse est correct
 				if (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net")) {
-					ping.setDescriptionComponent(new TextComponent(motd_base + "§4§l⚠ §cUtilise la bonne IP: §4§nplay.olympa.fr"));
+					ping.setDescriptionComponent(new TextComponent(motd_base + Chat.centerMotD("§4§l⚠ §cUtilise la bonne IP: §4§nplay.olympa.fr")));
 					return;
 				}
 				String connectSubDomain = connectIp.split("\\.")[0];
 				if (connectSubDomain.equalsIgnoreCase("buildeur")) {
-					ping.setDescriptionComponent(new TextComponent(motd_base + "§aServeur §2Buildeur"));
+					ping.setDescriptionComponent(new TextComponent(motd_base + Chat.centerMotD("§aServeur §2Buildeur")));
 					return;
 				}
 			}
@@ -122,7 +123,7 @@ public class MotdListener implements Listener {
 						sb.append(separator);
 					before = random;
 				}
-				ping.setDescriptionComponent(new TextComponent(motd_base + sb.toString()));
+				ping.setDescriptionComponent(new TextComponent(motd_base + Chat.centerMotD(sb.toString())));
 			}
 			break;
 		case MAINTENANCE:
@@ -150,7 +151,7 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()),
 			});
 			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
-			ping.setDescriptionComponent(new TextComponent(motd_base + "§4§l⚠ §cSERVEUR EN MAINTENANCE §4§l⚠"));
+			ping.setDescriptionComponent(new TextComponent(motd_base + Chat.centerMotD("§4§l⚠ §cSERVEUR EN MAINTENANCE §4§l⚠")));
 			break;
 		case DEV:
 			try {
@@ -176,7 +177,7 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()),
 			});
 			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
-			ping.setDescriptionComponent(new TextComponent(motd_base + "§cServeur en développement"));
+			ping.setDescriptionComponent(new TextComponent(motd_base + Chat.centerMotD("§cServeur en développement")));
 			break;
 		case SOON:
 			players.setSample(new ServerPing.PlayerInfo[] {
@@ -192,7 +193,7 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()), });
 			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
-			ping.setDescriptionComponent(new TextComponent(motd_base + "§bOn ouvre bientôt t'inquiète."));
+			ping.setDescriptionComponent(new TextComponent(motd_base + Chat.centerMotD("§bOn ouvre bientôt t'inquiète.")));
 			break;
 		case BETA:
 			players.setSample(new ServerPing.PlayerInfo[] {
@@ -210,7 +211,7 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()), });
-			ping.setDescriptionComponent(new TextComponent(motd_base + "§c[§6Beta&c] &e-> &binscrit-toi sur www.olympa.fr"));
+			ping.setDescriptionComponent(new TextComponent(motd_base + Chat.centerMotD("§c[§6Beta&c] &e-> &binscrit-toi sur www.olympa.fr")));
 			break;
 		case CLOSE_BETA:
 			players.setSample(new ServerPing.PlayerInfo[] {
@@ -227,7 +228,7 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()), });
-			ping.setDescriptionComponent(new TextComponent(motd_base + "§6Première Bêta Fermée"));
+			ping.setDescriptionComponent(new TextComponent(motd_base + Chat.centerMotD("§6Déjà 2 bêta fermée ? ça avance alors !")));
 			break;
 		default:
 			break;
