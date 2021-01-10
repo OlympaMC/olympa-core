@@ -5,6 +5,7 @@ import java.util.List;
 
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.api.utils.UtilsCore;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionHistory;
@@ -26,9 +27,8 @@ public class IdHistory {
 		}
 
 		TextComponent msg = new TextComponent("");
-		for (BaseComponent s : ban.toBaseComplement()) {
+		for (BaseComponent s : ban.toBaseComplement())
 			msg.addExtra(s);
-		}
 
 		msg.addExtra(new TextComponent(BungeeUtils.color("\n&6Historique: ")));
 
@@ -47,7 +47,7 @@ public class IdHistory {
 				msglist.add(msg3);
 			}
 
-			Utils.toTextComponent(msg, msglist, "&e,", "");
+			UtilsCore.toTextComponent(msg, msglist, "&e,", "");
 		}
 		sender.sendMessage(msg);
 

@@ -9,8 +9,8 @@ import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
+import fr.olympa.api.chat.Chat;
 import fr.olympa.api.server.ServerStatus;
-import fr.olympa.api.utils.Chat;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.utils.BungeeUtils;

@@ -3,7 +3,7 @@ package fr.olympa.core.bungee.tabtext;
 import java.util.Collection;
 import java.util.StringJoiner;
 
-import fr.olympa.api.utils.ColorUtils;
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.ProxyServer;

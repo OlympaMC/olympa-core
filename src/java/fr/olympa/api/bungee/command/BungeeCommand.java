@@ -13,12 +13,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.config.BungeeCustomConfig;
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.command.CommandArgument;
 import fr.olympa.api.command.IOlympaCommand;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.datamanagment.DataHandler;

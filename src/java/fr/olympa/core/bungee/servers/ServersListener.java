@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.LinkSpigotBungee;
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.api.utils.spigot.ProtocolAPI;

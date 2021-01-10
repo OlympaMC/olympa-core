@@ -62,6 +62,7 @@ import fr.olympa.core.spigot.commands.PingCommand;
 import fr.olympa.core.spigot.commands.RestartCommand;
 import fr.olympa.core.spigot.commands.ToggleErrors;
 import fr.olympa.core.spigot.commands.TpsCommand;
+import fr.olympa.core.spigot.commands.UtilsCommand;
 import fr.olympa.core.spigot.datamanagment.DataManagmentListener;
 import fr.olympa.core.spigot.datamanagment.OnLoadListener;
 import fr.olympa.core.spigot.groups.GroupCommand;

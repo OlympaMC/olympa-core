@@ -3,9 +3,9 @@ package fr.olympa.core.bungee.servers.commands;
 import java.util.StringJoiner;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.server.ServerStatus;
-import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.spigot.TPSUtils;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.CommandSender;

@@ -1,4 +1,4 @@
-package fr.olympa.core.spigot;
+package fr.olympa.core.spigot.commands;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,6 +47,7 @@ import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.region.tracking.TrackedRegion;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.spigot.SpigotUtils;
+import fr.olympa.core.spigot.OlympaCore;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.TileEntity;
 import net.minecraft.server.v1_16_R3.TileEntityTypes;
