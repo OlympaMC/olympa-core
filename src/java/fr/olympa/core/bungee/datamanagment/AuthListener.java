@@ -217,10 +217,10 @@ public class AuthListener implements Listener {
 					return;
 				}
 				OlympaBungee.getInstance().sendMessage("Création du compte de §6%s", name);
+				olympaPlayer = olympaAccount.createNew(olympaPlayer);
 				UUID uuidPremium = cache.getPremiumUUID();
 				if (uuidPremium != null)
 					olympaPlayer.setPremiumUniqueId(uuidPremium);
-				olympaPlayer = olympaAccount.createNew(olympaPlayer);
 				cache.setOlympaPlayer(olympaPlayer);
 			} catch (Exception e) {
 				e.printStackTrace();
