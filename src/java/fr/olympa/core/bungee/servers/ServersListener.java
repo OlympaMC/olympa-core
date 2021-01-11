@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.LinkSpigotBungee;
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.api.utils.spigot.ProtocolAPI;
@@ -63,7 +63,7 @@ public class ServersListener implements Listener {
 			if (serverFallback == null)
 				serverFallback = ServersConnection.getBestServer(OlympaServer.AUTH, serverKicked);
 			if (serverFallback == null) {
-				BaseComponent[] msg = TextComponent.fromLegacyText(BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e redémarre, merci de te reconnecter dans quelques secondes..."));
+				BaseComponent[] msg = BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e redémarre, merci de te reconnecter dans quelques secondes...");
 				player.sendMessage(msg);
 				event.setKickReasonComponent(msg);
 				return;

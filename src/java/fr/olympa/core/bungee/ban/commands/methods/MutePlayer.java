@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.UUID;
 
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
@@ -40,7 +41,7 @@ public class MutePlayer {
 			if (target != null) {
 				olympaTarget = new AccountProvider(target.getUniqueId()).get();
 				if (olympaTarget == null) {
-					sender.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color(config.getString("ban.playerneverjoin").replace("%player%", args[0])));
+					sender.sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color(config.getString("ban.playerneverjoin").replace("%player%", args[0])));
 					return;
 				}
 			} else if (targetUUID != null)
@@ -59,7 +60,7 @@ public class MutePlayer {
 			//			return;
 			//			}
 		} catch (SQLException e) {
-			sender.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color(config.getString("ban.messages.errordb")));
+			sender.sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color(config.getString("ban.messages.errordb")));
 			e.printStackTrace();
 			return;
 		}

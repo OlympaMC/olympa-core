@@ -20,6 +20,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 
 public class BungeeCustomConfig {
 
+	private static final String fileExtension = ".yml";
 	private static List<BungeeCustomConfig> configs = new ArrayList<>();
 
 	public static List<BungeeCustomConfig> getConfigs() {
@@ -27,7 +28,8 @@ public class BungeeCustomConfig {
 	}
 
 	public static BungeeCustomConfig getConfig(String name) {
-		return configs.stream().filter(c -> c.getName().equals(name)).findFirst().orElse(configs.stream().filter(c -> c.fileName.equals(name)).findFirst().orElse(null));
+		return configs.stream().filter(c -> c.getName().equals(name) || c.getName().equals(name.substring(0, name.length() - 1 - fileExtension.length()))).findFirst()
+				.orElse(configs.stream().filter(c -> c.fileName.equals(name)).findFirst().orElse(null));
 	}
 
 	private Plugin plugin;
@@ -36,8 +38,8 @@ public class BungeeCustomConfig {
 
 	public BungeeCustomConfig(Plugin plugin, String fileName) {
 		this.plugin = plugin;
-		if (!fileName.contains(".yml"))
-			fileName += ".yml";
+		if (!fileName.contains(fileExtension))
+			fileName += fileExtension;
 		this.fileName = fileName;
 		configs.add(this);
 	}

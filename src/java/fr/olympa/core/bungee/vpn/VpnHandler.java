@@ -6,23 +6,24 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.base.Charsets;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
 
+import fr.olympa.core.bungee.connectionqueue.QueueHandler;
 import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.connection.PendingConnection;
 
 @SuppressWarnings("deprecation")
 public class VpnHandler {
 
-	private static Cache<String, OlympaVpn> cache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).removalListener(notification -> {
+	private static Cache<String, OlympaVpn> cache = CacheBuilder.newBuilder().expireAfterAccess(30, TimeUnit.MINUTES).maximumSize(100).removalListener(notification -> {
 		OlympaVpn olympaVpn = (OlympaVpn) notification.getValue();
 		try {
 			if (olympaVpn.getId() == 0)
@@ -59,7 +60,7 @@ public class VpnHandler {
 		URL url = new URL(String.format("http://ip-api.com/json/%s?fields=17034769", ip));
 		URLConnection connection = url.openConnection(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ip, con.getAddress().getPort())));
 		connection.setUseCaches(false);
-		String result = CharStreams.toString(new InputStreamReader(connection.getURL().openStream(), Charsets.UTF_8));
+		String result = CharStreams.toString(new InputStreamReader(connection.getURL().openStream(), StandardCharsets.UTF_8));
 		return OlympaVpn.fromJson(result);
 	}
 
@@ -69,12 +70,15 @@ public class VpnHandler {
 		OlympaVpn olympaVpn = null;
 		olympaVpn = VpnHandler.get(ip);
 		if (olympaVpn == null) {
+			if (!QueueHandler.hasTooManyInQueue())
+				return null;
 			olympaVpn = VpnHandler.createVpnInfo(connection);
 			if (!olympaVpn.isOk())
 				throw new NullPointerException("OlympaVpn incomplete : " + new Gson().toJson(olympaVpn));
-			olympaVpn.addUser(username);
+			if (username != null)
+				olympaVpn.addUser(username);
 			addIfNotExist(ip, olympaVpn);
-		} else if (!olympaVpn.hasUser(username))
+		} else if (username != null && !olympaVpn.hasUser(username))
 			olympaVpn.addUser(username);
 		return olympaVpn;
 	}

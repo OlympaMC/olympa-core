@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.provider.AccountProvider;
@@ -12,6 +13,7 @@ import fr.olympa.api.server.ServerType;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class OlympaBungeePermission extends OlympaPermission {
@@ -86,6 +88,11 @@ public class OlympaBungeePermission extends OlympaPermission {
 			if (players != null)
 				players.forEach(player -> player.sendMessage(baseComponent));
 		});
+	}
+
+	@Override
+	public void sendMessage(String message, Object... args) {
+		getPlayersBungee(players -> players.forEach(player -> player.sendMessage(TextComponent.fromLegacyText(ColorUtils.color(String.format(message, args))))));
 	}
 
 	public boolean hasSenderPermissionBungee(CommandSender sender) {

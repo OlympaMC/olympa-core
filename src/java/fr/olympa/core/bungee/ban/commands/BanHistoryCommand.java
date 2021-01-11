@@ -6,19 +6,18 @@ import java.util.List;
 import java.util.UUID;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -81,7 +80,7 @@ public class BanHistoryCommand extends BungeeCommand {
 			sender.sendMessage(Prefix.DEFAULT_BAD.formatMessageB("&4%s&c n'a jamais été sanctionné.", target));
 			return;
 		}
-		TextComponent msg = new TextComponent(BungeeUtils.color("&6Sanctions de " + target + "&6:\n"));
+		TextComponent msg = new TextComponent(ColorUtils.color("&6Sanctions de " + target + "&6:\n"));
 		List<OlympaSanction> bans = new ArrayList<>();
 		List<OlympaSanction> mutes = new ArrayList<>();
 		List<OlympaSanction> kicks = new ArrayList<>();

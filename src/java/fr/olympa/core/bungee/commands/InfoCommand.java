@@ -4,9 +4,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 
+import com.google.gson.Gson;
+
 import fr.olympa.api.bungee.command.BungeeCommand;
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
@@ -15,6 +19,8 @@ import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
+import fr.olympa.core.bungee.vpn.OlympaVpn;
+import fr.olympa.core.bungee.vpn.VpnHandler;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -97,7 +103,19 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 		out.addExtra("\n");
 		if (hasPermission(OlympaCorePermissions.INFO_COMMAND_EXTRA)) {
 			out2 = new TextComponent(TextComponent.fromLegacyText("§3IP : §b[Cachée]"));
-			out2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§c" + target.getIp())));
+			StringJoiner sj = new StringJoiner("\n");
+			sj.add("§c" + target.getIp());
+			try {
+				OlympaVpn ipInfo = VpnHandler.get(target.getIp());
+				List<String> users = ipInfo.getUsers();
+				if (!users.isEmpty())
+					sj.add("§cIP partagée avec " + ColorUtils.joinRedEt(users));
+				if (hasPermission(OlympaCorePermissions.INFO_COMMAND_EXTRA_EXTRA))
+					sj.add("§e" + new Gson().toJson(ipInfo));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			out2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(sj.toString())));
 			out2.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, target.getIp()));
 			out.addExtra(out2);
 			out.addExtra("\n");

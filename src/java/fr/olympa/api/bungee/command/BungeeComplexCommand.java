@@ -13,6 +13,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.bungee.config.BungeeCustomConfig;
 import fr.olympa.api.bungee.permission.OlympaBungeePermission;
 import fr.olympa.api.command.complex.ArgumentParser;
 import fr.olympa.api.command.complex.Cmd;
@@ -26,6 +27,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -83,11 +85,12 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 
 	}
 
-	protected static final HoverEvent COMMAND_HOVER = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§bSuggérer la commande."));
+	protected static final HoverEvent COMMAND_HOVER = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(TextComponent.fromLegacyText("§bSuggérer la commande.")));
 	protected static final List<String> INTEGERS = Arrays.asList("1", "2", "3");
-	private static final String uuid = UUID.randomUUID().toString();
-	protected static final List<String> UUIDS = Arrays.asList(uuid, uuid.replace("-", ""));
+	private static final String TEMP_UUID = UUID.randomUUID().toString();
+	protected static final List<String> UUIDS = Arrays.asList(TEMP_UUID, TEMP_UUID.replace("-", ""));
 	protected static final List<String> BOOLEAN = Arrays.asList("true", "false");
+	protected static final List<String> HEX_COLOR = Arrays.asList("#123456", "#FFFFFF");
 	public final Map<List<String>, BungeeInternalCommand> commands = new HashMap<>();
 	private final Map<String, BungeeArgumentParser> parsers = new HashMap<>();
 
@@ -106,18 +109,26 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 			String random = UUID.randomUUID().toString();
 			return String.format("&4%s&c doit être un uuid sous la forme &4%s&c ou &4%s&c", x, random, random.replace("-", ""));
 		});
-		addArgumentParser("DOUBLE", sender -> Collections.EMPTY_LIST, x -> {
+		addArgumentParser("DOUBLE", sender -> Collections.emptyList(), x -> {
 			if (RegexMatcher.DOUBLE.is(x))
 				return RegexMatcher.DOUBLE.parse(x);
 			return null;
 		}, x -> String.format("&4%s&c doit être un nombre décimal", x));
-		addArgumentParser("BOOLEAN", sender -> BOOLEAN, Boolean::parseBoolean);
+		addArgumentParser("HEX_COLOR", sender -> HEX_COLOR, x -> {
+			if (RegexMatcher.HEX_COLOR.is(x))
+				return RegexMatcher.HEX_COLOR.parse(x);
+			return null;
+		}, x -> String.format("&4%s&c n'est pas un code hexadicimal sous la forme &4#123456&c ou &4#FFFFFF&c.", x));
+		addArgumentParser("BOOLEAN", sender -> BOOLEAN, Boolean::parseBoolean, null);
 		addArgumentParser("SUBCOMMAND", sender -> commands.entrySet().stream().filter(e -> !e.getValue().cmd.otherArg()).map(Entry::getKey).flatMap(List::stream).collect(Collectors.toList()), x -> {
 			BungeeInternalCommand result = getCommand(x);
 			if (result != null && result.cmd.otherArg())
 				return null;
 			return result;
 		}, x -> String.format("La commande &4%s&c n'existe pas", x));
+		addArgumentParser("CONFIGS", sender -> BungeeCustomConfig.getConfigs().stream().map(BungeeCustomConfig::getName).collect(Collectors.toList()), x -> {
+			return BungeeCustomConfig.getConfig(x);
+		}, x -> String.format("La config &4%s&c n'existe pas", x));
 		registerCommandsClass(this);
 	}
 
@@ -138,14 +149,8 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 			for (T each : enumClass.getEnumConstants())
 				if (each.name().equalsIgnoreCase(playerInput))
 					return each;
-			sendError("La valeur %s n'existe pas.", playerInput);
 			return null;
-		});
-	}
-
-	@Deprecated(forRemoval = true)
-	public void addArgumentParser(String name, Function<CommandSender, List<String>> tabArgumentsFunction, Function<String, Object> supplyArgumentFunction) {
-		parsers.put(name, new BungeeArgumentParser(tabArgumentsFunction, supplyArgumentFunction));
+		}, x -> String.format("La valeur %s n'existe pas.", x));
 	}
 
 	public void addArgumentParser(String name, Function<CommandSender, List<String>> tabArgumentsFunction, Function<String, Object> supplyArgumentFunction, Function<String, String> errorMessageArgumentFunction) {
@@ -320,6 +325,7 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 			}
 	}
 
+	@Override
 	public void sendHelp(CommandSender sender) {
 		super.sendHelp(sender);
 		for (BungeeInternalCommand command : commands.values()) {

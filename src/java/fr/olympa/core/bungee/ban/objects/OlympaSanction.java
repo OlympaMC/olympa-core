@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.player.OlympaPlayerInformations;
@@ -220,18 +221,18 @@ public class OlympaSanction {
 	// ###########################################################################################################################################################
 
 	public BaseComponent[] toBaseComplement() {
-		return new ComponentBuilder(BungeeUtils.color("&6Information sanction n°&e" + getId() + "\n\n"))
-				.append(BungeeUtils.color("&6Joueur: &e" + getPlayersNames() + "\n"))
-				.append(BungeeUtils.color("&6Auteur: &e" + BungeeUtils.getName(getAuthor()) + "\n"))
-				.append(BungeeUtils.color("&6Type: &e" + getType().getName(isPermanent()) + "\n"))
-				.append(BungeeUtils.color("&6Raison: &e" + getReason() + "\n"))
-				.append(BungeeUtils.color("&6Crée: &e" + Utils.timestampToDateAndHour(getCreated()) + "\n"))
-				.append(BungeeUtils.color("&6Expire: &e" + (getExpires() != 0 ? Utils.timestampToDateAndHour(getExpires()) + "\n&6Durée de base: &e" + Utils
+		return new ComponentBuilder(ColorUtils.color("&6Information sanction n°&e" + getId() + "\n\n"))
+				.append(ColorUtils.color("&6Joueur: &e" + getPlayersNames() + "\n"))
+				.append(ColorUtils.color("&6Auteur: &e" + BungeeUtils.getName(getAuthor()) + "\n"))
+				.append(ColorUtils.color("&6Type: &e" + getType().getName(isPermanent()) + "\n"))
+				.append(ColorUtils.color("&6Raison: &e" + getReason() + "\n"))
+				.append(ColorUtils.color("&6Crée: &e" + Utils.timestampToDateAndHour(getCreated()) + "\n"))
+				.append(ColorUtils.color("&6Expire: &e" + (getExpires() != 0 ? Utils.timestampToDateAndHour(getExpires()) + "\n&6Durée de base: &e" + Utils
 						.timestampToDuration(Utils.getCurrentTimeInSeconds() + getBanTime())
 						+ (getExpires() >= Utils.getCurrentTimeInSeconds() ? "\n&6Durée restante: &e" + Utils
 								.timestampToDuration(getExpires()) : "")
 						: "permanant") + "\n"))
-				.append(BungeeUtils.color("&6Status: &e" + getStatus().getColor() + getStatus().getName()))
+				.append(ColorUtils.color("&6Status: &e" + getStatus().getColor() + getStatus().getName()))
 				.create();
 	}
 

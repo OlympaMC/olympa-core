@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.utils;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
@@ -8,17 +9,17 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 
@@ -32,13 +33,14 @@ public class BungeeUtils {
 		return TextComponent.fromLegacyText(ColorUtils.format(format, args));
 	}
 
-	public static String color(String s) {
-		return s != null ? ChatColor.translateAlternateColorCodes('&', s) : "";
+	@SuppressWarnings("deprecation")
+	public static String getIP(Connection connection) {
+		return connection.getAddress().getAddress().getHostAddress();
 	}
 
-	public static String connectScreen(String s) {
+	public static BaseComponent[] connectScreen(String s) {
 		Configuration config = OlympaBungee.getInstance().getConfig();
-		return ColorUtils.color(config.getString("default.connectscreenprefix") + s + config.getString("default.connectscreensuffix"));
+		return TextComponent.fromLegacyText(ColorUtils.color(config.getString("default.connectscreenprefix") + s + config.getString("default.connectscreensuffix")));
 	}
 
 	public static TextComponent formatStringToJSON(String s) {
@@ -90,4 +92,13 @@ public class BungeeUtils {
 			noPerm.accept(playersWithNoPerm);
 	}
 
+	public static void changeSlots(int slots) throws ReflectiveOperationException {
+		ProxyServer proxy = ProxyServer.getInstance();
+		Class<?> configClass = proxy.getConfig().getClass();
+		if (!configClass.getSuperclass().equals(Object.class))
+			configClass = configClass.getSuperclass();
+		Field playerLimitField = configClass.getDeclaredField("playerLimit");
+		playerLimitField.setAccessible(true);
+		playerLimitField.set(proxy.getConfig(), slots);
+	}
 }

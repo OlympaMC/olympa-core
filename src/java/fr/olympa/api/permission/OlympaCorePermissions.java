@@ -56,6 +56,7 @@ public class OlympaCorePermissions {
 	public static final OlympaPermission VPN_BYPASS = new OlympaBungeePermission(OlympaGroup.FONDA);
 	public static final OlympaPermission INFO_COMMAND = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaPermission INFO_COMMAND_EXTRA = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
+	public static final OlympaPermission INFO_COMMAND_EXTRA_EXTRA = new OlympaBungeePermission(OlympaGroup.FONDA, OlympaGroup.ADMIN, OlympaGroup.RESP_TECH);
 	public static final OlympaPermission STAFF_CHAT = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 
 	public static final OlympaPermission SERVER_LIST_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
@@ -72,7 +73,6 @@ public class OlympaCorePermissions {
 	public static final OlympaPermission BUNGEE_LAG_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
 	public static final OlympaPermission SPIGOT_LAG_COMMAND = new OlympaPermission(OlympaGroup.PLAYER);
 
-	public static final OlympaPermission BUNGEE_CONFIG_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaPermission SPIGOT_CONFIG_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 
 	public static final OlympaPermission BUNGEE_BROADCAST_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
@@ -85,4 +85,13 @@ public class OlympaCorePermissions {
 	public static final OlympaBungeePermission TEAMSPEAK_SEE_ADMINHELP = new OlympaBungeePermission(OlympaGroup.MODP);
 	public static final OlympaPermission VERIFMOD_SEE_IN_TAB = new OlympaPermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaPermission VANISH_SEE_IN_TAB = new OlympaPermission(OlympaGroup.MODP);
+
+	public static final OlympaBungeePermission NICK_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaBungeePermission BUNGEE_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
+	public static final OlympaBungeePermission BUNGEE_COMMAND_TPS = new OlympaBungeePermission(OlympaGroup.PLAYER);
+	public static final OlympaBungeePermission BUNGEE_COMMAND_CONFIGS = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaBungeePermission BUNGEE_COMMAND_MAXPLAYERS = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaBungeePermission BUNGEE_COMMAND_SETTINGS = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaBungeePermission BUNGEE_COMMAND_ANTIBOT = new OlympaBungeePermission(OlympaGroup.RESP_BUILDER, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaBungeePermission SPIGOT_COMMAND_ANTIBOT = new OlympaBungeePermission(OlympaGroup.RESP_BUILDER, new OlympaGroup[] { OlympaGroup.DEV });
 }

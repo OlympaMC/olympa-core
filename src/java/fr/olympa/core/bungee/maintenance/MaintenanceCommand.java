@@ -7,12 +7,11 @@ import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.bungee.config.BungeeCustomConfig;
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.server.ServerStatus;
-import fr.olympa.api.utils.ColorUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -112,7 +111,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 					String statusmsg = "";
 					if (message.equals(""))
 						statusmsg = "(" + message.replace("\n", "") + ")";
-					sendMessage(BungeeUtils.color("&6Le mode maintenance est en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
+					sendMessage(ColorUtils.color("&6Le mode maintenance est en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
 					break;
 				default:
 					sendUsage();
