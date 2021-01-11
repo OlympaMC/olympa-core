@@ -10,6 +10,8 @@ public class BungeeBroadcastCommand extends BungeeCommand {
 	
 	public BungeeBroadcastCommand(Plugin plugin) {
 		super(plugin, "bungeebroadcast", "Permet d'envoyer un message sur tout le proxy.", OlympaCorePermissions.BUNGEE_BROADCAST_COMMAND);
+		minArg = 1;
+		usageString = "<message>";
 	}
 	
 	@Override

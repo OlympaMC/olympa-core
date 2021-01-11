@@ -76,6 +76,7 @@ public class OlympaCorePermissions {
 	public static final OlympaPermission SPIGOT_CONFIG_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 
 	public static final OlympaPermission BUNGEE_BROADCAST_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
+	public static final OlympaPermission BUNGEE_SECURITY_COMMAND = new OlympaPermission(OlympaGroup.ADMIN, OlympaGroup.RESP_TECH);
 	
 	public static final OlympaPermission BUNGEE_QUEUE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaPermission TEAMSPEAK_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
