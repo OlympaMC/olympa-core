@@ -26,7 +26,7 @@ import net.md_5.bungee.event.EventPriority;
 @SuppressWarnings("deprecation")
 public class BasicSecurityListener implements Listener {
 
-	private Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build();
+	private Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(100).build();
 
 	@EventHandler
 	public void on0Ping(ProxyPingEvent event) {
@@ -40,7 +40,7 @@ public class BasicSecurityListener implements Listener {
 		cache.put(player.getAddress().getAddress().getHostAddress(), "");
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = -128)
 	public void on1PreLogin(PreLoginEvent event) {
 		if (event.isCancelled())
 			return;
@@ -59,7 +59,7 @@ public class BasicSecurityListener implements Listener {
 		String subdomain = event.getConnection().getVirtualHost().getHostName().split("\\.")[0];
 
 		// Vérifie si l'adresse est correct
-		if (SecurityHandler.CHECK_IP && (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net") || !subdomain.equalsIgnoreCase("play") && !subdomain.equalsIgnoreCase("buildeur"))) {
+		if (SecurityHandler.CHECK_CORRECT_ENTRED_IP && (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net") || !subdomain.equalsIgnoreCase("play") && !subdomain.equalsIgnoreCase("buildeur"))) {
 			ProxiedPlayer player = ProxyServer.getInstance().getPlayer(name);
 			if (player != null) {
 				event.setCancelReason(BungeeUtils.connectScreen("&7[&cSécurité&7] &cTu dois te connecter avec l'adresse &nplay.olympa.fr&c."));

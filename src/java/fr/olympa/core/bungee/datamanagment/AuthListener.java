@@ -46,9 +46,12 @@ public class AuthListener implements Listener {
 		String name = connection.getName();
 		if (wait.contains(name))
 			try {
-				Thread.sleep(2 * 1000);
+				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+				event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#InterruptedException"));
+				event.setCancelled(true);
+				return;
 			}
 		CachePlayer oldCache = DataHandler.get(name);
 		if (oldCache != null)
