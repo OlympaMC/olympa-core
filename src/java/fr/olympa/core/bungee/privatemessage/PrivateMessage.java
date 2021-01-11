@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -48,13 +48,13 @@ public class PrivateMessage {
 				emeraldPlayer = OlympaConsole.getDevConnected();
 			emeraldTarget = new AccountProvider(target.getUniqueId()).get();
 		} catch (SQLException e) {
-			sender.sendMessage(BungeeUtils.color("&cUne erreur est survenue, impossible d'envoyer ce message."));
+			sender.sendMessage(ColorUtils.color("&cUne erreur est survenue, impossible d'envoyer ce message."));
 			e.printStackTrace();
 			return;
 		}
 
-		TextComponent msgPlayer = new TextComponent(TextComponent.fromLegacyText(BungeeUtils.color("&6Message &c\u2B06 " + emeraldTarget.getGroupPrefix() + target.getName() + "&b : ")));
-		msgPlayer.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(BungeeUtils.color("&aRépondre à " + emeraldTarget.getGroupPrefix() + target.getName())).create()));
+		TextComponent msgPlayer = new TextComponent(TextComponent.fromLegacyText(ColorUtils.color("&6Message &c\u2B06 " + emeraldTarget.getGroupPrefix() + target.getName() + "&b : ")));
+		msgPlayer.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ColorUtils.color("&aRépondre à " + emeraldTarget.getGroupPrefix() + target.getName())).create()));
 		msgPlayer.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + target.getName() + " "));
 		msgPlayer.addExtra(new TextComponent(TextComponent.fromLegacyText(message)));
 		sender.sendMessage(msgPlayer);
@@ -62,8 +62,8 @@ public class PrivateMessage {
 		String groupPrefix = "";
 		if (emeraldPlayer != null)
 			groupPrefix = emeraldPlayer.getGroupPrefix();
-		TextComponent msgTarget = new TextComponent(TextComponent.fromLegacyText(BungeeUtils.color("&6Message &a\u2B07 " + groupPrefix + sender.getName() + "&b : ")));
-		msgTarget.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(BungeeUtils.color("&aRépondre à " + groupPrefix + sender.getName())).create()));
+		TextComponent msgTarget = new TextComponent(TextComponent.fromLegacyText(ColorUtils.color("&6Message &a\u2B07 " + groupPrefix + sender.getName() + "&b : ")));
+		msgTarget.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ColorUtils.color("&aRépondre à " + groupPrefix + sender.getName())).create()));
 		msgTarget.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + sender.getName() + " "));
 		msgTarget.addExtra(new TextComponent(TextComponent.fromLegacyText(message)));
 		target.sendMessage(msgTarget);

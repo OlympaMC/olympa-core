@@ -21,8 +21,8 @@ import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.commands.NewBungeeCommand;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -255,11 +255,11 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 	}
 
 	public static void sendMessage(CommandSender sender, Prefix prefix, String text) {
-		sendMessage(sender, prefix + BungeeUtils.color(text));
+		sendMessage(sender, prefix + ColorUtils.color(text));
 	}
 
 	public static void sendMessage(CommandSender sender, String text) {
-		sender.sendMessage(TextComponent.fromLegacyText(BungeeUtils.color(text)));
+		sender.sendMessage(TextComponent.fromLegacyText(ColorUtils.color(text)));
 	}
 
 	public void sendMessage(Prefix prefix, String text) {
@@ -267,7 +267,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 	}
 
 	public void sendMessage(String text) {
-		sendMessage(sender, BungeeUtils.color(text));
+		sendMessage(sender, ColorUtils.color(text));
 	}
 
 	public void sendMessage(TextComponent text) {

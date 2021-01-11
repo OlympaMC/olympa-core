@@ -56,6 +56,7 @@ public class OlympaCorePermissions {
 	public static final OlympaPermission VPN_BYPASS = new OlympaBungeePermission(OlympaGroup.FONDA);
 	public static final OlympaPermission INFO_COMMAND = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaPermission INFO_COMMAND_EXTRA = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
+	public static final OlympaPermission INFO_COMMAND_EXTRA_EXTRA = new OlympaBungeePermission(OlympaGroup.FONDA, OlympaGroup.ADMIN, OlympaGroup.RESP_TECH);
 	public static final OlympaPermission STAFF_CHAT = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 
 	public static final OlympaPermission SERVER_LIST_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });

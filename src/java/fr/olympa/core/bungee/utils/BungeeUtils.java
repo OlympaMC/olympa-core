@@ -16,10 +16,10 @@ import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 
@@ -33,8 +33,9 @@ public class BungeeUtils {
 		return TextComponent.fromLegacyText(ColorUtils.format(format, args));
 	}
 
-	public static String color(String s) {
-		return s != null ? ChatColor.translateAlternateColorCodes('&', s) : "";
+	@SuppressWarnings("deprecation")
+	public static String getIP(Connection connection) {
+		return connection.getAddress().getAddress().getHostAddress();
 	}
 
 	public static BaseComponent[] connectScreen(String s) {

@@ -1,11 +1,11 @@
 package fr.olympa.core.bungee.login.listener;
 
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.HandlerLogin;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -82,9 +82,9 @@ public class LoginChatListener implements Listener {
 		if (DataHandler.isUnlogged(player) && (!event.isCommand() || !HandlerLogin.command.contains(command))) {
 			OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
 			if ((olympaPlayer == null || olympaPlayer.getPassword() == null || olympaPlayer.getPassword().isEmpty()) && !olympaPlayer.isPremium())
-				player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu dois t'enregistrer. Fais &4/register <mdp>&c."));
+				player.sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color("Tu dois t'enregistrer. Fais &4/register <mdp>&c."));
 			else
-				player.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("Tu dois être connecté%g. Fais &4/login <mdp>&c.".replace("%g", olympaPlayer.getGender().getTurne())));
+				player.sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color("Tu dois être connecté%g. Fais &4/login <mdp>&c.".replace("%g", olympaPlayer.getGender().getTurne())));
 			event.setCancelled(true);
 		}
 	}

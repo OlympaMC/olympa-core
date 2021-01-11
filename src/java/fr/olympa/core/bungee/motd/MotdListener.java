@@ -10,10 +10,10 @@ import java.util.UUID;
 import javax.imageio.ImageIO;
 
 import fr.olympa.api.chat.Chat;
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.Favicon;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -136,7 +136,7 @@ public class MotdListener implements Listener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			String maintenanceMessage = BungeeUtils.color(config.getString("settings.message"));
+			String maintenanceMessage = ColorUtils.color(config.getString("settings.message"));
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),

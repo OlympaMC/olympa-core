@@ -24,12 +24,15 @@ public class OlympaVpn {
 	Boolean hosting;
 	List<String> users = new ArrayList<>();
 
-	public OlympaVpn(long id, String query, boolean proxy, boolean mobile, boolean hosting, String usersString, String country, String city, String org, String as) {
+	public OlympaVpn(long id, String query, Boolean proxy, Boolean mobile, Boolean hosting, String usersString, String country, String city, String org, String as) {
 		this.id = id;
 		this.query = query;
-		this.mobile = mobile;
-		this.proxy = proxy;
-		this.hosting = hosting;
+		if (mobile)
+			this.mobile = mobile;
+		if (proxy)
+			this.proxy = proxy;
+		if (hosting)
+			this.hosting = hosting;
 		this.country = country;
 		this.city = city;
 		this.org = org;
@@ -81,18 +84,19 @@ public class OlympaVpn {
 	}
 
 	public Boolean isHosting() {
-		return hosting;
+		return hosting != null && hosting;
 	}
 
 	public Boolean isMobile() {
-		return mobile;
+		return mobile != null && mobile;
+	}
+
+	public Boolean isProxy() {
+		return proxy != null && proxy;
 	}
 
 	public boolean isOk() {
 		return status != null && status.equals("success");
 	}
 
-	public Boolean isProxy() {
-		return proxy;
-	}
 }

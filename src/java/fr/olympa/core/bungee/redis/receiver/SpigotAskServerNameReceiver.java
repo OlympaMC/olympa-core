@@ -1,11 +1,11 @@
 package fr.olympa.core.bungee.redis.receiver;
 
+import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import fr.olympa.core.bungee.servers.MonitorInfo;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersConnection;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -24,7 +24,7 @@ public class SpigotAskServerNameReceiver extends JedisPubSub {
 				MonitorInfo info = MonitorServers.getMonitor(serverInfo);
 				ServersConnection.getConnections(info.getOlympaServer()).forEach(wc -> {
 					ProxiedPlayer proxiedPlayer = ProxyServer.getInstance().getPlayer(wc.uuid);
-					proxiedPlayer.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("Tentative de connexion au serveur &2" + serverInfo.getName() + "&a..."));
+					proxiedPlayer.sendMessage(Prefix.DEFAULT_GOOD + ColorUtils.color("Tentative de connexion au serveur &2" + serverInfo.getName() + "&a..."));
 					proxiedPlayer.connect(serverInfo);
 				});
 
