@@ -30,10 +30,10 @@ import fr.olympa.core.bungee.ban.commands.UnbanCommand;
 import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
 import fr.olympa.core.bungee.commands.BungeeBroadcastCommand;
-import fr.olympa.core.bungee.commands.BungeeConfigCommand;
 import fr.olympa.core.bungee.commands.BungeeLagCommand;
 import fr.olympa.core.bungee.commands.BungeePingCommand;
 import fr.olympa.core.bungee.commands.InfoCommand;
+import fr.olympa.core.bungee.commands.NewBungeeCommand;
 import fr.olympa.core.bungee.commands.RedisCommand;
 import fr.olympa.core.bungee.connectionqueue.BungeeQueueCommand;
 import fr.olympa.core.bungee.connectionqueue.ConnectionQueueListener;
@@ -50,6 +50,7 @@ import fr.olympa.core.bungee.login.listener.PlayerSwitchListener;
 import fr.olympa.core.bungee.maintenance.MaintenanceCommand;
 import fr.olympa.core.bungee.maintenance.MaintenanceListener;
 import fr.olympa.core.bungee.motd.MotdListener;
+import fr.olympa.core.bungee.nick.NickCommand;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageCommand;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageListener;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageToggleCommand;
@@ -193,10 +194,12 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new RedisCommand(this).register();
 		new BungeePingCommand(this).register();
 		new BungeeQueueCommand(this).register();
-		new BungeeConfigCommand(this).register();
+		//		new BungeeConfigCommand(this).register();
+		new NewBungeeCommand(this).register();
 		new BungeeBroadcastCommand(this).register();
+		new NickCommand(this).register();
 
-		new MonitorServers(this);
+		MonitorServers.init(this);
 		SQLGroup.init();
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
 	}

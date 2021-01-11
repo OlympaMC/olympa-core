@@ -15,7 +15,6 @@ import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.config.Configuration;
 
 public class SanctionUtils {
@@ -94,7 +93,7 @@ public class SanctionUtils {
 		}
 		sjDisconnect.add(String.format("&cID : &4%s&c", ColorUtils.joinRedEt(bans.stream().map(OlympaSanction::getId).map(String::valueOf).collect(Collectors.toList()))));
 		sjDisconnect.add("");
-		BaseComponent[] msgDisconnect = TextComponent.fromLegacyText(BungeeUtils.connectScreen(sjDisconnect.toString()));
+		BaseComponent[] msgDisconnect = BungeeUtils.connectScreen(sjDisconnect.toString());
 		return msgDisconnect;
 	}
 }

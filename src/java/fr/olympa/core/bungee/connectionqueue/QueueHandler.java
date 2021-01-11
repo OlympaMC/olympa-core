@@ -8,7 +8,8 @@ public class QueueHandler {
 
 	// 150 = 0.15 sec
 	public static int TIME_BETWEEN_2 = 300;
-	public static int NUMBER_BEFORE_CANCEL = 50;
+	public static int NUMBER_BEFORE_CANCEL = 100;
+	public static int NUMBER_BEFORE_START_ANTIBOT = 20;
 	private static LinkedList<String> queue = new LinkedList<>();
 
 	public static int add(String playerName) {
@@ -17,10 +18,12 @@ public class QueueHandler {
 		queue.add(playerName);
 		System.out.println("§bTaille de la flle d'attente: " + queue.size());
 		QueueTask.start();
-		if (queue.size() > NUMBER_BEFORE_CANCEL)
-			AntiBotHandler.setEnable(true);
+		if (queue.size() >= NUMBER_BEFORE_CANCEL)
+			return -2;
+		else if (queue.size() >= NUMBER_BEFORE_START_ANTIBOT)
+			AntiBotHandler.setEnable(true, null);
 		else
-			AntiBotHandler.setEnable(false);
+			AntiBotHandler.setEnable(false, null);
 		return getTimeToW8(queue.size());
 	}
 

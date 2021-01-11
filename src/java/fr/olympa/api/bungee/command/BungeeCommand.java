@@ -51,7 +51,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 	protected LinkedHashMap<List<CommandArgument>, Boolean> args = new LinkedHashMap<>();
 
 	/**
-	 * Don't foget to set {@link BungeeCommand#usageString}
+	 * Don't foget to set {@link NewBungeeCommand#usageString}
 	 */
 	public Integer minArg = 0;
 

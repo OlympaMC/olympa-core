@@ -15,7 +15,6 @@ import fr.olympa.api.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue.Consumer;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 
 public class MonitorServers {
@@ -79,13 +78,17 @@ public class MonitorServers {
 		RedisBungeeSend.sendServerInfos(olympaServer, online, upper == null ? ServerStatus.UNKNOWN : upper.getStatus());
 	}
 
-	public MonitorServers(OlympaBungee plugin) {
+	private MonitorServers(OlympaBungee plugin) {
 		BungeeTaskManager task = plugin.getTask();
 		task.scheduleSyncRepeatingTask("monitor_serveurs", () -> {
-			for (ServerInfo serverInfo : ProxyServer.getInstance().getServers().values())
+			for (ServerInfo serverInfo : plugin.getProxy().getServersCopy().values())
 				updateServer(serverInfo, false);
 			for (OlympaServer olympaServer : olympaServers.keySet())
 				updateOlympaServer(olympaServer);
-		}, 1, 10, TimeUnit.SECONDS);
+		}, 1, 15, TimeUnit.SECONDS);
+	}
+
+	public static void init(OlympaBungee plugin) {
+		new MonitorServers(plugin);
 	}
 }

@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.utils;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
@@ -36,9 +37,9 @@ public class BungeeUtils {
 		return s != null ? ChatColor.translateAlternateColorCodes('&', s) : "";
 	}
 
-	public static String connectScreen(String s) {
+	public static BaseComponent[] connectScreen(String s) {
 		Configuration config = OlympaBungee.getInstance().getConfig();
-		return ColorUtils.color(config.getString("default.connectscreenprefix") + s + config.getString("default.connectscreensuffix"));
+		return TextComponent.fromLegacyText(ColorUtils.color(config.getString("default.connectscreenprefix") + s + config.getString("default.connectscreensuffix")));
 	}
 
 	public static TextComponent formatStringToJSON(String s) {
@@ -90,4 +91,13 @@ public class BungeeUtils {
 			noPerm.accept(playersWithNoPerm);
 	}
 
+	public static void changeSlots(int slots) throws ReflectiveOperationException {
+		ProxyServer proxy = ProxyServer.getInstance();
+		Class<?> configClass = proxy.getConfig().getClass();
+		if (!configClass.getSuperclass().equals(Object.class))
+			configClass = configClass.getSuperclass();
+		Field playerLimitField = configClass.getDeclaredField("playerLimit");
+		playerLimitField.setAccessible(true);
+		playerLimitField.set(proxy.getConfig(), slots);
+	}
 }
