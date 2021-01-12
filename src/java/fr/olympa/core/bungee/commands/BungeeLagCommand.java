@@ -14,7 +14,7 @@ public class BungeeLagCommand extends BungeeCommand {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		sender.sendMessage(MachineUtils.getInfos());
+		sender.sendMessage(MachineUtils.getInfos(proxiedPlayer == null));
 	}
 
 }

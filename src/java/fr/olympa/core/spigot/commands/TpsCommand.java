@@ -18,7 +18,7 @@ public class TpsCommand extends OlympaCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		sendComponents(MachineUtils.getInfos());
+		sendComponents(MachineUtils.getInfos(player == null));
 		return false;
 	}
 

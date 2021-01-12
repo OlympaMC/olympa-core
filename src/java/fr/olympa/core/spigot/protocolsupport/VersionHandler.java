@@ -21,8 +21,8 @@ public class VersionHandler {
 			viaVersion = new ViaVersionHook(plugin);
 		String[] versions = getRangeVersionArray();
 		if (versions != null) {
-			plugin.setFirstVersion(versions[0]);
-			plugin.setLastVersion(versions[versions.length - 1]);
+			plugin.setFirstVersion(versions[versions.length - 1]);
+			plugin.setLastVersion(versions[0]);
 		}
 	}
 
