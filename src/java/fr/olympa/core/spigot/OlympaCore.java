@@ -46,6 +46,7 @@ import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.plugin.OlympaSpigot;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.region.tracking.RegionManager;
+import fr.olympa.api.report.ReportReason;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.MySQL;
@@ -205,6 +206,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
+		ReportReason.registerReason(ReportReason.class);
 		super.onEnable();
 
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));

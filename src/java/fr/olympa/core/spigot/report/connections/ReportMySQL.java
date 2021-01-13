@@ -143,7 +143,7 @@ public class ReportMySQL {
 		resultSet.close();
 		OlympaPlayerInformations op;
 		for (OlympaReport r : reports) {
-			if (!ReportStatus.OPEN.equals(r.getStatus()))
+			if (!ReportStatus.OPEN.equals(r.getStatus())) // TODO remove open reports in OlympaStatement
 				continue;
 			op = AccountProvider.getPlayerInformations(r.getTargetId());
 			List<OlympaReport> listReports = data.get(op);
