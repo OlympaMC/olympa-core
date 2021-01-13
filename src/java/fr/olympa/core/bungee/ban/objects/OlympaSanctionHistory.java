@@ -1,14 +1,15 @@
 package fr.olympa.core.bungee.ban.objects;
 
+import com.google.gson.Gson;
+
 import fr.olympa.api.player.OlympaConsole;
-import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 
 public class OlympaSanctionHistory {
 
 	public static OlympaSanctionHistory fromJson(String json) {
-		return GsonCustomizedObjectTypeAdapter.GSON.fromJson(json, OlympaSanctionHistory.class);
+		return new Gson().fromJson(json, OlympaSanctionHistory.class);
 	}
 
 	private long author;
@@ -67,7 +68,7 @@ public class OlympaSanctionHistory {
 	}
 
 	public String toJson() {
-		return GsonCustomizedObjectTypeAdapter.GSON.toJson(this);
+		return new Gson().toJson(this);
 	}
 
 }

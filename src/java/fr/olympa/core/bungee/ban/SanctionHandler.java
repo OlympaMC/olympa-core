@@ -20,7 +20,7 @@ public class SanctionHandler {
 	public static int minTimeBan = 60;
 
 	public static int maxTimeMute = 10080;
-	public static int minTimeMute = 900;
+	public static int minTimeMute = 15;
 
 	static private List<OlympaSanction> mutes = new ArrayList<>();
 

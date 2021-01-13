@@ -41,10 +41,11 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 			return Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
 		case 2:
 			List<String> units = new ArrayList<>();
+			if (args[1].isBlank())
+				return Arrays.asList("15min", "30min", "1h", "2h", "12h", "1j", "2j", "3j", "7j", "1mo", "1an");
 			for (List<String> unit : SanctionUtils.units)
 				for (String u : unit)
-					for (int i = 1; i < 20; i++)
-						units.add(i + u);
+					units.add(args[1] + u);
 			return Utils.startWords(args[1], units);
 		case 3:
 			List<String> reasons = Arrays.asList("Cheat", "Insulte", "Provocation", "Spam", "Harcèlement", "Publicité");

@@ -52,11 +52,11 @@ public class SanctionExecute {
 		if (matcherDuration.find()) {
 			String time = matcherDuration.group(1);
 			String unit = matcherDuration.group(3);
-			reason = allArgs.substring(matcherDuration.group().length() + 1);
+			reason = allArgs.substring(matcherDuration.group().length());
 			me.setExpire(SanctionUtils.toTimeStamp(Integer.parseInt(time), unit));
 		} else
 			reason = allArgs;
-		me.setReason(SanctionUtils.formatReason(reason));
+		me.setReason(reason);
 		return me;
 	}
 
@@ -104,7 +104,7 @@ public class SanctionExecute {
 	}
 
 	public void setReason(String reason) {
-		this.reason = Utils.capitalize(reason);
+		this.reason = Utils.capitalize(SanctionUtils.formatReason(reason));
 	}
 
 	public void setSanctionType(OlympaSanctionType sanctionType) {

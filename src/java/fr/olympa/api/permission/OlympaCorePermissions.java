@@ -34,6 +34,7 @@ public class OlympaCorePermissions {
 	public static final OlympaBungeePermission BAN_UNMUTE_COMMAND = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
 	public static final OlympaBungeePermission BAN_HISTORY_COMMAND = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
 	public static final OlympaBungeePermission BAN_SEEBANMSG = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
+	public static final OlympaBungeePermission BAN_SEEBANMSG_FULL = new OlympaBungeePermission(OlympaGroup.RESP_BUILDER);
 	public static final OlympaBungeePermission BAN_BYPASS_BAN = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 
 	public static final OlympaPermission UTILS_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
@@ -77,7 +78,7 @@ public class OlympaCorePermissions {
 
 	public static final OlympaPermission BUNGEE_BROADCAST_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH);
 	public static final OlympaPermission BUNGEE_SECURITY_COMMAND = new OlympaPermission(OlympaGroup.ADMIN, OlympaGroup.RESP_TECH);
-	
+
 	public static final OlympaPermission BUNGEE_QUEUE_COMMAND = new OlympaPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaPermission TEAMSPEAK_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
 	public static final OlympaPermission TEAMSPEAK_COMMAND_MANAGE = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });

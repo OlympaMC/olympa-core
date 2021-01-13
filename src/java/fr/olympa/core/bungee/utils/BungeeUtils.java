@@ -29,6 +29,7 @@ public class BungeeUtils {
 		return l.stream().map(s -> ColorUtils.color(s)).collect(Collectors.toList());
 	}
 
+	@Deprecated(forRemoval = true)
 	public static BaseComponent[] format(String format, Object... args) {
 		return TextComponent.fromLegacyText(ColorUtils.format(format, args));
 	}

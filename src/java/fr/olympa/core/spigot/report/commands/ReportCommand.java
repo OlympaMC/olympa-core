@@ -100,7 +100,6 @@ public class ReportCommand extends ComplexCommand {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			sendError("Une erreur est survenu avec la base de donnés.");
-			return;
 		}
 	}
 
@@ -165,44 +164,44 @@ public class ReportCommand extends ComplexCommand {
 		ReportMsg.sendPanelId(sender, report);
 	}
 
-	@Cmd(args = "INTEGER", permissionName = "REPORT_SEE_COMMAND", syntax = "[nombre] [limite]", min = 0)
+	@Cmd(args = "INTEGER", permissionName = "REPORT_SEE_COMMAND", syntax = "[startNumber] [limite]", min = 0)
 	public void seeLast(CommandContext cmd) {
 		List<OlympaReport> reports = null;
 		int limit = -1;
-		int number = -1;
+		int startNumber = -1;
 		try {
 			if (cmd.getArgumentsLength() > 0) {
 				if (cmd.getArgument(0) instanceof Integer)
-					number = cmd.<Integer>getArgument(0);
+					startNumber = cmd.<Integer>getArgument(0);
 				if (cmd.getArgumentsLength() > 1 && cmd.getArgument(1) instanceof Integer)
 					limit = cmd.<Integer>getArgument(1);
-				if (limit == -1 || number == -1) {
+				if (limit == -1 || startNumber == -1) {
 					sendIncorrectSyntax(getCommand(getCommand()));
 					return;
 				}
 			}
 			if (limit == -1)
 				limit = 10;
-			if (number == -1)
-				number = 0;
-			reports = ReportMySQL.getLastReports(number, limit);
+			if (startNumber == -1)
+				startNumber = 0;
+			reports = ReportMySQL.getLastReports(startNumber, limit);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			sendError("Une erreur est survenu avec la base de donnés.");
 			return;
 		}
 		if (reports == null) {
-			player.sendMessage(Prefix.DEFAULT_BAD.formatMessage("Aucun report trouvé avec l'id &4%s&c.", cmd.getArgument(0)));
+			player.sendMessage(Prefix.DEFAULT_BAD.formatMessage("Aucun report trouvé avec offset = &4%s&c & limit = &4%s&c.", startNumber, limit));
 			return;
 		}
 		ReportMsg.sendPanelLast(sender, reports);
 	}
 
 	@Cmd(permissionName = "REPORT_SEE_COMMAND", min = 0)
-	public void seeMax(CommandContext cmd) {
+	public void seeConncted(CommandContext cmd) {
 		Stream<Entry<OlympaPlayerInformations, List<OlympaReport>>> reports = null;
 		try {
-			reports = ReportMySQL.getMaxReports();
+			reports = ReportMySQL.getConnectedReports();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			sendError("Une erreur est survenu avec la base de donnés.");

@@ -92,16 +92,19 @@ public class SanctionExecuteTarget {
 				long mins = (banExecute.expire - Utils.getCurrentTimeInSeconds()) / 60;
 				if (banExecute.sanctionType.isBanType() && mins < SanctionHandler.minTimeBan || banExecute.sanctionType.isMuteType() && mins < SanctionHandler.minTimeMute) {
 					banExecute.getAuthorSender()
-							.sendMessage(BungeeUtils.format(config.getString("ban.cantbypasstime"), "minimal", banExecute.sanctionType.getName(!banExecute.isPermanant()), Utils.timeToDuration(SanctionHandler.minTimeMute * 60)));
+							.sendMessage(
+									Prefix.DEFAULT_BAD.formatMessageB(config.getString("ban.cantbypasstime"), "minimal", banExecute.sanctionType.getName(!banExecute.isPermanant()), Utils.timeToDuration(SanctionHandler.minTimeMute * 60)));
 					return false;
 				}
 				if (banExecute.sanctionType.isBanType() && mins > SanctionHandler.maxTimeBan || banExecute.sanctionType.isMuteType() && mins > SanctionHandler.maxTimeMute) {
 					banExecute.getAuthorSender()
-							.sendMessage(BungeeUtils.format(config.getString("ban.cantbypasstime"), "maximal", banExecute.sanctionType.getName(!banExecute.isPermanant()), Utils.timeToDuration(SanctionHandler.maxTimeBan * 60)));
+							.sendMessage(
+									Prefix.DEFAULT_BAD.formatMessageB(config.getString("ban.cantbypasstime"), "maximal", banExecute.sanctionType.getName(!banExecute.isPermanant()), Utils.timeToDuration(SanctionHandler.maxTimeBan * 60)));
 					return false;
 				}
-				if (banExecute.sanctionType != OlympaSanctionType.BANIP && OlympaCorePermissions.STAFF.hasPermission(olympaPlayers.get(0)) && !OlympaCorePermissions.BAN_BYPASS_SANCTION_STAFF.hasPermission(banExecute.getAuthor())) {
-					banExecute.getAuthorSender().sendMessage(BungeeUtils.format(config.getString("ban.cantmutestaffmembers")));
+				if (banExecute.getAuthorId() != 0 && banExecute.sanctionType != OlympaSanctionType.BANIP && OlympaCorePermissions.STAFF.hasPermission(olympaPlayers.get(0))
+						&& !OlympaCorePermissions.BAN_BYPASS_SANCTION_STAFF.hasPermission(banExecute.getAuthor())) {
+					banExecute.getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB(config.getString("ban.cantmutestaffmembers")));
 					return false;
 				}
 			}
@@ -111,7 +114,8 @@ public class SanctionExecuteTarget {
 			if (alreadyban != null)
 				sanction = alreadyban;
 			else {
-				banExecute.getAuthorSender().sendMessage(ColorUtils.format(config.getString("ban.bannotfound"), identifier, banExecute.sanctionType.getName(!banExecute.isPermanant()), OlympaSanctionStatus.ACTIVE.getNameColored()));
+				banExecute.getAuthorSender()
+						.sendMessage(Prefix.DEFAULT_BAD.formatMessageB(config.getString("ban.bannotfound"), identifier, banExecute.sanctionType.getName(!banExecute.isPermanant()), OlympaSanctionStatus.ACTIVE.getNameColored()));
 				return false;
 			}
 			sanction.setStatus(newStatus);
@@ -151,25 +155,26 @@ public class SanctionExecuteTarget {
 	@SuppressWarnings("deprecation")
 	public void annonce(SanctionExecute banExecute) {
 		OlympaSanctionStatus newStatus = banExecute.newStatus;
-		String reason = SanctionUtils.formatReason(sanction.getReason());
+		String reason = banExecute.reason;
+		OlympaSanctionType type = sanction.getType();
+		String actionName = type.getName().toLowerCase();
+		if (newStatus != OlympaSanctionStatus.END && type != OlympaSanctionType.KICK)
+			actionName = newStatus.getPrefix() + actionName;
+		String timeToExpire = Utils.timestampToDuration(sanction.getExpires());
 
 		List<ProxiedPlayer> onlineTargets = getPlayers();
 		List<String> playersNames = new ArrayList<>();
+
 		playersNames.addAll(getOlympaPlayers().stream().map(OlympaPlayer::getName).collect(Collectors.toList()));
-		OlympaSanctionType type = sanction.getType();
 		StringJoiner sjAnnonce = new StringJoiner(" ");
-		sjAnnonce.add(String.format("&2[&c%s&2]", type.getName().toUpperCase()));
+		sjAnnonce.add(String.format("&2[&c%s&2]", actionName.toUpperCase()));
 		if (playersNames.size() > 1)
 			sjAnnonce.add(String.format("%s ont été", ColorUtils.joinGoldEt(playersNames)));
 		else
 			sjAnnonce.add(String.format("&4%s&c a été", playersNames.get(0)));
-		String actionName = type.getName().toLowerCase();
-		if (newStatus == OlympaSanctionStatus.END && type == OlympaSanctionType.KICK)
-			sjAnnonce.add(actionName);
-		else
-			sjAnnonce.add(newStatus.getPrefix() + actionName);
+		sjAnnonce.add(actionName);
 		if (newStatus == OlympaSanctionStatus.ACTIVE && !sanction.isPermanent())
-			sjAnnonce.add(String.format("pendant &4%s&c", Utils.timestampToDuration(sanction.getExpires())));
+			sjAnnonce.add(String.format("pendant &4%s&c", timeToExpire));
 		sjAnnonce.add(String.format("pour &4%s&c.", reason));
 		TextComponent msg = new TextComponent(TextComponent.fromLegacyText(ColorUtils.color(sjAnnonce.toString())));
 		TextComponent msgStaff = msg.duplicate();
@@ -180,6 +185,8 @@ public class SanctionExecuteTarget {
 		case ACTIVE:
 			BungeeUtils.getPlayers(OlympaCorePermissions.BAN_SEEBANMSG, t -> t.forEach(p -> p.sendMessage(msgStaff)),
 					t -> t.stream().filter(p -> onlineTargets.stream().anyMatch(p2 -> p2.getServer().getInfo().getName().equals(p.getServer().getInfo().getName()))).forEach(p -> p.sendMessage(msg)));
+			if (type == OlympaSanctionType.MUTE)
+				sanction.getOnlinePlayers().forEach(p -> p.sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("Tu as été mute pour &4%s&c pendant &4%s&c.", reason, timeToExpire)));
 			break;
 		case CANCEL:
 		case DELETE:
@@ -188,8 +195,6 @@ public class SanctionExecuteTarget {
 			BungeeUtils.getPlayers(OlympaCorePermissions.BAN_SEEBANMSG, t -> t.forEach(p -> p.sendMessage(msgStaff)), null);
 			break;
 		}
-		if (type == OlympaSanctionType.MUTE)
-			sanction.getOnlinePlayers().forEach(p -> p.sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("Tu as été mute pour &4%s&c.", reason))); // TODO durée
 	}
 
 	public static OlympaSanction add(OlympaSanctionType type, long author, String target, String reason, long timestamp) throws SQLException {

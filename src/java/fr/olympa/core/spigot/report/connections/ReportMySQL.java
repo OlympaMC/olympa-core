@@ -116,8 +116,7 @@ public class ReportMySQL {
 	}
 
 	public static List<OlympaReport> getLastReports(int startNumber, int number) throws SQLException {
-
-		OlympaStatement opStatement = new OlympaStatement(StatementType.SELECT, tableName, new String[] { "target_id" }, startNumber, number, new String[] {});
+		OlympaStatement opStatement = new OlympaStatement(StatementType.SELECT, tableName, null, startNumber, number, new String[] {});
 		List<OlympaReport> report = new ArrayList<>();
 		ResultSet resultSet = opStatement.executeQuery();
 		while (resultSet.next())
@@ -126,7 +125,7 @@ public class ReportMySQL {
 		return report;
 	}
 
-	public static Stream<Entry<OlympaPlayerInformations, List<OlympaReport>>> getMaxReports() throws SQLException {
+	public static Stream<Entry<OlympaPlayerInformations, List<OlympaReport>>> getConnectedReports() throws SQLException {
 		List<OlympaPlayer> players = (List<OlympaPlayer>) AccountProvider.getAll();
 		Map<OlympaPlayerInformations, List<OlympaReport>> data = new HashMap<>();
 		Set<String> orPlayers = new HashSet<>();
