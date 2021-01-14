@@ -2,7 +2,7 @@ package fr.olympa.core.bungee.login.events;
 
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.core.bungee.utils.BungeeUtils;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Event;
 
@@ -11,7 +11,7 @@ public class OlympaPlayerLoginEvent extends Event {
 	private boolean cancelled = false;
 	private OlympaPlayer olympaPlayer;
 	private ProxiedPlayer player;
-	private BaseComponent[] reason;
+	private TextComponent reason;
 
 	public OlympaPlayerLoginEvent(OlympaPlayer olympaPlayer, ProxiedPlayer player) {
 		this.olympaPlayer = olympaPlayer;
@@ -21,7 +21,7 @@ public class OlympaPlayerLoginEvent extends Event {
 	public boolean cancelIfNeeded() {
 		if (!cancelled)
 			return false;
-		if (reason != null && reason.length != 0)
+		if (reason != null)
 			player.disconnect(reason);
 		else
 			player.disconnect();
@@ -41,7 +41,7 @@ public class OlympaPlayerLoginEvent extends Event {
 		return player;
 	}
 
-	public BaseComponent[] getReason() {
+	public TextComponent getReason() {
 		return reason;
 	}
 

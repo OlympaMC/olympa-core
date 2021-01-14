@@ -102,8 +102,12 @@ public class MonitorInfo {
 		return error;
 	}
 
+	public boolean isUsualError() {
+		return status == ServerStatus.CLOSE && (error == null || error.isEmpty());
+	}
+
 	public boolean isDefaultError() {
-		return error != null && error.isEmpty();
+		return status == ServerStatus.CLOSE && error != null && error.isEmpty();
 	}
 
 	public Integer getMaxPlayers() {
@@ -139,7 +143,7 @@ public class MonitorInfo {
 	}
 
 	public boolean isOpen() {
-		return error == null;
+		return status != ServerStatus.CLOSE;
 	}
 
 	public String getLastVersion() {

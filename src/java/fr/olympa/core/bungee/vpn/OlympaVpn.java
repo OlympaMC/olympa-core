@@ -22,9 +22,11 @@ public class OlympaVpn {
 	Boolean mobile;
 	Boolean proxy;
 	Boolean hosting;
-	List<String> users = new ArrayList<>();
+	boolean upWithDB = false;
+	List<String> users;
+	List<String> whitelistUsers;
 
-	public OlympaVpn(long id, String query, Boolean proxy, Boolean mobile, Boolean hosting, String usersString, String country, String city, String org, String as) {
+	public OlympaVpn(long id, String query, Boolean proxy, Boolean mobile, Boolean hosting, String usersString, String country, String city, String org, String as, String whitelist) {
 		this.id = id;
 		this.query = query;
 		if (mobile)
@@ -39,12 +41,28 @@ public class OlympaVpn {
 		this.as = as;
 		if (usersString != null && !usersString.isEmpty())
 			users = Arrays.stream(usersString.split(";")).collect(Collectors.toList());
+		if (whitelist != null && !whitelist.isEmpty())
+			whitelistUsers = Arrays.stream(whitelist.split(";")).collect(Collectors.toList());
 	}
 
 	public void addUser(String username) {
+		if (username == null)
+			return;
 		if (users == null)
 			users = new ArrayList<>();
+		else if (users.contains(username))
+			return;
+		removeUpWithDb();
 		users.add(username);
+	}
+
+	public void addUserWhitelist(String username) {
+		if (whitelistUsers == null)
+			whitelistUsers = new ArrayList<>();
+		else if (whitelistUsers.contains(username))
+			return;
+		removeUpWithDb();
+		whitelistUsers.add(username);
 	}
 
 	public String getAs() {
@@ -79,8 +97,12 @@ public class OlympaVpn {
 		return users;
 	}
 
+	public List<String> getWhitelistUsers() {
+		return whitelistUsers;
+	}
+
 	public boolean hasUser(String username) {
-		return users.contains(username);
+		return users != null && users.contains(username);
 	}
 
 	public Boolean isHosting() {
@@ -95,8 +117,20 @@ public class OlympaVpn {
 		return proxy != null && proxy;
 	}
 
-	public boolean isOk() {
-		return status != null && status.equals("success");
+	public boolean isOk(String baseIp) {
+		return query.equals(baseIp) && status != null && status.equals("success");
+	}
+
+	public void removeUpWithDb() {
+		upWithDB = false;
+	}
+
+	public void setUpWithDB(boolean upWithDB) {
+		this.upWithDB = upWithDB;
+	}
+
+	public boolean isUpWithDB() {
+		return upWithDB;
 	}
 
 }

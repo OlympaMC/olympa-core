@@ -6,7 +6,6 @@ import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import net.md_5.bungee.event.EventPriority;
 
 public class ConnectionQueueListener implements Listener {
 
@@ -15,8 +14,7 @@ public class ConnectionQueueListener implements Listener {
 		QueueHandler.remove(event.getPlayer().getName());
 	}
 
-	@SuppressWarnings("deprecation")
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = -128)
 	public void onPreLogin(PreLoginEvent event) {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
@@ -24,13 +22,12 @@ public class ConnectionQueueListener implements Listener {
 		if (timeToW8 < 0) {
 			event.setCancelled(true);
 			if (timeToW8 == -1)
-				event.setCancelReason(BungeeUtils.connectScreen(String.join("&cIl y a déjà une connexion en attente avec le pseudo %s, réésaye dans %s secondes.", name, String.valueOf(QueueHandler.getTimeToW8(name) / 1000))));
+				event.setCancelReason(BungeeUtils.connectScreen("&cIl y a déjà une connexion en attente avec le pseudo %s, réessaye dans %d.", name, QueueHandler.getTimeToW8String(name)));
 			else if (timeToW8 == -2)
-				event.setCancelReason(BungeeUtils.connectScreen("&cLa file d'attente est trop longue pour te connecter. Réesaye plus tard."));
+				event.setCancelReason(BungeeUtils.connectScreen("&cL'attente pour te connecter est de &4%s&c\n&4Réessaye plus tard.", QueueHandler.getQueueTimeString()));
 		}
 
-		while (QueueHandler.isInQueue(name) && connection.isConnected()) {
-			//			System.out.println("WAIT " + timeToW8);
+		while (QueueHandler.isInQueue(name) && connection.isConnected())
 			try {
 				Thread.sleep(timeToW8);
 			} catch (Exception e) {
@@ -39,8 +36,6 @@ public class ConnectionQueueListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}
-			//			System.out.println("ENDWAIT " + timeToW8);
-			timeToW8 = QueueHandler.getTimeToW8(name);
-		}
+		//			System.out.println("ENDWAIT " + timeToW8);
 	}
 }

@@ -26,7 +26,7 @@ import net.md_5.bungee.event.EventPriority;
 @SuppressWarnings("deprecation")
 public class BasicSecurityListener implements Listener {
 
-	private Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(100).build();
+	public static Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(100).build();
 
 	@EventHandler
 	public void on0Ping(ProxyPingEvent event) {
@@ -55,6 +55,7 @@ public class BasicSecurityListener implements Listener {
 		}
 
 		String connectIp = event.getConnection().getVirtualHost().getHostName();
+		System.out.println("DEBUG BasicSecurityListener.class " + connectIp);
 		String connectDomain = Utils.getAfterFirst(connectIp, ".");
 		String subdomain = event.getConnection().getVirtualHost().getHostName().split("\\.")[0];
 

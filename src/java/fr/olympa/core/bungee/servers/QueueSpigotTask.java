@@ -31,7 +31,7 @@ public class QueueSpigotTask implements Runnable {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
-		if (!proxiedPlayer.isConnected()) {
+		if (!proxiedPlayer.isConnected() || proxiedPlayer.getServer() == null) {
 			ServersConnection.removeTryToConnect(proxiedPlayer);
 			return;
 		}

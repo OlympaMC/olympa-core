@@ -21,7 +21,7 @@ import net.md_5.bungee.api.scheduler.ScheduledTask;
 public class ServersConnection {
 
 	private static Set<WaitingConnection> connect = new HashSet<>();
-	private static Set<ServerInfo> waitToStart = new HashSet<>();
+	public static Set<ServerInfo> waitToStart = new HashSet<>();
 
 	public static void addConnection(WaitingConnection wc) {
 		connect.add(wc);
@@ -45,6 +45,10 @@ public class ServersConnection {
 	}
 
 	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except) {
+		return getBestServer(olympaServer, except, false);
+	}
+
+	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except, boolean w8forConnect) {
 		if (!olympaServer.hasMultiServers())
 			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(MonitorInfo::getServerInfo).orElse(null);
 
@@ -56,20 +60,28 @@ public class ServersConnection {
 			return bestServer;
 
 		// Ouvre un serveur
-		LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> {
-			ServerInfo serverToOpen = MonitorServers.getServersMap().entrySet().stream().filter(e -> MonitorServers.getServers(olympaServer).values().stream()
-					.anyMatch(mInfo -> mInfo.getName().equals(e.getKey().getName()) && mInfo.getStatus().equals(ServerStatus.CLOSE) && mInfo.isDefaultError())).map(Entry::getKey).findFirst().orElse(null);
-			if (serverToOpen != null && !waitToStart.contains(serverToOpen)) {
-				waitToStart.add(serverToOpen);
-				LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> {
-					waitToStart.remove(serverToOpen);
-				}, 1, TimeUnit.MINUTES);
-				OlympaRuntime.action("start", serverToOpen.getName()).start();
-			}
-		}, 5, TimeUnit.SECONDS);
-
+		ServerInfo serverToOpen = MonitorServers.getServersMap().entrySet().stream().filter(e -> MonitorServers.getServers(olympaServer).values().stream()
+				.anyMatch(mInfo -> mInfo.getName().equals(e.getKey().getName()) && mInfo.getStatus().equals(ServerStatus.CLOSE) && mInfo.isUsualError())).map(Entry::getKey).findFirst().orElse(null);
+		if (serverToOpen != null && !waitToStart.contains(serverToOpen)) {
+			waitToStart.add(serverToOpen);
+			LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> {
+				waitToStart.remove(serverToOpen);
+			}, 1, TimeUnit.MINUTES);
+			OlympaRuntime.actionForAllLines("start", serverToOpen.getName(), x -> readScriptMC(x)).start();
+			if (w8forConnect)
+				while (waitToStart.contains(serverToOpen))
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+		}
+		return serverToOpen;
 		// TODO create new server
-		return null;
+	}
+
+	public static void readScriptMC(String s) {
+
 	}
 
 	@SuppressWarnings("deprecation")

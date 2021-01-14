@@ -10,6 +10,9 @@ import fr.olympa.api.bungee.config.BungeeCustomConfig;
 import fr.olympa.api.bungee.task.BungeeTaskManager;
 import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.groups.SQLGroup;
+import fr.olympa.api.permission.OlympaAPIPermissions;
+import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
@@ -18,6 +21,7 @@ import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.commands.BanCommand;
 import fr.olympa.core.bungee.ban.commands.BanHistoryCommand;
@@ -38,6 +42,7 @@ import fr.olympa.core.bungee.connectionqueue.BungeeQueueCommand;
 import fr.olympa.core.bungee.connectionqueue.ConnectionQueueListener;
 import fr.olympa.core.bungee.connectionqueue.LeaveQueueCommand;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
+import fr.olympa.core.bungee.login.HandlerLogin;
 import fr.olympa.core.bungee.login.commands.EmailCommand;
 import fr.olympa.core.bungee.login.commands.LoginCommand;
 import fr.olympa.core.bungee.login.commands.PasswdCommand;
@@ -76,8 +81,10 @@ import fr.olympa.core.bungee.servers.commands.StopServerCommand;
 import fr.olympa.core.bungee.staffchat.StaffChatCommand;
 import fr.olympa.core.bungee.staffchat.StaffChatListener;
 import fr.olympa.core.bungee.tabtext.TabTextListener;
+import fr.olympa.core.bungee.vpn.VpnHandler;
 import fr.olympa.core.bungee.vpn.VpnListener;
 import fr.olympa.core.bungee.vpn.VpnSql;
+import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
@@ -117,6 +124,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 	public void onEnable() {
 		instance = this;
 		LinkSpigotBungee.Provider.link = this;
+		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
+		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
 
 		new RestartBungeeCommand(this).register();
 		task = new BungeeTaskManager(this);
@@ -200,6 +209,13 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 
 		MonitorServers.init(this);
 		SQLGroup.init();
+		CacheStats.addCache("WHO_PING", BasicSecurityListener.cache);
+		CacheStats.addCache("VPN", VpnHandler.cache);
+		CacheStats.addCache("WRONG_PASSWORD", HandlerLogin.timesFails);
+		CacheStats.addCache("REDIS_ASK_SERVER_OF_PLAYER", RedisSpigotSend.askPlayerServer);
+		CacheStats.addDebugMap("OLYMPA_PLAYERS", AccountProvider.getMap());
+		CacheStats.addDebugMap("OLYMPA_PLAYERSINFO", AccountProvider.getMapInformation());
+		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
 	}
 

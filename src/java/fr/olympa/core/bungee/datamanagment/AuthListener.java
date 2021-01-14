@@ -71,7 +71,11 @@ public class AuthListener implements Listener {
 		// Si le joueur ne s'est jamais connecté
 		if (olympaPlayer == null) {
 			if (AntiBotHandler.isEnable()) {
-				event.setCancelReason(BungeeUtils.connectScreen("&4AntiBot Activé &c> Tu dois t'inscrire sur le site pour te connecter\n&e&nwww.olympa.fr"));
+				event.setCancelReason(BungeeUtils.connectScreen("&eBienvenue %s sur Olympa\n" +
+						"&6On dirait que tu nous rejoins au mauvais moment, nous subissons une attaque de bot :(\n" +
+						"&ePour vérifier que tu n'es pas un robot, tu dois t'inscrire sur le site : &e&nwww.olympa.fr\n" +
+						"&6Tu pourra ensuite te connecter ici.\n\n" +
+						"&eTu peux aussi attendre, le temps que l'attaque de bots s'arrête.", name));
 				event.setCancelled(true);
 				return;
 			}
@@ -153,11 +157,11 @@ public class AuthListener implements Listener {
 				connection.setOnlineMode(true);
 		}
 		if (!connection.isOnlineMode() && !SecurityHandler.ALLOW_CRACK) {
-			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Crack sont temporairement désactivées. Désolé du dérangement."));
+			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Crack sont temporairement désactivées. Désolé du dérangement.\nMerci de réessayer plus tard ..."));
 			event.setCancelled(true);
 			return;
 		} else if (connection.isOnlineMode() && !SecurityHandler.ALLOW_PREMIUM) {
-			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Premium sont temporairement désactivées. Désolé du dérangement."));
+			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Premium sont temporairement désactivées. Désolé du dérangement.\nMerci de réessayer plus tard ..."));
 			event.setCancelled(true);
 			return;
 		}
@@ -177,8 +181,10 @@ public class AuthListener implements Listener {
 	public void on3Login(LoginEvent event) {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
-		if (event.isCancelled())
+		if (event.isCancelled()) {
 			DataHandler.removePlayer(name);
+			return;
+		}
 		CachePlayer cache = DataHandler.get(name);
 		if (cache == null) {
 			// à ajouter à la liste des erreurs

@@ -38,7 +38,7 @@ public class DelbanCommand extends BungeeCommand {
 			OlympaSanction ban = BanMySQL.getSanction(id);
 			if (ban != null) {
 				if (ban.getStatus().isStatus(OlympaSanctionStatus.DELETE)) {
-					TextComponent msg = BungeeUtils.formatStringToJSON(Prefix.DEFAULT_BAD + "Le ban n°&4" + ban.getId() + " &ca déjà été supprimé.");
+					TextComponent msg = BungeeUtils.stringToTextConponent(Prefix.DEFAULT_BAD + "Le ban n°&4" + ban.getId() + " &ca déjà été supprimé.");
 					msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, ban.toBaseComplement()));
 					sendMessage(msg);
 					return;

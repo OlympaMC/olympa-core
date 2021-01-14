@@ -59,6 +59,8 @@ public class MonitorServers {
 				if (instantUpdate)
 					updateOlympaServer(info.getOlympaServer());
 			}
+			if (info.isOpen())
+				ServersConnection.waitToStart.remove(serverInfo);
 			if (sucess != null)
 				sucess.accept(serverInfo);
 		});

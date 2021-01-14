@@ -76,6 +76,14 @@ public class AccountProvider implements OlympaAccount {
 		return cache.values();
 	}
 
+	public static Map<UUID, OlympaPlayer> getMap() {
+		return cache;
+	}
+
+	public static Map<Long, OlympaPlayerInformations> getMapInformation() {
+		return cachedInformations;
+	}
+
 	private static OlympaPlayer getFromCache(String name) {
 		return cache.values().stream().filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
 	}

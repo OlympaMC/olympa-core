@@ -82,7 +82,7 @@ public class UnmutePlayer {
 		//		SanctionHandler.removeMute(olympaTarget);
 
 		// Envoye un message au staff
-		TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("bungee.ban.messages.unmuteannouncetoauthor")
+		TextComponent msg = BungeeUtils.stringToTextConponent(config.getString("bungee.ban.messages.unmuteannouncetoauthor")
 				.replaceAll("%player%", olympaTarget.getName())
 				.replaceAll("%reason%", reason)
 				.replaceAll("%author%", BungeeUtils.getName(author)));

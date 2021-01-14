@@ -65,7 +65,7 @@ public class KickPlayer {
 		target.disconnect(
 				BungeeUtils.connectScreen(config.getString("bungee.ban.messages.kickdisconnect").replaceAll("%reason%", kick.getReason()).replace("%id%", String.valueOf(kick.getId()))));
 
-		TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("ban.kickannouncetoauthor")
+		TextComponent msg = BungeeUtils.stringToTextConponent(config.getString("ban.kickannouncetoauthor")
 				.replace("%player%", olympaTarget.getName())
 				.replace("%reason%", reason)
 				.replace("%author%", BungeeUtils.getName(authorId)));

@@ -139,8 +139,8 @@ public class CancerListener implements Listener {
 			int uppers = (int) msgNFD.chars().filter(c -> Character.isUpperCase(c)).count();
 
 			if (Math.round(uppers * 1.0 / (msgNFD.length() * 1.0) * 100.0) > serverSettings.getMaxCaps()) {
-				message = message.toLowerCase().replaceFirst(".", String.valueOf(message.toLowerCase().charAt(0)).toUpperCase());
-				//				message = String.valueOf(message.toLowerCase().charAt(0)).toUpperCase() + message.substring(0);
+				//				message = message.toLowerCase().replaceFirst(".", String.valueOf(message.toLowerCase().charAt(0)).toUpperCase());
+				message = String.valueOf(message.toLowerCase().charAt(0)).toUpperCase() + message.substring(1);
 				event.setMessage(message);
 				player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci d'éviter de mettre trop de majuscules."));
 			}

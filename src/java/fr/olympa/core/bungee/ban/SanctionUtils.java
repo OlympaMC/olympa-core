@@ -14,7 +14,7 @@ import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.utils.BungeeUtils;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.config.Configuration;
 
 public class SanctionUtils {
@@ -70,11 +70,11 @@ public class SanctionUtils {
 		return Utils.capitalize(reason.replaceAll(" {2,}", " "));
 	}
 
-	public static BaseComponent[] getDisconnectScreen(OlympaSanction sanction) {
+	public static TextComponent getDisconnectScreen(OlympaSanction sanction) {
 		return getDisconnectScreen(Arrays.asList(sanction));
 	}
 
-	public static BaseComponent[] getDisconnectScreen(List<OlympaSanction> bans) {
+	public static TextComponent getDisconnectScreen(List<OlympaSanction> bans) {
 		OlympaSanction sanction = bans.stream().sorted((s1, s2) -> Boolean.compare(s2.isPermanent(), s1.isPermanent())).findFirst().orElse(null);
 		StringJoiner sjDisconnect = new StringJoiner("\n");
 		String typeAction = sanction.getType().getNameForPlayer();
@@ -93,7 +93,6 @@ public class SanctionUtils {
 		}
 		sjDisconnect.add(String.format("&cID : &4%s&c", ColorUtils.joinRedEt(bans.stream().map(OlympaSanction::getId).map(String::valueOf).collect(Collectors.toList()))));
 		sjDisconnect.add("");
-		BaseComponent[] msgDisconnect = BungeeUtils.connectScreen(sjDisconnect.toString());
-		return msgDisconnect;
+		return BungeeUtils.connectScreen(sjDisconnect.toString());
 	}
 }

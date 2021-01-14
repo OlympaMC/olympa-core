@@ -53,7 +53,7 @@ public class MutePlayer {
 			OlympaSanction alreadymute = SanctionHandler.getMute(olympaTarget.getId());
 			//			if (alreadymute != null && !SanctionHandler.chechExpireBan(alreadymute)) {
 			// Sinon annuler le ban
-			TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("bungee.ban.messages.alreadymute").replace("%player%", olympaTarget.getName()));
+			TextComponent msg = BungeeUtils.stringToTextConponent(config.getString("bungee.ban.messages.alreadymute").replace("%player%", olympaTarget.getName()));
 			msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, alreadymute.toBaseComplement()));
 			msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + alreadymute.getId()));
 			sender.sendMessage(msg);
@@ -114,7 +114,7 @@ public class MutePlayer {
 
 				}
 				// Envoye un message à l'auteur
-				TextComponent msg = BungeeUtils.formatStringToJSON(config.getString("ban.tempmuteannouncetoauthor")
+				TextComponent msg = BungeeUtils.stringToTextConponent(config.getString("ban.tempmuteannouncetoauthor")
 						.replace("%player%", olympaTarget.getName())
 						.replace("%time%", Stimestamp)
 						.replace("%reason%", reason)
@@ -142,7 +142,7 @@ public class MutePlayer {
 					players.sendMessage(config.getString("bungee.ban.messages.muteannounce").replace("%player%", olympaTarget.getName()).replace("%reason%", reason));
 
 			TextComponent msg = BungeeUtils
-					.formatStringToJSON(config.getString("bungee.ban.messages.muteannouncetoauthor").replace("%player%", olympaTarget.getName()).replace("%reason%", reason));
+					.stringToTextConponent(config.getString("bungee.ban.messages.muteannouncetoauthor").replace("%player%", olympaTarget.getName()).replace("%reason%", reason));
 			msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, mute.toBaseComplement()));
 			msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/banhist " + mute.getId()));
 			OlympaCorePermissions.BAN_SEEBANMSG.sendMessage(msg);

@@ -39,17 +39,13 @@ public class BungeeUtils {
 		return connection.getAddress().getAddress().getHostAddress();
 	}
 
-	public static BaseComponent[] connectScreen(String s) {
+	public static TextComponent connectScreen(String s, Object... args) {
 		Configuration config = OlympaBungee.getInstance().getConfig();
-		return TextComponent.fromLegacyText(ColorUtils.color(config.getString("default.connectscreenprefix") + s + config.getString("default.connectscreensuffix")));
+		return stringToTextConponent(config.getString("default.connectscreenprefix") + String.format(s, args) + config.getString("default.connectscreensuffix"));
 	}
 
-	public static TextComponent formatStringToJSON(String s) {
-		TextComponent textcomponent = new TextComponent();
-		BaseComponent[] msgs = TextComponent.fromLegacyText(ColorUtils.color(s));
-		for (final BaseComponent msg : msgs)
-			textcomponent.addExtra(msg);
-		return textcomponent;
+	public static TextComponent stringToTextConponent(String s) {
+		return new TextComponent(TextComponent.fromLegacyText(ColorUtils.color(s)));
 	}
 
 	public static String getName(UUID playerUniqueId) {

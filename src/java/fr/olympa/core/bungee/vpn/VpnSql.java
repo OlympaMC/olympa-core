@@ -8,6 +8,7 @@ import java.util.List;
 
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.statement.OlympaStatement;
+import fr.olympa.api.sql.statement.StatementType;
 
 public class VpnSql {
 	private static String tableName = "commun.vpn";
@@ -18,11 +19,11 @@ public class VpnSql {
 		PreparedStatement pstate = new OlympaStatement("INSERT INTO " + tableName + " (`ip`, `is_vpn`, `is_mobile`, `is_host`, `pseudo`, `country`, `city`, `org`, `as`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);").returnGeneratedKeys()
 				.getStatement();
 		pstate.setString(i++, olympaVpn.getIp());
-		pstate.setInt(i++, olympaVpn.isProxy() ? 1 : 0);
-		pstate.setInt(i++, olympaVpn.isMobile() ? 1 : 0);
-		pstate.setInt(i++, olympaVpn.isHosting() ? 1 : 0);
+		pstate.setBoolean(i++, olympaVpn.isProxy());
+		pstate.setBoolean(i++, olympaVpn.isMobile());
+		pstate.setBoolean(i++, olympaVpn.isHosting());
 		List<String> users = olympaVpn.getUsers();
-		if (users.isEmpty())
+		if (users == null || users.isEmpty())
 			pstate.setString(i++, null);
 		else
 			pstate.setString(i++, String.join(";", users));
@@ -36,6 +37,7 @@ public class VpnSql {
 		olympaVpn.id = rs.getLong("id");
 		rs.close();
 		pstate.close();
+		olympaVpn.setUpWithDB(true);
 		return olympaVpn;
 	}
 
@@ -54,43 +56,53 @@ public class VpnSql {
 		int i = 1;
 		return new OlympaVpn(resultSet.getLong(i++),
 				resultSet.getString(i++),
-				resultSet.getInt(i++) == 1 ? true : false,
-				resultSet.getInt(i++) == 1 ? true : false,
-				resultSet.getInt(i++) == 1 ? true : false,
+				resultSet.getBoolean(i++),
+				resultSet.getBoolean(i++),
+				resultSet.getBoolean(i++),
 				resultSet.getString(i++),
 				resultSet.getString(i++),
 				resultSet.getString(i++),
 				resultSet.getString(i++),
-				resultSet.getString(i++));
+				resultSet.getString(i++),
+				resultSet.getString(i));
 	}
 
 	public static OlympaVpn getIpInfo(String ip) throws SQLException {
-		OlympaVpn info = null;
+		OlympaVpn olympaVpn = null;
 		Statement state = dbConnection.getConnection().createStatement();
 		ResultSet resultSet = state.executeQuery("SELECT * FROM " + tableName + " WHERE ip = '" + ip + "';");
 		if (resultSet.next())
-			info = getInfo(resultSet);
+			olympaVpn = getInfo(resultSet);
 		state.close();
-		return info;
+		if (olympaVpn != null)
+			olympaVpn.setUpWithDB(true);
+		return olympaVpn;
 	}
 
 	public static void saveIp(OlympaVpn olympaVpn) throws SQLException {
 		int i = 1;
-		PreparedStatement pstate = dbConnection.getConnection()
-				.prepareStatement("UPDATE " + tableName + " SET `is_vpn` = ?, `is_mobile` = ?, `is_host` = ?, `pseudo` = ?, `country` = ?, `city` = ?, `org` = ?, `as` = ? WHERE `ip` = ?;");
-		pstate.setInt(i++, olympaVpn.isProxy() ? 1 : 0);
-		pstate.setInt(i++, olympaVpn.isMobile() ? 1 : 0);
-		pstate.setInt(i++, olympaVpn.isHosting() ? 1 : 0);
+		PreparedStatement pstate = new OlympaStatement(StatementType.UPDATE, tableName, "ip", new String[] { "is_vpn", "is_mobile", "is_host", "pseudo", "whitelist_user", "country", "city", "org", "as" }).getStatement();
+		pstate.setBoolean(i++, olympaVpn.isProxy());
+		pstate.setBoolean(i++, olympaVpn.isMobile());
+		pstate.setBoolean(i++, olympaVpn.isHosting());
 		List<String> users = olympaVpn.getUsers();
-		if (users.isEmpty())
+		if (users == null || users.isEmpty())
 			pstate.setString(i++, null);
 		else
 			pstate.setString(i++, String.join(";", users));
+		List<String> whitelistUsers = olympaVpn.getWhitelistUsers();
+		if (whitelistUsers == null || whitelistUsers.isEmpty())
+			pstate.setString(i++, null);
+		else
+			pstate.setString(i++, String.join(";", whitelistUsers));
 		pstate.setString(i++, olympaVpn.getCountry());
 		pstate.setString(i++, olympaVpn.getCity());
 		pstate.setString(i++, olympaVpn.getOrg());
 		pstate.setString(i++, olympaVpn.getAs());
+
 		pstate.setString(i, olympaVpn.getIp());
+		pstate.executeUpdate();
+		olympaVpn.setUpWithDB(true);
 		pstate.close();
 	}
 

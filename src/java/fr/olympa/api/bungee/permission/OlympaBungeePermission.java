@@ -83,6 +83,11 @@ public class OlympaBungeePermission extends OlympaPermission {
 	}
 
 	@Override
+	public OlympaBungeePermission lockPermission() {
+		return (OlympaBungeePermission) super.lockPermission();
+	}
+
+	@Override
 	public void sendMessage(BaseComponent baseComponent) {
 		getPlayersBungee(players -> {
 			if (players != null)

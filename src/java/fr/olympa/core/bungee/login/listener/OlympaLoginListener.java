@@ -107,12 +107,12 @@ public class OlympaLoginListener implements Listener {
 							LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> ServersConnection.tryConnect(player, olympaServer2), 2, TimeUnit.SECONDS);
 						} else {
 							event.setTarget(server);
-							// TODO envoyer les donnés du joueur au serveur spigot
+							RedisBungeeSend.sendOlympaPlayerFirstConnection(server, olympaPlayer);
 							return;
 						}
 					}
 				}
-				ServerInfo lobby = ServersConnection.getBestServer(OlympaServer.LOBBY, null);
+				ServerInfo lobby = ServersConnection.getBestServer(OlympaServer.LOBBY, null, true);
 				if (lobby != null) {
 					event.setTarget(lobby);
 					RedisBungeeSend.sendOlympaPlayerFirstConnection(lobby, olympaPlayer);
@@ -121,9 +121,12 @@ public class OlympaLoginListener implements Listener {
 					LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> ServersConnection.tryConnect(player, OlympaServer.LOBBY), 2, TimeUnit.SECONDS);
 			}
 		}
-		ServerInfo auth = ServersConnection.getBestServer(OlympaServer.AUTH, null);
-		if (auth != null)
+		ServerInfo auth = ServersConnection.getBestServer(OlympaServer.AUTH, null, true);
+		if (auth != null) {
 			event.setTarget(auth);
+			if (cache != null && cache.getOlympaPlayer() != null)
+				RedisBungeeSend.sendOlympaPlayerFirstConnection(auth, cache.getOlympaPlayer());
+		}
 	}
 
 	@EventHandler

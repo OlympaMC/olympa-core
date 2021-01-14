@@ -18,7 +18,7 @@ import net.md_5.bungee.event.EventPriority;
 
 public class VpnListener implements Listener {
 
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPing(ProxyPingEvent event) {
 		PendingConnection connection = event.getConnection();
 		ServerPing ping = event.getResponse();
@@ -28,7 +28,7 @@ public class VpnListener implements Listener {
 		OlympaVpn olympaVpn;
 		try {
 			olympaVpn = VpnHandler.checkIP(connection);
-		} catch (SQLException | IOException | NullPointerException e) {
+		} catch (SQLException | IOException | NullPointerException | InterruptedException e) {
 			e.printStackTrace();
 			return;
 		}
@@ -45,7 +45,7 @@ public class VpnListener implements Listener {
 		OlympaVpn olympaVpn;
 		try {
 			olympaVpn = VpnHandler.checkIP(connection);
-		} catch (SQLException | IOException | NullPointerException e) {
+		} catch (SQLException | NullPointerException | IOException | InterruptedException e) {
 			e.printStackTrace();
 			return;
 		}
@@ -54,8 +54,7 @@ public class VpnListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-
-		if (olympaVpn.isProxy() || olympaVpn.isHosting()) {
+		if ((olympaVpn.isProxy() || olympaVpn.isHosting()) && (olympaVpn.getWhitelistUsers() == null || !olympaVpn.getWhitelistUsers().contains(connection.getName()))) {
 			System.out.println("§cVPN DETECTED > " + connection.getName() + " " + connection.getAddress().getAddress().getHostAddress());
 			event.setCancelReason(BungeeUtils.connectScreen("&cImpossible d'utiliser un VPN.\n\n&e&lSi tu pense qu'il y a une erreur, contacte un membre du staff."));
 			event.setCancelled(true);

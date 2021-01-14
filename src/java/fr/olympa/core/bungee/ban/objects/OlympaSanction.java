@@ -232,7 +232,7 @@ public class OlympaSanction {
 						+ (getExpires() >= Utils.getCurrentTimeInSeconds() ? "\n&6Durée restante: &e" + Utils
 								.timestampToDuration(getExpires()) : "")
 						: "permanant") + "\n"))
-				.append(ColorUtils.color("&6Status: &e" + getStatus().getColor() + getStatus().getName()))
+				.append(ColorUtils.color("&6Statut: &e" + getStatus().getColor() + getStatus().getName()))
 				.create();
 	}
 

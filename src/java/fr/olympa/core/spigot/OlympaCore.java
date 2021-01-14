@@ -26,11 +26,13 @@ import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
 import fr.olympa.api.afk.AfkHandler;
 import fr.olympa.api.command.CommandListener;
+import fr.olympa.api.command.essentials.AfkCommand;
 import fr.olympa.api.command.essentials.ColorCommand;
 import fr.olympa.api.command.essentials.EcseeCommand;
 import fr.olympa.api.command.essentials.FlyCommand;
 import fr.olympa.api.command.essentials.GamemodeCommand;
 import fr.olympa.api.command.essentials.InvseeCommand;
+import fr.olympa.api.command.essentials.PingCommand;
 import fr.olympa.api.command.essentials.tp.TpCommand;
 import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.customevents.SpigotConfigReloadEvent;
@@ -50,16 +52,16 @@ import fr.olympa.api.report.ReportReason;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.ErrorLoggerHandler;
 import fr.olympa.api.utils.ErrorOutputStream;
-import fr.olympa.core.spigot.afk.AfkCommand;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
 import fr.olympa.core.spigot.commands.ConfigCommand;
 import fr.olympa.core.spigot.commands.GenderCommand;
+import fr.olympa.core.spigot.commands.NewSpigotCommand;
 import fr.olympa.core.spigot.commands.PermissionCommand;
-import fr.olympa.core.spigot.commands.PingCommand;
 import fr.olympa.core.spigot.commands.RestartCommand;
 import fr.olympa.core.spigot.commands.ToggleErrors;
 import fr.olympa.core.spigot.commands.TpsCommand;
@@ -294,6 +296,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new ColorCommand(this).register();
 		new ToggleErrors(this).register();
 		new StaffCommand(this).register();
+		new NewSpigotCommand(this).register().registerPreProcess();
 
 		new AntiWD(this);
 		getTask().runTask(() -> versionHandler = new VersionHandler(this));
@@ -307,6 +310,9 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		CacheStats.addDebugMap("OLYMPA_PLAYERS", AccountProvider.getMap());
+		CacheStats.addDebugMap("OLYMPA_PLAYERSINFO", AccountProvider.getMapInformation());
+		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 			players.forEach(p -> {
@@ -320,7 +326,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 				System.out.println("Succes save " + p.getName());
 			});
 		}));
-
 	}
 
 	@EventHandler

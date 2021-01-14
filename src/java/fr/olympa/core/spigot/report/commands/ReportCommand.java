@@ -33,7 +33,7 @@ import fr.olympa.core.spigot.report.gui.ReportGuiConfirm;
 public class ReportCommand extends ComplexCommand {
 
 	public ReportCommand(Plugin plugin) {
-		super(plugin, "report", "Signale un joueur", OlympaCorePermissions.REPORT_SEE_COMMAND, "signale");
+		super(plugin, "report", "Signale un joueur", OlympaCorePermissions.REPORT_COMMAND, "signale");
 		addArgumentParser("REPORTREASON", sender -> ReportReason.values().stream().map(ReportReason::getReasonClear).collect(Collectors.toList()), x -> {
 			return ReportReason.getByReason(x.replace("_", " "));
 		}, x -> String.format("&4%s&c doit être une raison tel que &4%s&c", x, ReportReason.values().stream().map(ReportReason::getReasonClear).collect(Collectors.joining(", "))));

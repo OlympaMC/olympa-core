@@ -31,7 +31,7 @@ public class MotdListener implements Listener {
 	String site = "§6Site: §e§nwww.olympa.fr";
 	String twitter = "§6Twitter: §e@Olympa_fr";
 	String discord = "§6Discord: §e§ndiscord.olympa.fr";
-	String games = "§bPvPFaction§c \u00a4§3 ZTA §c\u00a4 §b§mCréatif";
+	String games = "§bPvPFaction§c ¤§3 ZTA §c¤ §b§mCréatif";
 	String version = "§cUtilise 1.9 à 1.16+§l✖";
 	String reason = "§6Raison de la maintenance :";
 	String separator = " §7| ";

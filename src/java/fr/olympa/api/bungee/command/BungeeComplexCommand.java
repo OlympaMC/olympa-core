@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -13,12 +14,14 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.bungee.config.BungeeCustomConfig;
 import fr.olympa.api.bungee.permission.OlympaBungeePermission;
 import fr.olympa.api.command.complex.ArgumentParser;
 import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.command.complex.IComplexCommand;
+import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.core.spigot.OlympaCore;
@@ -44,9 +47,15 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 			this.cmd = cmd;
 			this.method = method;
 			commands = commandsClass;
-			// TODO CHECK
-			perm = (OlympaBungeePermission) OlympaPermission.permissions.get(cmd.permissionName());
 			name = method.getName();
+			String permName = cmd.permissionName();
+			if (!permName.isBlank()) {
+				perm = (OlympaBungeePermission) OlympaPermission.permissions.get(cmd.permissionName());
+				if (perm == null) {
+					LinkSpigotBungee.Provider.link.sendMessage("&cBungeeComplexCommand &4%s&c > &cpermission &4%s&c introuvable, la permission est mise à &4OlympaGroup.FONDA&c.", name, cmd.permissionName());
+					perm = new OlympaBungeePermission(OlympaGroup.FONDA);
+				}
+			}
 		}
 
 		boolean canRun() {
@@ -56,21 +65,7 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 
 	public class BungeeArgumentParser extends ArgumentParser {
 
-		public Function<CommandSender, List<String>> tabArgumentsFunction;
-
-		/**
-		 * @Deprecated
-		 *
-		 * Il est possible d'utiliser le tabArgumentsFunction pour vérifier le type de l'arguement.
-		 * Il suffit de mettre le message d'erreur dans errorMessageArgumentFunction plutôt que dans tabArgumentsFunction sinon le message d'erreur sera envoyé avec que le plugin le gère.
-		 *
-		 * Utilise plutôt {@link #ComplexUtils(tabArgumentsFunction, supplyArgumentFunction, errorMessageArgumentFunction) ComplexUtils}.
-		 */
-		@Deprecated(forRemoval = true)
-		public BungeeArgumentParser(Function<CommandSender, List<String>> tabArgumentsFunction, Function<String, Object> supplyArgumentFunction) {
-			super(supplyArgumentFunction);
-			this.tabArgumentsFunction = tabArgumentsFunction;
-		}
+		public Function<CommandSender, Collection<String>> tabArgumentsFunction;
 
 		/**
 		 *
@@ -78,7 +73,7 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 		 * @param supplyArgumentFunction
 		 * @param wrongArgTypeMessageFunction Le message ne doit pas finir par un point, et doit avoir un sens en utiliser le message suivie d'un ou (ex: Ton message d'erreur OU un autre message d'erreur)
 		 */
-		public BungeeArgumentParser(Function<CommandSender, List<String>> tabArgumentsFunction, Function<String, Object> supplyArgumentFunction, Function<String, String> wrongArgTypeMessageFunction) {
+		public BungeeArgumentParser(Function<CommandSender, Collection<String>> tabArgumentsFunction, Function<String, Object> supplyArgumentFunction, Function<String, String> wrongArgTypeMessageFunction) {
 			super(supplyArgumentFunction, wrongArgTypeMessageFunction);
 			this.tabArgumentsFunction = tabArgumentsFunction;
 		}
@@ -89,6 +84,7 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 	protected static final List<String> INTEGERS = Arrays.asList("1", "2", "3");
 	private static final String TEMP_UUID = UUID.randomUUID().toString();
 	protected static final List<String> UUIDS = Arrays.asList(TEMP_UUID, TEMP_UUID.replace("-", ""));
+	protected static final List<String> IP = Arrays.asList("127.0.0.1");
 	protected static final List<String> BOOLEAN = Arrays.asList("true", "false");
 	protected static final List<String> HEX_COLOR = Arrays.asList("#123456", "#FFFFFF");
 	public final Map<List<String>, BungeeInternalCommand> commands = new HashMap<>();
@@ -96,6 +92,9 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 
 	public BungeeComplexCommand(Plugin plugin, String command, String description, OlympaBungeePermission permission, String... aliases) {
 		super(plugin, command, description, permission, aliases);
+		addArgumentParser("PLAYERS", sender -> plugin.getProxy().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toList()), x -> {
+			return plugin.getProxy().getPlayer(x);
+		}, x -> String.format("Le joueur &4%s&c est introuvable", x));
 		addArgumentParser("INTEGER", sender -> INTEGERS, x -> {
 			if (RegexMatcher.INT.is(x))
 				return RegexMatcher.INT.parse(x);
@@ -118,7 +117,12 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 			if (RegexMatcher.HEX_COLOR.is(x))
 				return RegexMatcher.HEX_COLOR.parse(x);
 			return null;
-		}, x -> String.format("&4%s&c n'est pas un code hexadicimal sous la forme &4#123456&c ou &4#FFFFFF&c.", x));
+		}, x -> String.format("&4%s&c n'est pas un code hexadicimal sous la forme &4%s&c ou &4%s&c.", x, HEX_COLOR.get(0), HEX_COLOR.get(1)));
+		addArgumentParser("IP", sender -> IP, x -> {
+			if (RegexMatcher.IP.is(x))
+				return RegexMatcher.IP.parse(x);
+			return null;
+		}, x -> String.format("&4%s&c n'est pas une IPv4 sous la forme &4%s&c.", x, IP));
 		addArgumentParser("BOOLEAN", sender -> BOOLEAN, Boolean::parseBoolean, null);
 		addArgumentParser("SUBCOMMAND", sender -> commands.entrySet().stream().filter(e -> !e.getValue().cmd.otherArg()).map(Entry::getKey).flatMap(List::stream).collect(Collectors.toList()), x -> {
 			BungeeInternalCommand result = getCommand(x);
@@ -153,7 +157,7 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 		}, x -> String.format("La valeur %s n'existe pas.", x));
 	}
 
-	public void addArgumentParser(String name, Function<CommandSender, List<String>> tabArgumentsFunction, Function<String, Object> supplyArgumentFunction, Function<String, String> errorMessageArgumentFunction) {
+	public void addArgumentParser(String name, Function<CommandSender, Collection<String>> tabArgumentsFunction, Function<String, Object> supplyArgumentFunction, Function<String, String> errorMessageArgumentFunction) {
 		parsers.put(name, new BungeeArgumentParser(tabArgumentsFunction, supplyArgumentFunction, errorMessageArgumentFunction));
 	}
 
@@ -180,8 +184,7 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 			sendImpossibleWithConsole();
 			return;
 		}
-
-		if (!hasPermission(internal.perm)) {
+		if (!isConsole() && !hasPermission(internal.perm)) {
 			sendDoNotHavePermission();
 			return;
 		}
@@ -264,6 +267,8 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 			sel = args[args.length - 1];
 		} else
 			return tmp;
+		if (sel.isBlank())
+			return find;
 		for (String arg : find)
 			if (arg.toLowerCase().startsWith(sel.toLowerCase()))
 				tmp.add(arg);
@@ -280,9 +285,7 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 		String[] needed = internal.cmd.args();
 		if (internal.cmd.otherArg())
 			index++;
-		else if (args.length == 1)
-			return find;
-		if (needed.length <= index || !internal.cmd.permissionName().isEmpty() && !internal.perm.hasSenderPermissionBungee(sender))
+		if (args.length == 1 || needed.length <= index || !internal.cmd.permissionName().isBlank() && !internal.perm.hasSenderPermissionBungee(sender))
 			return find;
 		String[] types = needed[index].split("\\|");
 		for (String type : types) {

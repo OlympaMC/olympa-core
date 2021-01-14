@@ -68,7 +68,6 @@ public class OlympaCorePermissions {
 
 	public static final OlympaPermission LOBBY_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
 	public static final OlympaPermission GENDER_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
-	public static final OlympaPermission PING_COMMAND = new OlympaPermission(OlympaGroup.PLAYER);
 	public static final OlympaPermission BPING_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
 
 	public static final OlympaPermission BUNGEE_LAG_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
@@ -89,10 +88,14 @@ public class OlympaCorePermissions {
 
 	public static final OlympaBungeePermission NICK_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaBungeePermission BUNGEE_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
+	public static final OlympaBungeePermission BUNGEE_COMMAND_VPNINFO = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
 	public static final OlympaBungeePermission BUNGEE_COMMAND_TPS = new OlympaBungeePermission(OlympaGroup.PLAYER);
 	public static final OlympaBungeePermission BUNGEE_COMMAND_CONFIGS = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaBungeePermission BUNGEE_COMMAND_MAXPLAYERS = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaBungeePermission BUNGEE_COMMAND_SETTINGS = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaBungeePermission BUNGEE_COMMAND_ANTIBOT = new OlympaBungeePermission(OlympaGroup.RESP_BUILDER, new OlympaGroup[] { OlympaGroup.DEV });
-	public static final OlympaBungeePermission SPIGOT_COMMAND_ANTIBOT = new OlympaBungeePermission(OlympaGroup.RESP_BUILDER, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaBungeePermission BUNGEE_COMMAND_CACHE = new OlympaBungeePermission(OlympaGroup.RESP_TECH, OlympaGroup.ADMIN).lockPermission();
+	public static final OlympaPermission SPIGOT_COMMAND = new OlympaPermission(OlympaGroup.PLAYER);
+	public static final OlympaPermission SPIGOT_COMMAND_ANTIBOT = new OlympaPermission(OlympaGroup.RESP_BUILDER, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaPermission SPIGOT_COMMAND_CACHE = new OlympaPermission(OlympaGroup.RESP_TECH, OlympaGroup.ADMIN).lockPermission();
 }
