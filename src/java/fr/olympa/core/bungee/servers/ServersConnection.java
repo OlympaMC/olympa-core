@@ -73,7 +73,7 @@ public class ServersConnection {
 			if (w8forConnect != null)
 				while (waitToStart.contains(serverToOpen))
 					try {
-						w8forConnect.getServer().unsafe().sendPacket(new KeepAlive(ThreadLocalRandom.current().nextLong()));
+						w8forConnect.getPendingConnection().unsafe().sendPacket(new KeepAlive(ThreadLocalRandom.current().nextLong()));
 						Thread.sleep(5000);
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();

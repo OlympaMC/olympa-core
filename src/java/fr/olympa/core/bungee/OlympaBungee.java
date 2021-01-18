@@ -213,6 +213,44 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		CacheStats.addCache("VPN", VpnHandler.cache);
 		CacheStats.addCache("WRONG_PASSWORD", HandlerLogin.timesFails);
 		CacheStats.addCache("REDIS_ASK_SERVER_OF_PLAYER", RedisSpigotSend.askPlayerServer);
+
+		//				try {
+		//					Field remoteAddressField = AbstractChannel.class.getDeclaredField("remoteAddress");
+		//					remoteAddressField.setAccessible(true);
+		//		
+		//					Field serverChild = PipelineUtils.class.getField("SERVER_CHILD");
+		//					serverChild.setAccessible(true);
+		//		
+		//					Field modifiersField = Field.class.getDeclaredField("modifiers");
+		//					modifiersField.setAccessible(true);
+		//					modifiersField.setInt(serverChild, serverChild.getModifiers() & ~Modifier.FINAL);
+		//		
+		//					ChannelInitializer<Channel> bungeeChannelInitializer = PipelineUtils.SERVER_CHILD;
+		//		
+		//					Method initChannelMethod = ChannelInitializer.class.getDeclaredMethod("initChannel", Channel.class);
+		//					initChannelMethod.setAccessible(true);
+		//					serverChild.set(null, new ChannelInitializer<>() {
+		//						@Override
+		//						protected void initChannel(Channel channel) throws Exception {
+		//							initChannelMethod.invoke(bungeeChannelInitializer, channel);
+		//							channel.pipeline().addAfter(PipelineUtils.TIMEOUT_HANDLER, "haproxy-decoder", new HAProxyMessageDecoder());
+		//							channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", new ChannelInboundHandlerAdapter() {
+		//								@Override
+		//								public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+		//									if (msg instanceof HAProxyMessage) {
+		//										HAProxyMessage message = (HAProxyMessage) msg;
+		//										remoteAddressField.set(channel, new InetSocketAddress(message.sourceAddress(), message.sourcePort()));
+		//									} else
+		//										super.channelRead(ctx, msg);
+		//								}
+		//							});
+		//						}
+		//					});
+		//				} catch (Exception e) {
+		//					getLogger().log(Level.SEVERE, e.getMessage(), e);
+		//					getProxy().stop();
+		//				}
+
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
 	}
 

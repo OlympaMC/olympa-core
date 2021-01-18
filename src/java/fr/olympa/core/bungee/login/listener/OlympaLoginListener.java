@@ -112,7 +112,7 @@ public class OlympaLoginListener implements Listener {
 						}
 					}
 				}
-				ServerInfo lobby = ServersConnection.getBestServer(OlympaServer.LOBBY, null, true);
+				ServerInfo lobby = ServersConnection.getBestServer(OlympaServer.LOBBY, null, player);
 				if (lobby != null) {
 					event.setTarget(lobby);
 					RedisBungeeSend.sendOlympaPlayerFirstConnection(lobby, olympaPlayer);
@@ -121,7 +121,7 @@ public class OlympaLoginListener implements Listener {
 					LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> ServersConnection.tryConnect(player, OlympaServer.LOBBY), 2, TimeUnit.SECONDS);
 			}
 		}
-		ServerInfo auth = ServersConnection.getBestServer(OlympaServer.AUTH, null, true);
+		ServerInfo auth = ServersConnection.getBestServer(OlympaServer.AUTH, null, player);
 		if (auth != null) {
 			event.setTarget(auth);
 			if (cache != null && cache.getOlympaPlayer() != null)

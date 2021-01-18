@@ -188,7 +188,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 		int i = QueueHandler.TIME_BETWEEN_2;
 		if (cmd.getArgumentsLength() == 0)
 			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%d&7.\n" +
-					"C'est à dire qu'il a y 1 connexion acceptée toutes les &4%d&7 milisecondes (%d secondes).\n" +
+					"C'est à dire qu'il a y 1 connexion acceptée toutes les &4%d&7 milisecondes (%1$,.2f secondes).\n" +
 					"Et donc qu'il y a &4%d&7 connexion/secondes.", "TIME_BETWEEN_2", i, i, i / 1000, 1000d / QueueHandler.TIME_BETWEEN_2);
 		else {
 			QueueHandler.TIME_BETWEEN_2 = (Integer) cmd.getArgument(0);
