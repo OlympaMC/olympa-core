@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
+import net.md_5.bungee.protocol.packet.KeepAlive;
 
 public class ServersConnection {
 
@@ -45,10 +47,10 @@ public class ServersConnection {
 	}
 
 	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except) {
-		return getBestServer(olympaServer, except, false);
+		return getBestServer(olympaServer, except, null);
 	}
 
-	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except, boolean w8forConnect) {
+	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except, ProxiedPlayer w8forConnect) {
 		if (!olympaServer.hasMultiServers())
 			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(MonitorInfo::getServerInfo).orElse(null);
 
@@ -68,9 +70,10 @@ public class ServersConnection {
 				waitToStart.remove(serverToOpen);
 			}, 1, TimeUnit.MINUTES);
 			OlympaRuntime.actionForAllLines("start", serverToOpen.getName(), x -> readScriptMC(x)).start();
-			if (w8forConnect)
+			if (w8forConnect != null)
 				while (waitToStart.contains(serverToOpen))
 					try {
+						w8forConnect.getServer().unsafe().sendPacket(new KeepAlive(ThreadLocalRandom.current().nextLong()));
 						Thread.sleep(5000);
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
