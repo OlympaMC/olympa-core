@@ -32,7 +32,7 @@ public class VpnListener implements Listener {
 			e.printStackTrace();
 			return;
 		}
-		if (olympaVpn != null && olympaVpn.isProxy())
+		if (olympaVpn != null && olympaVpn.isProxy() && !olympaVpn.hasWhitelistUsers())
 			ping.setDescriptionComponent(new TextComponent(MotdListener.MOTD_BASE + Chat.centerMotD("§4&l⚠ §cLes VPN sont interdit.")));
 	}
 

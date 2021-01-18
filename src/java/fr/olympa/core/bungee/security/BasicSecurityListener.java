@@ -28,7 +28,7 @@ public class BasicSecurityListener implements Listener {
 
 	public static Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(100).build();
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on0Ping(ProxyPingEvent event) {
 		PendingConnection connection = event.getConnection();
 		cache.put(connection.getAddress().getAddress().getHostAddress(), "");

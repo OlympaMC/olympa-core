@@ -80,21 +80,22 @@ public class MotdListener implements Listener {
 		}
 		switch (status) {
 		case OPEN:
-			players.setSample(new ServerPing.PlayerInfo[] {
-					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
-					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					// new ServerPing.PlayerInfo(this.welcome.replace("%player", playerName) + " " +
-					// this.separator2 + " " + this.version, UUID.randomUUID()),
-					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(games, UUID.randomUUID()),
-					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
-					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()),
-			});
+			//			players.setSample(new ServerPing.PlayerInfo[] {
+			//					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+			//					// new ServerPing.PlayerInfo(this.welcome.replace("%player", playerName) + " " +
+			//					// this.separator2 + " " + this.version, UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo(games, UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()),
+			//			});
+			players.setSample(new PlayerInfoBuilder().append("").append("").append(games).append("").append(discord).append(teamspeak).append(twitter).append(site).append("").build());
 			if (new Random().nextInt(2) == 0)
 				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + games));
 			else {
@@ -143,14 +144,14 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo(reason, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(maintenanceMessage, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()),
 			});
-			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
+			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§8 - §7" + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
 			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§4§l⚠ §cSERVEUR EN MAINTENANCE §4§l⚠")));
 			break;
 		case DEV:
@@ -169,14 +170,17 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo("§2Serveur en développement depuis", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§2le 18 octobre 2019", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("§22 Bêta privées ont déjà été faites", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("§2Une prochaine bêta en 2021 ?", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()),
 			});
-			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
+			ping.setVersion(new ServerPing.Protocol(ColorUtils.randomColor() + "Info §nici§8 - §7" + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
 			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§cServeur en développement")));
 			break;
 		case SOON:
@@ -186,9 +190,9 @@ public class MotdListener implements Listener {
 					new ServerPing.PlayerInfo("§cOuverture très prochainement, suivez-nous", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§csur les réseaux pour plus d'infos.", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()), });
@@ -199,36 +203,40 @@ public class MotdListener implements Listener {
 			players.setSample(new ServerPing.PlayerInfo[] {
 					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo("§6Serveur Ouvert en Beta", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("§6Serveur Ouvert en Bêta", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§eInscrit-toi sur notre site pour", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§eêtre pententiellement selectionner", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("§eà rejoindre la beta.", UUID.randomUUID()),
+					new ServerPing.PlayerInfo("§cIl y a de place, tu as toutes tes chances..", UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
 					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
 					new ServerPing.PlayerInfo("", UUID.randomUUID()),
 					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()), });
 			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§c[§6Beta&c] &e-> &binscrit-toi sur www.olympa.fr")));
 			break;
 		case CLOSE_BETA:
-			players.setSample(new ServerPing.PlayerInfo[] {
-					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
-					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo("§cPremière Bêta Fermée", UUID.randomUUID()),
-					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo("§eSeul le staff et quelques amis", UUID.randomUUID()),
-					new ServerPing.PlayerInfo("§eont accès au serveur.", UUID.randomUUID()),
-					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
-					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
-					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()), });
-			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§6Déjà 2 bêta fermée ? ça avance alors !")));
+			players.setSample(new PlayerInfoBuilder().append("").append("&cBêta Fermée").append("").append("&eSeul le staff et quelques amis")
+					.append("&eont accès au serveur.").append("").append(discord).append(teamspeak).append(twitter).append(site).append("").build());
+			//			players.setSample(new ServerPing.PlayerInfo[] {
+			//					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo("§cPremière Bêta Fermée", UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo("§eSeul le staff et quelques amis", UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo("§eont accès au serveur.", UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo("", UUID.randomUUID()),
+			//					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()), });
+			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
+			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§6Bêta fermée")));
 			break;
 		default:
 			break;

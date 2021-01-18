@@ -314,6 +314,7 @@ public class MySQL extends SQLClass {
 			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next())
 				olympaPlayers.add(getOlympaPlayer(resultSet));
+			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -331,13 +332,14 @@ public class MySQL extends SQLClass {
 		OlympaStatement newGetPlayerByGroupStatement = new OlympaStatement(sb.toString());
 		try {
 			PreparedStatement statement = newGetPlayerByGroupStatement.getStatement();
-			statement.setString(1, String.format("\b(%s)\b", groups.stream().map(g -> String.valueOf(g.getId())).collect(Collectors.joining("|"))));
+			statement.setString(1, String.format("\\b(%s)\\b", groups.stream().map(g -> String.valueOf(g.getId())).collect(Collectors.joining("|"))));
 			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
 				OlympaPlayer op = getOlympaPlayer(resultSet);
 				if (op.getGroups().keySet().stream().anyMatch(gr -> groupsIds.contains(gr.getId())))
 					olympaPlayers.add(getOlympaPlayer(resultSet));
 			}
+			resultSet.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -362,6 +364,7 @@ public class MySQL extends SQLClass {
 			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next())
 				names.add(resultSet.getString("pseudo"));
+			resultSet.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -393,6 +396,7 @@ public class MySQL extends SQLClass {
 		ResultSet resultSet = statement.executeQuery();
 		while (resultSet.next())
 			olympaPlayers.add(getOlympaPlayer(resultSet));
+		resultSet.close();
 		return olympaPlayers;
 	}
 
@@ -403,7 +407,9 @@ public class MySQL extends SQLClass {
 			PreparedStatement statement = playerExistStatement.getStatement();
 			statement.setString(1, playerUUID.toString());
 			ResultSet resultSet = statement.executeQuery();
-			return resultSet.next();
+			boolean b = resultSet.next();
+			resultSet.close();
+			return b;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -430,6 +436,7 @@ public class MySQL extends SQLClass {
 				resultSet.getInt("ts3_id"),
 				resultSet.getInt("discord_olympa_id"),
 				resultSet.getBoolean("vanish"));
+		resultSet.close();
 		return player;
 	}
 

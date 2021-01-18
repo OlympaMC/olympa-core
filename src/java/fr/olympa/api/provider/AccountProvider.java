@@ -25,6 +25,7 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.sql.SQLClass;
 import fr.olympa.api.sql.SQLColumn;
 import fr.olympa.api.sql.SQLTable;
+import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
@@ -76,12 +77,9 @@ public class AccountProvider implements OlympaAccount {
 		return cache.values();
 	}
 
-	public static Map<UUID, OlympaPlayer> getMap() {
-		return cache;
-	}
-
-	public static Map<Long, OlympaPlayerInformations> getMapInformation() {
-		return cachedInformations;
+	{
+		CacheStats.addDebugMap("PLAYERS", AccountProvider.cache);
+		CacheStats.addDebugMap("PLAYERS_INFO", AccountProvider.cachedInformations);
 	}
 
 	private static OlympaPlayer getFromCache(String name) {

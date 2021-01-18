@@ -213,9 +213,6 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		CacheStats.addCache("VPN", VpnHandler.cache);
 		CacheStats.addCache("WRONG_PASSWORD", HandlerLogin.timesFails);
 		CacheStats.addCache("REDIS_ASK_SERVER_OF_PLAYER", RedisSpigotSend.askPlayerServer);
-		CacheStats.addDebugMap("OLYMPA_PLAYERS", AccountProvider.getMap());
-		CacheStats.addDebugMap("OLYMPA_PLAYERSINFO", AccountProvider.getMapInformation());
-		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
 	}
 

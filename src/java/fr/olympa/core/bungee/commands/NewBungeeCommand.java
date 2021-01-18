@@ -28,7 +28,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class NewBungeeCommand extends BungeeComplexCommand {
 
 	public NewBungeeCommand(Plugin plugin) {
-		super(plugin, "bungee", "Diverses gestion du serveur bungee.", OlympaCorePermissions.BUNGEE_COMMAND);
+		super(plugin, "bungee", "Diverses gestion du serveur bungee.", OlympaCorePermissions.BUNGEE_COMMAND, "bung");
 		addArgumentParser("CACHE", sender -> CacheStats.getCaches().keySet(), x -> CacheStats.getCache(x), x -> "&4%s&c doit être un id de cache qui existe.");
 		addArgumentParser("DEBUG_LIST", sender -> CacheStats.getDebugLists().keySet(), x -> CacheStats.getDebugList(x), x -> "&4%s&c doit être un id de debugList qui existe.");
 		addArgumentParser("DEBUG_MAP", sender -> CacheStats.getDebugMaps().keySet(), x -> CacheStats.getDebugMap(x), x -> "&4%s&c doit être un id de debugMap qui existe.");
@@ -236,7 +236,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 			try {
 				config.reload();
 				time = System.nanoTime() - time;
-				sendMessage(Prefix.DEFAULT_GOOD, "Config &2%s&a chargé en &2%s secondes", config.getName(), new DecimalFormat("0.#").format(time / 1000000000d));
+				sendMessage(Prefix.DEFAULT_GOOD, "Config &2%s&a chargé en &2%s milisecondes", config.getName(), new DecimalFormat("0,#").format(time / 1000000d));
 			} catch (IOException e) {
 				sendMessage(Prefix.ERROR, "Impossible de charger la config &4%d&7 : &4%d&7.", config.getName(), e.getMessage());
 				e.printStackTrace();
@@ -247,7 +247,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 			try {
 				config.save();
 				time = System.nanoTime() - time;
-				sendMessage(Prefix.DEFAULT_GOOD, "Config &2%s&a sauvegarder en &2%s secondes", config.getName(), new DecimalFormat("0.#").format(time / 1000000000d));
+				sendMessage(Prefix.DEFAULT_GOOD, "Config &2%s&a sauvegarder en &2%s milisecondes", config.getName(), new DecimalFormat("0,#").format(time / 1000000d));
 			} catch (IOException e) {
 				sendMessage(Prefix.ERROR, "Impossible de sauvegarder la config &4%d&7 sur le disque : &4%d&7.", config.getName(), e.getMessage());
 				e.printStackTrace();

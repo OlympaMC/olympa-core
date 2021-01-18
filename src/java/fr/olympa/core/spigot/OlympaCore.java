@@ -52,7 +52,6 @@ import fr.olympa.api.report.ReportReason;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.ErrorLoggerHandler;
 import fr.olympa.api.utils.ErrorOutputStream;
 import fr.olympa.core.spigot.chat.CancerListener;
@@ -310,9 +309,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		CacheStats.addDebugMap("OLYMPA_PLAYERS", AccountProvider.getMap());
-		CacheStats.addDebugMap("OLYMPA_PLAYERSINFO", AccountProvider.getMapInformation());
-		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 			players.forEach(p -> {

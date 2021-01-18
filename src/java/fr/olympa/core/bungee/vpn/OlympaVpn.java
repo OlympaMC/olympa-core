@@ -105,6 +105,14 @@ public class OlympaVpn {
 		return users != null && users.contains(username);
 	}
 
+	public boolean hasWhitelistUser(String username) {
+		return whitelistUsers != null && whitelistUsers.contains(username);
+	}
+
+	public boolean hasWhitelistUsers() {
+		return whitelistUsers != null && users != null && whitelistUsers.stream().anyMatch(u -> users.contains(u));
+	}
+
 	public Boolean isHosting() {
 		return hosting != null && hosting;
 	}
