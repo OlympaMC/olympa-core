@@ -8,6 +8,7 @@ public class SecurityHandler {
 
 	public static boolean PING_BEFORE_JOIN = false;
 	public static boolean CHECK_CORRECT_ENTRED_IP = true;
+	public static boolean CHECK_CORRECT_ENTRED_IP_NUMBER = true;
 	public static boolean CHECK_VPN = true;
 	public static boolean CHECK_VPN_ON_MOTD = true;
 	public static boolean ALLOW_CRACK = true;

@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.ban.commands.methods;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +26,13 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class UnbanIp {
 
 	public static void unBan(UUID author, CommandSender sender, String ip, String[] args) {
-		List<OlympaPlayer> olympaTargets = MySQL.getPlayersByIp(ip);
+		List<OlympaPlayer> olympaTargets;
+		try {
+			olympaTargets = MySQL.getPlayersByIp(ip);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return;
+		}
 		String olympaTargetsName = olympaTargets.stream().map(OlympaPlayer::getName).collect(Collectors.joining(", "));
 
 		CustomConfig config = OlympaCore.getInstance().getConfig();

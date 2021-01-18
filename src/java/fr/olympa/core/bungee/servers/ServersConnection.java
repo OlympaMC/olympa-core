@@ -62,15 +62,17 @@ public class ServersConnection {
 			return bestServer;
 
 		// Ouvre un serveur
-		ServerInfo serverToOpen = MonitorServers.getServersMap().entrySet().stream().filter(e -> MonitorServers.getServers(olympaServer).values().stream()
+		ServerInfo serverToOpen = MonitorServers.getServersMap().entrySet().stream().filter(e -> (except == null || !e.getKey().getName().equals(except.getName())) && MonitorServers.getServers(olympaServer).values().stream()
 				.anyMatch(mInfo -> mInfo.getName().equals(e.getKey().getName()) && mInfo.getStatus().equals(ServerStatus.CLOSE) && mInfo.isUsualError())).map(Entry::getKey).findFirst().orElse(null);
-		if (serverToOpen != null && !waitToStart.contains(serverToOpen)) {
-			waitToStart.add(serverToOpen);
-			LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> {
-				waitToStart.remove(serverToOpen);
-			}, 1, TimeUnit.MINUTES);
-			OlympaRuntime.actionForAllLines("start", serverToOpen.getName(), x -> readScriptMC(x)).start();
-			if (w8forConnect != null)
+		if (serverToOpen != null) {
+			if (!waitToStart.contains(serverToOpen)) {
+				waitToStart.add(serverToOpen);
+				LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> {
+					waitToStart.remove(serverToOpen);
+				}, 1, TimeUnit.MINUTES);
+				OlympaRuntime.actionForAllLines("start", serverToOpen.getName(), x -> readScriptMC(x)).start();
+			}
+			if (w8forConnect != null) {
 				while (waitToStart.contains(serverToOpen))
 					try {
 						w8forConnect.getPendingConnection().unsafe().sendPacket(new KeepAlive(ThreadLocalRandom.current().nextLong()));
@@ -78,8 +80,10 @@ public class ServersConnection {
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
+				return serverToOpen;
+			}
 		}
-		return serverToOpen;
+		return null;
 		// TODO create new server
 	}
 

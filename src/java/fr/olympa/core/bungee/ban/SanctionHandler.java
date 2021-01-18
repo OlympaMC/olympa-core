@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.ban;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -110,7 +111,14 @@ public class SanctionHandler {
 	}
 
 	public static List<OlympaSanction> getMutes(UUID uuid) {
-		return mutes.stream().filter(olympaMute -> olympaMute.getPlayersInfos().stream().anyMatch(opi -> opi.getUUID().equals(uuid))).collect(Collectors.toList());
+		return mutes.stream().filter(olympaMute -> {
+			try {
+				return olympaMute.getPlayersInfos().stream().anyMatch(opi -> opi.getUUID().equals(uuid));
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}).collect(Collectors.toList());
 	}
 
 	public static OlympaSanction getMute(OlympaPlayer olympaPlayer) {
@@ -128,7 +136,7 @@ public class SanctionHandler {
 	//	public static void removeMute(OlympaPlayer olympaPlayer) {
 	//		removeMute(getMute(olympaPlayer));
 	//	}
-	public static boolean removeMute(String target) {
+	public static boolean removeMute(String target) throws SQLException {
 		OlympaSanction mute = getMute(target);
 		if (mute.getPlayersInfos().size() > 1)
 			return false;

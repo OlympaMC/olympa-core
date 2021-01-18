@@ -1,5 +1,6 @@
 package fr.olympa.core.spigot.groups;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,7 @@ import fr.olympa.api.utils.Utils;
 
 public class StaffGui extends OlympaGUI {
 
-	public StaffGui() {
+	public StaffGui() throws SQLException {
 		super("Staff", 5);
 		List<OlympaPlayer> staff = MySQL.getPlayersByGroupsIds(OlympaGroup.getStaffGroups()).stream().sorted((o1, o2) -> o2.getGroup().getPower() - o1.getGroup().getPower()).collect(Collectors.toList());
 		int i = 0;

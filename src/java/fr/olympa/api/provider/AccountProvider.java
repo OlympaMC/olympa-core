@@ -124,19 +124,25 @@ public class AccountProvider implements OlympaAccount {
 
 	public synchronized static OlympaPlayerInformations getPlayerInformations(long id) {
 		OlympaPlayerInformations info = cachedInformations.get(id);
-		if (info == null) {
-			info = MySQL.getPlayerInformations(id);
-			cachedInformations.put(id, info);
-		}
+		if (info == null)
+			try {
+				info = MySQL.getPlayerInformations(id);
+				cachedInformations.put(id, info);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		return info;
 	}
 
 	public synchronized static OlympaPlayerInformations getPlayerInformations(UUID uuid) {
 		OlympaPlayerInformations info = cachedInformations.values().stream().filter(opi -> opi.getUUID().equals(uuid)).findFirst().orElse(null);
-		if (info == null) {
-			info = MySQL.getPlayerInformations(uuid);
-			cachedInformations.put(info.getId(), info);
-		}
+		if (info == null)
+			try {
+				info = MySQL.getPlayerInformations(uuid);
+				cachedInformations.put(info.getId(), info);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		return info;
 	}
 

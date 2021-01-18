@@ -88,14 +88,26 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
-	public void checkCorrectEntredIP(CommandContext cmd) {
+	public void checkCorrectIP(CommandContext cmd) {
 		boolean b = SecurityHandler.CHECK_CORRECT_ENTRED_IP;
 		if (cmd.getArgumentsLength() == 0)
-			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire qu'un vérifie si l'ip est 'play.olympa.fr'.\nEt aussi que l'ip en chiffre ne fonctionnera plus.", "CHECK_CORRECT_ENTRED_IP",
+			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire qu'un vérifie si l'ip est 'play.olympa.fr'.", "CHECK_CORRECT_ENTRED_IP",
 					b ? "true" : "false");
 		else {
 			SecurityHandler.CHECK_CORRECT_ENTRED_IP = cmd.getArgument(0);
 			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_CORRECT_ENTRED_IP", b ? "true" : "false", SecurityHandler.CHECK_CORRECT_ENTRED_IP ? "true" : "false");
+		}
+	}
+
+	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
+	public void checkIPNumber(CommandContext cmd) {
+		boolean b = SecurityHandler.CHECK_CORRECT_ENTRED_IP_NUMBER;
+		if (cmd.getArgumentsLength() == 0)
+			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire qu'on autorise/interdit l'utilisation de l'ip en chiffre (cad 89.234.182.172).", "CHECK_CORRECT_ENTRED_IP_NUMBER",
+					b ? "true" : "false");
+		else {
+			SecurityHandler.CHECK_CORRECT_ENTRED_IP_NUMBER = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_CORRECT_ENTRED_IP_NUMBER", b ? "true" : "false", SecurityHandler.CHECK_CORRECT_ENTRED_IP_NUMBER ? "true" : "false");
 		}
 	}
 
@@ -202,7 +214,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 			@SuppressWarnings("deprecation")
 			int playerLimit = ProxyServer.getInstance().getConfig().getPlayerLimit();
 			BungeeUtils.changeSlots(cmd.getArgument(0));
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%d&a à &2%d&a.", "TIME_BETWEEN_2", playerLimit, cmd.getArgument(0));
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%d&a à &2%d&a.", "PLAYER_LIMIT", playerLimit, cmd.getArgument(0));
 		} catch (ReflectiveOperationException e) {
 			e.printStackTrace();
 			sendError(e);

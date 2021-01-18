@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
@@ -55,17 +56,15 @@ public class BasicSecurityListener implements Listener {
 		}
 
 		String connectIp = event.getConnection().getVirtualHost().getHostName();
-		System.out.println("DEBUG BasicSecurityListener.class " + connectIp);
 		String connectDomain = Utils.getAfterFirst(connectIp, ".");
 		String subdomain = event.getConnection().getVirtualHost().getHostName().split("\\.")[0];
 
 		// Vérifie si l'adresse est correct
-		if (SecurityHandler.CHECK_CORRECT_ENTRED_IP && (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net") || !subdomain.equalsIgnoreCase("play") && !subdomain.equalsIgnoreCase("buildeur"))) {
-			ProxiedPlayer player = ProxyServer.getInstance().getPlayer(name);
-			if (player != null) {
-				event.setCancelReason(BungeeUtils.connectScreen("&7[&cSécurité&7] &cTu dois te connecter avec l'adresse &nplay.olympa.fr&c."));
-				event.setCancelled(true);
-			}
+		if (RegexMatcher.IP.is(connectIp) && SecurityHandler.CHECK_CORRECT_ENTRED_IP_NUMBER
+				|| SecurityHandler.CHECK_CORRECT_ENTRED_IP && (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net")
+						|| !subdomain.equalsIgnoreCase("play") && !subdomain.equalsIgnoreCase("buildeur"))) {
+			event.setCancelReason(BungeeUtils.connectScreen("&7[&cSécurité&7] &cTu dois te connecter avec l'adresse &nplay.olympa.fr&c."));
+			event.setCancelled(true);
 		}
 
 		if (SecurityHandler.PING_BEFORE_JOIN) {
@@ -85,7 +84,7 @@ public class BasicSecurityListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}
-			String turne = new String();
+			String turne = "";
 			OlympaPlayer olympaPlayer = AccountProvider.get(target.getUniqueId());
 			if (olympaPlayer != null)
 				turne = olympaPlayer.getGender().getTurne();

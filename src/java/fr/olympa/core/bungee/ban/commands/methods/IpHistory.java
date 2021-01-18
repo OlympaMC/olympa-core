@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.ban.commands.methods;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,13 @@ public class IpHistory {
 	@SuppressWarnings("deprecation")
 	public static void histBan(CommandSender sender, String ip) {
 		List<OlympaSanction> bans = BanMySQL.getSanctions(ip);
-		List<OlympaPlayer> players = MySQL.getPlayersByIp(ip);
+		List<OlympaPlayer> players = null;
+		try {
+			players = MySQL.getPlayersByIp(ip);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return;
+		}
 
 		String playersShow = players.stream().map(OlympaPlayer::getName).collect(Collectors.joining(", "));
 
