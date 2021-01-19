@@ -122,7 +122,7 @@ public class AccountProvider implements OlympaAccount {
 		return olympaPlayer;
 	}
 
-	public synchronized static OlympaPlayerInformations getPlayerInformations(long id) {
+	public static synchronized OlympaPlayerInformations getPlayerInformations(long id) {
 		OlympaPlayerInformations info = cachedInformations.get(id);
 		if (info == null)
 			try {
@@ -134,7 +134,7 @@ public class AccountProvider implements OlympaAccount {
 		return info;
 	}
 
-	public synchronized static OlympaPlayerInformations getPlayerInformations(UUID uuid) {
+	public static synchronized OlympaPlayerInformations getPlayerInformations(UUID uuid) {
 		OlympaPlayerInformations info = cachedInformations.values().stream().filter(opi -> opi.getUUID().equals(uuid)).findFirst().orElse(null);
 		if (info == null)
 			try {

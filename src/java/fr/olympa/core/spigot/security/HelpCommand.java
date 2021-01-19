@@ -20,13 +20,17 @@ public class HelpCommand extends OlympaCommand {
 		super.description = "Affiche l'aide.";
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		OlympaPlayer olympaPlayer = getOlympaPlayer();
+		OlympaPlayer olympaPlayer = null;
+		if (player != null)
+			olympaPlayer = getOlympaPlayer();
 		if (args.length == 0) {
 			TextComponent compo = new TextComponent(TextComponent.fromLegacyText("§e---------- §6Aide §lOlympa§e ----------"));
 			for (OlympaCommand command : OlympaCommand.commands) {
-				if (!command.hasPermission(olympaPlayer)) continue;
+				if (player != null && !command.hasPermission(olympaPlayer))
+					continue;
 				TextComponent commandCompo = new TextComponent(TextComponent.fromLegacyText("\n§7➤ §6/" + command.getCommand() + (command.getDescription() == null ? "" : ": §e" + command.getDescription())));
 				commandCompo.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§bClique pour afficher l'aide de cette commande !")));
 				commandCompo.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/help " + command.getCommand()));
@@ -37,10 +41,10 @@ public class HelpCommand extends OlympaCommand {
 		} else
 			for (OlympaCommand command : OlympaCommand.commands)
 				if (command.getAllCommands().contains(args[0])) {
-					if (command.hasPermission(olympaPlayer))
+					if (player == null || command.hasPermission(olympaPlayer))
 						command.sendHelp(sender);
 					else
-						sendError("Vous n'avez pas la permission pour afficher l'aide de cette commande.");
+						sendError("Tu n'as pas la permission pour afficher l'aide de cette commande.");
 					return false;
 				}
 		return false;
@@ -50,7 +54,8 @@ public class HelpCommand extends OlympaCommand {
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		List<String> commands = new ArrayList<>();
 		for (OlympaCommand command : OlympaCommand.commands) {
-			if (!command.hasPermission(sender)) continue;
+			if (!command.hasPermission(sender))
+				continue;
 			commands.addAll(command.getAllCommands());
 		}
 		return commands;
