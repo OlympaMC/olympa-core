@@ -21,7 +21,7 @@ import fr.olympa.core.spigot.OlympaCore;
 public class SetStatusCommand extends OlympaCommand {
 
 	public SetStatusCommand(Plugin plugin) {
-		super(plugin, "setstatus", OlympaCorePermissions.SETSTATUS_COMMAND, "setstate");
+		super(plugin, "setstatus", "Permet de modifier le status d'un serveur.", OlympaCorePermissions.SETSTATUS_COMMAND, "setstate");
 		this.addArgs(false, ServerStatus.getNames());
 	}
 

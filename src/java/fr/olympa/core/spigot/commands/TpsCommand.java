@@ -13,7 +13,7 @@ import fr.olympa.api.utils.machine.MachineUtils;
 public class TpsCommand extends OlympaCommand {
 
 	public TpsCommand(Plugin plugin) {
-		super(plugin, "tps", OlympaCorePermissions.SPIGOT_LAG_COMMAND, "lag");
+		super(plugin, "tps", "Affiche des informations sur l'état du serveur.", OlympaCorePermissions.SPIGOT_LAG_COMMAND, "lag");
 	}
 
 	@Override

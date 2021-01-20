@@ -17,11 +17,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.spigotmc.SpigotConfig;
 
-import com.mojang.brigadier.arguments.DoubleArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
 import fr.olympa.api.afk.AfkHandler;
@@ -83,8 +78,6 @@ import fr.olympa.core.spigot.security.HelpCommand;
 import fr.olympa.core.spigot.security.PluginCommand;
 import fr.olympa.core.spigot.status.SetStatusCommand;
 import fr.olympa.core.spigot.status.StatusMotdListener;
-import me.lucko.commodore.Commodore;
-import me.lucko.commodore.CommodoreProvider;
 
 public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listener {
 
@@ -222,9 +215,9 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		}
 		new ReportMySQL(database);
 
-		TestCommand test = new TestCommand(this);
+		/*TestCommand test = new TestCommand(this);
 		test.register();
-
+		
 		if (CommodoreProvider.isSupported()) {
 			Commodore commodore = CommodoreProvider.getCommodore(this);
 			commodore.register(test.reflectCommand, LiteralArgumentBuilder.literal("test1")
@@ -244,7 +237,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 					// Could not serialize fr.olympa.api.brigadier.UUIDArgumentType@28aefe5e (class fr.olympa.api.brigadier.UUIDArgumentType) - will not be sent to client!
 					)
 					.build());
-		}
+		}*/
 
 		//		pluginManager.registerEvents(new TestListener(), this);
 
