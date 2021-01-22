@@ -2,6 +2,7 @@ package fr.olympa.core.bungee.datamanagment;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
@@ -206,7 +207,7 @@ public class AuthListener implements Listener {
 		} else
 			// Si le joueur ne s'est jamais connecté
 			try {
-				UUID uuidCrack = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes("UTF-8"));
+				UUID uuidCrack = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(StandardCharsets.UTF_8));
 
 				// Vérifie que l'uuid n'est pas déjà utiliser
 				OlympaPlayer uuidAlreadyExist = MySQL.getPlayer(uuidCrack);
@@ -232,7 +233,7 @@ public class AuthListener implements Listener {
 				cache.setOlympaPlayer(olympaPlayer);
 			} catch (Exception e) {
 				e.printStackTrace();
-				event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#UTF8BungeeCantCreateNew"));
+				event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#BungeeCantCreateNew"));
 				event.setCancelled(true);
 				DataHandler.removePlayer(name);
 				return;

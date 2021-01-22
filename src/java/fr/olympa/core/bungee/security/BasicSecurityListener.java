@@ -10,6 +10,7 @@ import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.utils.BungeeUtils;
@@ -27,7 +28,11 @@ import net.md_5.bungee.event.EventPriority;
 @SuppressWarnings("deprecation")
 public class BasicSecurityListener implements Listener {
 
-	public static Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(100).build();
+	private static final Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(100).build();
+
+	{
+		CacheStats.addCache("WHO_PING", BasicSecurityListener.cache);
+	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on0Ping(ProxyPingEvent event) {
@@ -88,7 +93,7 @@ public class BasicSecurityListener implements Listener {
 			OlympaPlayer olympaPlayer = AccountProvider.get(target.getUniqueId());
 			if (olympaPlayer != null)
 				turne = olympaPlayer.getGender().getTurne();
-			target.disconnect(BungeeUtils.connectScreen("&cTu t'es connecté" + turne + " depuis une autre fenêtre sur ton reseau."));
+			target.disconnect(BungeeUtils.connectScreen("&cTu t'es connecté" + turne + " depuis une autre fenêtre sur ton réseau."));
 			event.setCancelled(false);
 		}
 

@@ -133,7 +133,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 		}
 	}
 
-	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = { "IP", "PLAYER" }, min = 2)
+	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = { "IP", "playerName" }, min = 2)
 	public void vpnAddWhitelist(CommandContext cmd) {
 		try {
 			OlympaVpn vpnInfo = VpnHandler.get(cmd.getArgument(0));

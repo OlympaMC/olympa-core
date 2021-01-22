@@ -209,7 +209,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 
 		MonitorServers.init(this);
 		SQLGroup.init();
-		CacheStats.addCache("WHO_PING", BasicSecurityListener.cache);
+
 		CacheStats.addCache("VPN", VpnHandler.cache);
 		CacheStats.addCache("WRONG_PASSWORD", HandlerLogin.timesFails);
 		CacheStats.addCache("REDIS_ASK_SERVER_OF_PLAYER", RedisSpigotSend.askPlayerServer);
@@ -217,16 +217,16 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		//				try {
 		//					Field remoteAddressField = AbstractChannel.class.getDeclaredField("remoteAddress");
 		//					remoteAddressField.setAccessible(true);
-		//		
+		//
 		//					Field serverChild = PipelineUtils.class.getField("SERVER_CHILD");
 		//					serverChild.setAccessible(true);
-		//		
+		//
 		//					Field modifiersField = Field.class.getDeclaredField("modifiers");
 		//					modifiersField.setAccessible(true);
 		//					modifiersField.setInt(serverChild, serverChild.getModifiers() & ~Modifier.FINAL);
-		//		
+		//
 		//					ChannelInitializer<Channel> bungeeChannelInitializer = PipelineUtils.SERVER_CHILD;
-		//		
+		//
 		//					Method initChannelMethod = ChannelInitializer.class.getDeclaredMethod("initChannel", Channel.class);
 		//					initChannelMethod.setAccessible(true);
 		//					serverChild.set(null, new ChannelInitializer<>() {
