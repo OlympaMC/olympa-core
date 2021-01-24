@@ -179,6 +179,22 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	@Override
 	public void onLoad() {
 		super.onLoad();
+		instance = this;
+		SpigotConfig.sendNamespaced = false;
+	}
+
+	@Override
+	public void onEnable() {
+		LinkSpigotBungee.Provider.link = this;
+		PluginManager pluginManager = getServer().getPluginManager();
+		pluginManager.registerEvents(new OnLoadListener(), this);
+
+		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
+		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
+		ReportReason.registerReason(ReportReason.class);
+		super.onEnable();
+		
+		RedisSpigotSend.errorsEnabled = true;
 		System.setErr(new PrintStream(new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20))));
 		ErrorLoggerHandler errorHandler = new ErrorLoggerHandler(RedisSpigotSend::sendError);
 		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
@@ -188,20 +204,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		Bukkit.getLogger().addHandler(errorHandler);
 		sendMessage("Hooked error stream handler into §6server§e logger!");
 		sendMessage("§6" + getDescription().getName() + "§e (" + getDescription().getVersion() + ") est chargé.");
-		SpigotConfig.sendNamespaced = false;
-	}
-
-	@Override
-	public void onEnable() {
-		instance = this;
-		LinkSpigotBungee.Provider.link = this;
-		PluginManager pluginManager = getServer().getPluginManager();
-		pluginManager.registerEvents(new OnLoadListener(), this);
-
-		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
-		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
-		ReportReason.registerReason(ReportReason.class);
-		super.onEnable();
 
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 		imageFrameManager = new ImageFrameManager(this, "maps.yml", "images");

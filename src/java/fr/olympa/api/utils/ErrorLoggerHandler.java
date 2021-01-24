@@ -6,6 +6,8 @@ import java.util.logging.LogRecord;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 
+import fr.olympa.core.spigot.OlympaCore;
+
 public class ErrorLoggerHandler extends Handler {
 	
 	private Consumer<String> sendError;
@@ -17,7 +19,12 @@ public class ErrorLoggerHandler extends Handler {
 	@Override
 	public void publish(LogRecord record) {
 		if (record.getThrown() != null) {
-			sendError.accept(record.getLevel().getName() + " [" + record.getLoggerName() + "] " + record.getMessage().replaceAll("executing task \\d*", "executing task XXX") + "\n" + ExceptionUtils.getStackTrace(record.getThrown()));
+			String stackTrace = ExceptionUtils.getStackTrace(record.getThrown());
+			try {
+				sendError.accept(record.getLevel().getName() + " [" + record.getLoggerName() + "] " + record.getMessage().replaceAll("executing task \\d*", "executing task XXX") + "\n" + stackTrace);
+			}catch (Exception ex) {
+				OlympaCore.getInstance().sendMessage("§cUne erreur est survenue durant le passage d'une erreur au bungee via redis:\n%s", stackTrace);
+			}
 		}
 	}
 	
