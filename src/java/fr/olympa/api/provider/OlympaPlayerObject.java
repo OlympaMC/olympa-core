@@ -161,22 +161,14 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void addNewIp(String ip) {
 		histIp.put(Utils.getCurrentTimeInSeconds(), this.ip);
-		try {
-			COLUMN_IP_HISTORY.updateValue(this, GsonCustomizedObjectTypeAdapter.GSON.toJson(histIp));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		COLUMN_IP_HISTORY.updateAsync(this, GsonCustomizedObjectTypeAdapter.GSON.toJson(histIp), null, null);
 		setIp(ip);
 	}
 
 	@Override
 	public void addNewName(String name) {
 		histName.put(Utils.getCurrentTimeInSeconds(), this.name);
-		try {
-			COLUMN_NAME_HISTORY.updateValue(this, GsonCustomizedObjectTypeAdapter.GSON.toJson(histName));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		COLUMN_NAME_HISTORY.updateAsync(this, GsonCustomizedObjectTypeAdapter.GSON.toJson(histName), null, null);
 		setName(name);
 	}
 
@@ -210,6 +202,8 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		OlympaGroup olympaGroup = null;
 		for (Iterator<OlympaGroup> iterator = groups.keySet().iterator(); iterator.hasNext();) {
 			olympaGroup = iterator.next();
+			if (!olympaGroup.isVisible())
+				continue;
 			if (OlympaServer.ALL.equals(olympaGroup.getServer()))
 				break;
 			if (Objects.equals(olympaGroup.getServer(), LinkSpigotBungee.Provider.link.getOlympaServer()))
