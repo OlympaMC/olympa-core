@@ -13,6 +13,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.player.OlympaPlayer;
@@ -65,6 +66,7 @@ public class DataManagmentListener implements Listener {
 		}
 		int i = 0;
 		while (olympaPlayer == null && i++ < 10) {
+			LinkSpigotBungee.Provider.link.sendMessage("&4OlympaPlayer de %s pas encore trouvé, essaie n°%d.", uuid, i + 1);
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -74,7 +76,7 @@ public class DataManagmentListener implements Listener {
 				olympaPlayer = olympaAccount.getFromRedis();
 			else if (i == 6)
 				try {
-					olympaPlayer = olympaAccount.get();
+					olympaPlayer = olympaAccount.fromDb();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -121,10 +123,11 @@ public class DataManagmentListener implements Listener {
 				if (player.isOnline()) {
 					if (AccountProvider.loadPlayerDatas(olympaPlayer))
 						Bukkit.broadcastMessage("§d§k##§6 Bienvenue au joueur " + olympaPlayer.getGroup().getColor() + "§l" + player.getName() + "§6 qui rejoint le serveur ! §d§k##");
-					
+
 					OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
 					Bukkit.getPluginManager().callEvent(loginevent);
-				}else OlympaCore.getInstance().sendMessage("§c⚠ Le joueur %s s'est déconnecté avant que son OlympaPlayer ne soit complètement chargé.", player.getName());
+				} else
+					OlympaCore.getInstance().sendMessage("§c⚠ Le joueur %s s'est déconnecté avant que son OlympaPlayer ne soit complètement chargé.", player.getName());
 			} catch (SQLException e) {
 				e.printStackTrace();
 				OlympaCore.getInstance().getTask().runTask(() -> {

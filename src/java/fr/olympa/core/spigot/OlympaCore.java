@@ -47,6 +47,7 @@ import fr.olympa.api.report.ReportReason;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.ErrorLoggerHandler;
 import fr.olympa.api.utils.ErrorOutputStream;
 import fr.olympa.core.spigot.chat.CancerListener;
@@ -191,9 +192,10 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
+		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
 		ReportReason.registerReason(ReportReason.class);
 		super.onEnable();
-		
+
 		RedisSpigotSend.errorsEnabled = true;
 		System.setErr(new PrintStream(new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20))));
 		ErrorLoggerHandler errorHandler = new ErrorLoggerHandler(RedisSpigotSend::sendError);
@@ -219,7 +221,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 		/*TestCommand test = new TestCommand(this);
 		test.register();
-		
+
 		if (CommodoreProvider.isSupported()) {
 			Commodore commodore = CommodoreProvider.getCommodore(this);
 			commodore.register(test.reflectCommand, LiteralArgumentBuilder.literal("test1")

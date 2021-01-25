@@ -113,7 +113,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 
 	@Override
 	public void onDisable() {
-		task.cancelTaskByName("monitor_serveurs");
+		if (task != null)
+			task.cancelTaskByName("monitor_serveurs");
 		//		RedisAccess.close();
 		if (database != null)
 			database.close();
@@ -252,6 +253,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		//				}
 
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
+		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
 	}
 
 	@Override
