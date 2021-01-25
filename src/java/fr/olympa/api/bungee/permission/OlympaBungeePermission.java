@@ -20,59 +20,38 @@ public class OlympaBungeePermission extends OlympaPermission {
 
 	public OlympaBungeePermission(OlympaGroup minGroup) {
 		super(minGroup);
-		serverType = ServerType.BUNGEE;
 	}
 
 	public OlympaBungeePermission(OlympaGroup... allowedGroups) {
 		super(allowedGroups);
-		serverType = ServerType.BUNGEE;
-	}
-
-	public OlympaBungeePermission(OlympaGroup minGroup, ServerType serverType) {
-		super(minGroup, serverType);
-		serverType = ServerType.BUNGEE;
 	}
 
 	public OlympaBungeePermission(OlympaGroup minGroup, boolean lockPermission) {
 		super(minGroup, lockPermission);
-		serverType = ServerType.BUNGEE;
-	}
-
-	public OlympaBungeePermission(OlympaGroup minGroup, boolean lockPermission, ServerType serverType) {
-		super(minGroup, lockPermission, serverType);
-		serverType = ServerType.BUNGEE;
 	}
 
 	public OlympaBungeePermission(boolean lockPermission, OlympaGroup... allowedGroups) {
 		super(lockPermission, allowedGroups);
-		serverType = ServerType.BUNGEE;
 	}
 
 	public OlympaBungeePermission(OlympaGroup minGroup, OlympaGroup[] allowedGroups) {
 		super(minGroup, allowedGroups);
-		serverType = ServerType.BUNGEE;
-	}
-
-	public OlympaBungeePermission(OlympaGroup minGroup, OlympaGroup[] allowedGroups, ServerType serverType) {
-		super(minGroup, allowedGroups, serverType);
-		serverType = ServerType.BUNGEE;
 	}
 
 	public OlympaBungeePermission(OlympaGroup minGroup, OlympaGroup[] allowedGroups, boolean lockPermission) {
 		super(minGroup, allowedGroups, lockPermission);
-		serverType = ServerType.BUNGEE;
 	}
 
-	public OlympaBungeePermission(OlympaGroup minGroup, OlympaGroup[] allowedGroups, boolean lockPermission, ServerType serverType) {
-		super(minGroup, allowedGroups, lockPermission, serverType);
-		serverType = ServerType.BUNGEE;
+	@Override
+	public ServerType getServerType() {
+		return ServerType.BUNGEE;
 	}
-
+	
 	public void getPlayersBungee(Consumer<? super Set<ProxiedPlayer>> success) {
 		Set<ProxiedPlayer> players = ProxyServer.getInstance().getPlayers().stream().filter(p -> {
 			try {
 				return this.hasPermission(new AccountProvider(p.getUniqueId()).get());
-			} catch (SQLException e) {
+			}catch (SQLException e) {
 				e.printStackTrace();
 				return false;
 			}
@@ -88,10 +67,10 @@ public class OlympaBungeePermission extends OlympaPermission {
 	}
 
 	@Override
-	public void sendMessage(BaseComponent baseComponent) {
+	public void sendMessage(BaseComponent... baseComponents) {
 		getPlayersBungee(players -> {
 			if (players != null)
-				players.forEach(player -> player.sendMessage(baseComponent));
+				players.forEach(player -> player.sendMessage(baseComponents));
 		});
 	}
 

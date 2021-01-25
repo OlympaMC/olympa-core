@@ -12,7 +12,7 @@ import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.permission.OlympaSpigotPermission;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.spigot.SpigotUtils;
@@ -41,7 +41,7 @@ public class SetStatusCommand extends OlympaCommand {
 			sendError("Le serveur est déjà en mode " + status.getNameColored() + "&c.");
 			return true;
 		}
-		OlympaPermission needPermission = status2.getPermission();
+		OlympaSpigotPermission needPermission = status2.getPermission();
 		if (needPermission != null && !needPermission.hasSenderPermission(sender)) {
 			sendError("Tu n'a pas la permission d'être connecter si tu met le mode " + status.getNameColored() + "&c.");
 			return true;

@@ -23,6 +23,7 @@ import fr.olympa.api.command.complex.ComplexCommand;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.permission.OlympaSpigotPermission;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.server.ServerType;
 import fr.olympa.api.utils.Prefix;
@@ -117,7 +118,7 @@ public class PermissionCommand extends ComplexCommand {
 	public void allow(CommandContext cmd) {
 		Entry<String, OlympaPermission> entry = cmd.getArgument(0);
 		String permName = entry.getKey();
-		OlympaPermission perm = entry.getValue();
+		OlympaSpigotPermission perm = (OlympaSpigotPermission) entry.getValue();
 		OlympaGroup olympaGroup = null;
 		Player player = null;
 		if (perm.getServerType() != ServerType.SPIGOT) {
@@ -193,7 +194,7 @@ public class PermissionCommand extends ComplexCommand {
 	public void disallow(CommandContext cmd) {
 		Entry<String, OlympaPermission> entry = cmd.getArgument(0);
 		String permName = entry.getKey();
-		OlympaPermission perm = entry.getValue();
+		OlympaSpigotPermission perm = (OlympaSpigotPermission) entry.getValue();
 		Object arg1 = cmd.getArgument(1);
 		OlympaGroup olympaGroup = null;
 		Player player = null;

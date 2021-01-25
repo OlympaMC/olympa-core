@@ -9,13 +9,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
-import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.permission.OlympaSpigotPermission;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class StaffCommand extends OlympaCommand {
 
 	public StaffCommand(Plugin plugin) {
-		super(plugin, "staff", "Permet de voir le staff.", (OlympaPermission) null);
+		super(plugin, "staff", "Permet de voir le staff.", (OlympaSpigotPermission) null);
 		isAsynchronous = true;
 		allowConsole = false;
 	}
