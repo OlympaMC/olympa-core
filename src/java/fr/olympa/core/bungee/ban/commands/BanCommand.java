@@ -13,7 +13,6 @@ import fr.olympa.core.bungee.ban.execute.SanctionExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
@@ -27,11 +26,9 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		SanctionExecute banArg = SanctionExecute.formatArgs(args);
+		SanctionExecute banArg = SanctionExecute.formatArgs(this, args);
 		banArg.setSanctionType(OlympaSanctionType.BAN);
-		if (sender instanceof ProxiedPlayer)
-			banArg.setAuthor(getOlympaPlayer());
-		banArg.launchSanction(this, OlympaSanctionStatus.ACTIVE);
+		banArg.launchSanction(OlympaSanctionStatus.ACTIVE);
 	}
 
 	@Override

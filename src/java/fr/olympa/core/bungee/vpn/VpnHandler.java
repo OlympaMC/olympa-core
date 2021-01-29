@@ -113,7 +113,7 @@ public class VpnHandler {
 				}
 				try {
 					olympaVpn = VpnHandler.createVpnInfo(connection, ip);
-				} catch (Exception e) {
+				} catch (Exception | NoClassDefFoundError e) {
 					inCheck.remove(ip);
 					throw e;
 				}

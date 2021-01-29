@@ -175,7 +175,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 		if (cmd.getArgumentsLength() == 0)
 			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%d&7.\n" +
 					"C'est à dire qu'il faut &4%d&c connections dans la file d'attente pour lancer l'antibot.\n" +
-					"Et donc &4%d&7 de file d'attente.", "NUMBER_BEFORE_START_ANTIBOT", i, i, QueueHandler.getStartBotTimeString());
+					"Et donc &4%s&7 de file d'attente.", "NUMBER_BEFORE_START_ANTIBOT", i, i, QueueHandler.getStartBotTimeString());
 		else {
 			QueueHandler.NUMBER_BEFORE_START_ANTIBOT = (Integer) cmd.getArgument(0);
 			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%d&a à &2%d&a.", "NUMBER_BEFORE_START_ANTIBOT", i, QueueHandler.NUMBER_BEFORE_START_ANTIBOT);
@@ -188,7 +188,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 		if (cmd.getArgumentsLength() == 0)
 			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%d&7.\n" +
 					"C'est à dire qu'il peut y avoir &4%d&c connexions dans la file d'attente MAXIMUM. Les autres connexions seront cancel.\n" +
-					"Et donc que le temps d'attente maximum est de &4%d&7.", "NUMBER_BEFORE_CANCEL", i, i, QueueHandler.getMaxQueueTimeString());
+					"Et donc que le temps d'attente maximum est de &4%s&7.", "NUMBER_BEFORE_CANCEL", i, i, QueueHandler.getMaxQueueTimeString());
 		else {
 			QueueHandler.NUMBER_BEFORE_CANCEL = (Integer) cmd.getArgument(0);
 			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%d&a à &2%d&a.", "NUMBER_BEFORE_CANCEL", i, QueueHandler.NUMBER_BEFORE_CANCEL);

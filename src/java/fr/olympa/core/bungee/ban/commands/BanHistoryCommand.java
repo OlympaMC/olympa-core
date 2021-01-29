@@ -1,21 +1,17 @@
 package fr.olympa.core.bungee.ban.commands;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
+import fr.olympa.core.bungee.ban.execute.SanctionExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import net.md_5.bungee.api.CommandSender;
@@ -34,38 +30,43 @@ public class BanHistoryCommand extends BungeeCommand {
 		usageString = "<joueur|uuid|id|ip>";
 	}
 
+	//	@Override
+	//	public void onCommand(CommandSender sender, String[] args) {
+	//		String identifier = args[0];
+	//
+	//		String id = null;
+	//		String target = null;
+	//		try {
+	//			if (RegexMatcher.LONG.is(identifier))
+	//				id = identifier;
+	//			else if (RegexMatcher.IP.is(identifier)) {
+	//				if (!OlympaCorePermissions.BAN_BANIP_COMMAND.hasSenderPermissionBungee(sender)) {
+	//					sendDoNotHavePermission();
+	//					return;
+	//				}
+	//				target = identifier;
+	//			} else if (RegexMatcher.UUID.is(identifier)) {
+	//				OlympaPlayer op = new AccountProvider((UUID) RegexMatcher.UUID.parse(identifier)).get();
+	//				target = String.valueOf(op.getId());
+	//			} else if (RegexMatcher.USERNAME.is(identifier)) {
+	//				OlympaPlayer op;
+	//				op = AccountProvider.get(identifier);
+	//				target = String.valueOf(op.getId());
+	//			} else {
+	//				Configuration config = OlympaBungee.getInstance().getConfig();
+	//				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replace("%type%", args[0]));
+	//				return;
+	//			}
+	//		} catch (IllegalArgumentException | SQLException e) {
+	//			e.printStackTrace();
+	//			sendError(e);
+	//		}
+	//
+	//	}
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		String identifier = args[0];
-
-		String id = null;
-		String target = null;
-		try {
-			if (RegexMatcher.LONG.is(identifier))
-				id = identifier;
-			else if (RegexMatcher.IP.is(identifier)) {
-				if (!OlympaCorePermissions.BAN_BANIP_COMMAND.hasSenderPermissionBungee(sender)) {
-					sendDoNotHavePermission();
-					return;
-				}
-				target = identifier;
-			} else if (RegexMatcher.UUID.is(identifier)) {
-				OlympaPlayer op = new AccountProvider((UUID) RegexMatcher.UUID.parse(identifier)).get();
-				target = String.valueOf(op.getId());
-			} else if (RegexMatcher.USERNAME.is(identifier)) {
-				OlympaPlayer op;
-				op = AccountProvider.get(identifier);
-				target = String.valueOf(op.getId());
-			} else {
-				Configuration config = OlympaBungee.getInstance().getConfig();
-				this.sendMessage(Prefix.DEFAULT_BAD, config.getString("default.typeunknown").replace("%type%", args[0]));
-				return;
-			}
-		} catch (IllegalArgumentException | SQLException e) {
-			e.printStackTrace();
-			sendError(e);
-		}
-
+		SanctionExecute banArg = SanctionExecute.formatArgs(this, args);
+		banArg.printInfo();
 	}
 
 	@SuppressWarnings("deprecation")

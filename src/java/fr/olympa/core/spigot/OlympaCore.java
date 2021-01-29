@@ -221,7 +221,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 		/*TestCommand test = new TestCommand(this);
 		test.register();
-
+		
 		if (CommodoreProvider.isSupported()) {
 			Commodore commodore = CommodoreProvider.getCommodore(this);
 			commodore.register(test.reflectCommand, LiteralArgumentBuilder.literal("test1")
@@ -303,7 +303,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			BasicFileAttributes attr;
 			attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
 			lastModifiedTime = attr.lastModifiedTime().toMillis() / 1000L;
-		} catch (Exception e) {
+		} catch (Exception | NoClassDefFoundError e) {
 			e.printStackTrace();
 		}
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {

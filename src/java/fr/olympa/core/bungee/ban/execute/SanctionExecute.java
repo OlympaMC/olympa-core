@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.chat.ColorUtils;
+import fr.olympa.api.chat.TxtComponentBuilder;
 import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaConsole;
@@ -19,33 +20,37 @@ import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.SanctionUtils;
+import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
 
 public class SanctionExecute {
 
-	public static SanctionExecute formatArgs(String[] args) {
-		SanctionExecute me = new SanctionExecute();
+	public static SanctionExecute formatArgs(BungeeCommand bungeeCommand, String[] args) {
+		SanctionExecute me = new SanctionExecute(bungeeCommand);
 		me.setTargetsString(Arrays.asList(args[0].split(",")));
-		me.getTargetsString().forEach(target -> {
+
+		List<String> targetsString = Arrays.asList(args[0].split(","));
+		for (String target : targetsString)
 			if (RegexMatcher.IP.is(target))
 				try {
 					me.targetsRaw.add(InetAddress.getByName(target));
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
+					bungeeCommand.sendError(e);
 				}
 			else if (RegexMatcher.UUID.is(target))
 				me.targetsRaw.add(RegexMatcher.UUID.parse(target));
-			else if (RegexMatcher.USERNAME.is(target))
-				me.targetsRaw.add(target);
 			else if (RegexMatcher.LONG.is(target))
 				me.targetsRaw.add(RegexMatcher.LONG.parse(target));
+			else if (RegexMatcher.USERNAME.is(target))
+				me.targetsRaw.add(target);
 			else
 				me.unknownTargetType.add(target);
-		});
+		me.setTargetsString(targetsString);
 		String allArgs = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 		String reason = null;
 		Matcher matcherDuration = SanctionUtils.matchDuration(allArgs);
@@ -60,6 +65,7 @@ public class SanctionExecute {
 		return me;
 	}
 
+	BungeeCommand cmd;
 	private List<String> targetsString;
 	private List<Object> targetsRaw = new ArrayList<>();
 	private List<String> unknownTargetType = new ArrayList<>();
@@ -76,7 +82,16 @@ public class SanctionExecute {
 		return targetsString;
 	}
 
-	public SanctionExecute() {
+	public SanctionExecute(BungeeCommand cmd) {
+		this.cmd = cmd;
+		author = cmd.getOlympaPlayer();
+		if (author == null)
+			try {
+				author = new AccountProvider(OlympaConsole.getUniqueId()).get();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				cmd.sendError(e);
+			}
 	}
 
 	public void setTargetsString(List<String> targetsString) {
@@ -112,27 +127,18 @@ public class SanctionExecute {
 	}
 
 	public CommandSender getAuthorSender() {
-		return author != null ? ProxyServer.getInstance().getPlayer(author.getUniqueId()) : ProxyServer.getInstance().getConsole();
+		return cmd.getSender();
 	}
 
 	public OlympaPlayer getAuthor() {
-		try {
-			return author != null ? author : new AccountProvider(OlympaConsole.getUniqueId()).get();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return author;
 	}
 
 	public long getAuthorId() {
-		return author != null ? author.getId() : 0L;
+		return author.getId();
 	}
 
-	public void setAuthor(OlympaPlayer author) {
-		this.author = author;
-	}
-
-	public void launchSanction(BungeeCommand bungeeCommand, OlympaSanctionStatus newStatus) {
+	public void launchSanction(OlympaSanctionStatus newStatus) {
 		this.newStatus = newStatus;
 		if (printfErrorIfAny() || !getOlympaPlayersFromArgs())
 			return;
@@ -143,7 +149,8 @@ public class SanctionExecute {
 				target.execute(this);
 				target.annonce(this);
 			} catch (SQLException e) {
-				bungeeCommand.sendError(e);
+				e.printStackTrace();
+				cmd.sendError(e);
 			}
 	}
 
@@ -176,15 +183,65 @@ public class SanctionExecute {
 					targets.add(new SanctionExecuteTarget(t, Arrays.asList(new AccountProvider((UUID) t).get())));
 				else if (t instanceof String)
 					targets.add(new SanctionExecuteTarget(t, Arrays.asList(AccountProvider.get((String) t))));
-				else if (t instanceof Integer)
-					targets.add(new SanctionExecuteTarget(t, Arrays.asList(AccountProvider.get((Integer) t))));
+				else if (t instanceof Long)
+					targets.add(new SanctionExecuteTarget(t, Arrays.asList(AccountProvider.get((Long) t))));
 			} catch (SQLException e) {
 				e.printStackTrace();
+				cmd.sendError(e);
 			}
 		// Never join data
-		if (targets.isEmpty())
+		if (targets.stream().allMatch(e -> e == null))
 			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("&cCible &4%s&c introuvable.", ColorUtils.joinRed(targetsString)));
 		return !targets.isEmpty();
+	}
+
+	private boolean detectSanction() {
+		for (Object t : targetsRaw)
+			try {
+				if (t instanceof InetAddress)
+					targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(((InetAddress) t).getHostAddress()), t));
+				else if (t instanceof UUID)
+					targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(t), t));
+				else if (t instanceof String)
+					targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(AccountProvider.get((String) t)), t));
+				else if (t instanceof Long) {
+					Long l = (Long) t;
+					targets.add(new SanctionExecuteTarget(Arrays.asList(BanMySQL.getSanction(l)), t));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				cmd.sendError(e);
+			}
+		if (targets.stream().allMatch(e -> e == null))
+			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("&cCasier de &4%s&c vierge.", ColorUtils.joinRed(targetsString)));
+		return !targets.isEmpty();
+	}
+
+	public void printInfo() {
+		if (targetsRaw.isEmpty())
+			if (!unknownTargetType.isEmpty())
+				getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Le format de &4%s&c n'est pas connu. Utilise l'un des format suivants: pseudo, IP, UUID ou ID de sanction.", ColorUtils.joinRed(unknownTargetType)));
+			else
+				getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Rajoute une cible : pseudo, IP, UUID ou sanction."));
+		if (!detectSanction())
+			return;
+
+		List<OlympaSanction> allSanctions = new ArrayList<>();
+		for (SanctionExecuteTarget t : targets)
+			if (t != null)
+				allSanctions.addAll(t.getSanctions());
+		if (allSanctions.isEmpty())
+			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("&cAucun résultat valide pour &4%s&c.", ColorUtils.joinRed(targetsString)));
+		else if (allSanctions.size() == 1) {
+			OlympaSanction s = allSanctions.get(0);
+			getAuthorSender().sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("Une seule sanction trouvée pour %s.", ColorUtils.joinGreenEt(targetsString)));
+			getAuthorSender().sendMessage(s.toBaseComplement());
+		} else {
+			TxtComponentBuilder builder = new TxtComponentBuilder(Prefix.DEFAULT_GOOD, "%d résultats pour %s (%s).", allSanctions.size(), ColorUtils.joinGreenEt(targetsString)).extraSpliterBN();
+			for (OlympaSanction sanction : allSanctions)
+				builder.extra(new TxtComponentBuilder("%d - %s %s %s", sanction.getId(), sanction.getStatus().getNameColored(), sanction.getAuthorName(), sanction.getReason()).onHoverText(sanction.toBaseComplement()));
+			getAuthorSender().sendMessage(builder.build());
+		}
 	}
 
 }

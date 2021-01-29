@@ -191,7 +191,7 @@ public class CancerListener implements Listener {
 				event.setMessage(message);
 				player.sendMessage(ColorUtils.color(Prefix.BAD + "Les symboles chelou sont interdit."));
 			}
-		} catch (Exception e) {
+		} catch (Exception | NoClassDefFoundError e) {
 			e.printStackTrace();
 		}
 		olympaTchat.setLastMsg(msgNFD);

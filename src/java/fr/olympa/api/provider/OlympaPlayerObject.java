@@ -440,7 +440,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Override
 	public void setPassword(String password) {
 		this.password = Passwords.getPBKDF2(password);
-		COLUMN_PASSWORD.updateAsync(this, password, null, null);
+		COLUMN_PASSWORD.updateAsync(this, this.password, null, null);
 	}
 
 	@Override

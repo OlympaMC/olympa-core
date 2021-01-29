@@ -24,11 +24,9 @@ public class UnmuteCommand extends BungeeCommand {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		SanctionExecute banArg = SanctionExecute.formatArgs(args);
+		SanctionExecute banArg = SanctionExecute.formatArgs(this, args);
 		banArg.setSanctionType(OlympaSanctionType.MUTE);
-		if (sender instanceof ProxiedPlayer)
-			banArg.setAuthor(getOlympaPlayer());
-		banArg.launchSanction(this, OlympaSanctionStatus.CANCEL);
+		banArg.launchSanction(OlympaSanctionStatus.CANCEL);
 	}
 
 	//	@Override

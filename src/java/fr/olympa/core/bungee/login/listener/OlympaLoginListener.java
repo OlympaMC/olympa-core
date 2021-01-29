@@ -2,7 +2,6 @@ package fr.olympa.core.bungee.login.listener;
 
 import java.util.concurrent.TimeUnit;
 
-import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.bungee.customevent.BungeeOlympaGroupChangeEvent;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.OlympaPlayer;
@@ -60,11 +59,11 @@ public class OlympaLoginListener implements Listener {
 					String subdomain = cache.getSubDomain();
 					if (subdomain != null)
 						if (subdomain.equalsIgnoreCase("buildeur"))
-							ServersConnection.tryConnect(player, OlympaServer.BUILDEUR);
+							ServersConnection.tryConnect(player, OlympaServer.BUILDEUR, false);
 						else if (subdomain.equalsIgnoreCase("dev"))
-							ServersConnection.tryConnect(player, OlympaServer.DEV);
+							ServersConnection.tryConnect(player, OlympaServer.DEV, false);
 						else
-							ServersConnection.tryConnect(player, OlympaServer.LOBBY);
+							ServersConnection.tryConnect(player, OlympaServer.LOBBY, false);
 				}
 				DataHandler.removePlayer(cache);
 			}
@@ -104,7 +103,7 @@ public class OlympaLoginListener implements Listener {
 						if (server == null || !MonitorServers.getMonitor(server).isOpen()) {
 							tryConnect = true;
 							OlympaServer olympaServer2 = olympaServer;
-							LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> ServersConnection.tryConnect(player, olympaServer2), 2, TimeUnit.SECONDS);
+							ServersConnection.tryConnect(player, olympaServer2, true);
 						} else {
 							event.setTarget(server);
 							RedisBungeeSend.sendOlympaPlayerFirstConnection(server, olympaPlayer);
@@ -118,7 +117,7 @@ public class OlympaLoginListener implements Listener {
 					RedisBungeeSend.sendOlympaPlayerFirstConnection(lobby, olympaPlayer);
 					return;
 				} else if (!tryConnect)
-					LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> ServersConnection.tryConnect(player, OlympaServer.LOBBY), 2, TimeUnit.SECONDS);
+					ServersConnection.tryConnect(player, OlympaServer.LOBBY, true);
 			}
 		}
 		ServerInfo auth = ServersConnection.getBestServer(OlympaServer.AUTH, null, player);
@@ -132,7 +131,7 @@ public class OlympaLoginListener implements Listener {
 	@EventHandler
 	public void onServerConnected(ServerConnectedEvent event) {
 		ProxiedPlayer player = event.getPlayer();
-		ServersConnection.removeTryToConnect(player);
+		ServersConnection.removeTryToConnect(player, true);
 		CachePlayer cache = DataHandler.get(player.getName());
 		if (cache != null) {
 			OlympaPlayer olympaPlayer = cache.getOlympaPlayer();

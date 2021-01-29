@@ -103,6 +103,10 @@ public class OlympaSanction {
 		return author;
 	}
 
+	public String getAuthorName() {
+		return BungeeUtils.getName(getAuthor());
+	}
+
 	public long getBanTime() {
 		return expires - created;
 	}
@@ -230,7 +234,7 @@ public class OlympaSanction {
 		}
 		return new ComponentBuilder(ColorUtils.color("&6Information sanction n°&e" + getId() + "\n\n"))
 				.append(ColorUtils.color("&6Joueur: &e" + playerNames + "\n"))
-				.append(ColorUtils.color("&6Auteur: &e" + BungeeUtils.getName(getAuthor()) + "\n"))
+				.append(ColorUtils.color("&6Auteur: &e" + getAuthorName() + "\n"))
 				.append(ColorUtils.color("&6Type: &e" + getType().getName(isPermanent()) + "\n"))
 				.append(ColorUtils.color("&6Raison: &e" + getReason() + "\n"))
 				.append(ColorUtils.color("&6Crée: &e" + Utils.timestampToDateAndHour(getCreated()) + "\n"))

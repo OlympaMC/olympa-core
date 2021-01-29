@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.chat.ColorUtils;
+import fr.olympa.api.chat.TxtComponentBuilder;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
@@ -26,6 +27,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.TabExecutor;
@@ -68,9 +70,8 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 		out2 = new TextComponent(TextComponent.fromLegacyText("§3Première connexion : §b" + Utils.timestampToDuration(target.getFirstConnection())));
 		out2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§3Le: §b" + Utils.timestampToDate(target.getFirstConnection()))));
 		out.addExtra(out2);
-		out.addExtra("\n");
 		if (targetProxied == null) {
-			out2 = new TextComponent(TextComponent.fromLegacyText("§3Dernière connexion : §b" + Utils.timestampToDuration(target.getLastConnection())));
+			out2 = new TextComponent(TextComponent.fromLegacyText("§3Dernière : §b" + Utils.timestampToDuration(target.getLastConnection())));
 			out2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§3Le: §b" + Utils.timestampToDate(target.getLastConnection()))));
 		} else
 			out2 = new TextComponent(TextComponent.fromLegacyText("§3Connecté depuis : §b" + Utils.timestampToDuration(target.getLastConnection())));
@@ -100,6 +101,8 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 		//		out.addExtra("\n");
 		//		out2 = new TextComponent(TextComponent.fromLegacyText("§3Link Discord: §b" + (target.getDiscordId() != 0 ? "oui" : "non")));
 		out.addExtra(out2);
+		out.addExtra("\n");
+		out.addExtra(TxtComponentBuilder.of(null, "&3UUID : &b%s", ClickEvent.Action.COPY_TO_CLIPBOARD, target.getUniqueId().toString(), HoverEvent.Action.SHOW_TEXT, new Text("&eClique pour copier dans le presse-papier")));
 		out.addExtra("\n");
 		if (hasPermission(OlympaCorePermissions.INFO_COMMAND_EXTRA)) {
 			out2 = new TextComponent(TextComponent.fromLegacyText("§3IP : §b[Cachée]"));
