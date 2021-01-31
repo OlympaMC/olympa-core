@@ -175,6 +175,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		hologramsManager.unload();
 		super.onDisable();
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
+		RedisSpigotSend.errorsEnabled = false;
 	}
 
 	@Override
