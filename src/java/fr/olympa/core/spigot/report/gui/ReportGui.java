@@ -11,13 +11,14 @@ import org.bukkit.inventory.ItemStack;
 import fr.olympa.api.gui.OlympaGUI;
 import fr.olympa.api.item.OlympaItemBuild;
 import fr.olympa.api.report.ReportReason;
+import fr.olympa.api.report.ReportReasonItem;
 
 public class ReportGui extends OlympaGUI {
 
 	public static void open(Player player, OfflinePlayer target2, String note) {
 		ReportGui gui = new ReportGui("&6Report &e" + target2.getName(), 3, target2, note);
 
-		List<OlympaItemBuild> items = ReportReason.values().stream().map(ReportReason::getItem).collect(Collectors.toList());
+		List<OlympaItemBuild> items = ReportReason.values().stream().map(rr -> ((ReportReasonItem) rr).getItem()).collect(Collectors.toList());
 		int slot = gui.inv.getSize() / 2 - items.size() / 2;
 		for (OlympaItemBuild item : items)
 			gui.inv.setItem(slot++, item.build());
@@ -39,7 +40,7 @@ public class ReportGui extends OlympaGUI {
 			return true;
 
 		//		ReportReason reason = ReportReason.get(current);
-		ReportReason reason = ReportReason.values().stream().filter(itemGui -> itemGui.getItem().build().isSimilar(current)).findFirst().orElse(null);
+		ReportReason reason = ReportReason.values().stream().filter(itemGui -> ((ReportReasonItem) itemGui).getItem().build().isSimilar(current)).findFirst().orElse(null);
 		ReportGuiConfirm.open(player, target, reason, note);
 		return true;
 	}

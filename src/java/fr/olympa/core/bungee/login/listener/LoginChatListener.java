@@ -1,6 +1,5 @@
 package fr.olympa.core.bungee.login.listener;
 
-import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
@@ -40,7 +39,7 @@ public class LoginChatListener implements Listener {
 
 		joinMessageCrackNew = base.duplicate();
 		TextComponent link = new TextComponent();
-		addLegacyText(link, "§aCrée ton compte avec §2/register <mot de passe>§a ou §2clique ici §aet écris ton mot de passe.");
+		addLegacyText(link, "§aCrée ton compte avec §2/register <mot de passe>§a ou §2clique ici§a.");
 		link.setHoverEvent(hoverTooltip);
 		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/register "));
 		joinMessageCrackNew.addExtra(link);
@@ -48,7 +47,7 @@ public class LoginChatListener implements Listener {
 
 		joinMessageCrackCreated = base.duplicate();
 		link = new TextComponent();
-		addLegacyText(link, "§aTon mot de passe est le même sur le site et le forum.\n§aFais §2/login <mot de passe>§a ou §2clique ici §aet écris ton mot de passe.");
+		addLegacyText(link, "§aTon mot de passe est le même sur le site et le forum.\n§aFais §2/login <mot de passe>§a ou §2clique ici §a.");
 		link.setHoverEvent(hoverTooltip);
 		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/login "));
 		joinMessageCrackCreated.addExtra(link);
@@ -56,7 +55,7 @@ public class LoginChatListener implements Listener {
 
 		joinMessagePremiumNew = base.duplicate();
 		link = new TextComponent();
-		addLegacyText(link, "§aCrée-toi un compte sur le site avec §2/register <mot de passe>§a ou §2clique ici §aet écris ton mot de passe.");
+		addLegacyText(link, "§aCrée-toi un compte sur le site avec §2/register <mot de passe>§a ou §2clique ici §a.");
 		link.setHoverEvent(hoverTooltip);
 		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/register "));
 		joinMessagePremiumNew.addExtra(link);
@@ -71,7 +70,6 @@ public class LoginChatListener implements Listener {
 			component.addExtra(compo);
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onChat(ChatEvent event) {
 		if (!(event.getSender() instanceof ProxiedPlayer))
@@ -82,9 +80,9 @@ public class LoginChatListener implements Listener {
 		if (DataHandler.isUnlogged(player) && (!event.isCommand() || !HandlerLogin.command.contains(command))) {
 			OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
 			if ((olympaPlayer == null || olympaPlayer.getPassword() == null || olympaPlayer.getPassword().isEmpty()) && !olympaPlayer.isPremium())
-				player.sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color("Tu dois t'enregistrer. Fais &4/register <mdp>&c."));
+				player.sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Tu dois t'enregistrer. Fais &4/register <mdp>&c."));
 			else
-				player.sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color("Tu dois être connecté%g. Fais &4/login <mdp>&c.".replace("%g", olympaPlayer.getGender().getTurne())));
+				player.sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Tu dois être connecté%s. Fais &4/login <mdp>&c.", olympaPlayer.getGender().getTurne()));
 			event.setCancelled(true);
 		}
 	}

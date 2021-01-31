@@ -54,15 +54,12 @@ public class AuthListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}
-		CachePlayer oldCache = DataHandler.get(name);
-		if (oldCache != null)
-			DataHandler.removePlayer(oldCache);
 		CachePlayer cache = new CachePlayer(name);
 
 		OlympaPlayer olympaPlayer;
 		try {
 			olympaPlayer = AccountProvider.get(name);
-		} catch (Exception e) {
+		} catch (Exception | NoClassDefFoundError e) {
 			e.printStackTrace();
 			event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#SQLBungeeLost"));
 			event.setCancelled(true);
@@ -170,7 +167,7 @@ public class AuthListener implements Listener {
 		DataHandler.addPlayer(cache);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = (byte) 128)
 	public void on2PreLogin(PreLoginEvent event) {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
@@ -182,10 +179,8 @@ public class AuthListener implements Listener {
 	public void on3Login(LoginEvent event) {
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
-		if (event.isCancelled()) {
-			DataHandler.removePlayer(name);
+		if (event.isCancelled())
 			return;
-		}
 		CachePlayer cache = DataHandler.get(name);
 		if (cache == null) {
 			// à ajouter à la liste des erreurs
@@ -231,7 +226,7 @@ public class AuthListener implements Listener {
 				if (uuidPremium != null)
 					olympaPlayer.setPremiumUniqueId(uuidPremium);
 				cache.setOlympaPlayer(olympaPlayer);
-			} catch (Exception e) {
+			} catch (Exception | NoClassDefFoundError e) {
 				e.printStackTrace();
 				event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#BungeeCantCreateNew"));
 				event.setCancelled(true);
@@ -255,6 +250,14 @@ public class AuthListener implements Listener {
 		olympaAccount.accountPersist();
 	}
 
+	@EventHandler(priority = (byte) 128)
+	public void on4Login(PreLoginEvent event) {
+		PendingConnection connection = event.getConnection();
+		String name = connection.getName();
+		if (event.isCancelled())
+			DataHandler.removePlayer(name);
+	}
+
 	@EventHandler(priority = EventPriority.LOW)
 	public void on5PostLogin(PostLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
@@ -270,11 +273,10 @@ public class AuthListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on6Disconnect(PlayerDisconnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
-		OlympaBungee.getInstance().sendMessage("§7Déconnexion du joueur §e" + player.getName() + (event.getPlayer().getServer() == null ? "" : " §7(serveur §6" + event.getPlayer().getServer().getInfo().getName() + "§7)"));
+		DataHandler.removePlayer(player.getName());
+		wait.add(player.getName());
 		AccountProvider olympaAccount = new AccountProvider(player.getUniqueId());
 		olympaAccount.removeFromCache();
-		wait.add(player.getName());
-		DataHandler.removePlayer(player.getName());
 		ProxyServer.getInstance().getScheduler().schedule(OlympaBungee.getInstance(), () -> {
 			wait.remove(player.getName());
 			OlympaPlayer olympaPlayer = olympaAccount.getFromRedis();
@@ -287,6 +289,7 @@ public class AuthListener implements Listener {
 			olympaAccount.removeFromRedis();
 			//olympaAccount.saveToDb(olympaPlayer);
 		}, 4, TimeUnit.SECONDS);
+		OlympaBungee.getInstance().sendMessage("§7Déconnexion du joueur §e" + player.getName() + (event.getPlayer().getServer() == null ? "" : " §7(serveur §6" + event.getPlayer().getServer().getInfo().getName() + "§7)"));
 	}
 
 }

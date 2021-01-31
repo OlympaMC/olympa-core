@@ -29,7 +29,7 @@ public class ServersConnection {
 		connect.add(wc);
 	}
 
-	public static boolean removeConnection(WaitingConnection wc) {
+	private static boolean removeConnection(WaitingConnection wc) {
 		return connect.remove(wc);
 	}
 
@@ -37,8 +37,19 @@ public class ServersConnection {
 		return connect.stream().filter(wc -> wc.olympaServer.isSame(olympaServer)).collect(Collectors.toSet());
 	}
 
-	public static Set<WaitingConnection> getConnections(UUID uuid) {
-		return connect.stream().filter(wc -> wc.uuid.equals(uuid)).collect(Collectors.toSet());
+	public static WaitingConnection getConnections(UUID uuid) {
+		Set<WaitingConnection> list = connect.stream().filter(wc -> wc.uuid.equals(uuid)).collect(Collectors.toSet());
+		WaitingConnection wc = null;
+		if (!list.isEmpty())
+			wc = list.iterator().next();
+		// TODO remove this after masse test
+		if (list.size() > 1) {
+			list.remove(wc);
+			connect.removeAll(list);
+			new Exception("DEBUG > C'est pas normal qu'il y est plusieurs WaitingConnection de " + uuid).printStackTrace();
+		}
+		// ------------------------------
+		return wc;
 	}
 
 	public static boolean canPlayerConnect(ServerInfo server) {
@@ -70,7 +81,7 @@ public class ServersConnection {
 				LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> {
 					waitToStart.remove(serverToOpen);
 				}, 1, TimeUnit.MINUTES);
-				OlympaRuntime.actionForAllLines("start", serverToOpen.getName(), x -> readScriptMC(x)).start();
+				OlympaRuntime.action("start", serverToOpen.getName()).start();
 			}
 			if (w8forConnect != null) {
 				while (waitToStart.contains(serverToOpen))
@@ -85,10 +96,6 @@ public class ServersConnection {
 		}
 		return null;
 		// TODO create new server
-	}
-
-	public static void readScriptMC(String s) {
-
 	}
 
 	@SuppressWarnings("deprecation")
@@ -108,26 +115,33 @@ public class ServersConnection {
 	}
 
 	public static boolean removeTryToConnect(ProxiedPlayer player) {
+		return removeTryToConnect(player, false);
+	}
+
+	public static boolean removeTryToConnect(ProxiedPlayer player, boolean isPostLoginEvent) {
 		boolean b = false;
-		Set<WaitingConnection> wcs = getConnections(player.getUniqueId());
-		BungeeTaskManager taskHandler = (BungeeTaskManager) LinkSpigotBungee.Provider.link.getTask();
-		for (WaitingConnection wc : wcs) {
-			ScheduledTask task = wc.task;
-			if (task != null) {
-				taskHandler.cancelTaskById(task.getId());
-				System.out.println("Task removeTryToConnect cancel");
-				b = true;
-				wc.task = null;
-			}
-			ServersConnection.removeConnection(wc);
+		WaitingConnection wc = getConnections(player.getUniqueId());
+		if (wc == null)
+			return b;
+		if (wc.isChangeServer == isPostLoginEvent) {
+			wc.isChangeServer = false;
+			return b;
 		}
+		BungeeTaskManager taskHandler = (BungeeTaskManager) LinkSpigotBungee.Provider.link.getTask();
+		ScheduledTask task = wc.task;
+		if (task != null) {
+			taskHandler.cancelTaskById(task.getId());
+			b = true;
+			wc.task = null;
+		}
+		ServersConnection.removeConnection(wc);
 		return b;
 	}
 
-	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer) {
+	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer, boolean isChangeServer) {
 		removeTryToConnect(player);
 		BungeeTaskManager taskHandler = (BungeeTaskManager) LinkSpigotBungee.Provider.link.getTask();
 		ScheduledTask task = taskHandler.scheduleSyncRepeatingTaskAndGet("tryconnect_player_" + player.getUniqueId(), new QueueSpigotTask(player, olympaServer), 0, 20, TimeUnit.SECONDS);
-		addConnection(new WaitingConnection(player.getUniqueId(), olympaServer, task));
+		addConnection(new WaitingConnection(player.getUniqueId(), olympaServer, task, isChangeServer));
 	}
 }

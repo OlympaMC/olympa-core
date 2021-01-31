@@ -65,7 +65,7 @@ public class DataManagmentListener implements Listener {
 			return;
 		}
 		int i = 0;
-		while (olympaPlayer == null && i++ < 10) {
+		while (olympaPlayer == null && i < 10) {
 			LinkSpigotBungee.Provider.link.sendMessage("&4OlympaPlayer de %s pas encore trouvé, essaie n°%d.", uuid, i + 1);
 			try {
 				Thread.sleep(1000);
@@ -82,6 +82,7 @@ public class DataManagmentListener implements Listener {
 				}
 			else
 				olympaPlayer = olympaAccount.getFromCache();
+			i++;
 		}
 		if (olympaPlayer == null) {
 			event.disallow(Result.KICK_OTHER, SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotNoData"));

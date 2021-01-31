@@ -24,11 +24,9 @@ public class KickCommand extends BungeeCommand {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		SanctionExecute banArg = SanctionExecute.formatArgs(args);
+		SanctionExecute banArg = SanctionExecute.formatArgs(this, args);
 		banArg.setSanctionType(OlympaSanctionType.KICK);
-		if (sender instanceof ProxiedPlayer)
-			banArg.setAuthor(getOlympaPlayer());
-		banArg.launchSanction(this, OlympaSanctionStatus.END);
+		banArg.launchSanction(OlympaSanctionStatus.END);
 	}
 
 	//	@Override

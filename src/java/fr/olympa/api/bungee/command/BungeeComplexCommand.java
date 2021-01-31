@@ -243,7 +243,7 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 		}
 
 		try {
-			internal.method.invoke(internal.commands, new CommandContext(this, argsCmd, command));
+			internal.method.invoke(internal.commands, new CommandContext(sender, this, argsCmd, command));
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			sendError("Une erreur est survenue.");
 			e.printStackTrace();

@@ -15,7 +15,7 @@ public class SpigotServerSwitchReceiver extends JedisPubSub {
 		ProxiedPlayer player = OlympaBungee.getInstance().getProxy().getPlayer(args[0]);
 		OlympaServer server = OlympaServer.valueOf(args[1]);
 		System.out.println(String.format("[REDIS] Demande de serveur switch %s sur le serv %s.", player.getName(), server.getNameCaps()));
-		ServersConnection.tryConnect(player, server);
+		ServersConnection.tryConnect(player, server, false);
 	}
 
 }

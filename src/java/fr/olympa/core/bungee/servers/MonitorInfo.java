@@ -45,7 +45,7 @@ public class MonitorInfo {
 		olympaServer = serverInfo.getKey();
 		serverID = serverInfo.getValue();
 
-		ping = Math.round((System.nanoTime() - time) / 1000000);
+		ping = Math.round((System.nanoTime() - time) / 1000000f);
 		if (error == null) {
 			Players players = serverPing.getPlayers();
 			onlinePlayers = players.getOnline();
@@ -63,9 +63,9 @@ public class MonitorInfo {
 			if (motd.length >= 4 && RegexMatcher.INT.is(motd[3]))
 				threads = (Integer) RegexMatcher.INT.parse(motd[3]);
 			if (motd.length >= 5)
-				firstVersion = motd[4];
+				lastVersion = motd[4];
 			if (motd.length >= 6)
-				lastVersion = motd[5];
+				firstVersion = motd[5];
 			if (motd.length >= 7 && RegexMatcher.INT.is(motd[6]))
 				lastModifiedCore = (Integer) RegexMatcher.INT.parse(motd[6]);
 		} else {

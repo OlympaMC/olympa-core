@@ -146,7 +146,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 			}
 
 			if (args.length < minArg) {
-				sendUsage();
+				sendUsage(getName());
 				return;
 			}
 			onCommand(sender, args);

@@ -54,8 +54,8 @@ public class BasicSecurityListener implements Listener {
 		String name = connection.getName();
 		String ip = connection.getAddress().getAddress().getHostAddress();
 
-		if (!name.matches("[a-zA-Z0-9_]*") || name.length() > 16 || name.length() < 4) {
-			event.setCancelReason(BungeeUtils.connectScreen("&6Ton pseudo doit contenir uniquement des chiffres, des lettres et des tiret bas et entre 4 et 16 charatères."));
+		if (!RegexMatcher.USERNAME.is(name)) {
+			event.setCancelReason(BungeeUtils.connectScreen("&6Ton pseudo doit contenir uniquement des chiffres, des lettres et des tiret bas et entre 4 et 16 caractères."));
 			event.setCancelled(true);
 			return;
 		}

@@ -16,7 +16,7 @@ import net.md_5.bungee.event.EventPriority;
 
 public class BungeeCommandListener implements Listener {
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = -128)
 	public void onChat(ChatEvent event) {
 		String message = event.getMessage();
 		if (!message.startsWith("/"))
@@ -28,10 +28,9 @@ public class BungeeCommandListener implements Listener {
 		BungeeCommand cmd = BungeeCommand.commandPreProcess.entrySet().stream().filter(entry -> entry.getKey().contains(command)).map(Entry::getValue).findFirst().orElse(null);
 		if (cmd == null)
 			return;
-
+		event.setCancelled(true);
 		ProxiedPlayer player = (ProxiedPlayer) event.getSender();
 		cmd.execute(player, Arrays.copyOfRange(args, 1, args.length));
-		event.setCancelled(true);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -51,8 +50,7 @@ public class BungeeCommandListener implements Listener {
 				event.getSuggestions().clear();
 				event.getSuggestions().addAll(suggestion);
 			}
-		}else {
+		} else
 			event.setCancelled(true);
-		}
 	}
 }

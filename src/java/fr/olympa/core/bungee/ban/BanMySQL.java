@@ -32,7 +32,7 @@ public class BanMySQL {
 	`status_id` INT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
-
+	
 	 */
 	/**
 	 * Ajoute un sanction/mute
@@ -89,7 +89,7 @@ public class BanMySQL {
 	//		return sanction;
 	//	}
 
-	public static OlympaSanction getSanction(int id) {
+	public static OlympaSanction getSanction(long id) {
 		OlympaSanction sanction = null;
 		try {
 			Statement state = OlympaBungee.getInstance().getDatabase().createStatement();

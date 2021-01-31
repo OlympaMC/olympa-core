@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.gson.Gson;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
@@ -23,14 +24,13 @@ import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
-import us.myles.viaversion.libs.gson.Gson;
 
 public class RedisSpigotSend {
 
 	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
 	public static Cache<UUID, Consumer<String>> askPlayerServer = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
 	public static boolean errorsEnabled = false;
-	
+
 	public static void askServerName() {
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
 			try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
@@ -119,7 +119,8 @@ public class RedisSpigotSend {
 	}
 
 	public static void sendError(String stackTrace) {
-		if (!errorsEnabled) return;
+		if (!errorsEnabled)
+			return;
 		String serverName = OlympaCore.getInstance().getServerName();
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 			jedis.publish(RedisChannel.SPIGOT_RECEIVE_ERROR.name(), serverName + ":" + stackTrace);

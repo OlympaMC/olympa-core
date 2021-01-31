@@ -30,7 +30,7 @@ public class ConnectionQueueListener implements Listener {
 		while (QueueHandler.isInQueue(name) && connection.isConnected())
 			try {
 				Thread.sleep(timeToW8);
-			} catch (Exception e) {
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 				event.setCancelReason(BungeeUtils.connectScreen("§cUne erreur est survenue."));
 				event.setCancelled(true);
