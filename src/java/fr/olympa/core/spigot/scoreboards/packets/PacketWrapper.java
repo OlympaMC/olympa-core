@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import fr.olympa.api.scoreboard.tab.FakeTeam;
 import fr.olympa.core.spigot.scoreboards.NametagManager;
 import fr.olympa.core.spigot.scoreboards.utils.UtilsScoreboard;
 
@@ -31,11 +32,29 @@ public class PacketWrapper {
 			e.printStackTrace();
 		}
 	}
+
+	public static PacketWrapper delete(FakeTeam team) {
+		FakeTeam.removeId(team);
+		return new PacketWrapper(team.getName(), 2);
+	}
+
+	public static PacketWrapper create(FakeTeam team) {
+		return new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers());
+	}
+
+	public static PacketWrapper addMember(FakeTeam team, List<String> members) {
+		return new PacketWrapper(team.getName(), 3, members);
+	}
+
+	public static PacketWrapper removeMember(FakeTeam team, List<String> members) {
+		return new PacketWrapper(team.getName(), 4, members);
+	}
+
 	public String error;
 
 	private Object packet = PacketAccessor.createPacket();
 
-	public PacketWrapper(String name, int param, List<String> members) {
+	private PacketWrapper(String name, int param, List<String> members) {
 		if (param != 3 && param != 4)
 			throw new IllegalArgumentException("Method must be join or leave for player constructor");
 		setupDefaults(name, param);
@@ -77,6 +96,12 @@ public class PacketWrapper {
 			} catch (Exception e) {
 				error = e.getMessage();
 			}
+	}
+
+	private PacketWrapper(String name, int param) {
+		if (param != 2)
+			throw new IllegalArgumentException("Method must be remove team");
+		setupDefaults(name, param);
 	}
 
 	public void send() {

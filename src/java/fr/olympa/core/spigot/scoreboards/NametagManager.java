@@ -1,8 +1,14 @@
 package fr.olympa.core.spigot.scoreboards;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 
@@ -10,14 +16,22 @@ import fr.olympa.api.scoreboard.tab.FakeTeam;
 import fr.olympa.api.scoreboard.tab.Nametag;
 import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
 
-@SuppressWarnings("deprecation")
 public class NametagManager {
 
 	public static boolean DISABLE_PUSH_ALL_TAGS = true;
 
-	private final Map<String, Map<Player, FakeTeam>> playerTeams = new HashMap<>(); //TODO
+	//	private final Map<String, Map<Player, FakeTeam>> playerTeams = new HashMap<>(); //TODO
+	private final static Map<FakeTeam, Collection<? extends Player>> playerTeams = new HashMap<>();
 
-	public void changeFakeNametag(String player, Nametag nameTag, int sortPriority, Collection<? extends Player> toPlayers) {
+	public static Set<FakeTeam> getTeamsOfPlayer(Player player) {
+		return playerTeams.keySet().stream().filter(team -> team.getMembers().contains(player.getName())).collect(Collectors.toSet());
+	}
+
+	public static Set<FakeTeam> getTeamsOfViewer(Player player) {
+		return playerTeams.entrySet().stream().filter(entry -> entry.getValue().contains(player)).map(Entry::getKey).collect(Collectors.toSet());
+	}
+
+	public void changeFakeNametag(String playerName, Nametag nameTag, int sortPriority, Collection<? extends Player> toPlayers) {
 		/*FakeTeam previous = getFakeTeam(player);
 		String suffix = nameTag.getSuffix();
 		String prefix = nameTag.getPrefix();
@@ -29,9 +43,32 @@ public class NametagManager {
 			suffix = previous.getSuffix();*/
 		if (nameTag.isEmpty())
 			return;
+		//		playerTeams.entrySet().stream().filter(entry -> entry.getValue().contains(toPlayers.stream().filter(p -> entry.getValue().contains(p)).coll));
 		FakeTeam team = new FakeTeam(nameTag.getPrefix(), nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix(), sortPriority);
-		team.addMember(player);
-		new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers()).send(toPlayers);
+		team.addMember(playerName);
+		PacketWrapper.create(team).send(toPlayers);
+		//		new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers()).send(toPlayers);
+		List<FakeTeam> remove = new ArrayList<>();
+		playerTeams.forEach((fakeTeam, toPlayersCache) -> {
+			if (!fakeTeam.getMembers().contains(playerName))
+				return;
+			fakeTeam.getMembers().remove(playerName);
+			if (fakeTeam.getMembers().isEmpty()) {
+				PacketWrapper.delete(team);
+				remove.add(fakeTeam);
+				return;
+			}
+			List<? extends Player> removeToPlayers = toPlayersCache.stream().filter(p -> toPlayers.contains(p)).collect(Collectors.toList());
+			if (removeToPlayers.size() != toPlayersCache.size())
+				PacketWrapper.removeMember(team, Arrays.asList(playerName)).send(toPlayers);
+			//				new PacketWrapper(team.getName(), 4, Arrays.asList(player)).send(toPlayers); // WARNING CAN CRASH -> need test
+			else {
+				PacketWrapper.delete(team).send(toPlayers);
+				remove.add(fakeTeam);
+			}
+		});
+		remove.forEach(fakeTeam -> playerTeams.remove(fakeTeam));
+		playerTeams.put(team, toPlayers);
 
 		//new PacketWrapper(team.getName(), 3, Arrays.asList(player)).send(toPlayers);
 	}

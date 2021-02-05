@@ -66,17 +66,18 @@ public class DataManagmentListener implements Listener {
 		}
 		int i = 0;
 		while (olympaPlayer == null && i < 10) {
-			LinkSpigotBungee.Provider.link.sendMessage("&4OlympaPlayer de %s pas encore trouvé, essaie n°%d.", uuid, i + 1);
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			if (i == 2 || i == 4)
+			if (i == 5 || i == 8) {
 				olympaPlayer = olympaAccount.getFromRedis();
-			else if (i == 6)
+				LinkSpigotBungee.Provider.link.sendMessage("&4OlympaPlayer de %s pas encore trouvé, essaye de récupérer via redis n°%d résultat: %s", uuid, i + 1, olympaPlayer != null);
+			} else if (i == 9)
 				try {
 					olympaPlayer = olympaAccount.fromDb();
+					LinkSpigotBungee.Provider.link.sendMessage("&4OlympaPlayer de %s pas encore trouvé, essaye de récupérer via bdd (risque de perte de données majeur) n°%d résultat: %s", uuid, i + 1, olympaPlayer != null);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -106,6 +107,8 @@ public class DataManagmentListener implements Listener {
 			return;
 		}
 		event.setJoinMessage(ColorUtils.color(String.format("&7[&a+&7] %s%s", olympaPlayer.getGroupPrefix(), player.getDisplayName())));
+		//		 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, Reflection.getPlayerConnection(player)));
+
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)

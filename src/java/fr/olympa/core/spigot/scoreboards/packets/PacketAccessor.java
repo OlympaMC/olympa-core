@@ -43,9 +43,8 @@ class PacketAccessor {
 		try {
 			String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 
-			if (legacyVersions.contains(version)) {
+			if (legacyVersions.contains(version))
 				LEGACY_SERVER = true;
-			}
 
 			Class<?> typeCraftPlayer = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer");
 			getHandle = typeCraftPlayer.getMethod("getHandle");
@@ -65,15 +64,12 @@ class PacketAccessor {
 			}
 
 			PacketData currentVersion = null;
-			for (PacketData packetData : PacketData.values()) {
-				if (version.contains(packetData.name())) {
+			for (PacketData packetData : PacketData.values())
+				if (version.contains(packetData.name()))
 					currentVersion = packetData;
-				}
-			}
 
-			if (CAULDRON_SERVER) {
+			if (CAULDRON_SERVER)
 				currentVersion = PacketData.cauldron;
-			}
 
 			if (currentVersion != null) {
 				PREFIX = getNMS(currentVersion.getPrefix());
@@ -84,17 +80,14 @@ class PacketAccessor {
 				PACK_OPTION = getNMS(currentVersion.getPackOption());
 				DISPLAY_NAME = getNMS(currentVersion.getDisplayName());
 
-				if (!isLegacyVersion()) {
+				if (!isLegacyVersion())
 					TEAM_COLOR = getNMS(currentVersion.getColor());
-				}
 
-				if (isPushVersion(version)) {
+				if (isPushVersion(version))
 					PUSH = getNMS(currentVersion.getPush());
-				}
 
-				if (isVisibilityVersion(version)) {
+				if (isVisibilityVersion(version))
 					VISIBILITY = getNMS(currentVersion.getVisibility());
-				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -103,7 +96,7 @@ class PacketAccessor {
 
 	static Object createPacket() {
 		try {
-			return packetClass.newInstance();
+			return packetClass.getConstructor().newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -129,9 +122,8 @@ class PacketAccessor {
 	}
 
 	static void sendPacket(Collection<? extends Player> players, Object packet) {
-		for (Player player : players) {
+		for (Player player : players)
 			sendPacket(player, packet);
-		}
 	}
 
 	static void sendPacket(Player player, Object packet) {

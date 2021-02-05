@@ -2,13 +2,11 @@ package fr.olympa.core.spigot.scoreboards.api;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 
@@ -47,7 +45,7 @@ public final class NametagAPI implements INametagApi {
 	}
 
 	@Override
-	public void callNametagUpdate(OlympaPlayer player, Collection<? extends OlympaPlayer> toPlayers) {
+	public void callNametagUpdate(OlympaPlayer player, Iterable<? extends OlympaPlayer> toPlayers) {
 		if (player.getPlayer() == null || !player.getPlayer().isOnline()) {
 			OlympaCore.getInstance().sendMessage("§cTentative de mise à jour du nametag du joueur hors-ligne §4%s", player.getName());
 			return;
@@ -57,15 +55,14 @@ public final class NametagAPI implements INametagApi {
 			if (to.getPlayer() == null || !to.getPlayer().isOnline())
 				continue;
 			Nametag tag = new Nametag();
-			for (Entry<EventPriority, NametagHandler> handlerEntry : handlers) {
+			for (Entry<EventPriority, NametagHandler> handlerEntry : handlers)
 				try {
 					NametagHandler handler = handlerEntry.getValue();
 					handler.updateNameTag(tag, player, to);
-				}catch (Exception ex) {
+				} catch (Exception ex) {
 					OlympaCore.getInstance().sendMessage("§cUne erreur est survenue lors de la mise à jour du nametag de %s", player.getName());
 					ex.printStackTrace();
 				}
-			}
 			List<Player> similarTags = nametags.get(tag);
 			if (similarTags == null) {
 				similarTags = new ArrayList<>();
@@ -81,14 +78,7 @@ public final class NametagAPI implements INametagApi {
 		wrapper.send();
 		if (wrapper.error == null)
 			return true;
-		Bukkit.getLogger().severe(new StringBuilder()
-				.append("\n------------------------------------------------------\n")
-				.append("[WARNING] ScoreboardTeam").append(" Failed to load! [WARNING]")
-				.append("\n------------------------------------------------------")
-				.append("\nThis might be an issue with reflection:\n> ")
-				.append(wrapper.error)
-				.append("\n\n------------------------------------------------------")
-				.toString());
+		new Exception("[WARNING] NameTag -> invalid Protocol of Team, error with reflection. NameTag won't work").printStackTrace();
 		return false;
 	}
 

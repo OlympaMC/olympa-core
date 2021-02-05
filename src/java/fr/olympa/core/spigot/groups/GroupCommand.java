@@ -146,6 +146,7 @@ public class GroupCommand extends OlympaCommand {
 						this.sendError("%s&c n'est pas dans le groupe &4%s&c.", olympaTarget.getName(), newGroup.getName(gender));
 						return true;
 					}
+					olympaTarget.removeGroup(newGroup);
 					Entry<OlympaGroup, Long> entry = olympaTarget.getGroups().firstEntry();
 					OlympaGroup principalGroup = entry.getKey();
 					Long timestamp2 = entry.getValue();
@@ -154,7 +155,6 @@ public class GroupCommand extends OlympaCommand {
 						timestampString2 = "pendant &4" + Utils.timestampToDuration(timestamp2) + "&c";
 					msg = "&cTu as été démote du groupe &4%group&c%time&c. Ton grade principale deviens &4%group2&c%time2&c.".replace("%time2", timestampString2).replace("%group2", principalGroup.getName(gender));
 					state = ChangeType.REMOVE;
-					olympaTarget.removeGroup(newGroup);
 				} else {
 					sendUsage(label);
 					return true;
