@@ -101,4 +101,6 @@ public class OlympaCorePermissions {
 
 	public static final OlympaBungeePermission IP_COMMAND = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaBungeePermission IP_COMMAND_SEE_IP = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
+
+	public static final OlympaSpigotPermission NAMETAG_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 }

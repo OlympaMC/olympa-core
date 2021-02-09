@@ -26,24 +26,37 @@ import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
  */
 public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 
-	private NametagManager manager;
+	public NametagManager manager;
+	private NametagHandler defaultHandler;
 	private List<Entry<EventPriority, NametagHandler>> handlers = new ArrayList<>();
 
 	@Override
 	public boolean enable(OlympaCore plugin) {
 		manager = new NametagManager();
 		handlers = new ArrayList<>();
+		defaultHandler = (nametag, op, to) -> nametag.appendPrefix(op.getGroupPrefix());
+		addNametagHandler(EventPriority.LOW, defaultHandler);
 		return true;
 	}
 
 	@Override
 	public boolean disable(OlympaCore plugin) {
+		if (defaultHandler != null) {
+			removeNametagHandler(defaultHandler);
+			defaultHandler = null;
+		}
 		return disable();
 	}
 
 	@Override
 	public boolean isEnabled() {
 		return manager != null;
+	}
+
+	@Override
+	public boolean setToPlugin(OlympaCore plugin) {
+		plugin.setNameTagApi(this);
+		return true;
 	}
 
 	private boolean disable() {
@@ -86,7 +99,6 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 			if (to.getPlayer() == null || !to.getPlayer().isOnline())
 				continue;
 			Nametag tag = new Nametag();
-			OlympaCore.getInstance().sendMessage("§cok");
 			for (Entry<EventPriority, NametagHandler> handlerEntry : handlers)
 				try {
 					NametagHandler handler = handlerEntry.getValue();
@@ -95,7 +107,6 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 					OlympaCore.getInstance().sendMessage("§cUne erreur est survenue lors de la mise à jour du nametag de %s", player.getName());
 					ex.printStackTrace();
 				}
-			OlympaCore.getInstance().sendMessage("§cok2");
 			List<Player> similarTags = nametags.get(tag);
 			if (similarTags == null) {
 				similarTags = new ArrayList<>();
@@ -104,7 +115,6 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 			similarTags.add(to.getPlayer());
 		}
 		nametags.forEach((tag, players) -> manager.changeFakeNametag(player.getName(), tag, player.getGroup().getIndex(), players));
-		OlympaCore.getInstance().sendMessage("§cok3");
 	}
 
 	public boolean testCompat() {

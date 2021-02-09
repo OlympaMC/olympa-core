@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -217,23 +216,19 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		}
 		new ReportMySQL(database);
 
-		//		nameTagApi = new NametagAPI();
-		//		((NametagAPI) nameTagApi).enable(this);
-		//		pluginManager.registerEvents(new ScoreboardTeamListener(), this);
-		// move to fr.olympa.core.spigot.module.SpigotModule.class
 		try {
 			SpigotModule.enable();
+			((NametagAPI) nameTagApi).testCompat();
 		} catch (Exception | NoSuchMethodError e) {
 			sendMessage("&cUne erreur est survenue lors du chargement des modules.");
 			e.printStackTrace();
 		}
-		((NametagAPI) nameTagApi).testCompat();
-		if (nameTagApi != null)
-			nameTagApi.addNametagHandler(EventPriority.LOW, (nametag, op, to) -> nametag.appendPrefix(op.getGroupPrefix()));
-		//		nameTagApi.addNametagHandler(EventPriority.HIGHEST, (nametag, op, to) -> {
-		//			if (vanishApi != null && vanishApi.isVanished(op.getPlayer()) && OlympaAPIPermissions.VANISH_SEE.hasPermission(to))
-		//				nametag.appendSuffix("&4[VANISH]&7");
-		//		});
+		try {
+			new HologramsManager(this, new File(getDataFolder(), "holograms.yml"));
+		} catch (NullPointerException | IOException | ReflectiveOperationException e) {
+			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
+			e.printStackTrace();
+		}
 
 		pluginManager.registerEvents(this, this);
 		pluginManager.registerEvents(new DataManagmentListener(), this);
@@ -245,14 +240,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		pluginManager.registerEvents(new CommandListener(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
 		pluginManager.registerEvents(regionManager = new RegionManager(), this);
-
-		try {
-			new HologramsManager(this, new File(getDataFolder(), "holograms.yml"));
-			//			pluginManager.registerEvents(hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml")), this);
-		} catch (NullPointerException | IOException | ReflectiveOperationException e) {
-			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
-			e.printStackTrace();
-		}
 
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();

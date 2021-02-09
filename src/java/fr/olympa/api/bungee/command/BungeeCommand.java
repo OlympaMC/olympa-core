@@ -49,6 +49,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 	protected boolean bypassAuth = false;
 	protected OlympaPermission permission;
 	protected Map<List<CommandArgument>, Boolean> args = new LinkedHashMap<>();
+	List<String> commands = new ArrayList<>();
 
 	/**
 	 * Don't foget to set {@link NewBungeeCommand#usageString}
@@ -228,11 +229,17 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 	@Override
 	public BungeeCommand registerPreProcess() {
 		build();
-		List<String> commands = new ArrayList<>();
 		commands.add(command);
 		commands.addAll(Arrays.asList(aliases));
 		commandPreProcess.put(commands, this);
 		return this;
+	}
+
+	@Override
+	public void unregister() {
+		plugin.getProxy().getPluginManager().unregisterCommand(this);
+		if (commandPreProcess.containsValue(this))
+			commandPreProcess.remove(commands, this);
 	}
 
 	@Override

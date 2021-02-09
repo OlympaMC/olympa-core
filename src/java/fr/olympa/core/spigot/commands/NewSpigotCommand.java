@@ -48,24 +48,38 @@ public class NewSpigotCommand extends ComplexCommand {
 	//		CacheStats.executeOnList(this, cmd);
 	//	}
 
-	@Cmd(args = { "MODULES", "ON|OFF" }, min = 1)
-	public void module(CommandContext cmd) {
-		Boolean toOn = cmd.getArgumentsLength() > 1 ? ((String) cmd.getArgument(1)).equalsIgnoreCase("ON") : null;
-		OlympaModule<? extends Object, Listener, ? extends Plugin, OlympaCommand> module = cmd.getArgument(0);
-		if (toOn == null)
-			sendMessage(Prefix.DEFAULT, "Le module &8%s&7 est %s", module.getName(), module.isEnabledString());
-		else if (toOn) {
-			module.enable();
-			sendMessage(Prefix.DEFAULT, "Démarrage du module %s, il est désormais %s", module.getName(), module.isEnabledString());
-		} else {
-			module.disable();
-			sendMessage(Prefix.DEFAULT, "Arrêt du module %s, il est désormais %s", module.getName(), module.isEnabledString());
-		}
-
-	}
-
 	@Cmd(permissionName = "SPIGOT_COMMAND_CACHE", args = { "DEBUG_MAP", "clear|print" })
 	public void map(CommandContext cmd) {
 		CacheStats.executeOnMap(this, cmd);
+	}
+
+	@Cmd(args = { "MODULES|debug", "ON|OFF" }, min = 1)
+	public void module(CommandContext cmd) {
+		String arg1 = cmd.getArgumentsLength() > 1 ? (String) cmd.getArgument(1) : "";
+		Boolean toOn = cmd.getArgumentsLength() > 1 ? arg1.equalsIgnoreCase("ON") ? true : !arg1.equalsIgnoreCase("OFF") : null;
+		Object arg0 = cmd.getArgument(0);
+		if (arg0 instanceof String) {
+			if (toOn == null)
+				sendMessage(Prefix.DEFAULT, "Le module &8%s&7 est %s", "de debug", OlympaModule.DEBUG ? "&2Activé" : "&4Désativé");
+			else if (toOn) {
+				OlympaModule.DEBUG = true;
+				sendMessage(Prefix.DEFAULT_GOOD, "Le module %s est désormais %s", "de debug", OlympaModule.DEBUG ? "&2Activé" : "&4Désativé");
+			} else {
+				OlympaModule.DEBUG = false;
+				sendMessage(Prefix.DEFAULT_BAD, "Le module %s est désormais %s", "de debug", OlympaModule.DEBUG ? "&2Activé" : "&4Désativé");
+			}
+		} else {
+			OlympaModule<? extends Object, Listener, ? extends Plugin, OlympaCommand> module = cmd.getArgument(0);
+			if (toOn == null)
+				sendMessage(Prefix.DEFAULT, "Le module &8%s&7 est %s", module.getName(), module.isEnabledString());
+			else if (toOn) {
+				module.enable();
+				sendMessage(Prefix.DEFAULT_GOOD, "Démarrage du module %s, il est désormais %s", module.getName(), module.isEnabledString());
+			} else {
+				module.disable();
+				sendMessage(Prefix.DEFAULT_BAD, "Arrêt du module %s, il est désormais %s", module.getName(), module.isEnabledString());
+			}
+
+		}
 	}
 }

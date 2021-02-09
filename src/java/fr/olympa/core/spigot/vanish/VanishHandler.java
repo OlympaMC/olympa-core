@@ -32,7 +32,7 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 		if (nameTagApi != null) {
 			handler = (nametag, op, to) -> {
 				if (isVanished(op.getPlayer()) && OlympaAPIPermissions.VANISH_SEE.hasPermission(to))
-					nametag.appendSuffix("&4[VANISH]&7");
+					nametag.appendSuffix("§d[§5VANISH§d]");
 			};
 			nameTagApi.addNametagHandler(EventPriority.HIGHEST, handler);
 			return true;
@@ -58,12 +58,20 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 	}
 
 	@Override
+	public boolean setToPlugin(OlympaCore plugin) {
+		plugin.setVanishApi(this);
+		return true;
+	}
+
+	@Override
 	public void disable(OlympaPlayer olympaPlayer, boolean showMessage) {
 		Player player = olympaPlayer.getPlayer();
 		OlympaCore plugin = OlympaCore.getInstance();
 		player.removePotionEffect(PotionEffectType.INVISIBILITY);
 		player.setCollidable(true);
 		removeVanishMetadata(player);
+		INametagApi api = plugin.getNameTagApi();
+		api.callNametagUpdate(olympaPlayer);
 		Bukkit.getOnlinePlayers().forEach(p -> p.showPlayer(plugin, player));
 		if (showMessage)
 			Prefix.DEFAULT_BAD.sendMessage(player, "Tu n'es plus en vanish.");
@@ -77,10 +85,10 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 		player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false), true);
 		player.setCollidable(false);
 		addVanishMetadata(player);
-		OlympaAPIPermissions.VANISH_SEE.getOlympaPlayers(perm -> {
-			INametagApi api = OlympaCore.getInstance().getNameTagApi();
+		INametagApi api = plugin.getNameTagApi();
+		OlympaAPIPermissions.VANISH_SEE.getOlympaPlayers(playerPerm -> {
 			//			NametagAPI api = SpigotModule.NAME_TAG.getApi();
-			api.callNametagUpdate(olympaPlayer, perm);
+			api.callNametagUpdate(olympaPlayer, playerPerm);
 			olympaPlayer.getPlayer().showPlayer(plugin, player);
 		}, noPerm -> noPerm.forEach(noStaff -> noStaff.getPlayer().hidePlayer(plugin, player)));
 		if (showMessage)
@@ -109,4 +117,5 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 	public void removeVanishMetadata(Player player) {
 		player.removeMetadata("vanished", OlympaCore.getInstance());
 	}
+
 }

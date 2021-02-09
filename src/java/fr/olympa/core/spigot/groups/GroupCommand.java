@@ -139,7 +139,7 @@ public class GroupCommand extends OlympaCommand {
 					Long timestamp2 = entry.getValue();
 					String timestampString2 = new String();
 					if (timestamp2 != 0)
-						timestampString2 = "pendant &2" + Utils.timestampToDuration(timestamp2) + "&a";
+						timestampString2 = " pendant &2" + Utils.timestampToDuration(timestamp2) + "&a";
 					msg = "&aTu es désormais en plus dans le groupe &2%group&a%time. Ton grade principale est &2%group2&a%time2.".replace("%time2", timestampString2).replace("%group2", principalGroup.getName(gender));
 				} else if (args[nextArg].equalsIgnoreCase("remove")) {
 					if (!oldGroups.containsKey(newGroup)) {
@@ -152,7 +152,7 @@ public class GroupCommand extends OlympaCommand {
 					Long timestamp2 = entry.getValue();
 					String timestampString2 = new String();
 					if (timestamp2 != 0)
-						timestampString2 = "pendant &4" + Utils.timestampToDuration(timestamp2) + "&c";
+						timestampString2 = " pendant &4" + Utils.timestampToDuration(timestamp2) + "&c";
 					msg = "&cTu as été démote du groupe &4%group&c%time&c. Ton grade principale deviens &4%group2&c%time2&c.".replace("%time2", timestampString2).replace("%group2", principalGroup.getName(gender));
 					state = ChangeType.REMOVE;
 				} else {

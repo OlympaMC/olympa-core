@@ -4,4 +4,4 @@ main: fr.olympa.core.spigot.OlympaCore
 author: Tristiisch, SkytAsul
 version: 0.1
 softdepend: [ProtocolSupport, ViaVersion]
-api-version: 1.15
+api-version: 1.16

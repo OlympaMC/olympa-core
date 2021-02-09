@@ -15,7 +15,7 @@ import fr.olympa.core.spigot.module.SpigotModule;
 public class VanishCommand extends OlympaCommand {
 
 	public VanishCommand(Plugin plugin) {
-		super(plugin, "vanish", "Permet de se mettre en Vash", OlympaAPIPermissions.VANISH_COMMAND, new String[] {});
+		super(plugin, "vanish", "Permet de se mettre en Vanish", OlympaAPIPermissions.VANISH_COMMAND, "v");
 		allowConsole = false;
 	}
 
