@@ -217,19 +217,19 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		}
 		new ReportMySQL(database);
 
-		nameTagApi = new NametagAPI();
+		//		nameTagApi = new NametagAPI();
 		//		((NametagAPI) nameTagApi).enable(this);
 		//		pluginManager.registerEvents(new ScoreboardTeamListener(), this);
 		// move to fr.olympa.core.spigot.module.SpigotModule.class
-		((NametagAPI) nameTagApi).testCompat();
-		if (nameTagApi != null)
-			nameTagApi.addNametagHandler(EventPriority.LOW, (nametag, op, to) -> nametag.appendPrefix(op.getGroupPrefix()));
 		try {
 			SpigotModule.enable();
 		} catch (Exception | NoSuchMethodError e) {
 			sendMessage("&cUne erreur est survenue lors du chargement des modules.");
 			e.printStackTrace();
 		}
+		((NametagAPI) nameTagApi).testCompat();
+		if (nameTagApi != null)
+			nameTagApi.addNametagHandler(EventPriority.LOW, (nametag, op, to) -> nametag.appendPrefix(op.getGroupPrefix()));
 		//		nameTagApi.addNametagHandler(EventPriority.HIGHEST, (nametag, op, to) -> {
 		//			if (vanishApi != null && vanishApi.isVanished(op.getPlayer()) && OlympaAPIPermissions.VANISH_SEE.hasPermission(to))
 		//				nametag.appendSuffix("&4[VANISH]&7");
