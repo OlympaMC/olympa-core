@@ -67,8 +67,8 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 				player.premiumUuid = context.deserialize(object.get("premiumUuid"), UUID.class);
 			if (object.has("vanish"))
 				player.vanish = object.get("vanish").getAsBoolean();
-			if (object.has("discordOlympaId"))
-				player.discordOlympaId = object.get("discordOlympaId").getAsInt();
+			//			if (object.has("discordOlympaId"))
+			//				player.discordOlympaId = object.get("discordOlympaId").getAsInt();
 			if (object.has("teamspeakId"))
 				player.teamspeakId = object.get("teamspeakId").getAsInt();
 			return player;
@@ -88,14 +88,14 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_CREATED = new SQLColumn<OlympaPlayerObject>("created", "DATE NOT NULL", Types.DATE).setUpdatable().setNotDefault();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_LAST_CONNECTION = new SQLColumn<OlympaPlayerObject>("last_connection", "TIMESTAMP NULL DEFAULT current_timestamp()", Types.TIMESTAMP).setUpdatable().setNotDefault();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_TS3_ID = new SQLColumn<OlympaPlayerObject>("ts3_id", "INT(11) DEFAULT NULL", Types.INTEGER).setUpdatable();
-	private static final SQLColumn<OlympaPlayerObject> COLUMN_DISCORD_ID = new SQLColumn<OlympaPlayerObject>("discord_olympa_id", "INT(11) DEFAULT NULL", Types.INTEGER).setUpdatable();
+	//	private static final SQLColumn<OlympaPlayerObject> COLUMN_DISCORD_ID = new SQLColumn<OlympaPlayerObject>("discord_olympa_id", "INT(11) DEFAULT NULL", Types.INTEGER).setUpdatable();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_NAME_HISTORY = new SQLColumn<OlympaPlayerObject>("name_history", "VARCHAR(10000) DEFAULT NULL", Types.VARCHAR).setUpdatable();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_IP_HISTORY = new SQLColumn<OlympaPlayerObject>("ip_history", "VARCHAR(10000) DEFAULT NULL", Types.VARCHAR).setUpdatable();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_GENDER = new SQLColumn<OlympaPlayerObject>("gender", "TINYINT(1) DEFAULT NULL", Types.TINYINT).setUpdatable();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_VANISH = new SQLColumn<OlympaPlayerObject>("vanish", "TINYINT(1) DEFAULT 0", Types.TINYINT).setUpdatable();
 
 	static final List<SQLColumn<OlympaPlayerObject>> COLUMNS = Arrays.asList(COLUMN_ID, COLUMN_PSEUDO, COLUMN_UUID_SERVER, COLUMN_UUID_PREMIUM, COLUMN_GROUPS, COLUMN_EMAIL, COLUMN_PASSWORD, COLUMN_MONEY, COLUMN_IP, COLUMN_CREATED,
-			COLUMN_LAST_CONNECTION, COLUMN_TS3_ID, COLUMN_DISCORD_ID, COLUMN_NAME_HISTORY, COLUMN_IP_HISTORY, COLUMN_GENDER, COLUMN_VANISH);
+			COLUMN_LAST_CONNECTION, COLUMN_TS3_ID/*, COLUMN_DISCORD_ID*/, COLUMN_NAME_HISTORY, COLUMN_IP_HISTORY, COLUMN_GENDER, COLUMN_VANISH);
 
 	@Expose
 	long id = -1;
@@ -129,8 +129,8 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	Boolean connected;
 	@Expose
 	private int teamspeakId;
-	@Expose
-	private int discordOlympaId;
+	//	@Expose
+	//	private int discordOlympaId;
 
 	private Object cachedPlayer = null;
 	private OlympaPlayerInformations cachedInformations = null;
@@ -348,7 +348,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public void loadSavedDatas(long id, UUID premiumUuid, String groupsString, long firstConnection, long lastConnection, String password, String email, Gender gender, String histNameJson, String histIpJson, int discordOlympaId, int teamspeakId, boolean vanish) {
+	public void loadSavedDatas(long id, UUID premiumUuid, String groupsString, long firstConnection, long lastConnection, String password, String email, Gender gender, String histNameJson, String histIpJson/*, int discordOlympaId*/, int teamspeakId, boolean vanish) {
 		this.id = id;
 		this.premiumUuid = premiumUuid;
 		for (String groupInfos : groupsString.split(";")) {
@@ -366,7 +366,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		this.password = password;
 		this.email = email;
 		this.gender = gender;
-		this.discordOlympaId = discordOlympaId;
+		//		this.discordOlympaId = discordOlympaId;
 		this.teamspeakId = teamspeakId;
 		this.vanish = vanish;
 
@@ -461,14 +461,14 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 		COLUMN_VANISH.updateAsync(this, vanish, null, null);
 	}
 
-	@Override
-	public int getDiscordOlympaId() {
-		return discordOlympaId;
-	}
-
-	@Override
-	public void setDiscordOlympaId(int discordOlympaId) {
-		this.discordOlympaId = discordOlympaId;
-		COLUMN_DISCORD_ID.updateAsync(this, discordOlympaId, null, null);
-	}
+	//	@Override
+	//	public int getDiscordOlympaId() {
+	//		return discordOlympaId;
+	//	}
+	//
+	//	@Override
+	//	public void setDiscordOlympaId(int discordOlympaId) {
+	//		this.discordOlympaId = discordOlympaId;
+	//		COLUMN_DISCORD_ID.updateAsync(this, discordOlympaId, null, null);
+	//	}
 }

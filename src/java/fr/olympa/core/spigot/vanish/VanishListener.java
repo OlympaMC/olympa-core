@@ -9,6 +9,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -21,26 +22,27 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.potion.PotionEffectType;
 
 import fr.olympa.api.vanish.IVanishApi;
 import fr.olympa.core.spigot.OlympaCore;
+import fr.olympa.core.spigot.module.SpigotModule;
 
-public class VanishListener {
+public class VanishListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		OlympaCore plugin = OlympaCore.getInstance();
-		player.getActivePotionEffects().removeIf(p -> p.getType() == PotionEffectType.INVISIBILITY && p.getDuration() == 0);
-		plugin.getVanishApi().getVanished().forEach(vanishPlayer -> player.hidePlayer(plugin, vanishPlayer));
+		//		player.getActivePotionEffects().removeIf(p -> p.getType() == PotionEffectType.INVISIBILITY && p.getDuration() == 0);
+
+		SpigotModule.VANISH.getApi().getVanished().forEach(vanishPlayer -> player.hidePlayer(plugin, vanishPlayer));
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		IVanishApi vanishHandler = OlympaCore.getInstance().getVanishApi();
-		if (vanishHandler.isVanished(player)) {
+		IVanishApi vanishHandler = SpigotModule.VANISH.getApi();
+		if (vanishHandler != null && vanishHandler.isVanished(player)) {
 			event.setQuitMessage(null);
 			vanishHandler.removeVanishMetadata(player);
 		}
@@ -51,7 +53,8 @@ public class VanishListener {
 		if (!(event.getEntity() instanceof Player) || event.getCause() != DamageCause.MAGIC)
 			return;
 		Player player = (Player) event.getEntity();
-		if (OlympaCore.getInstance().getVanishApi().isVanished(player))
+		IVanishApi vanishHandler = SpigotModule.VANISH.getApi();
+		if (vanishHandler != null && vanishHandler.isVanished(player))
 			event.setCancelled(true);
 	}
 
@@ -60,21 +63,24 @@ public class VanishListener {
 		if (!(event.getTarget() instanceof Player))
 			return;
 		Player player = (Player) event.getTarget();
-		if (OlympaCore.getInstance().getVanishApi().isVanished(player))
+		IVanishApi vanishHandler = SpigotModule.VANISH.getApi();
+		if (vanishHandler != null && vanishHandler.isVanished(player))
 			event.setCancelled(true);
 	}
 
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
 		Player player = event.getPlayer();
-		if (OlympaCore.getInstance().getVanishApi().isVanished(player))
+		IVanishApi vanishHandler = SpigotModule.VANISH.getApi();
+		if (vanishHandler != null && vanishHandler.isVanished(player))
 			event.setCancelled(true);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		if (!OlympaCore.getInstance().getVanishApi().isVanished(player))
+		IVanishApi vanishHandler = SpigotModule.VANISH.getApi();
+		if (vanishHandler != null && vanishHandler.isVanished(player))
 			return;
 		if (event.getAction() == Action.PHYSICAL && event.getClickedBlock().getType() == Material.FARMLAND)
 			event.setCancelled(true);
@@ -105,7 +111,8 @@ public class VanishListener {
 			if (!(entity instanceof Player))
 				continue;
 			Player player = (Player) entity;
-			if (OlympaCore.getInstance().getVanishApi().isVanished(player))
+			IVanishApi vanishHandler = SpigotModule.VANISH.getApi();
+			if (vanishHandler != null && vanishHandler.isVanished(player))
 				event.setIntensity(player, 0);
 		}
 	}
@@ -117,7 +124,8 @@ public class VanishListener {
 		if (!(entity instanceof Player))
 			return;
 		player = (Player) entity;
-		if (!OlympaCore.getInstance().getVanishApi().isVanished(player))
+		IVanishApi vanishHandler = SpigotModule.VANISH.getApi();
+		if (vanishHandler != null && vanishHandler.isVanished(player))
 			return;
 		event.setCancelled(true);
 	}
@@ -128,7 +136,8 @@ public class VanishListener {
 		Player player = (Player) event.getEntity();
 		if (!(event.getEntity() instanceof Player))
 			return;
-		if (OlympaCore.getInstance().getVanishApi().isVanished(player))
+		IVanishApi vanishHandler = SpigotModule.VANISH.getApi();
+		if (vanishHandler != null && vanishHandler.isVanished(player))
 			event.setCancelled(true);
 	}
 }

@@ -1,10 +1,7 @@
 package fr.olympa.core.spigot.scoreboards;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -31,6 +28,12 @@ public class NametagManager {
 		return playerTeams.entrySet().stream().filter(entry -> entry.getValue().contains(player)).map(Entry::getKey).collect(Collectors.toSet());
 	}
 
+	public static void deleteAllTeams() {
+		playerTeams.forEach((fakeTeam, players) -> {
+			PacketWrapper.delete(fakeTeam).send(players);
+		});
+	}
+
 	public void changeFakeNametag(String playerName, Nametag nameTag, int sortPriority, Collection<? extends Player> toPlayers) {
 		/*FakeTeam previous = getFakeTeam(player);
 		String suffix = nameTag.getSuffix();
@@ -43,12 +46,13 @@ public class NametagManager {
 			suffix = previous.getSuffix();*/
 		if (nameTag.isEmpty())
 			return;
-		//		playerTeams.entrySet().stream().filter(entry -> entry.getValue().contains(toPlayers.stream().filter(p -> entry.getValue().contains(p)).coll));
+		//		new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers()).send(toPlayers);
 		FakeTeam team = new FakeTeam(nameTag.getPrefix(), nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix(), sortPriority);
 		team.addMember(playerName);
-		PacketWrapper.create(team).send(toPlayers);
-		//		new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers()).send(toPlayers);
-		List<FakeTeam> remove = new ArrayList<>();
+		new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers()).send(toPlayers);
+		//		PacketWrapper.create(team).send(toPlayers);
+
+		/*List<FakeTeam> remove = new ArrayList<>();
 		playerTeams.forEach((fakeTeam, toPlayersCache) -> {
 			if (!fakeTeam.getMembers().contains(playerName))
 				return;
@@ -67,8 +71,9 @@ public class NametagManager {
 				remove.add(fakeTeam);
 			}
 		});
-		remove.forEach(fakeTeam -> playerTeams.remove(fakeTeam));
-		playerTeams.put(team, toPlayers);
+		remove.forEach(fakeTeam -> playerTeams.remove(fakeTeam));*/
+		//		playerTeams.put(team, toPlayers);
+		//		LinkSpigotBungee.Provider.link.sendMessage("DEBUG Team work");
 
 		//new PacketWrapper(team.getName(), 3, Arrays.asList(player)).send(toPlayers);
 	}

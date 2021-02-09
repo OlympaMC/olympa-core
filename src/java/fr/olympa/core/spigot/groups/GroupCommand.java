@@ -121,7 +121,7 @@ public class GroupCommand extends OlympaCommand {
 			TreeMap<OlympaGroup, Long> oldGroups = olympaTarget.getGroups();
 			String timestampString = new String();
 			if (timestamp != 0)
-				timestampString = "pendant &2" + Utils.timestampToDuration(timestamp) + "&a";
+				timestampString = " /groupendant &2" + Utils.timestampToDuration(timestamp) + "&a";
 
 			ChangeType state;
 			String msg = "&aTu es désormais dans le groupe &2%group&a%time.";
@@ -209,7 +209,7 @@ public class GroupCommand extends OlympaCommand {
 		} else if (args.length == 2)
 			return Utils.startWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toList()));
 		else if (args.length == 3)
-			return Utils.startWords(args[2], Arrays.asList(String.valueOf(Utils.getCurrentTimeInSeconds() + 2628000), "0"));
+			return Utils.startWords(args[2], Arrays.asList("add", "remove", String.valueOf(Utils.getCurrentTimeInSeconds() + 2628000), "0"));
 		else if (args.length == 4)
 			return Utils.startWords(args[3], Arrays.asList("add", "remove"));
 		return null;

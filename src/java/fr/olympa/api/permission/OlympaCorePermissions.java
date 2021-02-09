@@ -98,4 +98,7 @@ public class OlympaCorePermissions {
 	public static final OlympaSpigotPermission SPIGOT_COMMAND = new OlympaSpigotPermission(OlympaGroup.PLAYER);
 	public static final OlympaSpigotPermission SPIGOT_COMMAND_ANTIBOT = new OlympaSpigotPermission(OlympaGroup.RESP_BUILDER, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaSpigotPermission SPIGOT_COMMAND_CACHE = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, OlympaGroup.ADMIN).lockPermission();
+
+	public static final OlympaBungeePermission IP_COMMAND = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
+	public static final OlympaBungeePermission IP_COMMAND_SEE_IP = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
 }

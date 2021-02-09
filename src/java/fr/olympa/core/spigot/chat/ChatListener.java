@@ -20,7 +20,7 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.core.spigot.OlympaCore;
+import fr.olympa.core.spigot.module.SpigotModule;
 
 public class ChatListener implements Listener {
 
@@ -29,7 +29,7 @@ public class ChatListener implements Listener {
 		return format.substring(index - 3, index - 1);
 	}
 
-	@EventHandler (priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
@@ -77,7 +77,7 @@ public class ChatListener implements Listener {
 			target.playSound(target.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 3.0F, 0.533F);
 			new FakeMsg(format, player.getDisplayName(), messageToTarget).send(target);
 			event.getRecipients().remove(target);
-			if (OlympaCore.getInstance().getAfkHandler().isAfk(target))
+			if (SpigotModule.AFK.getApi().isAfk(target))
 				Prefix.INFO.sendMessage(player, "&7%s est AFK et risque de ne pas te répondre.", target.getName());
 		}
 	}

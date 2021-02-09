@@ -94,9 +94,10 @@ class PacketAccessor {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	static Object createPacket() {
 		try {
-			return packetClass.getConstructor().newInstance();
+			return packetClass.newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

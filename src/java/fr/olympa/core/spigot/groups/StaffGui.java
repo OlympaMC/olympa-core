@@ -12,6 +12,7 @@ import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.gui.OlympaGUI;
 import fr.olympa.api.item.OlympaItemBuild;
 import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.sort.Sorting;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
 
@@ -19,7 +20,8 @@ public class StaffGui extends OlympaGUI {
 
 	public StaffGui() throws SQLException {
 		super("Staff", 5);
-		List<OlympaPlayer> staff = MySQL.getPlayersByGroupsIds(OlympaGroup.getStaffGroups()).stream().sorted((o1, o2) -> o2.getGroup().getPower() - o1.getGroup().getPower()).collect(Collectors.toList());
+		//		List<OlympaPlayer> staff = MySQL.getPlayersByGroupsIds(OlympaGroup.getStaffGroups()).stream().sorted((o1, o2) -> o2.getGroup().getPower() - o1.getGroup().getPower()).collect(Collectors.toList());
+		List<OlympaPlayer> staff = MySQL.getPlayersByGroupsIds(OlympaGroup.getStaffGroups()).stream().sorted(new Sorting<OlympaPlayer>(op -> op.getGroup().getPower())).collect(Collectors.toList());
 		int i = 0;
 		for (OlympaPlayer s : staff)
 			inv.setItem(i++, new OlympaItemBuild(s.getGroup().getPrefix(s.getGender()) + s.getName()).skullowner(s.getName()).addLore(

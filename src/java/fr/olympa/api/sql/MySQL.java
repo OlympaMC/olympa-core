@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -262,6 +263,22 @@ public class MySQL extends SQLClass {
 		return olympaPlayers;
 	}
 
+	private static OlympaStatement getPlayersByAllIPStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE WHERE `ip` = ? OR `ip_history` LIKE ?");
+
+	public static Map<Boolean, List<OlympaPlayer>> getPlayersByAllIp(String ipAlreadyUsed) throws SQLException {
+		List<OlympaPlayer> olympaPlayers = new ArrayList<>();
+		PreparedStatement statement = getPlayersByAllIPStatement.getStatement();
+		statement.setString(1, ipAlreadyUsed);
+		statement.setString(2, "%" + ipAlreadyUsed + "%");
+		ResultSet resultSet = statement.executeQuery();
+		while (resultSet.next()) {
+			OlympaPlayer op = getOlympaPlayer(resultSet);
+			olympaPlayers.add(op);
+		}
+		resultSet.close();
+		return olympaPlayers.stream().collect(Collectors.partitioningBy(op -> op.getIp().equals(ipAlreadyUsed)));
+	}
+
 	private static OlympaStatement getPlayersByNameHistoryStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `name_history` LIKE ?");
 
 	public static List<OlympaPlayer> getPlayersByNameHistory(String nameHistory) throws SQLException {
@@ -413,7 +430,6 @@ public class MySQL extends SQLClass {
 				resultSet.getString("name_history"),
 				resultSet.getString("ip_history"),
 				resultSet.getInt("ts3_id"),
-				resultSet.getInt("discord_olympa_id"),
 				resultSet.getBoolean("vanish"));
 		return player;
 	}

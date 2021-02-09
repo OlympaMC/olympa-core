@@ -13,6 +13,7 @@ import fr.olympa.api.groups.SQLGroup;
 import fr.olympa.api.permission.OlympaAPIPermissions;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.plugin.OlympaPluginInterface;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
@@ -36,6 +37,7 @@ import fr.olympa.core.bungee.ban.listeners.SanctionListener;
 import fr.olympa.core.bungee.commands.BungeeBroadcastCommand;
 import fr.olympa.core.bungee.commands.BungeePingCommand;
 import fr.olympa.core.bungee.commands.InfoCommand;
+import fr.olympa.core.bungee.commands.IpCommand;
 import fr.olympa.core.bungee.commands.NewBungeeCommand;
 import fr.olympa.core.bungee.commands.RedisCommand;
 import fr.olympa.core.bungee.connectionqueue.BungeeQueueCommand;
@@ -92,7 +94,7 @@ import net.md_5.bungee.config.Configuration;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
-public class OlympaBungee extends Plugin implements LinkSpigotBungee {
+public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPluginInterface {
 
 	private static OlympaBungee instance;
 
@@ -207,6 +209,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		new NewBungeeCommand(this).register();
 		new BungeeBroadcastCommand(this).register();
 		new NickCommand(this).register();
+		new IpCommand(this).register();
 
 		MonitorServers.init(this);
 		SQLGroup.init();
@@ -349,7 +352,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee {
 		return maintConfig;
 	}
 
-	private String getPrefixConsole() {
+	@Override
+	public String getPrefixConsole() {
 		return "&f[&6" + getDescription().getName() + "&f] &e";
 	}
 

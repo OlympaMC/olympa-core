@@ -3,6 +3,7 @@ package fr.olympa.core.bungee.commands;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
 import java.util.TreeMap;
@@ -53,7 +54,9 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 				}
 				targetProxied = ProxyServer.getInstance().getPlayer(target.getUniqueId());
 			} catch (SQLException e) {
+				sendError(e);
 				e.printStackTrace();
+				return;
 			}
 		else if (proxiedPlayer != null) {
 			target = getOlympaPlayer();
@@ -96,23 +99,37 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 			}
 			out.addExtra("\n");
 		}
-		out2 = new TextComponent(TextComponent.fromLegacyText("§3Premium : §b" + (target.isPremium() ? "oui" : "non")));
+		if (target.isPremium())
+			out.addExtra(TxtComponentBuilder.of(null, "&3Premium : &boui", ClickEvent.Action.COPY_TO_CLIPBOARD, target.getPremiumUniqueId().toString(), HoverEvent.Action.SHOW_TEXT,
+					new Text("&eClique pour copier l'UUID premium dans le presse-papier")));
+		else
+			out.addExtra(new TextComponent(TextComponent.fromLegacyText("§3Premium : §bnon")));
+
 		//		out.addExtra(out2);
 		//		out.addExtra("\n");
 		//		out2 = new TextComponent(TextComponent.fromLegacyText("§3Link Discord: §b" + (target.getDiscordId() != 0 ? "oui" : "non")));
-		out.addExtra(out2);
 		out.addExtra("\n");
-		out.addExtra(TxtComponentBuilder.of(null, "&3UUID : &b%s", ClickEvent.Action.COPY_TO_CLIPBOARD, target.getUniqueId().toString(), HoverEvent.Action.SHOW_TEXT, new Text("&eClique pour copier dans le presse-papier")));
+		out.addExtra(
+				TxtComponentBuilder.of(null, "&3UUID : &b" + target.getUniqueId(), ClickEvent.Action.COPY_TO_CLIPBOARD, target.getUniqueId().toString(), HoverEvent.Action.SHOW_TEXT,
+						new Text("&eClique pour copier l'UUID dans le presse-papier")));
 		out.addExtra("\n");
 		if (hasPermission(OlympaCorePermissions.INFO_COMMAND_EXTRA)) {
 			out2 = new TextComponent(TextComponent.fromLegacyText("§3IP : §b[Cachée]"));
 			StringJoiner sj = new StringJoiner("\n");
 			sj.add("§c" + target.getIp());
 			try {
-				OlympaVpn ipInfo = VpnHandler.get(target.getIp());
+				String ip = target.getIp();
+				OlympaVpn ipInfo = VpnHandler.get(ip);
 				List<String> users = ipInfo.getUsers();
+				Map<Boolean, List<OlympaPlayer>> usersAll = MySQL.getPlayersByAllIp(ip);
+				List<OlympaPlayer> usersAllNow = usersAll.get(true);
+				List<OlympaPlayer> usersAllHistory = usersAll.get(false);
+				if (!usersAllNow.isEmpty())
+					sj.add("§cIP partagée actuellement avec " + ColorUtils.joinRedEt(usersAllNow));
+				if (!usersAllHistory.isEmpty())
+					sj.add("§cIP déjà partager avec " + ColorUtils.joinRedEt(usersAllHistory));
 				if (!users.isEmpty())
-					sj.add("§cIP partagée avec " + ColorUtils.joinRedEt(users));
+					sj.add("§cIP déjà utiliser sur les pseudo " + ColorUtils.joinRedEt(users));
 				if (hasPermission(OlympaCorePermissions.INFO_COMMAND_EXTRA_EXTRA))
 					sj.add("§e" + new Gson().toJson(ipInfo));
 			} catch (SQLException e) {

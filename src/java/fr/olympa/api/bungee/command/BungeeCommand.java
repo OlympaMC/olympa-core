@@ -48,7 +48,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 	protected String description;
 	protected boolean bypassAuth = false;
 	protected OlympaPermission permission;
-	protected LinkedHashMap<List<CommandArgument>, Boolean> args = new LinkedHashMap<>();
+	protected Map<List<CommandArgument>, Boolean> args = new LinkedHashMap<>();
 
 	/**
 	 * Don't foget to set {@link NewBungeeCommand#usageString}

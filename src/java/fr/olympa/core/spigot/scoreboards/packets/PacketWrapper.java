@@ -35,12 +35,16 @@ public class PacketWrapper {
 
 	public static PacketWrapper delete(FakeTeam team) {
 		FakeTeam.removeId(team);
-		return new PacketWrapper(team.getName(), 2);
+		return new PacketWrapper(team.getName(), 1);
 	}
 
 	public static PacketWrapper create(FakeTeam team) {
 		return new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers());
 	}
+	//
+	//	public static PacketWrapper update(FakeTeam team) {
+	//		return new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 2);
+	//	}
 
 	public static PacketWrapper addMember(FakeTeam team, List<String> members) {
 		return new PacketWrapper(team.getName(), 3, members);
@@ -99,7 +103,7 @@ public class PacketWrapper {
 	}
 
 	private PacketWrapper(String name, int param) {
-		if (param != 2)
+		if (param != 1)
 			throw new IllegalArgumentException("Method must be remove team");
 		setupDefaults(name, param);
 	}

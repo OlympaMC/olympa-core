@@ -21,7 +21,6 @@ import org.spigotmc.SpigotConfig;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
-import fr.olympa.api.afk.AfkHandler;
 import fr.olympa.api.command.CommandListener;
 import fr.olympa.api.command.essentials.AfkCommand;
 import fr.olympa.api.command.essentials.ColorCommand;
@@ -36,7 +35,6 @@ import fr.olympa.api.customevents.SpigotConfigReloadEvent;
 import fr.olympa.api.frame.ImageFrameManager;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.gui.Inventories;
-import fr.olympa.api.holograms.HologramsCommand;
 import fr.olympa.api.holograms.HologramsManager;
 import fr.olympa.api.hook.IProtocolSupport;
 import fr.olympa.api.permission.OlympaAPIPermissions;
@@ -72,6 +70,7 @@ import fr.olympa.core.spigot.datamanagment.OnLoadListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
 import fr.olympa.core.spigot.groups.StaffCommand;
+import fr.olympa.core.spigot.module.SpigotModule;
 import fr.olympa.core.spigot.protocolsupport.VersionHandler;
 import fr.olympa.core.spigot.protocolsupport.ViaVersionHook;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
@@ -86,15 +85,12 @@ import fr.olympa.core.spigot.redis.receiver.SpigotOlympaPlayerReceiver;
 import fr.olympa.core.spigot.redis.receiver.SpigotReceiveOlympaPlayerReceiver;
 import fr.olympa.core.spigot.report.commands.ReportCommand;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
-import fr.olympa.core.spigot.scoreboards.NametagManager;
-import fr.olympa.core.spigot.scoreboards.ScoreboardTeamListener;
 import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
 import fr.olympa.core.spigot.security.AntiWD;
 import fr.olympa.core.spigot.security.HelpCommand;
 import fr.olympa.core.spigot.security.PluginCommand;
 import fr.olympa.core.spigot.status.SetStatusCommand;
 import fr.olympa.core.spigot.status.StatusMotdListener;
-import fr.olympa.core.spigot.vanish.VanishHandler;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
@@ -166,9 +162,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	@Override
 	public void onDisable() {
 		setStatus(ServerStatus.CLOSE);
-
 		super.onDisable();
-
+		SpigotModule.disable();
 		if (database != null)
 			database.close();
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
@@ -190,12 +185,14 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
+		new RestartCommand(this).registerPreProcess();
 		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
 		ReportReason.registerReason(ReportReason.class);
-		setupRedis();
 		super.onEnable();
-		if (config != null)
+		if (config != null) {
+			setupRedis();
 			setupDatabase();
+		}
 
 		RedisSpigotSend.errorsEnabled = true;
 		System.setErr(new PrintStream(new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20))));
@@ -213,47 +210,30 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		try {
 			AccountProvider.init(new MySQL(database));
 		} catch (SQLException ex) {
-			sendMessage("§cUne erreur est survenue lors du chargement du MySQL. Arrêt du plugin.");
+			sendMessage("&cUne erreur est survenue lors du chargement du MySQL. Arrêt du plugin.");
 			ex.printStackTrace();
 			setEnabled(false);
 			return;
 		}
 		new ReportMySQL(database);
 
-		/*TestCommand test = new TestCommand(this);
-		test.register();
-		
-		if (CommodoreProvider.isSupported()) {
-			Commodore commodore = CommodoreProvider.getCommodore(this);
-			commodore.register(test.reflectCommand, LiteralArgumentBuilder.literal("test1")
-					.then(LiteralArgumentBuilder.literal("set")
-							.then(LiteralArgumentBuilder.literal("day"))
-							.then(LiteralArgumentBuilder.literal("noon"))
-							.then(LiteralArgumentBuilder.literal("night"))
-							.then(LiteralArgumentBuilder.literal("midnight"))
-							.then(RequiredArgumentBuilder.argument("time", IntegerArgumentType.integer())))
-					.then(LiteralArgumentBuilder.literal("add")
-							.then(RequiredArgumentBuilder.argument("time", DoubleArgumentType.doubleArg(-10, 10))))
-					.then(LiteralArgumentBuilder.literal("query")
-							.then(LiteralArgumentBuilder.literal("daytime"))
-							.then(LiteralArgumentBuilder.literal("gametime"))
-							.then(LiteralArgumentBuilder.literal("day"))
-					//.then(RequiredArgumentBuilder.argument("uuid", UUIDArgumentType.uuid()))
-					// Could not serialize fr.olympa.api.brigadier.UUIDArgumentType@28aefe5e (class fr.olympa.api.brigadier.UUIDArgumentType) - will not be sent to client!
-					)
-					.build());
-		}*/
-
-		//		pluginManager.registerEvents(new TestListener(), this);
-
-		vanishApi = new VanishHandler();
-		nameTagApi = new NametagAPI(new NametagManager());
-		nameTagApi.addNametagHandler(EventPriority.LOW, (nametag, op, to) -> nametag.appendPrefix(op.getGroupPrefix()));
-		nameTagApi.addNametagHandler(EventPriority.HIGH, (nametag, op, to) -> {
-			if (getVanishApi().isVanished(op.getPlayer()) && OlympaAPIPermissions.VANISH_SEE.hasPermission(to))
-				nametag.appendPrefix(" &4[VANISH]&7");
-		});
+		nameTagApi = new NametagAPI();
+		//		((NametagAPI) nameTagApi).enable(this);
+		//		pluginManager.registerEvents(new ScoreboardTeamListener(), this);
+		// move to fr.olympa.core.spigot.module.SpigotModule.class
 		((NametagAPI) nameTagApi).testCompat();
+		if (nameTagApi != null)
+			nameTagApi.addNametagHandler(EventPriority.LOW, (nametag, op, to) -> nametag.appendPrefix(op.getGroupPrefix()));
+		try {
+			SpigotModule.enable();
+		} catch (Exception | NoSuchMethodError e) {
+			sendMessage("&cUne erreur est survenue lors du chargement des modules.");
+			e.printStackTrace();
+		}
+		//		nameTagApi.addNametagHandler(EventPriority.HIGHEST, (nametag, op, to) -> {
+		//			if (vanishApi != null && vanishApi.isVanished(op.getPlayer()) && OlympaAPIPermissions.VANISH_SEE.hasPermission(to))
+		//				nametag.appendSuffix("&4[VANISH]&7");
+		//		});
 
 		pluginManager.registerEvents(this, this);
 		pluginManager.registerEvents(new DataManagmentListener(), this);
@@ -264,13 +244,12 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		pluginManager.registerEvents(new ChatListener(), this);
 		pluginManager.registerEvents(new CommandListener(), this);
 		pluginManager.registerEvents(new StatusMotdListener(), this);
-		pluginManager.registerEvents(new ScoreboardTeamListener(), this);
 		pluginManager.registerEvents(regionManager = new RegionManager(), this);
-		pluginManager.registerEvents(afkHandler = new AfkHandler(), this);
 
 		try {
-			pluginManager.registerEvents(hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml")), this);
-		} catch (IOException | ReflectiveOperationException e) {
+			new HologramsManager(this, new File(getDataFolder(), "holograms.yml"));
+			//			pluginManager.registerEvents(hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml")), this);
+		} catch (NullPointerException | IOException | ReflectiveOperationException e) {
 			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
 			e.printStackTrace();
 		}
@@ -284,7 +263,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new TpsCommand(this).registerPreProcess();
 		new UtilsCommand(this).register();
 		new GenderCommand(this).register();
-		new RestartCommand(this).registerPreProcess();
 		new GamemodeCommand(this).register().registerPreProcess();
 		new InvseeCommand(this).register();
 		new EcseeCommand(this).register();
@@ -293,7 +271,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new ConfigCommand(this).register();
 		new PermissionCommand(this).register();
 		new PingCommand(this).register();
-		new HologramsCommand(hologramsManager).register();
+		//		new HologramsCommand(hologramsManager).register();
 		new TpCommand(this).register();
 		new ColorCommand(this).register();
 		new ToggleErrors(this).register();

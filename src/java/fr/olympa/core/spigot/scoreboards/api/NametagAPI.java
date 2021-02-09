@@ -2,6 +2,7 @@ package fr.olympa.core.spigot.scoreboards.api;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Map.Entry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 
+import fr.olympa.api.module.OlympaModule.ModuleApi;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.scoreboard.tab.INametagApi;
@@ -22,14 +24,33 @@ import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
  * Implements the INametagAPI interface. There only exists one instance of this
  * class.
  */
-public final class NametagAPI implements INametagApi {
+public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 
 	private NametagManager manager;
-
 	private List<Entry<EventPriority, NametagHandler>> handlers = new ArrayList<>();
 
-	public NametagAPI(NametagManager manager) {
-		this.manager = manager;
+	@Override
+	public boolean enable(OlympaCore plugin) {
+		manager = new NametagManager();
+		handlers = new ArrayList<>();
+		return true;
+	}
+
+	@Override
+	public boolean disable(OlympaCore plugin) {
+		return disable();
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return manager != null;
+	}
+
+	private boolean disable() {
+		manager = null;
+		if (handlers != null)
+			handlers.clear();
+		return true;
 	}
 
 	@Override
@@ -40,12 +61,22 @@ public final class NametagAPI implements INametagApi {
 	}
 
 	@Override
+	public void removeNametagHandler(NametagHandler handler) {
+		handlers.removeIf(f -> f.getValue().equals(handler));
+		OlympaCore.getInstance().sendMessage("&c-1 nametag handler §4%s", handler.getClass().getSimpleName());
+	}
+
+	@Override
 	public void callNametagUpdate(OlympaPlayer player) {
 		callNametagUpdate(player, AccountProvider.getAll());
 	}
 
 	@Override
-	public void callNametagUpdate(OlympaPlayer player, Iterable<? extends OlympaPlayer> toPlayers) {
+	public void callNametagUpdate(OlympaPlayer player, Collection<? extends OlympaPlayer> toPlayers) {
+		if (manager == null) {
+			OlympaCore.getInstance().sendMessage("&cModule NameTag &4désactiver &8> &cImpossible de mettre à jour le nameTag de &4%s&7.", player.getName());
+			return;
+		}
 		if (player.getPlayer() == null || !player.getPlayer().isOnline()) {
 			OlympaCore.getInstance().sendMessage("§cTentative de mise à jour du nametag du joueur hors-ligne §4%s", player.getName());
 			return;
@@ -55,6 +86,7 @@ public final class NametagAPI implements INametagApi {
 			if (to.getPlayer() == null || !to.getPlayer().isOnline())
 				continue;
 			Nametag tag = new Nametag();
+			OlympaCore.getInstance().sendMessage("§cok");
 			for (Entry<EventPriority, NametagHandler> handlerEntry : handlers)
 				try {
 					NametagHandler handler = handlerEntry.getValue();
@@ -63,6 +95,7 @@ public final class NametagAPI implements INametagApi {
 					OlympaCore.getInstance().sendMessage("§cUne erreur est survenue lors de la mise à jour du nametag de %s", player.getName());
 					ex.printStackTrace();
 				}
+			OlympaCore.getInstance().sendMessage("§cok2");
 			List<Player> similarTags = nametags.get(tag);
 			if (similarTags == null) {
 				similarTags = new ArrayList<>();
@@ -71,6 +104,7 @@ public final class NametagAPI implements INametagApi {
 			similarTags.add(to.getPlayer());
 		}
 		nametags.forEach((tag, players) -> manager.changeFakeNametag(player.getName(), tag, player.getGroup().getIndex(), players));
+		OlympaCore.getInstance().sendMessage("§cok3");
 	}
 
 	public boolean testCompat() {
@@ -79,6 +113,7 @@ public final class NametagAPI implements INametagApi {
 		if (wrapper.error == null)
 			return true;
 		new Exception("[WARNING] NameTag -> invalid Protocol of Team, error with reflection. NameTag won't work").printStackTrace();
+		disable();
 		return false;
 	}
 

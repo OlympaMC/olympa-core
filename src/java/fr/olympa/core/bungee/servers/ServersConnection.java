@@ -26,6 +26,9 @@ public class ServersConnection {
 	public static Set<ServerInfo> waitToStart = new HashSet<>();
 
 	public static void addConnection(WaitingConnection wc) {
+		Set<WaitingConnection> list = connect.stream().filter(wc2 -> wc2.uuid.equals(wc.uuid)).collect(Collectors.toSet());
+		if (!list.isEmpty())
+			connect.removeAll(list);
 		connect.add(wc);
 	}
 
