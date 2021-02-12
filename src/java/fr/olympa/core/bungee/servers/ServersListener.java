@@ -46,7 +46,7 @@ public class ServersListener implements Listener {
 		}
 		if (kickReason.contains("restarting") || kickReason.contains("closed")) {
 			ServerInfo serverFallback = null;
-			if (olympaServer != null && olympaServer.hasMultiServers()) {
+			if (olympaServer.hasMultiServers()) {
 				serverFallback = ServersConnection.getBestServer(olympaServer, serverKicked);
 				if (serverFallback != null) {
 					event.setCancelled(true);

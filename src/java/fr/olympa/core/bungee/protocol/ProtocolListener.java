@@ -10,7 +10,6 @@ import net.md_5.bungee.event.EventPriority;
 
 public class ProtocolListener implements Listener {
 
-	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPreLogin(PreLoginEvent event) {
 		if (event.isCancelled())

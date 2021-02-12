@@ -12,6 +12,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
@@ -27,7 +28,7 @@ public class LoginChatListener implements Listener {
 	private TextComponent joinMessagePremiumCreated;
 
 	public LoginChatListener() {
-		HoverEvent hoverTooltip = new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder("Clique pour avoir directement la commande").color(ChatColor.YELLOW).create());
+		HoverEvent hoverTooltip = new HoverEvent(Action.SHOW_TEXT, new Text(new ComponentBuilder("Clique pour avoir directement la commande").color(ChatColor.YELLOW).create()));
 
 		TextComponent base = new TextComponent();
 		addLegacyText(base, "§4§l§m----------------§7 [§cLogin§7] §4§l§m----------------\n"

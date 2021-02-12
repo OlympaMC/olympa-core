@@ -36,7 +36,7 @@ public class PasswdCommand extends BungeeCommand {
 		}
 
 		if (args.length < 2) {
-			sendUsage();
+			sendUsage(command);
 			return;
 		}
 		String newPassword = args[1];

@@ -44,7 +44,7 @@ public class RegisterCommand extends BungeeCommand {
 			return;
 		}
 		if (args.length > 2) {
-			sendUsage();
+			sendUsage(command);
 			return;
 		}
 		String password = args[0];

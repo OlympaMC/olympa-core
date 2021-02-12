@@ -27,11 +27,9 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 	 */
 
 	static List<String> arg2 = new ArrayList<>();
-	static String command;
 
 	public MaintenanceCommand(Plugin plugin) {
 		super(plugin, "maintenance", OlympaCorePermissions.MAINTENANCE_COMMAND, "maint");
-		command = getCommand();
 		minArg = 1;
 		arg2.addAll(Arrays.asList("status", "add", "remove", "list"));
 		arg2.addAll(ServerStatus.getCommandsArgs());
@@ -70,7 +68,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 			switch (args[0].toLowerCase()) {
 			case "add":
 				if (args.length < 2) {
-					sendUsage();
+					sendUsage(command);
 					return;
 				}
 				List<String> whitelist = maintconfig.getStringList("whitelist");
@@ -84,7 +82,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 				break;
 			case "remove":
 				if (args.length < 2) {
-					sendUsage();
+					sendUsage(command);
 					return;
 				}
 				whitelist = maintconfig.getStringList("whitelist");
@@ -112,7 +110,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 				sendMessage(ColorUtils.color("&6Le mode maintenance est en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
 				break;
 			default:
-				sendUsage();
+				sendUsage(command);
 				break;
 			}
 		}
@@ -133,11 +131,11 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 					return Utils.startWords(args[1], maintconfig.getStringList("whitelist"));
 				break;
 			case "add":
-				return /*MySQL.getPlayersBySimilarName(args[1]).stream().map(OlympaPlayer::getName).collect(Collectors.toList());*/ Collections.EMPTY_LIST;
+				return /*MySQL.getPlayersBySimilarName(args[1]).stream().map(OlympaPlayer::getName).collect(Collectors.toList());*/ Collections.emptyList();
 			}
 			break;
 		}
-		return new ArrayList<>();
+		return Collections.emptyList();
 	}
 
 	@SuppressWarnings("deprecation")

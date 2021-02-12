@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.security;
 
+import java.net.InetSocketAddress;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -38,6 +39,7 @@ public class BasicSecurityListener implements Listener {
 	public void on0Ping(ProxyPingEvent event) {
 		PendingConnection connection = event.getConnection();
 		cache.put(connection.getAddress().getAddress().getHostAddress(), "");
+		InetSocketAddress test = (InetSocketAddress) connection.getSocketAddress();
 	}
 
 	@EventHandler

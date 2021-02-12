@@ -71,7 +71,7 @@ public class EmailCommand extends BungeeCommand {
 		}
 
 		if (args.length > 2) {
-			this.sendUsage();
+			this.sendUsage(command);
 			return;
 		}
 

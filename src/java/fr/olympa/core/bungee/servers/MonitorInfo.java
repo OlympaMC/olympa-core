@@ -127,7 +127,7 @@ public class MonitorInfo {
 	}
 
 	public ServerInfo getServerInfo() {
-		return ProxyServer.getInstance().getServers().get(serverName);
+		return ProxyServer.getInstance().getServersCopy().get(serverName);
 	}
 
 	public ServerStatus getStatus() {
