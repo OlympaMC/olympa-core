@@ -15,6 +15,7 @@ public class ErrorOutputStream extends OutputStream {
 	private Function<Runnable, Object> launchTask;
 	
 	private PrintStream wrap;
+	private boolean disabled = false;
 	
 	public ErrorOutputStream(PrintStream wrap, Consumer<String> sendError, Function<Runnable, Object> launchOneSecondTask) {
 		this.wrap = wrap;
@@ -22,9 +23,15 @@ public class ErrorOutputStream extends OutputStream {
 		this.launchTask = launchOneSecondTask;
 	}
 	
+	public void disable() {
+		disabled = true;
+	}
+	
 	@Override
 	public void write(int b) throws IOException {
 		wrap.write(b);
+		if (disabled) return;
+		
 		pending.append(b);
 		if (task == null) task = launchTask.apply(this::execute);
 	}
@@ -32,6 +39,8 @@ public class ErrorOutputStream extends OutputStream {
 	@Override
 	public void write(byte[] buf, int off, int len) throws IOException {
 		wrap.write(buf, off, len);
+		if (disabled) return;
+		
 		pending.append(new String(buf, off, len));
 		if (task == null) task = launchTask.apply(this::execute);
 	}

@@ -106,6 +106,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	private VersionHandler versionHandler;
 	private String lastVersion = "unknown";
 	private String firstVersion = "unknown";
+	private ErrorOutputStream errorOutputStream;
 
 	public String getLastVersion() {
 		return lastVersion;
@@ -167,6 +168,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			database.close();
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
 		RedisSpigotSend.errorsEnabled = false;
+		errorOutputStream.disable();
 	}
 
 	@Override
@@ -194,7 +196,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		}
 
 		RedisSpigotSend.errorsEnabled = true;
-		System.setErr(new PrintStream(new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20))));
+		errorOutputStream = new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20));
+		System.setErr(new PrintStream(errorOutputStream));
 		ErrorLoggerHandler errorHandler = new ErrorLoggerHandler(RedisSpigotSend::sendError);
 		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
 			plugin.getLogger().addHandler(errorHandler);

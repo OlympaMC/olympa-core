@@ -181,10 +181,12 @@ public class AccountProvider implements OlympaAccount {
 		ResultSet resultSet = pluginPlayerTable.get(player.getId());
 		if (resultSet.next()) {
 			player.loadDatas(resultSet);
+			player.loaded();
 			return false;
 		}
 		pluginPlayerTable.insert(player.getId());
 		OlympaCore.getInstance().sendMessage("Données créées pour le joueur §6" + player.getName());
+		player.loaded();
 		return true;
 	}
 

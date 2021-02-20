@@ -344,7 +344,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public void loadDatas(ResultSet resultSet) throws SQLException {
-		// has to be override
+		// has to be overriden
 	}
 
 	@Override
@@ -379,6 +379,9 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			histIps.entrySet().stream().forEach(entry -> histIp.put(entry.getKey(), entry.getValue()));
 		}
 	}
+	
+	@Override
+	public void loaded() {}
 
 	@Override
 	public void removeGroup(OlympaGroup group) {
