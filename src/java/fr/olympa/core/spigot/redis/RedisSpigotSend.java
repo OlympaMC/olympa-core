@@ -58,13 +58,16 @@ public class RedisSpigotSend {
 	}
 
 	public static void sendOlympaPlayerToOtherSpigot(OlympaPlayer olympaPlayer, String serverTo) {
-		LinkSpigotBungee.Provider.link.launchAsync(() -> {
+		Runnable run = () -> {
 			try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 				String serverName = OlympaCore.getInstance().getServerName();
 				jedis.publish(RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name(), serverName + ";" + serverTo + ";" + GsonCustomizedObjectTypeAdapter.GSON.toJson(olympaPlayer));
 			}
 			RedisAccess.INSTANCE.disconnect();
-		});
+		};
+		if (LinkSpigotBungee.Provider.link.isEnabled()) {
+			LinkSpigotBungee.Provider.link.launchAsync(run);
+		}else run.run();
 	}
 
 	public static void sendOlympaPlayerToBungee(OlympaPlayer olympaPlayer, String serverTo) {

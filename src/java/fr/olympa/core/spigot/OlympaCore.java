@@ -27,6 +27,7 @@ import fr.olympa.api.command.essentials.EcseeCommand;
 import fr.olympa.api.command.essentials.FlyCommand;
 import fr.olympa.api.command.essentials.GamemodeCommand;
 import fr.olympa.api.command.essentials.InvseeCommand;
+import fr.olympa.api.command.essentials.ItemCommand;
 import fr.olympa.api.command.essentials.PingCommand;
 import fr.olympa.api.command.essentials.tp.TpCommand;
 import fr.olympa.api.config.CustomConfig;
@@ -265,6 +266,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new ColorCommand(this).register();
 		new ToggleErrors(this).register();
 		new StaffCommand(this).register();
+		new ItemCommand(this).register();
 		new NewSpigotCommand(this).register().registerPreProcess();
 
 		new AntiWD(this);
@@ -369,7 +371,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			jedis.subscribe(sub, channel);
 			jedis.disconnect();
 		}, "Redis sub " + channel).start();
-
 	}
 
 	@Override

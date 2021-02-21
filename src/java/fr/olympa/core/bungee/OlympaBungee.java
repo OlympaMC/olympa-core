@@ -114,6 +114,11 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	}
 
 	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+	
+	@Override
 	public void onDisable() {
 		if (task != null)
 			task.cancelTaskByName("monitor_serveurs");
