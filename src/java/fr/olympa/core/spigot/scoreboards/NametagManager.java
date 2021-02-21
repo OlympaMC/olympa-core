@@ -53,7 +53,7 @@ public class NametagManager {
 			return;
 		//		new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers()).send(toPlayers);
 		Set<FakeTeam> allTeams = getTeamsOfPlayer(playerName);
-		FakeTeam team = new FakeTeam(nameTag.getPrefix(), nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix(), sortPriority);
+		FakeTeam team = new FakeTeam(nameTag.getPrefix().isBlank() ? "" : nameTag.getPrefix() + " ", nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix(), sortPriority);
 		team.addMember(playerName);
 		team.addViewers(toPlayers);
 		PacketWrapper.create(team).send(toPlayers);
