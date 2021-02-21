@@ -161,14 +161,13 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 	@Override
 	public void onDisable() {
+		RedisSpigotSend.errorsEnabled = false;
 		setStatus(ServerStatus.CLOSE);
 		super.onDisable();
 		SpigotModule.disable();
 		if (database != null)
 			database.close();
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
-		RedisSpigotSend.errorsEnabled = false;
-		errorOutputStream.disable();
 	}
 
 	@Override
