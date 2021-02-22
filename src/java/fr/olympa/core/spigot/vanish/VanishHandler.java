@@ -32,7 +32,7 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 		if (nameTagApi != null) {
 			handler = (nametag, op, to) -> {
 				if (isVanished(op.getPlayer()) && OlympaAPIPermissions.VANISH_SEE.hasPermission(to))
-					nametag.appendSuffix("§d[§5VANISH§d]");
+					nametag.appendSuffix("§d[§5VANISH§d]§r");
 			};
 			nameTagApi.addNametagHandler(EventPriority.HIGHEST, handler);
 			return true;

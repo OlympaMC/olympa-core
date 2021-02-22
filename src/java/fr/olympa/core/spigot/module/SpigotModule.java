@@ -24,9 +24,9 @@ public class SpigotModule extends PluginModule {
 
 	private static OlympaCore pl = OlympaCore.getInstance();
 
-	public static OlympaModule<NametagAPI, Listener, OlympaCore, ComplexCommand> NAME_TAG = new OlympaModule<>(pl, "nameTag", plugin -> new NametagAPI(), ScoreboardTeamListener.class, NameTagCommand.class);
-	public static OlympaModule<VanishHandler, Listener, OlympaCore, OlympaCommand> VANISH = new OlympaModule<>(pl, "vanish", plugin -> new VanishHandler(), VanishListener.class, VanishCommand.class);
-	public static OlympaModule<AfkHandler, Listener, OlympaCore, OlympaCommand> AFK = new OlympaModule<>(pl, "afk", plugin -> new AfkHandler(), AfkHandler.class, AfkCommand.class);
+	public static final OlympaModule<NametagAPI, Listener, OlympaCore, ComplexCommand> NAME_TAG = new OlympaModule<>(pl, "nameTag", plugin -> new NametagAPI(), ScoreboardTeamListener.class, NameTagCommand.class);
+	public static final OlympaModule<VanishHandler, Listener, OlympaCore, OlympaCommand> VANISH = new OlympaModule<>(pl, "vanish", plugin -> new VanishHandler(), VanishListener.class, VanishCommand.class);
+	public static final OlympaModule<AfkHandler, Listener, OlympaCore, OlympaCommand> AFK = new OlympaModule<>(pl, "afk", plugin -> new AfkHandler(), AfkHandler.class, AfkCommand.class);
 
 	public static void enable() {
 		for (OlympaModule<? extends Object, Listener, ? extends OlympaPluginInterface, ? extends IOlympaCommand> module : modules)

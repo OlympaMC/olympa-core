@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.scoreboard.tab.FakeTeam;
-import fr.olympa.core.spigot.scoreboards.NametagManager;
+import fr.olympa.core.spigot.scoreboards.NameTagManager;
 import fr.olympa.core.spigot.scoreboards.utils.UtilsScoreboard;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -142,7 +142,7 @@ public class PacketWrapper {
 			PacketAccessor.TEAM_NAME.set(packet, name);
 			PacketAccessor.PARAM_INT.set(packet, param);
 
-			if (NametagManager.DISABLE_PUSH_ALL_TAGS && PacketAccessor.PUSH != null)
+			if (NameTagManager.DISABLE_PUSH_ALL_TAGS && PacketAccessor.PUSH != null)
 				PacketAccessor.PUSH.set(packet, "never");
 		} catch (Exception e) {
 			error = e.getMessage();

@@ -73,7 +73,7 @@ public class MySQL extends SQLClass {
 	// Pour pas surcharger les requettes MySQL
 	// TODO -> cache redis pour le cache multi-server
 	static Set<String> allPlayersNamesCache = null;
-
+	
 	public static Set<String> getAllPlayersNames() {
 		if (allPlayersNamesCache != null)
 			return allPlayersNamesCache;
@@ -123,7 +123,7 @@ public class MySQL extends SQLClass {
 		statement.setLong(1, id);
 		ResultSet resultSet = statement.executeQuery();
 		if (resultSet.next())
-			opInfo = new OlympaPlayerInformationsObject(id, resultSet.getString("pseudo"), (UUID) RegexMatcher.UUID.parse(resultSet.getString("uuid_server")));
+			opInfo = new OlympaPlayerInformationsObject(id, resultSet.getString("pseudo"), RegexMatcher.UUID.parse(resultSet.getString("uuid_server")));
 		resultSet.close();
 		return opInfo;
 	}
@@ -416,8 +416,8 @@ public class MySQL extends SQLClass {
 		String uuidPremiumString = resultSet.getString("uuid_premium");
 		UUID uuidPremium = null;
 		if (uuidPremiumString != null)
-			uuidPremium = (UUID) RegexMatcher.UUID.parse(uuidPremiumString);
-		OlympaPlayer player = AccountProvider.pluginPlayerProvider.create((UUID) RegexMatcher.UUID.parse(resultSet.getString("uuid_server")), resultSet.getString("pseudo"), resultSet.getString("ip"));
+			uuidPremium = RegexMatcher.UUID.parse(uuidPremiumString);
+		OlympaPlayer player = AccountProvider.pluginPlayerProvider.create(RegexMatcher.UUID.parse(resultSet.getString("uuid_server")), resultSet.getString("pseudo"), resultSet.getString("ip"));
 		player.loadSavedDatas(
 				resultSet.getLong("id"),
 				uuidPremium,

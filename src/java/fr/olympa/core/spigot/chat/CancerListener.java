@@ -31,7 +31,7 @@ public class CancerListener implements Listener {
 	private Pattern matchLink = Pattern.compile("(https?:\\/\\/(www\\.)?)?([-\\w]+(\\.|[0-9]))+(fr|org|net|com|xxx|name|xyr|gg|ly|be|lu)\\S*");
 	private Pattern matchLink2 = Pattern.compile("^(https?:\\/\\/)?(www|play|pvp)\\.([-\\w]+(\\.|[0-9]))+(fr|org|net|com|xxx|name|xyr|gg|ly|be|lu|shop)$");
 	private Pattern matchFlood = Pattern.compile("(.)\\1{3,}");
-	private Pattern matchNoWord = Pattern.compile("[^\\w\\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÐÒÓÔÕÖÙÚÛÜÝŸ\\-=+÷²!@#%^&*();,.?\\\"':{}|\\[\\]<>~\\\\€$£µ\\/°]+");
+	private Pattern matchNoWord = Pattern.compile("[^\\w\\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÐÒÓÔÕÖÙÚÛÜÝŸ\\-=+÷²!@#%^&§*();,.?\\\"':{}|\\[\\]<>~\\\\€$£µ\\/°]+");
 
 	@EventHandler
 	public void onPlayerChatEvent(AsyncPlayerChatEvent event) {
@@ -88,7 +88,7 @@ public class CancerListener implements Listener {
 			else
 				link = matcher2.group();
 			Set<String> linkWhitelist = new HashSet<>(OlympaCore.getInstance().getConfig().getStringList("chat.linkwhitelist"));
-			if (!linkWhitelist.stream().filter(l -> link.contains(l)).findFirst().isPresent()) {
+			if (!linkWhitelist.stream().anyMatch(l -> link.contains(l))) {
 				event.setCancelled(true);
 				player.sendMessage(ColorUtils.color(Prefix.BAD + "Les liens sont interdits."));
 				Chat.sendToStaff("Lien", player, message, link);

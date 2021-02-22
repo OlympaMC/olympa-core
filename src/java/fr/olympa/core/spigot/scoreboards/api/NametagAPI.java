@@ -17,7 +17,7 @@ import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.scoreboard.tab.Nametag;
 import fr.olympa.core.spigot.OlympaCore;
-import fr.olympa.core.spigot.scoreboards.NametagManager;
+import fr.olympa.core.spigot.scoreboards.NameTagManager;
 import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
 
 /**
@@ -26,17 +26,17 @@ import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
  */
 public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 
-	public NametagManager manager;
+	public NameTagManager manager;
 	private NametagHandler defaultHandler;
 	private List<Entry<EventPriority, NametagHandler>> handlers = new ArrayList<>();
 
 	@Override
 	public boolean enable(OlympaCore plugin) {
-		manager = new NametagManager();
+		manager = new NameTagManager();
 		handlers = new ArrayList<>();
 		defaultHandler = (nametag, op, to) -> {
 			String prefix = op.getGroupPrefix();
-			nametag.appendPrefix(prefix.substring(0, prefix.length() - 1));
+			nametag.appendPrefix(prefix);
 		};
 		addNametagHandler(EventPriority.LOW, defaultHandler);
 		return true;
