@@ -53,33 +53,54 @@ public class NewSpigotCommand extends ComplexCommand {
 		CacheStats.executeOnMap(this, cmd);
 	}
 
-	@Cmd(args = { "MODULES|debug", "ON|OFF" }, min = 1)
-	public void module(CommandContext cmd) {
-		String arg1 = cmd.getArgumentsLength() > 1 ? (String) cmd.getArgument(1) : "";
-		Boolean toOn = cmd.getArgumentsLength() > 1 ? arg1.equalsIgnoreCase("ON") ? true : !arg1.equalsIgnoreCase("OFF") : null;
-		Object arg0 = cmd.getArgument(0);
-		if (arg0 instanceof String) {
-			if (toOn == null)
-				sendMessage(Prefix.DEFAULT, "Le module &8%s&7 est %s", "de debug", OlympaModule.DEBUG ? "&2Activé" : "&4Désativé");
-			else if (toOn) {
-				OlympaModule.DEBUG = true;
-				sendMessage(Prefix.DEFAULT_GOOD, "Le module %s est désormais %s", "de debug", OlympaModule.DEBUG ? "&2Activé" : "&4Désativé");
-			} else {
-				OlympaModule.DEBUG = false;
-				sendMessage(Prefix.DEFAULT_BAD, "Le module %s est désormais %s", "de debug", OlympaModule.DEBUG ? "&2Activé" : "&4Désativé");
-			}
+	@Cmd(args = "on|off", min = 1)
+	public void debugModule(CommandContext cmd) {
+		String arg0 = cmd.getArgument(0);
+		Boolean toOn;
+		if (arg0.equalsIgnoreCase("on"))
+			toOn = true;
+		else if (arg0.equalsIgnoreCase("off"))
+			toOn = false;
+		else
+			toOn = null;
+		if (toOn == null)
+			sendMessage(Prefix.DEFAULT, "Le module &8%s&7 est %s", "de debug", OlympaModule.DEBUG ? "&2Activé" : "&4Désativé");
+		else if (toOn) {
+			OlympaModule.DEBUG = true;
+			sendMessage(Prefix.DEFAULT_GOOD, "Le module %s est désormais %s", "de debug", OlympaModule.DEBUG ? "&2Activé" : "&4Désativé");
 		} else {
-			OlympaModule<? extends Object, Listener, ? extends Plugin, OlympaCommand> module = cmd.getArgument(0);
-			if (toOn == null)
-				sendMessage(Prefix.DEFAULT, "Le module &8%s&7 est %s", module.getName(), module.isEnabledString());
-			else if (toOn) {
-				module.enable();
-				sendMessage(Prefix.DEFAULT_GOOD, "Démarrage du module %s, il est désormais %s", module.getName(), module.isEnabledString());
-			} else {
-				module.disable();
-				sendMessage(Prefix.DEFAULT_BAD, "Arrêt du module %s, il est désormais %s", module.getName(), module.isEnabledString());
-			}
+			OlympaModule.DEBUG = false;
+			sendMessage(Prefix.DEFAULT_BAD, "Le module %s est désormais %s", "de debug", OlympaModule.DEBUG ? "&2Activé" : "&4Désativé");
+		}
+	}
 
+	@Cmd(args = { "MODULES", "on|off|debugon|debugoff" }, min = 1)
+	public void module(CommandContext cmd) {
+		OlympaModule<? extends Object, Listener, ? extends Plugin, OlympaCommand> module = cmd.getArgument(0);
+		if (cmd.getArgumentsLength() == 0) {
+			sendMessage(Prefix.DEFAULT, "Le module &8%s&7 est %s", module.getName(), module.isEnabledString());
+			return;
+		}
+		switch (cmd.<String>getArgument(1).toLowerCase()) {
+		case "on":
+			module.enable();
+			sendMessage(Prefix.DEFAULT_GOOD, "Démarrage du module %s, il est désormais %s", module.getName(), module.isEnabledString());
+			break;
+		case "off":
+			module.disable();
+			sendMessage(Prefix.DEFAULT_BAD, "Arrêt du module %s, il est désormais %s", module.getName(), module.isEnabledString());
+			break;
+		case "debugon":
+			module.setDebug(true);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le mode DEBUG du module %s est désormais", module.getName(), module.isEnabledString());
+			break;
+		case "debugoff":
+			module.setDebug(false);
+			sendMessage(Prefix.DEFAULT_BAD, "Arrêt du module %s, il est désormais %s", module.getName(), module.isEnabledString());
+			break;
+		default:
+			sendIncorrectSyntax();
+			break;
 		}
 	}
 }
