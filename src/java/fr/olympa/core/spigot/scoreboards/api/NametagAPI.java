@@ -36,7 +36,7 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 		handlers = new ArrayList<>();
 		defaultHandler = (nametag, op, to) -> {
 			String prefix = op.getGroupPrefix();
-			nametag.appendPrefix(prefix);
+			nametag.appendPrefix(prefix.substring(0, prefix.length() - 1));
 		};
 		addNametagHandler(EventPriority.LOW, defaultHandler);
 		return true;
