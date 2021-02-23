@@ -23,6 +23,8 @@ import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.commands.NewBungeeCommand;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
+import fr.olympa.core.bungee.servers.MonitorInfo;
+import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -198,6 +200,8 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 			case "TIME":
 				potentialArgs.addAll(Arrays.asList("1h", "2h", "4h", "6h", "12h", "1j", "2j", "3j", "1semaine", "2semaines", "1mois", "1an"));
 				break;
+			case "SERVERS":
+				potentialArgs.addAll(MonitorServers.getServers().stream().map(MonitorInfo::getName).collect(Collectors.toList()));
 			default:
 				potentialArgs.add(ca.getArgName());
 				break;
