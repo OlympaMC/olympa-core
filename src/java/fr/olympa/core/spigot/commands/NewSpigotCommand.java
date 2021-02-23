@@ -10,7 +10,6 @@ import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.command.complex.ComplexCommand;
 import fr.olympa.api.module.OlympaModule;
-import fr.olympa.api.module.PluginModule;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Prefix;
@@ -23,7 +22,7 @@ public class NewSpigotCommand extends ComplexCommand {
 		addArgumentParser("DEBUG_LIST", (sender, msg) -> CacheStats.getDebugLists().keySet(), x -> CacheStats.getDebugList(x), x -> "&4%s&c doit être un id de debugList qui existe.");
 		addArgumentParser("DEBUG_MAP", (sender, msg) -> CacheStats.getDebugMaps().keySet(), x -> CacheStats.getDebugMap(x), x -> "&4%s&c doit être un id de debugMap qui existe.");
 		addArgumentParser("ALIGNMENT", Alignment.class);
-		addArgumentParser("MODULES", (sender, msg) -> PluginModule.getModulesNames(), x -> PluginModule.getModule(x), x -> "&4%s&c n'est pas un module, essaye " + String.join(", ", PluginModule.getModulesNames()) + " .");
+		addArgumentParser("MODULES", (sender, msg) -> OlympaModule.getModulesNames(), x -> OlympaModule.getModule(x), x -> "&4%s&c n'est pas un module, essaye " + String.join(", ", OlympaModule.getModulesNames()) + " .");
 	}
 
 	@Cmd(permissionName = "SPIGOT_COMMAND_CACHE", args = { "CACHE", "clear|print" })
@@ -81,26 +80,31 @@ public class NewSpigotCommand extends ComplexCommand {
 			sendMessage(Prefix.DEFAULT, "Le module &8%s&7 est %s", module.getName(), module.isEnabledString());
 			return;
 		}
-		switch (cmd.<String>getArgument(1).toLowerCase()) {
-		case "on":
-			module.enable();
-			sendMessage(Prefix.DEFAULT_GOOD, "Démarrage du module %s, il est désormais %s", module.getName(), module.isEnabledString());
-			break;
-		case "off":
-			module.disable();
-			sendMessage(Prefix.DEFAULT_BAD, "Arrêt du module %s, il est désormais %s", module.getName(), module.isEnabledString());
-			break;
-		case "debugon":
-			module.setDebug(true);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le mode DEBUG du module %s est désormais", module.getName(), module.isEnabledString());
-			break;
-		case "debugoff":
-			module.setDebug(false);
-			sendMessage(Prefix.DEFAULT_BAD, "Arrêt du module %s, il est désormais %s", module.getName(), module.isEnabledString());
-			break;
-		default:
-			sendIncorrectSyntax();
-			break;
+		try {
+			switch (cmd.<String>getArgument(1).toLowerCase()) {
+			case "on":
+				module.enableModule();
+				sendMessage(Prefix.DEFAULT_GOOD, "Démarrage du module %s, il est désormais %s", module.getName(), module.isEnabledString());
+				break;
+			case "off":
+				module.disableModule();
+				sendMessage(Prefix.DEFAULT_BAD, "Arrêt du module %s, il est désormais %s", module.getName(), module.isEnabledString());
+				break;
+			case "debugon":
+				module.setDebug(true);
+				sendMessage(Prefix.DEFAULT_GOOD, "Le mode DEBUG du module %s est désormais", module.getName(), module.isEnabledString());
+				break;
+			case "debugoff":
+				module.setDebug(false);
+				sendMessage(Prefix.DEFAULT_GOOD, "Le mode DEBUG du module %s est désormais", module.getName(), module.isEnabledString());
+				break;
+			default:
+				sendIncorrectSyntax();
+				break;
+			}
+		} catch (Exception e) {
+			sendError(e);
+			e.printStackTrace();
 		}
 	}
 }

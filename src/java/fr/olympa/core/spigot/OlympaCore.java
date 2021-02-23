@@ -1,7 +1,6 @@
 package fr.olympa.core.spigot;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -37,6 +36,7 @@ import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.gui.Inventories;
 import fr.olympa.api.holograms.HologramsManager;
 import fr.olympa.api.hook.IProtocolSupport;
+import fr.olympa.api.module.OlympaModule;
 import fr.olympa.api.permission.OlympaAPIPermissions;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
@@ -70,7 +70,6 @@ import fr.olympa.core.spigot.datamanagment.OnLoadListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
 import fr.olympa.core.spigot.groups.StaffCommand;
-import fr.olympa.core.spigot.module.SpigotModule;
 import fr.olympa.core.spigot.protocolsupport.VersionHandler;
 import fr.olympa.core.spigot.protocolsupport.ViaVersionHook;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
@@ -165,7 +164,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		RedisSpigotSend.errorsEnabled = false;
 		setStatus(ServerStatus.CLOSE);
 		super.onDisable();
-		SpigotModule.disable();
+		OlympaModule.disableAll();
 		if (database != null)
 			database.close();
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
@@ -220,7 +219,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new ReportMySQL(database);
 
 		try {
-			SpigotModule.enable();
+			OlympaModule.enableAll();
 			((NametagAPI) nameTagApi).testCompat();
 		} catch (Exception | NoSuchMethodError e) {
 			sendMessage("&cUne erreur est survenue lors du chargement des modules.");
@@ -228,7 +227,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		}
 		try {
 			new HologramsManager(this, new File(getDataFolder(), "holograms.yml"));
-		} catch (NullPointerException | IOException | ReflectiveOperationException e) {
+		} catch (NullPointerException | ReflectiveOperationException e) {
 			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
 			e.printStackTrace();
 		}

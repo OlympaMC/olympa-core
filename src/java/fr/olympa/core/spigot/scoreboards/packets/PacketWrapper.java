@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.scoreboard.tab.FakeTeam;
-import fr.olympa.core.spigot.module.SpigotModule;
+import fr.olympa.core.spigot.module.CoreModules;
 import fr.olympa.core.spigot.scoreboards.NameTagManager;
 import fr.olympa.core.spigot.scoreboards.utils.UtilsScoreboard;
 
@@ -129,13 +129,13 @@ public class PacketWrapper {
 	}
 
 	public void send(Collection<? extends Player> players) {
-		if (SpigotModule.NAME_TAG.isDebugEnabled())
+		if (CoreModules.NAME_TAG.isDebugEnabled())
 			LinkSpigotBungee.Provider.link.sendMessage("To players %s", ColorUtils.joinPlayer('a', '2', players));
 		PacketAccessor.sendPacket(players, packet);
 	}
 
 	public void send(Player player) {
-		if (SpigotModule.NAME_TAG.isDebugEnabled())
+		if (CoreModules.NAME_TAG.isDebugEnabled())
 			LinkSpigotBungee.Provider.link.sendMessage("To player &2%s", player.getName());
 		PacketAccessor.sendPacket(player, packet);
 	}
