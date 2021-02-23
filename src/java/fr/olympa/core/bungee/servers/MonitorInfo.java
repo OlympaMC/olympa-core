@@ -2,9 +2,9 @@ package fr.olympa.core.bungee.servers;
 
 import java.util.AbstractMap;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.Utils;
@@ -18,7 +18,7 @@ public class MonitorInfo {
 	private static final Pattern ID_PATTERN = Pattern.compile("\\d*$");
 
 	public static Entry<OlympaServer, Integer> getOlympaServer(String serverName) {
-		Matcher matcher = ID_PATTERN.matcher(serverName);
+		java.util.regex.Matcher matcher = ID_PATTERN.matcher(serverName);
 		matcher.find();
 		String id = matcher.group();
 		int serverID = Utils.isEmpty(id) ? 0 : Integer.parseInt(id);
@@ -30,37 +30,64 @@ public class MonitorInfo {
 	private OlympaServer olympaServer;
 	private int serverID;
 
-	private Integer ping;
-	private Integer onlinePlayers;
-	private Integer maxPlayers;
+	private Integer ping, onlinePlayers, maxPlayers, ramUsage, threads;
 	private ServerStatus status = ServerStatus.UNKNOWN;
 	private String error;
 	private Float tps;
+	private String firstVersion = "unknown";
+	private String lastVersion = "unknown";
+	private int lastModifiedCore;
 
 	public MonitorInfo(ServerInfo server, long time, ServerPing serverPing, Throwable error) {
 		serverName = server.getName();
 
 		Entry<OlympaServer, Integer> serverInfo = getOlympaServer(serverName);
-		this.olympaServer = serverInfo.getKey();
-		this.serverID = serverInfo.getValue();
+		olympaServer = serverInfo.getKey();
+		serverID = serverInfo.getValue();
 
-		ping = Math.round((System.nanoTime() - time) / 1000000);
+		ping = Math.round((System.nanoTime() - time) / 1000000f);
 		if (error == null) {
 			Players players = serverPing.getPlayers();
 			onlinePlayers = players.getOnline();
 			maxPlayers = players.getMax();
-			String allMotd = serverPing.getDescriptionComponent().toLegacyText();
+			String allMotd = serverPing.getDescriptionComponent().toPlainText();
 			if (allMotd.startsWith("§"))
 				allMotd = allMotd.substring(2);
 			String[] motd = allMotd.split(" ");
 			if (motd.length >= 1)
 				status = ServerStatus.get(motd[0]);
-			if (motd.length >= 2)
-				tps = Float.valueOf(motd[1]);
+			if (motd.length >= 2 && RegexMatcher.FLOAT.is(motd[1]))
+				tps = (Float) RegexMatcher.FLOAT.parse(motd[1]);
+			if (motd.length >= 3 && RegexMatcher.INT.is(motd[2]))
+				ramUsage = (Integer) RegexMatcher.INT.parse(motd[2]);
+			if (motd.length >= 4 && RegexMatcher.INT.is(motd[3]))
+				threads = (Integer) RegexMatcher.INT.parse(motd[3]);
+			if (motd.length >= 5)
+				lastVersion = motd[4];
+			if (motd.length >= 6)
+				firstVersion = motd[5];
+			if (motd.length >= 7 && RegexMatcher.INT.is(motd[6]))
+				lastModifiedCore = (Integer) RegexMatcher.INT.parse(motd[6]);
 		} else {
 			status = ServerStatus.CLOSE;
-			this.error = error.getMessage();
+			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "");
 		}
+	}
+
+	public int getLastModifiedCore() {
+		return lastModifiedCore;
+	}
+
+	public static Pattern getIdPattern() {
+		return ID_PATTERN;
+	}
+
+	public Integer getRamUsage() {
+		return ramUsage;
+	}
+
+	public Integer getThreads() {
+		return threads;
 	}
 
 	public OlympaServer getOlympaServer() {
@@ -73,6 +100,14 @@ public class MonitorInfo {
 
 	public String getError() {
 		return error;
+	}
+
+	public boolean isUsualError() {
+		return status == ServerStatus.CLOSE && (error == null || error.isEmpty());
+	}
+
+	public boolean isDefaultError() {
+		return status == ServerStatus.CLOSE && error != null && error.isEmpty();
 	}
 
 	public Integer getMaxPlayers() {
@@ -92,11 +127,15 @@ public class MonitorInfo {
 	}
 
 	public ServerInfo getServerInfo() {
-		return ProxyServer.getInstance().getServers().get(serverName);
+		return ProxyServer.getInstance().getServersCopy().get(serverName);
 	}
 
 	public ServerStatus getStatus() {
 		return status;
+	}
+
+	public void setStatus(ServerStatus status) {
+		this.status = status;
 	}
 
 	public Float getTps() {
@@ -104,7 +143,20 @@ public class MonitorInfo {
 	}
 
 	public boolean isOpen() {
-		return error == null;
+		return status != ServerStatus.CLOSE;
 	}
 
+	public String getLastVersion() {
+		return lastVersion;
+	}
+
+	public String getFirstVersion() {
+		return firstVersion;
+	}
+
+	public String getRangeVersion() {
+		if (firstVersion.equals(lastVersion))
+			return firstVersion;
+		return firstVersion + " à " + lastVersion;
+	}
 }

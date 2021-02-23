@@ -3,6 +3,8 @@ package fr.olympa.api.sql;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import net.md_5.bungee.config.Configuration;
+
 public class DbCredentials {
 
 	private String host;
@@ -12,18 +14,27 @@ public class DbCredentials {
 	private String database;
 
 	public DbCredentials(FileConfiguration config) {
-		ConfigurationSection databaseDefault = config.getConfigurationSection("database.default");
-		if (databaseDefault == null) {
+		ConfigurationSection path = config.getConfigurationSection("database.default");
+		if (path == null)
 			return;
-		}
-		this.host = databaseDefault.getString("host");
-		this.user = databaseDefault.getString("user");
-		this.password = databaseDefault.getString("password");
-		this.database = databaseDefault.getString("database");
-		int configInt = databaseDefault.getInt("port");
-		if (configInt != 0) {
-			this.port = configInt;
-		}
+		host = path.getString("host");
+		user = path.getString("user");
+		password = path.getString("password");
+		database = path.getString("database");
+		int configInt = path.getInt("port");
+		if (configInt != 0)
+			port = configInt;
+	}
+
+	public DbCredentials(Configuration config) {
+		Configuration path = config.getSection("database.default");
+		host = path.getString("host");
+		user = path.getString("user");
+		password = path.getString("password");
+		database = path.getString("database");
+		int configInt = path.getInt("port");
+		if (configInt != 0)
+			port = configInt;
 	}
 
 	public DbCredentials(String host, String user, String password) {
@@ -36,33 +47,33 @@ public class DbCredentials {
 		this.host = host;
 		this.user = user;
 		this.password = password;
-		this.database = dbName;
+		database = dbName;
 		this.port = port;
 	}
 
 	public String getDatabase() {
-		return this.database;
+		return database;
 	}
 
 	public String getHost() {
-		return this.host;
+		return host;
 	}
 
 	public String getPassword() {
-		return this.password;
+		return password;
 	}
 
 	public int getPort() {
-		return this.port;
+		return port;
 	}
 
 	public String getUser() {
-		return this.user;
+		return user;
 	}
 
 	public String toURI() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("jdbc:mariadb://").append(this.host).append(":").append(this.port).append("/").append(this.database).append("?autoReconnect=true");
+		sb.append("jdbc:mariadb://").append(host).append(":").append(port).append("/").append(database).append("?autoReconnect=true");
 		return sb.toString();
 	}
 }

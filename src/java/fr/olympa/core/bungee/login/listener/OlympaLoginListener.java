@@ -2,11 +2,12 @@ package fr.olympa.core.bungee.login.listener;
 
 import java.util.concurrent.TimeUnit;
 
+import fr.olympa.api.bungee.customevent.BungeeOlympaGroupChangeEvent;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.api.customevent.OlympaGroupChangeEvent;
 import fr.olympa.core.bungee.datamanagment.CachePlayer;
 import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
@@ -19,68 +20,72 @@ import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent.Reason;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
-import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
-@SuppressWarnings("deprecation")
 public class OlympaLoginListener implements Listener {
-	
+
 	@EventHandler
-	public void onOlympaGroupChange(OlympaGroupChangeEvent event) {
+	public void onOlympaGroupChange(BungeeOlympaGroupChangeEvent event) {
 		ProxiedPlayer player = event.getPlayer();
+		if (player == null)
+			return;
 		player.removeGroups(player.getGroups().toArray(new String[0]));
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
 		String[] groupsNames = olympaPlayer.getGroups().keySet().stream().map(OlympaGroup::name).toArray(String[]::new);
 		if (groupsNames.length > 0)
 			player.addGroups(groupsNames);
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onOlympaPlayerLogin(OlympaPlayerLoginEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
+		AccountProvider account = new AccountProvider(olympaPlayer.getUniqueId());
+		String ip = event.getIp();
+		if (!olympaPlayer.getIp().equals(ip)) {
+			olympaPlayer.addNewIp(ip);
+			account.saveToRedis(olympaPlayer);
+			RedisBungeeSend.sendOlympaPlayer(player.getServer().getInfo(), olympaPlayer);
+		}
 		String[] groupsNames = olympaPlayer.getGroups().keySet().stream().map(OlympaGroup::name).toArray(String[]::new);
 		if (groupsNames.length > 0)
 			player.addGroups(groupsNames);
-		String ip = player.getAddress().getAddress().getHostAddress();
-		if (!olympaPlayer.getIp().equals(ip))
-			olympaPlayer.addNewIp(ip);
 		CachePlayer cache = DataHandler.get(player.getName());
-		OlympaBungee.getInstance().getTask().runTaskLater(() -> {
-			if (cache != null && !olympaPlayer.isPremium()) {
-				String subdomain = cache.getSubDomain();
-				if (subdomain != null)
-					if (subdomain.equalsIgnoreCase("buildeur")) {
-						ServersConnection.tryConnect(player, OlympaServer.BUILDEUR);
-						return;
-					} else if (subdomain.equalsIgnoreCase("dev")) {
-						ServersConnection.tryConnect(player, OlympaServer.DEV);
-						return;
-					}
-				ServersConnection.tryConnect(player, OlympaServer.LOBBY);
+		OlympaBungee.getInstance().getTask().runTaskLater("connect_player_" + player.getUniqueId(), () -> {
+			if (cache != null) {
+				if (!olympaPlayer.isPremium()) {
+					String subdomain = cache.getSubDomain();
+					if (subdomain != null)
+						if (subdomain.equalsIgnoreCase("buildeur"))
+							ServersConnection.tryConnect(player, OlympaServer.BUILDEUR, false);
+						else if (subdomain.equalsIgnoreCase("dev"))
+							ServersConnection.tryConnect(player, OlympaServer.DEV, false);
+						else
+							ServersConnection.tryConnect(player, OlympaServer.LOBBY, false);
+				}
+				DataHandler.removePlayer(cache);
 			}
-			DataHandler.removePlayer(player.getName());
 		}, 2, TimeUnit.SECONDS);
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerDisconnect(PlayerDisconnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
 		player.removeGroups(player.getGroups().toArray(new String[0]));
 		ServersConnection.removeTryToConnect(player);
+		OlympaBungee.getInstance().getTask().cancelTaskByName("connect_player_" + player.getUniqueId());
 	}
-	
+
 	@EventHandler
 	public void onServerConnect(ServerConnectEvent event) {
 		if (event.isCancelled())
 			return;
-		ProxiedPlayer player = event.getPlayer();
 		Reason reason = event.getReason();
 		if (reason != Reason.JOIN_PROXY)
 			return;
-		
+		ProxiedPlayer player = event.getPlayer();
 		boolean tryConnect = false;
 		CachePlayer cache = DataHandler.get(player.getName());
 		if (cache != null) {
@@ -97,37 +102,41 @@ public class OlympaLoginListener implements Listener {
 						ServerInfo server = ServersConnection.getBestServer(olympaServer, null);
 						if (server == null || !MonitorServers.getMonitor(server).isOpen()) {
 							tryConnect = true;
-							ServersConnection.tryConnect(player, olympaServer);
+							OlympaServer olympaServer2 = olympaServer;
+							ServersConnection.tryConnect(player, olympaServer2, true);
 						} else {
 							event.setTarget(server);
+							RedisBungeeSend.sendOlympaPlayerFirstConnection(server, olympaPlayer);
 							return;
 						}
 					}
 				}
-				ServerInfo lobby = ServersConnection.getBestServer(OlympaServer.LOBBY, null);
+				ServerInfo lobby = ServersConnection.getBestServer(OlympaServer.LOBBY, null, player);
 				if (lobby != null) {
 					event.setTarget(lobby);
+					RedisBungeeSend.sendOlympaPlayerFirstConnection(lobby, olympaPlayer);
 					return;
 				} else if (!tryConnect)
-					ServersConnection.tryConnect(player, OlympaServer.LOBBY);
+					ServersConnection.tryConnect(player, OlympaServer.LOBBY, true);
 			}
 		}
-		ServerInfo auth = ServersConnection.getBestServer(OlympaServer.AUTH, null);
-		System.out.println("ok " + auth);
-		if (auth != null)
+		ServerInfo auth = ServersConnection.getBestServer(OlympaServer.AUTH, null, player);
+		if (auth != null) {
 			event.setTarget(auth);
+			if (cache != null && cache.getOlympaPlayer() != null)
+				RedisBungeeSend.sendOlympaPlayerFirstConnection(auth, cache.getOlympaPlayer());
+		}
 	}
-	
+
 	@EventHandler
 	public void onServerConnected(ServerConnectedEvent event) {
-		ServersConnection.removeTryToConnect(event.getPlayer());
-	}
-	
-	@EventHandler
-	public void onServerSwitch(ServerSwitchEvent event) {
 		ProxiedPlayer player = event.getPlayer();
-		if (event.getFrom() != null)
-			RedisBungeeSend.giveOlympaPlayer(event.getFrom(), player.getServer().getInfo());
-		
+		ServersConnection.removeTryToConnect(player, true);
+		CachePlayer cache = DataHandler.get(player.getName());
+		if (cache != null) {
+			OlympaPlayer olympaPlayer = cache.getOlympaPlayer();
+			if (olympaPlayer != null && olympaPlayer.isConnected() && olympaPlayer.isPremium())
+				DataHandler.removePlayer(cache);
+		}
 	}
 }

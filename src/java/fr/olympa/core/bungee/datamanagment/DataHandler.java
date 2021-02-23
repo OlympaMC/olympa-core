@@ -7,10 +7,16 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class DataHandler {
 
-	static Set<CachePlayer> players = new HashSet<>();
+	private static Set<CachePlayer> players = new HashSet<>();
 
 	public static void addPlayer(CachePlayer player) {
-		DataHandler.players.add(player);
+		CachePlayer cache = get(player.getName());
+		boolean isCacheNull = cache == null;
+		boolean isNotSameObject = !isCacheNull && !cache.equals(player);
+		if (isCacheNull || isNotSameObject)
+			DataHandler.players.add(player);
+		if (isNotSameObject)
+			removePlayer(cache);
 	}
 
 	public static CachePlayer get(String name) {
@@ -30,9 +36,8 @@ public class DataHandler {
 	}
 
 	public static void removePlayer(CachePlayer player) {
-		if (player != null) {
+		if (player != null)
 			DataHandler.players.remove(player);
-		}
 	}
 
 	public static void removePlayer(String name) {

@@ -1,50 +1,100 @@
 package fr.olympa.core.spigot;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.spigotmc.SpigotConfig;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
 import fr.olympa.api.command.CommandListener;
+import fr.olympa.api.command.essentials.AfkCommand;
+import fr.olympa.api.command.essentials.ColorCommand;
+import fr.olympa.api.command.essentials.EcseeCommand;
+import fr.olympa.api.command.essentials.FlyCommand;
+import fr.olympa.api.command.essentials.GamemodeCommand;
+import fr.olympa.api.command.essentials.InvseeCommand;
+import fr.olympa.api.command.essentials.ItemCommand;
+import fr.olympa.api.command.essentials.PingCommand;
+import fr.olympa.api.command.essentials.tp.TpCommand;
+import fr.olympa.api.config.CustomConfig;
+import fr.olympa.api.customevents.SpigotConfigReloadEvent;
 import fr.olympa.api.frame.ImageFrameManager;
+import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.gui.Inventories;
 import fr.olympa.api.holograms.HologramsManager;
-import fr.olympa.api.hook.ProtocolAction;
+import fr.olympa.api.hook.IProtocolSupport;
+import fr.olympa.api.module.OlympaModule;
 import fr.olympa.api.permission.OlympaAPIPermissions;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.plugin.OlympaSpigot;
-import fr.olympa.api.provider.RedisAccess;
+import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.redis.RedisAccess;
+import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.region.tracking.RegionManager;
-import fr.olympa.api.scoreboard.tab.INametagApi;
+import fr.olympa.api.report.ReportReason;
 import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.sql.DbConnection;
+import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.utils.CacheStats;
+import fr.olympa.api.utils.ErrorLoggerHandler;
+import fr.olympa.api.utils.ErrorOutputStream;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
+import fr.olympa.core.spigot.commands.ConfigCommand;
 import fr.olympa.core.spigot.commands.GenderCommand;
+import fr.olympa.core.spigot.commands.NewSpigotCommand;
+import fr.olympa.core.spigot.commands.PermissionCommand;
 import fr.olympa.core.spigot.commands.RestartCommand;
-import fr.olympa.core.spigot.datamanagment.listeners.DataManagmentListener;
+import fr.olympa.core.spigot.commands.ToggleErrors;
+import fr.olympa.core.spigot.commands.TpsCommand;
+import fr.olympa.core.spigot.commands.UtilsCommand;
+import fr.olympa.core.spigot.datamanagment.DataManagmentListener;
+import fr.olympa.core.spigot.datamanagment.OnLoadListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
-import fr.olympa.core.spigot.protocolsupport.ProtocolSupportHook;
+import fr.olympa.core.spigot.groups.StaffCommand;
+import fr.olympa.core.spigot.module.CoreModules;
+import fr.olympa.core.spigot.protocolsupport.VersionHandler;
+import fr.olympa.core.spigot.protocolsupport.ViaVersionHook;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
+import fr.olympa.core.spigot.redis.receiver.BungeeAskPlayerServerReceiver;
+import fr.olympa.core.spigot.redis.receiver.BungeeSendOlympaPlayerReceiver;
+import fr.olympa.core.spigot.redis.receiver.BungeeServerNameReceiver;
+import fr.olympa.core.spigot.redis.receiver.BungeeTeamspeakIdReceiver;
+import fr.olympa.core.spigot.redis.receiver.SpigotCommandReceiver;
+import fr.olympa.core.spigot.redis.receiver.SpigotGroupChangedReceiveReceiver;
+import fr.olympa.core.spigot.redis.receiver.SpigotGroupChangedReceiver;
+import fr.olympa.core.spigot.redis.receiver.SpigotOlympaPlayerReceiver;
+import fr.olympa.core.spigot.redis.receiver.SpigotReceiveOlympaPlayerReceiver;
 import fr.olympa.core.spigot.report.commands.ReportCommand;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
-import fr.olympa.core.spigot.scoreboards.NameTagListener;
-import fr.olympa.core.spigot.scoreboards.NametagManager;
-import fr.olympa.core.spigot.scoreboards.ScoreboardTeamListener;
 import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
 import fr.olympa.core.spigot.security.AntiWD;
 import fr.olympa.core.spigot.security.HelpCommand;
 import fr.olympa.core.spigot.security.PluginCommand;
 import fr.olympa.core.spigot.status.SetStatusCommand;
 import fr.olympa.core.spigot.status.StatusMotdListener;
-import fr.olympa.core.spigot.tps.TpsCommand;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPubSub;
 
-public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
+public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listener {
 
 	private static OlympaCore instance = null;
 
@@ -52,38 +102,55 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 		return instance;
 	}
 
+	protected DbConnection database = null;
 	private SwearHandler swearHandler;
-	private RegionManager regionManager;
-	private HologramsManager hologramsManager;
-	private ImageFrameManager imageFrameManager;
-	private ProtocolAction protocolSupportHook;
-	private INametagApi nameTagApi;
+	private VersionHandler versionHandler;
+	private String lastVersion = "unknown";
+	private String firstVersion = "unknown";
+	private ErrorOutputStream errorOutputStream;
 
-	@Override
-	public INametagApi getNameTagApi() {
-		return nameTagApi;
+	public String getLastVersion() {
+		return lastVersion;
+	}
+
+	public void setLastVersion(String lastVersion) {
+		this.lastVersion = lastVersion;
+	}
+
+	public String getFirstVersion() {
+		return firstVersion;
+	}
+
+	public String getRangeVersion() {
+		if (firstVersion.equals(lastVersion))
+			return firstVersion;
+		return firstVersion + " à " + lastVersion;
+	}
+
+	public void setFirstVersion(String firstVersion) {
+		this.firstVersion = firstVersion;
+	}
+
+	public ViaVersionHook getViaVersionHook() {
+		return versionHandler.getViaVersion();
+	}
+
+	private long lastModifiedTime;
+
+	public long getLastModifiedTime() {
+		return lastModifiedTime;
 	}
 
 	@Override
-	public ProtocolAction getProtocolSupport() {
-		return protocolSupportHook;
+	public Connection getDatabase() throws SQLException {
+		return database.getConnection();
 	}
 
 	@Override
-	public RegionManager getRegionManager() {
-		return regionManager;
+	public IProtocolSupport getProtocolSupport() {
+		return versionHandler.getProtocolSupport();
 	}
 
-	@Override
-	public HologramsManager getHologramsManager() {
-		return hologramsManager;
-	}
-
-	@Override
-	public ImageFrameManager getImageFrameManager() {
-		return imageFrameManager;
-	}
-	
 	public SwearHandler getSwearHandler() {
 		return swearHandler;
 	}
@@ -95,70 +162,221 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee {
 
 	@Override
 	public void onDisable() {
-		RedisSpigotSend.sendShutdown();
-		RedisAccess.close();
-		status = ServerStatus.CLOSE;
-		nameTagApi.reset();
-		hologramsManager.unload();
+		RedisSpigotSend.errorsEnabled = false;
+		setStatus(ServerStatus.CLOSE);
 		super.onDisable();
+		OlympaModule.disableAll();
+		if (database != null)
+			database.close();
 		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
 	}
 
 	@Override
-	public void onEnable() {
+	public void onLoad() {
+		super.onLoad();
 		instance = this;
+		SpigotConfig.sendNamespaced = false;
+	}
+
+	@Override
+	public void onEnable() {
 		LinkSpigotBungee.Provider.link = this;
-		
+		PluginManager pluginManager = getServer().getPluginManager();
+		pluginManager.registerEvents(new OnLoadListener(), this);
+
 		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
+		new RestartCommand(this).registerPreProcess();
+		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
+		ReportReason.registerReason(ReportReason.class);
 		super.onEnable();
-		// Force Dev Status (le status dans la config est ignoré)
-		status = ServerStatus.DEV;
-		
+		if (config != null) {
+			setupRedis();
+			setupDatabase();
+		}
+
+		RedisSpigotSend.errorsEnabled = true;
+		errorOutputStream = new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20));
+		System.setErr(new PrintStream(errorOutputStream));
+		ErrorLoggerHandler errorHandler = new ErrorLoggerHandler(RedisSpigotSend::sendError);
+		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+			plugin.getLogger().addHandler(errorHandler);
+			sendMessage("Hooked error stream handler into §6%s§e's logger!", plugin.getName());
+		}
+		Bukkit.getLogger().addHandler(errorHandler);
+		sendMessage("Hooked error stream handler into §6server§e logger!");
+		sendMessage("§6" + getDescription().getName() + "§e (" + getDescription().getVersion() + ") est chargé.");
+
+		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
+		imageFrameManager = new ImageFrameManager(this, "maps.yml", "images");
 		try {
-			hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml"));
-		} catch (IOException e) {
+			AccountProvider.init(new MySQL(database));
+		} catch (SQLException ex) {
+			sendMessage("&cUne erreur est survenue lors du chargement du MySQL. Arrêt du plugin.");
+			ex.printStackTrace();
+			setEnabled(false);
+			return;
+		}
+		new ReportMySQL(database);
+
+		try {
+			new CoreModules();
+			OlympaModule.enableAll();
+			((NametagAPI) nameTagApi).testCompat();
+		} catch (Exception | NoSuchMethodError e) {
+			sendMessage("&cUne erreur est survenue lors du chargement des modules.");
+			e.printStackTrace();
+		}
+		try {
+			new HologramsManager(this, new File(getDataFolder(), "holograms.yml"));
+		} catch (NullPointerException | ReflectiveOperationException e) {
 			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
 			e.printStackTrace();
 		}
-		
-		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
-		imageFrameManager = new ImageFrameManager(this, "maps.yml", "images");
-		new MySQL(database);
-		new ReportMySQL(database);
-		
+
+		pluginManager.registerEvents(this, this);
+		pluginManager.registerEvents(new DataManagmentListener(), this);
+		pluginManager.registerEvents(new GroupListener(), this);
+		pluginManager.registerEvents(new CancerListener(), this);
+		pluginManager.registerEvents(new Inventories(), this);
+		pluginManager.registerEvents(new StatusMotdListener(), this);
+		pluginManager.registerEvents(new ChatListener(), this);
+		pluginManager.registerEvents(new CommandListener(), this);
+		pluginManager.registerEvents(new StatusMotdListener(), this);
+		pluginManager.registerEvents(regionManager = new RegionManager(), this);
+
 		new GroupCommand(this).register();
 		new ChatCommand(this).register();
 		new ReportCommand(this).register();
 		new SetStatusCommand(this).register();
-		new PluginCommand(this).register();
-		new HelpCommand(this).register();
+		new PluginCommand(this).registerPreProcess();
+		new HelpCommand(this).registerPreProcess();
 		new TpsCommand(this).registerPreProcess();
 		new UtilsCommand(this).register();
 		new GenderCommand(this).register();
-		new RestartCommand(this).registerPreProcess();
-		// new PasswdCommand(this).register();
-		
-		PluginManager pluginManager = getServer().getPluginManager();
-		pluginManager.registerEvents(new DataManagmentListener(), this);
-		pluginManager.registerEvents(new GroupListener(), this);
-		pluginManager.registerEvents(new CancerListener(), this);
-		pluginManager.registerEvents(new TestListener(), this);
-		pluginManager.registerEvents(new Inventories(), this);
-		pluginManager.registerEvents(new StatusMotdListener(), this);
-		pluginManager.registerEvents(new ChatListener(), this);
-		pluginManager.registerEvents(regionManager = new RegionManager(), this);
-		pluginManager.registerEvents(new CommandListener(), this);
-		pluginManager.registerEvents(new StatusMotdListener(), this);
-		pluginManager.registerEvents(new NameTagListener(), this);
-		pluginManager.registerEvents(new ScoreboardTeamListener(), this);
-		nameTagApi = new NametagAPI(new NametagManager());
-		((NametagAPI) nameTagApi).testCompat();
-		
+		new GamemodeCommand(this).register().registerPreProcess();
+		new InvseeCommand(this).register();
+		new EcseeCommand(this).register();
+		new FlyCommand(this).register();
+		new AfkCommand(this).register();
+		new ConfigCommand(this).register();
+		new PermissionCommand(this).register();
+		new PingCommand(this).register();
+		//		new HologramsCommand(hologramsManager).register();
+		new TpCommand(this).register();
+		new ColorCommand(this).register();
+		new ToggleErrors(this).register();
+		new StaffCommand(this).register();
+		new ItemCommand(this).register();
+		new NewSpigotCommand(this).register().registerPreProcess();
+
 		new AntiWD(this);
-		if (getServer().getPluginManager().isPluginEnabled("ProtocolSupport"))
-			protocolSupportHook = new ProtocolSupportHook(this);
-		
+		getTask().runTask(() -> versionHandler = new VersionHandler(this));
+		OlympaGroup defaultGroup = OlympaGroup.PLAYER;
+		defaultGroup.setRuntimePermission("minecraft.command.help", false);
+		defaultGroup.setRuntimePermission("minecraft.command.me", false);
+		defaultGroup.setRuntimePermission("minecraft.command.msg", false);
+		defaultGroup.setRuntimePermission("bukkit.command.version", false);
+		defaultGroup.setRuntimePermission("bukkit.command.plugins", false);
+		defaultGroup.setRuntimePermission("bukkit.command.help", false);
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
+
+		try {
+			File file = new File(OlympaCore.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+			BasicFileAttributes attr;
+			attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+			lastModifiedTime = attr.lastModifiedTime().toMillis() / 1000L;
+		} catch (Exception | NoClassDefFoundError e) {
+			e.printStackTrace();
+		}
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+			players.forEach(p -> {
+				AccountProvider account = new AccountProvider(p.getUniqueId());
+				OlympaPlayer olympaPlayer = account.getFromCache();
+				if (olympaPlayer != null) {
+					//MySQL.savePlayerPluginDatas(olympaPlayer);
+					account.saveToRedis(olympaPlayer);
+					account.removeFromCache();
+				}
+				System.out.println("Succes save " + p.getName());
+			});
+		}));
+	}
+
+	@EventHandler
+	public void onSpigotConfigReload(SpigotConfigReloadEvent event) {
+		CustomConfig newConfig = event.getConfig();
+		String newFileName = newConfig.getFileName();
+		if (newFileName.equals(getConfig().getFileName()))
+			swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
+		else if (newFileName.equals(imageFrameManager.getFileName()))
+			imageFrameManager.loadMaps(newConfig);
+		/*else if (newFileName.equals(hologramsManager.getFile().getName()))
+			try {
+				hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml"));
+			}catch (IOException | ReflectiveOperationException e) {
+				e.printStackTrace();
+			}*/
+	}
+
+	@Override
+	public boolean isSpigot() {
+		return true;
+	}
+
+	private void setupRedis(int... is) {
+		int i1 = 0;
+		if (is != null && is.length != 0)
+			i1 = is[0] + 1;
+		int i = i1;
+		RedisAccess redisAccess = RedisAccess.init(getConfig());
+		redisAccess.connect();
+		if (redisAccess.isConnected()) {
+			registerRedisSub(redisAccess.getConnection(), new BungeeServerNameReceiver(), RedisChannel.BUNGEE_ASK_SEND_SERVERNAME.name());
+			registerRedisSub(redisAccess.connect(), new SpigotOlympaPlayerReceiver(), RedisChannel.BUNGEE_ASK_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(redisAccess.connect(), new SpigotReceiveOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(redisAccess.connect(), new BungeeSendOlympaPlayerReceiver(), RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(redisAccess.connect(), new SpigotGroupChangedReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP.name());
+			registerRedisSub(redisAccess.connect(), new SpigotGroupChangedReceiveReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP_RECEIVE.name());
+			registerRedisSub(redisAccess.connect(), new BungeeAskPlayerServerReceiver(), RedisChannel.BUNGEE_SEND_PLAYERSERVER.name());
+			registerRedisSub(redisAccess.connect(), new SpigotCommandReceiver(), RedisChannel.SPIGOT_COMMAND.name());
+			registerRedisSub(redisAccess.connect(), new BungeeTeamspeakIdReceiver(), RedisChannel.BUNGEE_SEND_TEAMSPEAKID.name());
+			RedisSpigotSend.askServerName();
+			sendMessage("&aConnexion à &2Redis&a établie.");
+		} else {
+			if (i % 100 == 0)
+				sendMessage("&cConnexion à &4Redis&c impossible.");
+			getTask().runTaskLater(() -> setupRedis(i), 10, TimeUnit.SECONDS);
+		}
+	}
+
+	private void setupDatabase(int... is) {
+		int i1 = 0;
+		if (is != null && is.length != 0)
+			i1 = is[0] + 1;
+		int i = i1;
+		DbCredentials dbcredentials = new DbCredentials(getConfig());
+		database = new DbConnection(dbcredentials);
+		if (database.connect())
+			sendMessage("&aConnexion à la base de donnée &2" + dbcredentials.getDatabase() + "&a établie.");
+		else {
+			if (i % 100 == 0)
+				sendMessage("&cConnexion à la base de donnée &4" + dbcredentials.getDatabase() + "&c impossible.");
+			getTask().runTaskLater(() -> setupDatabase(i), 10, TimeUnit.SECONDS);
+		}
+	}
+
+	public void registerRedisSub(Jedis jedis, JedisPubSub sub, String channel) {
+		new Thread(() -> {
+			jedis.subscribe(sub, channel);
+			jedis.disconnect();
+		}, "Redis sub " + channel).start();
+	}
+
+	@Override
+	public void setStatus(ServerStatus status) {
+		this.status = status;
+		RedisSpigotSend.changeStatus(status);
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -20,17 +21,18 @@ public class ReportGuiChoose extends OlympaGUI {
 
 		List<Player> potentials = new ArrayList<>();
 		EntityDamageEvent lastDmgCause = player.getLastDamageCause();
-		if (lastDmgCause != null && lastDmgCause.getEntity() instanceof Player) {
+		if (lastDmgCause != null && lastDmgCause.getEntity() instanceof Player)
 			potentials.add((Player) lastDmgCause.getEntity());
-		}
 		potentials.add(player.getKiller());
+
+		if (potentials.isEmpty())
+			potentials = Bukkit.getOnlinePlayers().stream().limit(6 * 9).collect(Collectors.toList());
 
 		List<OlympaItemBuild> items = potentials.stream().map(p -> new OlympaItemBuild("&cReport &4" + p.getName()).skullowner(p)).collect(Collectors.toList());
 		ReportGuiChoose gui = new ReportGuiChoose("&6Report", items.size() / 9);
 		int slot = gui.inv.getSize() / 2 - items.size() / 2;
-		for (OlympaItemBuild item : items) {
+		for (OlympaItemBuild item : items)
 			gui.inv.setItem(slot++, item.build());
-		}
 		gui.create(player);
 	}
 
@@ -40,12 +42,11 @@ public class ReportGuiChoose extends OlympaGUI {
 
 	@Override
 	public boolean onClick(Player player, ItemStack current, int slot, ClickType click) {
-		if (current == null) {
-			return false;
-		}
+		if (current == null)
+			return true;
 
 		OfflinePlayer target = ((SkullMeta) current.getItemMeta()).getOwningPlayer();
 		ReportGui.open(player, target, null);
-		return false;
+		return true;
 	}
 }

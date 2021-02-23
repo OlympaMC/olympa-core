@@ -16,7 +16,7 @@ import fr.olympa.api.utils.Prefix;
 public class ChatCommand extends OlympaCommand {
 	
 	public ChatCommand(Plugin plugin) {
-		super(plugin, "chat", OlympaCorePermissions.CHAT_COMMAND, "tchat");
+		super(plugin, "chat", "Permet de gérer l'envoi des messages dans le chat.", OlympaCorePermissions.CHAT_COMMAND, "tchat");
 		this.addArgs(true, "slow", "clear", "mute");
 	}
 	

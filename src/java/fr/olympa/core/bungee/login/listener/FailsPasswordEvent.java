@@ -8,9 +8,10 @@ import net.md_5.bungee.event.EventHandler;
 
 public class FailsPasswordEvent implements Listener {
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerDisconnect(PlayerDisconnectEvent event) {
 		ProxiedPlayer player = event.getPlayer();
-		HandlerLogin.timesFails.remove(player);
+		HandlerLogin.timesFails.invalidate(player.getAddress().getAddress().getHostAddress());
 	}
 }

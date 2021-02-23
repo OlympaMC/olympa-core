@@ -9,17 +9,25 @@ import com.mysql.jdbc.Driver;
 
 public class DbConnection {
 
-	final DbCredentials dbcredentials;
+	DbCredentials dbcredentials;
 	Connection connection;
 
 	public DbConnection(DbCredentials dbcredentials) {
 		this.dbcredentials = dbcredentials;
 	}
 
+	public void updateCredentials(DbCredentials dbcredentials) {
+		this.dbcredentials = dbcredentials;
+	}
+
+	public boolean isSameCredentials(DbCredentials dbcredentials) {
+		return this.dbcredentials.equals(dbcredentials);
+	}
+
 	public boolean close() {
 		try {
-			if (this.connection != null && !this.connection.isClosed()) {
-				this.connection.close();
+			if (connection != null && !connection.isClosed()) {
+				connection.close();
 				return true;
 			}
 		} catch (SQLException e) {
@@ -32,10 +40,10 @@ public class DbConnection {
 		try {
 			Class.forName("org.mariadb.jdbc.Driver");
 			Driver.class.getName();
-			this.connection = DriverManager.getConnection(this.dbcredentials.toURI(), this.dbcredentials.getUser(), this.dbcredentials.getPassword());
-			this.connection.setNetworkTimeout(Executors.newSingleThreadExecutor(), 28800);
+			connection = DriverManager.getConnection(dbcredentials.toURI(), dbcredentials.getUser(), dbcredentials.getPassword());
+			connection.setNetworkTimeout(Executors.newSingleThreadExecutor(), 28800);
 			System.out.println("Opened database connection.");
-			return !this.connection.isClosed();
+			return !connection.isClosed();
 		} catch (final SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -43,10 +51,9 @@ public class DbConnection {
 	}
 
 	public Connection getConnection() throws SQLException {
-		if (this.connection != null && this.connection.isValid(0)) {
-			return this.connection;
-		}
-		this.connect();
-		return this.connection;
+		if (connection != null && connection.isValid(0))
+			return connection;
+		connect();
+		return connection;
 	}
 }

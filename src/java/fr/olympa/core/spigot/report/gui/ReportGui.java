@@ -1,6 +1,5 @@
 package fr.olympa.core.spigot.report.gui;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,18 +10,17 @@ import org.bukkit.inventory.ItemStack;
 
 import fr.olympa.api.gui.OlympaGUI;
 import fr.olympa.api.item.OlympaItemBuild;
-import fr.olympa.core.spigot.report.items.ReportReason;
+import fr.olympa.api.report.ReportReason;
 
 public class ReportGui extends OlympaGUI {
 
 	public static void open(Player player, OfflinePlayer target2, String note) {
-		ReportGui gui = new ReportGui("&6Report &e" + target2.getName(), 3 * 9, target2, note);
+		ReportGui gui = new ReportGui("&6Report &e" + target2.getName(), 3, target2, note);
 
-		List<OlympaItemBuild> items = Arrays.stream(ReportReason.values()).map(ReportReason::getItem).collect(Collectors.toList());
+		List<OlympaItemBuild> items = ReportReason.values().stream().map(rr -> (OlympaItemBuild) rr.getItem()).collect(Collectors.toList());
 		int slot = gui.inv.getSize() / 2 - items.size() / 2;
-		for (OlympaItemBuild item : items) {
+		for (OlympaItemBuild item : items)
 			gui.inv.setItem(slot++, item.build());
-		}
 		gui.create(player);
 	}
 
@@ -37,12 +35,12 @@ public class ReportGui extends OlympaGUI {
 
 	@Override
 	public boolean onClick(Player player, ItemStack current, int slot, ClickType click) {
-		if (current == null) {
-			return false;
-		}
+		if (current == null)
+			return true;
 
-		ReportReason reason = ReportReason.get(current);
+		//		ReportReason reason = ReportReason.get(current);
+		ReportReason reason = ReportReason.values().stream().filter(itemGui -> ((OlympaItemBuild) itemGui.getItem()).build().isSimilar(current)).findFirst().orElse(null);
 		ReportGuiConfirm.open(player, target, reason, note);
-		return false;
+		return true;
 	}
 }

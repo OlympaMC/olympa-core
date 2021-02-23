@@ -1,8 +1,8 @@
 package fr.olympa.core.bungee.vpn;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
@@ -22,34 +22,47 @@ public class OlympaVpn {
 	Boolean mobile;
 	Boolean proxy;
 	Boolean hosting;
-	Map<String, Boolean> users = new HashMap<>();
+	boolean upWithDB = false;
+	List<String> users;
+	List<String> whitelistUsers;
 
-	public OlympaVpn(long id, String query, boolean proxy, boolean mobile, boolean hosting, String usersString, String country, String city, String org, String as) {
+	public OlympaVpn(long id, String query, Boolean proxy, Boolean mobile, Boolean hosting, String usersString, String country, String city, String org, String as, String whitelist) {
 		this.id = id;
 		this.query = query;
-		this.mobile = mobile;
-		this.proxy = proxy;
-		this.hosting = hosting;
+		if (mobile)
+			this.mobile = mobile;
+		if (proxy)
+			this.proxy = proxy;
+		if (hosting)
+			this.hosting = hosting;
 		this.country = country;
 		this.city = city;
 		this.org = org;
 		this.as = as;
-		if (usersString != null && !usersString.isEmpty()) {
-			users = Arrays.stream(usersString.split(",")).collect(Collectors.toMap(entry -> entry.split(":")[0], entry -> {
-				String[] split = entry.split(":");
-				if (split.length > 1) {
-					return split[1].equals("1");
-				}
-				return false;
-			}));
-		}
+		if (usersString != null && !usersString.isEmpty())
+			users = Arrays.stream(usersString.split(";")).collect(Collectors.toList());
+		if (whitelist != null && !whitelist.isEmpty())
+			whitelistUsers = Arrays.stream(whitelist.split(";")).collect(Collectors.toList());
 	}
 
-	public void addUser(String username, boolean onlineMode) {
-		if (users == null) {
-			users = new HashMap<>();
-		}
-		users.put(username, onlineMode);
+	public void addUser(String username) {
+		if (username == null)
+			return;
+		if (users == null)
+			users = new ArrayList<>();
+		else if (users.contains(username))
+			return;
+		removeUpWithDb();
+		users.add(username);
+	}
+
+	public void addUserWhitelist(String username) {
+		if (whitelistUsers == null)
+			whitelistUsers = new ArrayList<>();
+		else if (whitelistUsers.contains(username))
+			return;
+		removeUpWithDb();
+		whitelistUsers.add(username);
 	}
 
 	public String getAs() {
@@ -80,36 +93,52 @@ public class OlympaVpn {
 		return status;
 	}
 
-	public Map<String, Boolean> getUsers() {
+	public List<String> getUsers() {
 		return users;
 	}
 
-	public boolean hasUser(String username, boolean onlineMode) {
-		return users.entrySet().stream().filter(entry -> entry.getKey().equalsIgnoreCase(username) && entry.getValue() == onlineMode).findFirst().isPresent();
+	public List<String> getWhitelistUsers() {
+		return whitelistUsers;
+	}
+
+	public boolean hasUser(String username) {
+		return users != null && users.contains(username);
+	}
+
+	public boolean hasWhitelistUser(String username) {
+		return whitelistUsers != null && whitelistUsers.contains(username);
+	}
+
+	public boolean hasWhitelistUsers() {
+		return whitelistUsers != null && users != null && whitelistUsers.stream().anyMatch(u -> users.contains(u));
 	}
 
 	public Boolean isHosting() {
-		return hosting;
+		return hosting != null && hosting;
 	}
 
 	public Boolean isMobile() {
-		return mobile;
-	}
-
-	public boolean isOk() {
-		return status != null && status.equals("success");
+		return mobile != null && mobile;
 	}
 
 	public Boolean isProxy() {
-		return proxy;
+		return proxy != null && proxy;
 	}
 
-	@Deprecated
-	public boolean isVpn() {
-		return proxy || hosting;
+	public boolean isOk(String baseIp) {
+		return query.equals(baseIp) && status != null && status.equals("success");
 	}
 
-	public void setUsers(Map<String, Boolean> users) {
-		this.users = users;
+	public void removeUpWithDb() {
+		upWithDB = false;
 	}
+
+	public void setUpWithDB(boolean upWithDB) {
+		this.upWithDB = upWithDB;
+	}
+
+	public boolean isUpWithDB() {
+		return upWithDB;
+	}
+
 }
