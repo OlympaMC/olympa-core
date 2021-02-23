@@ -70,6 +70,7 @@ import fr.olympa.core.spigot.datamanagment.OnLoadListener;
 import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
 import fr.olympa.core.spigot.groups.StaffCommand;
+import fr.olympa.core.spigot.module.CoreModules;
 import fr.olympa.core.spigot.protocolsupport.VersionHandler;
 import fr.olympa.core.spigot.protocolsupport.ViaVersionHook;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
@@ -219,6 +220,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new ReportMySQL(database);
 
 		try {
+			new CoreModules();
 			OlympaModule.enableAll();
 			((NametagAPI) nameTagApi).testCompat();
 		} catch (Exception | NoSuchMethodError e) {
