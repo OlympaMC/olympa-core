@@ -42,31 +42,31 @@ public class BanMySQL {
 	 */
 	public static long addSanction(OlympaSanction olympaban) throws SQLException {
 		OlympaStatement statement = new OlympaStatement("INSERT INTO sanctions (type_id, target, reason, author_id, expires, created, status_id) VALUES (?, ?, ?, ?, ?, ?, ?)", true);
-		PreparedStatement pstate = statement.getStatement();
-		int i = 1;
-		pstate.setInt(i++, olympaban.getType().getId());
-		pstate.setString(i++, olympaban.getTarget());
-		pstate.setString(i++, olympaban.getReason());
-		pstate.setLong(i++, olympaban.getAuthor());
-		pstate.setTimestamp(i++, new Timestamp(olympaban.getExpires() * 1000L));
-		pstate.setTimestamp(i++, new Timestamp(olympaban.getCreated() * 1000L));
-		pstate.setLong(i, olympaban.getStatus().getId());
-		pstate.executeUpdate();
-		ResultSet resultSet = pstate.getGeneratedKeys();
-		resultSet.next();
-		long id = resultSet.getLong("id");
-		resultSet.close();
-		return id;
+		try (PreparedStatement pstate = statement.createStatement()) {
+			int i = 1;
+			pstate.setInt(i++, olympaban.getType().getId());
+			pstate.setString(i++, olympaban.getTarget());
+			pstate.setString(i++, olympaban.getReason());
+			pstate.setLong(i++, olympaban.getAuthor());
+			pstate.setTimestamp(i++, new Timestamp(olympaban.getExpires() * 1000L));
+			pstate.setTimestamp(i++, new Timestamp(olympaban.getCreated() * 1000L));
+			pstate.setLong(i, olympaban.getStatus().getId());
+			statement.executeUpdate(pstate);
+			ResultSet resultSet = pstate.getGeneratedKeys();
+			resultSet.next();
+			long id = resultSet.getLong("id");
+			resultSet.close();
+			return id;
+		}
 	}
 
 	public static boolean changeStatus(OlympaSanctionHistory banhistory, long id) {
 		OlympaStatement statement = new OlympaStatement("UPDATE sanctions SET `status_id` = ?, `history` = CONCAT_WS(';', ?, history) WHERE `id` = ?;");
-		try {
-			PreparedStatement pstate = statement.getStatement();
+		try (PreparedStatement pstate = statement.createStatement()) {
 			pstate.setInt(1, banhistory.getStatus().getId());
 			pstate.setString(2, banhistory.toJson());
 			pstate.setLong(3, id);
-			int i = statement.executeUpdate();
+			int i = statement.executeUpdate(pstate);
 			if (i != 1)
 				throw new SQLException("An error has occurred (" + i + " row(s) affected)");
 		} catch (SQLException e) {
