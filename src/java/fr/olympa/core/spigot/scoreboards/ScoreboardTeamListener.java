@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
@@ -18,6 +19,7 @@ import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.scoreboard.tab.FakeTeam;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.core.spigot.OlympaCore;
+import fr.olympa.core.spigot.module.CoreModules;
 import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
 
 public class ScoreboardTeamListener implements Listener {
@@ -25,14 +27,26 @@ public class ScoreboardTeamListener implements Listener {
 	// HandlerList.unregisterAll(new ScoreboardTeamListener()) pour désactiver le
 	// format de base
 
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void on0PlayerConnect(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
+
+		INametagApi nameTagApi = CoreModules.NAME_TAG.getApi();
+		if (nameTagApi == null)
+			return;
+		nameTagApi.callNametagUpdate(olympaPlayer);
+		List<OlympaPlayer> self = Arrays.asList(olympaPlayer);
+		for (OlympaPlayer other : AccountProvider.getAll())
+			if (other != olympaPlayer && other.getPlayer() != null && other.getPlayer().isOnline())
+				nameTagApi.callNametagUpdate(other, self);
+	}
+
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void on0PlayerLoad(OlympaPlayerLoadEvent event) {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
-		//OlympaCore.getInstance().getServer().getPluginManager().callEvent(new PlayerNameTagEditEvent(player, olympaPlayer, null, null));
-
-		INametagApi nameTagApi = OlympaCore.getInstance().getNameTagApi();
-		//		INametagApi nameTagApi = SpigotModule.NAME_TAG.getApi();
+		INametagApi nameTagApi = CoreModules.NAME_TAG.getApi();
 		if (nameTagApi == null)
 			return;
 		nameTagApi.callNametagUpdate(olympaPlayer);
@@ -45,10 +59,8 @@ public class ScoreboardTeamListener implements Listener {
 	@EventHandler
 	public void on1OlympaPlayerChangeGroup(AsyncOlympaPlayerChangeGroupEvent event) {
 		Player player = event.getPlayer();
-		INametagApi nameTagApi = OlympaCore.getInstance().getNameTagApi();
-		//		INametagApi nameTagApi = SpigotModule.NAME_TAG.getApi();
+		INametagApi nameTagApi = CoreModules.NAME_TAG.getApi();
 		if (player != null && player.isOnline() && nameTagApi != null)
-			//OlympaCore.getInstance().getServer().getPluginManager().callEvent(new PlayerNameTagEditEvent(player, event.getOlympaPlayer(), null, null));
 			nameTagApi.callNametagUpdate(event.getOlympaPlayer());
 	}
 
@@ -57,7 +69,6 @@ public class ScoreboardTeamListener implements Listener {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
 		INametagApi nameTagApi = OlympaCore.getInstance().getNameTagApi();
-		//		INametagApi nameTagApi = SpigotModule.NAME_TAG.getApi();
 		if (nameTagApi != null)
 			nameTagApi.callNametagUpdate(olympaPlayer);
 	}
