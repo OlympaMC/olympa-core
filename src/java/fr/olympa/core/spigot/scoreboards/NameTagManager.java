@@ -1,10 +1,10 @@
 package fr.olympa.core.spigot.scoreboards;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
@@ -19,7 +19,7 @@ public class NameTagManager {
 	public static boolean DISABLE_PUSH_ALL_TAGS = true;
 
 	//	private final Map<String, Map<Player, FakeTeam>> playerTeams = new HashMap<>(); //TODO
-	private final static Map<FakeTeam, Collection<? extends Player>> playerTeams = new HashMap<>();
+	private final static Map<FakeTeam, Collection<? extends Player>> playerTeams = new ConcurrentHashMap<>();
 
 	static {
 		CacheStats.addDebugMap("nameTagTeams", playerTeams);
