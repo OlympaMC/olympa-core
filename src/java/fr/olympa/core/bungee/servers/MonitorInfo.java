@@ -30,7 +30,7 @@ public class MonitorInfo {
 	private OlympaServer olympaServer;
 	private int serverID;
 
-	private Integer ping, onlinePlayers, maxPlayers, ramUsage, threads;
+	private Integer ping, onlinePlayers, maxPlayers, ramUsage, threads, allThreads;
 	private ServerStatus status = ServerStatus.UNKNOWN;
 	private String error;
 	private Float tps;
@@ -57,17 +57,21 @@ public class MonitorInfo {
 			if (motd.length >= 1)
 				status = ServerStatus.get(motd[0]);
 			if (motd.length >= 2 && RegexMatcher.FLOAT.is(motd[1]))
-				tps = (Float) RegexMatcher.FLOAT.parse(motd[1]);
+				tps = RegexMatcher.FLOAT.parse(motd[1]);
 			if (motd.length >= 3 && RegexMatcher.INT.is(motd[2]))
-				ramUsage = (Integer) RegexMatcher.INT.parse(motd[2]);
-			if (motd.length >= 4 && RegexMatcher.INT.is(motd[3]))
-				threads = (Integer) RegexMatcher.INT.parse(motd[3]);
+				ramUsage = RegexMatcher.INT.parse(motd[2]);
+			if (motd.length >= 4) {
+				String[] threadsWithAllThreads = motd[3].split("/");
+				threads = RegexMatcher.INT.parse(threadsWithAllThreads[0]);
+				if (threadsWithAllThreads.length > 1)
+					allThreads = RegexMatcher.INT.parse(threadsWithAllThreads[1]);
+			}
 			if (motd.length >= 5)
 				lastVersion = motd[4];
 			if (motd.length >= 6)
 				firstVersion = motd[5];
 			if (motd.length >= 7 && RegexMatcher.INT.is(motd[6]))
-				lastModifiedCore = (Integer) RegexMatcher.INT.parse(motd[6]);
+				lastModifiedCore = RegexMatcher.INT.parse(motd[6]);
 		} else {
 			status = ServerStatus.CLOSE;
 			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "");
@@ -96,6 +100,10 @@ public class MonitorInfo {
 
 	public int getServerID() {
 		return serverID;
+	}
+
+	public Integer getAllThreads() {
+		return allThreads;
 	}
 
 	public String getError() {

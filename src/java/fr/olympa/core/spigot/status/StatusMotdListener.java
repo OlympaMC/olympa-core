@@ -15,7 +15,7 @@ import fr.olympa.core.spigot.OlympaCore;
 
 public class StatusMotdListener implements Listener {
 
-	@EventHandler (priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPing(ServerListPingEvent event) {
 		ServerStatus status = OlympaCore.getInstance().getStatus();
 		MachineInfo machineInfo = new MachineInfo();
@@ -24,6 +24,7 @@ public class StatusMotdListener implements Listener {
 		sj.add(status.getName());
 		sj.add(String.valueOf(TPS.getTPS()));
 		sj.add(String.valueOf(machineInfo.getRawMemUsage()));
+		sj.add(String.valueOf(machineInfo.getThreads() + "/" + machineInfo.getAllThreadsCreated()));
 		sj.add(core.getFirstVersion());
 		sj.add(core.getLastVersion());
 		sj.add(Utils.timestampToDuration(core.getLastModifiedTime()));
