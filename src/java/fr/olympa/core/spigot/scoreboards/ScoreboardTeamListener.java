@@ -29,31 +29,27 @@ public class ScoreboardTeamListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on0PlayerConnect(PlayerJoinEvent event) {
-		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
-
 		INametagApi nameTagApi = CoreModules.NAME_TAG.getApi();
 		if (nameTagApi == null)
 			return;
-		nameTagApi.callNametagUpdate(olympaPlayer);
-		List<OlympaPlayer> self = Arrays.asList(olympaPlayer);
-		for (OlympaPlayer other : AccountProvider.getAll())
-			if (other != olympaPlayer && other.getPlayer() != null && other.getPlayer().isOnline())
-				nameTagApi.callNametagUpdate(other, self);
+		
+		Player player = event.getPlayer();
+		nameTagApi.callNametagUpdate(AccountProvider.get(player.getUniqueId()), false);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void on0PlayerLoad(OlympaPlayerLoadEvent event) {
-		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
 		INametagApi nameTagApi = CoreModules.NAME_TAG.getApi();
 		if (nameTagApi == null)
 			return;
-		nameTagApi.callNametagUpdate(olympaPlayer);
+		
+		Player player = event.getPlayer();
+		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
+		nameTagApi.callNametagUpdate(AccountProvider.get(player.getUniqueId()));
 		List<OlympaPlayer> self = Arrays.asList(olympaPlayer);
 		for (OlympaPlayer other : AccountProvider.getAll())
 			if (other != olympaPlayer && other.getPlayer() != null && other.getPlayer().isOnline())
-				nameTagApi.callNametagUpdate(other, self);
+				nameTagApi.callNametagUpdate(other, self, true);
 	}
 
 	@EventHandler

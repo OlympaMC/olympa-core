@@ -13,7 +13,6 @@ import org.bukkit.event.EventPriority;
 
 import fr.olympa.api.module.OlympaModule.ModuleApi;
 import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.scoreboard.tab.Nametag;
 import fr.olympa.core.spigot.OlympaCore;
@@ -34,9 +33,17 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 	public boolean enable(OlympaCore plugin) {
 		manager = new NameTagManager();
 		handlers = new ArrayList<>();
-		defaultHandler = (nametag, op, to) -> {
-			String prefix = op.getGroupPrefix();
-			nametag.appendPrefix(prefix.substring(0, prefix.length() - 1));
+		defaultHandler = new NametagHandler() {
+			@Override
+			public void updateNameTag(Nametag nametag, OlympaPlayer op, OlympaPlayer to) {
+				String prefix = op.getGroupPrefix();
+				nametag.appendPrefix(prefix.substring(0, prefix.length() - 1));
+			}
+			
+			@Override
+			public boolean needsDatas() {
+				return false;
+			}
 		};
 		addNametagHandler(EventPriority.LOW, defaultHandler);
 		return true;
@@ -83,12 +90,7 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 	}
 
 	@Override
-	public void callNametagUpdate(OlympaPlayer player) {
-		callNametagUpdate(player, AccountProvider.getAll());
-	}
-
-	@Override
-	public void callNametagUpdate(OlympaPlayer player, Collection<? extends OlympaPlayer> toPlayers) {
+	public void callNametagUpdate(OlympaPlayer player, Collection<? extends OlympaPlayer> toPlayers, boolean withDatas) {
 		if (manager == null) {
 			OlympaCore.getInstance().sendMessage("&cModule NameTag &4désactiver &8> &cImpossible de mettre à jour le nameTag de &4%s&7.", player.getName());
 			return;
@@ -105,7 +107,7 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 			for (Entry<EventPriority, NametagHandler> handlerEntry : handlers)
 				try {
 					NametagHandler handler = handlerEntry.getValue();
-					handler.updateNameTag(tag, player, to);
+					if (!handler.needsDatas() || withDatas) handler.updateNameTag(tag, player, to);
 				} catch (Exception ex) {
 					OlympaCore.getInstance().sendMessage("§cUne erreur est survenue lors de la mise à jour du nametag de %s", player.getName());
 					ex.printStackTrace();
