@@ -126,7 +126,7 @@ public class ServersConnection {
 		WaitingConnection wc = getConnections(player.getUniqueId());
 		if (wc == null)
 			return b;
-		if (wc.isChangeServer == isPostLoginEvent) {
+		if (wc.isChangeServer == isPostLoginEvent && wc.isChangeServer) {
 			wc.isChangeServer = false;
 			return b;
 		}

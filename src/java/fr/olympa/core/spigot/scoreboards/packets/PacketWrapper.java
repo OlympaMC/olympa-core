@@ -40,7 +40,8 @@ public class PacketWrapper {
 	public static PacketWrapper delete(FakeTeam team) {
 		if (!team.isValidTeam())
 			throw new IllegalAccessError("FakeTeam team is not valid : " + new Gson().toJson(team));
-		LinkSpigotBungee.Provider.link.sendMessage("Team &cDelete&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), team.getMembers() != null ? String.join(", ", team.getMembers()) : null);
+		if (CoreModules.NAME_TAG.isDebugEnabled())
+			LinkSpigotBungee.Provider.link.sendMessage("Team &cDelete&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), team.getMembers() != null ? String.join(", ", team.getMembers()) : null);
 		FakeTeam.removeId(team);
 		return new PacketWrapper(team.getName(), 1);
 	}
@@ -48,7 +49,8 @@ public class PacketWrapper {
 	public static PacketWrapper create(FakeTeam team) {
 		if (!team.isValidTeam())
 			throw new IllegalAccessError("FakeTeam team is not valid : " + new Gson().toJson(team));
-		LinkSpigotBungee.Provider.link.sendMessage("Team &2Create&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), String.join(", ", team.getMembers()));
+		if (CoreModules.NAME_TAG.isDebugEnabled())
+			LinkSpigotBungee.Provider.link.sendMessage("Team &2Create&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), String.join(", ", team.getMembers()));
 		return new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers());
 	}
 	//
@@ -59,14 +61,16 @@ public class PacketWrapper {
 	public static PacketWrapper addMember(FakeTeam team, List<String> members) {
 		if (!team.isValidTeam())
 			throw new IllegalAccessError("FakeTeam team is not valid : " + new Gson().toJson(team));
-		LinkSpigotBungee.Provider.link.sendMessage("Team &2add member&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), String.join(", ", members));
+		if (CoreModules.NAME_TAG.isDebugEnabled())
+			LinkSpigotBungee.Provider.link.sendMessage("Team &2add member&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), String.join(", ", members));
 		return new PacketWrapper(team.getName(), 3, members);
 	}
 
 	public static PacketWrapper removeMember(FakeTeam team, List<String> members) {
 		if (!team.isValidTeam())
 			throw new IllegalAccessError("FakeTeam team is not valid : " + new Gson().toJson(team));
-		LinkSpigotBungee.Provider.link.sendMessage("Team &cremove member&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), String.join(", ", members));
+		if (CoreModules.NAME_TAG.isDebugEnabled())
+			LinkSpigotBungee.Provider.link.sendMessage("Team &cremove member&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), String.join(", ", members));
 		return new PacketWrapper(team.getName(), 4, members);
 	}
 

@@ -35,7 +35,14 @@ public class MonitorServers {
 	}
 
 	public static Stream<MonitorInfo> getServersSorted() {
-		return bungeeServers.values().stream().sorted((o1, o2) -> Integer.compare(o1.getStatus().getId(), o2.getStatus().getId()));
+		return bungeeServers.values().stream().sorted((o1, o2) -> {
+			int i = Integer.compare(o1.getStatus().getId(), o2.getStatus().getId());
+			if (i == 0 && o2.getOnlinePlayers() != 0 && o1.getOnlinePlayers() != 0)
+				i = Integer.compare(o2.getOnlinePlayers(), o1.getOnlinePlayers());
+			if (i == 0)
+				i = Integer.compare(o2.getPing(), o1.getPing());
+			return i;
+		});
 	}
 
 	public static Map<ServerInfo, MonitorInfo> getServersMap() {
