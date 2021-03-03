@@ -250,7 +250,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new ReportCommand(this).register();
 		new SetStatusCommand(this).register();
 		new PluginCommand(this).registerPreProcess();
-		new HelpCommand(this).registerPreProcess();
+		new HelpCommand(this).register().registerPreProcess();
 		new TpsCommand(this).registerPreProcess();
 		new UtilsCommand(this).register();
 		new GenderCommand(this).register();

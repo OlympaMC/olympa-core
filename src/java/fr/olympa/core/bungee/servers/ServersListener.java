@@ -57,8 +57,7 @@ public class ServersListener implements Listener {
 					return;
 				}
 			}
-			if (serverFallback == null)
-				serverFallback = ServersConnection.getBestServer(OlympaServer.LOBBY, serverKicked);
+			serverFallback = ServersConnection.getBestServer(OlympaServer.LOBBY, serverKicked);
 			if (serverFallback == null)
 				serverFallback = ServersConnection.getBestServer(OlympaServer.AUTH, serverKicked);
 			if (serverFallback == null) {
@@ -67,15 +66,13 @@ public class ServersListener implements Listener {
 				event.setKickReasonComponent(new ComponentBuilder(msg).create());
 				return;
 			}
-
 			event.setCancelled(true);
 			event.setCancelServer(serverFallback);
 			player.sendMessage(TextComponent.fromLegacyText(Prefix.DEFAULT_GOOD + ColorUtils.color(
 					"Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter environ 30 secondes avant d'être reconnecté automatiquement.")));
 			ServersConnection.tryConnect(player, olympaServer, true);
 			return;
-		}
-		if (kickReason.contains("Outdated client! Please use")) {
+		} else if (kickReason.contains("Outdated client! Please use")) {
 			String serverVersion = kickReason.replaceFirst("Outdated client! Please use ", "");
 			List<ProtocolAPI> playerVersion = ProtocolAPI.getAll(player.getPendingConnection().getVersion());
 			event.setKickReasonComponent(TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du Serveur %s > Ta version (%s)", serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
