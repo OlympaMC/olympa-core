@@ -16,8 +16,11 @@
 # $2 = 18:30:00
 
 (cd /home/repo/olympaapi/ && sh ./deploy.sh $1)
+if [ "$?" -ne 0 ]; then
+	echo "\e[91mArrêt de la création des JAR.\e[0m"; exit $rc
+fi
 
-USE_BRANCH="master"
+USE_BRANCH="master dev"
 
 ACTUAL_COMMIT_ID=`cat target/commitId`
 
@@ -33,8 +36,11 @@ else
 fi
 
 if [ -n "$BRANCH_NAME" ]; then
-	#if [ `git branch --list $BRANCH_NAME` ]; then
+	exists=`git show-ref refs/heads/$BRANCH_NAME`
+	if [ -n "$exists" ]; then
 		git checkout $BRANCH_NAME --force
+	fi
+	#if [ `git branch --list $BRANCH_NAME` ]; then
 	#elif [[ $BRANCH_NAME =~ ^[0-9A-Fa-f]{1,}$ ]] ; then
 	#	git checkout $BRANCH_NAME --force
 	#else
@@ -58,7 +64,7 @@ if [ -n "$ACTUAL_COMMIT_ID" ]; then
 fi
 git pull && mvn install
 if [ "$?" -ne 0 ]; then
-	echo -e "\e[91m\n\nLe build de l'api a échoué !\e[0m"; exit $rc
+	echo -e "\e[91m\n\nLe build du core a échoué !\e[0m"; exit $rc
 else
 	echo `git rev-parse HEAD` > target/commitId
 fi
