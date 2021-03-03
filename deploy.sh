@@ -26,19 +26,22 @@ ACTUAL_COMMIT_ID=`cat target/commitId`
 
 
 if [ -n "$1" ]; then
-	if [ -n "$2" ]; then
-		DATE="$1 $2"
+	if [ -n "$2" ] && [ "$2" = "date"]; then
+		DATE="$2"
 	else
 		BRANCH_NAME="$1"
+		SERV="$2"
 	fi
 else
-	echo "\e[0;36mTu peux choisir la version du core en ajoutant une date (ex ./deploy.sh 1979-02-26 18:30:00) ou une branch (ex ./deploy.sh dev).\e[0m"
+	echo "\e[0;36mTu peux choisir la version du core en ajoutant une date (ex ./deploy.sh date \"1979-02-26 18:30:00\") ou une branch (ex ./deploy.sh dev).\e[0m"
 fi
 
 if [ -n "$BRANCH_NAME" ]; then
 	exists=`git show-ref refs/heads/$BRANCH_NAME`
 	if [ -n "$exists" ]; then
 		git checkout $BRANCH_NAME --force
+	else
+		unset BRANCH_NAME
 	fi
 	#if [ `git branch --list $BRANCH_NAME` ]; then
 	#elif [[ $BRANCH_NAME =~ ^[0-9A-Fa-f]{1,}$ ]] ; then
@@ -48,7 +51,7 @@ if [ -n "$BRANCH_NAME" ]; then
 	#fi
 fi
 
-if [ -n "$DATE" ]; then
+if [ -n "$DATE" ] && [ "$DATE" != "" ]; then
 	git checkout 'master@{$DATE}' --force
 elif [ -z "$BRANCH_NAME" ]; then
 	git reset --hard HEAD
@@ -69,3 +72,4 @@ else
 	echo `git rev-parse HEAD` > target/commitId
 fi
 echo "\e[32mLe jar du commit $(cat target/commitId) a été crée.\e[0m"
+exit 0
