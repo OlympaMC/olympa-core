@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.olympa</groupId>
 	<artifactId>olympa-core</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1</version>
 	<repositories>
 		<repository>
 			<id>papermc-releases</id>
@@ -103,7 +103,7 @@
 	</dependencies>
 	<build>
 		<defaultGoal>clean package</defaultGoal>
-		<sourceDirectory>${basedir}/src/java/</sourceDirectory>
+		<sourceDirectory>${project.basedir}/src/java/</sourceDirectory>
 		<resources>
 			<resource>
 				<directory>src/resources</directory>
@@ -113,7 +113,7 @@
 			<plugin>
 				<groupId>pl.project13.maven</groupId>
 				<artifactId>git-commit-id-plugin</artifactId>
-				<version>2.2.4</version>
+				<version>4.0.3</version>
 				<executions>
 					<execution>
 						<id>get-the-git-infos</id>
@@ -129,6 +129,8 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.2.1</version>
 				<configuration>
+					<finalName>OlympaCore</finalName>
+					<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
 					<minimizeJar>false</minimizeJar>
 					<filters>
 						<filter>
@@ -150,7 +152,6 @@
 							</includes>
 						</filter>
 					</filters>
-					<finalName>OlympaCore</finalName>
 					<outputDirectory>target</outputDirectory>
 				</configuration>
 				<executions>
@@ -165,6 +166,7 @@
 		</plugins>
 	</build>
 	<properties>
+		<project.fullVersion>${project.artifactId}-${git.commit.id.describe-short}</project.fullVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.source>11</maven.compiler.source>
@@ -173,6 +175,5 @@
 		<maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
 		<argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
-		<mainClass>x.Main</mainClass>
 	</properties>
 </project>

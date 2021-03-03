@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
-import java.util.TreeMap;
 
 import com.google.gson.Gson;
 
@@ -83,7 +82,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 		out2 = new TextComponent(TextComponent.fromLegacyText("§3Grades : §b" + target.getGroupsToHumainString()));
 		out.addExtra(out2);
 		out.addExtra("\n");
-		TreeMap<Long, String> histName = target.getHistHame();
+		Map<Long, String> histName = target.getHistHame();
 		if (!histName.isEmpty()) {
 			int size = histName.size();
 			String s = Utils.withOrWithoutS(size);

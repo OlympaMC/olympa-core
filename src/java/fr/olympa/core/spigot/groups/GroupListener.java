@@ -2,7 +2,7 @@ package fr.olympa.core.spigot.groups;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -45,7 +45,7 @@ public class GroupListener implements Listener {
 
 		calculatePermissions(olympaPlayer, event.getPlayer());
 
-		TreeMap<OlympaGroup, Long> groups = olympaPlayer.getGroups();
+		Map<OlympaGroup, Long> groups = olympaPlayer.getGroups();
 
 		List<OlympaGroup> oldGroups = groups.entrySet().stream().filter(entry -> entry.getValue() != 0 && entry.getValue() < now).map(entry -> entry.getKey()).collect(Collectors.toList());
 		if (oldGroups.isEmpty())

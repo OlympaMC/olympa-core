@@ -25,6 +25,9 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.permission.OlympaSpigotPermission;
 import fr.olympa.api.player.Gender;
+import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.provider.OlympaPlayerObject;
 import fr.olympa.api.server.ServerType;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
@@ -125,7 +128,7 @@ public class PermissionCommand extends ComplexCommand {
 		sendMessage(Prefix.DEFAULT_GOOD, "Le joueur &2%s&a n'a plus la permission bukkit &2%s&a.", target.getName(), cmd.<String>getArgument(0));
 	}
 
-	@Cmd(args = { "PERMISSION", "GROUPS|PLAYERS" }, min = 2)
+	@Cmd(args = { "PERMISSION", "GROUPS|PLAYERS", "save" }, min = 2)
 	public void allow(CommandContext cmd) {
 		Entry<String, OlympaPermission> entry = cmd.getArgument(0);
 		String permName = entry.getKey();
@@ -171,9 +174,19 @@ public class PermissionCommand extends ComplexCommand {
 		if (olympaGroup != null) {
 			spigotPerm.allowGroup(olympaGroup);
 			sendMessage(Prefix.DEFAULT_GOOD, "Le group &2%s&a a désormais la permission &2%s&a.", olympaGroup.getName(), permName);
-		} else {
+			if (cmd.getArgumentsLength() > 2 && "save".equalsIgnoreCase(cmd.getArgument(2))) {
+				AccountProvider accProvider = new AccountProvider(player.getUniqueId());
+				OlympaPlayer op = accProvider.getFromCache();
+				((OlympaPlayerObject) op).removeCustomPermission(spigotPerm, OlympaCore.getInstance().getOlympaServer());
+			}
+		} else if (player != null) {
 			spigotPerm.allowPlayer(player);
 			sendMessage(Prefix.DEFAULT_GOOD, "Le joueur &2%s&a a désormais la permission &2%s&a.", player.getName(), permName);
+			if (cmd.getArgumentsLength() > 2 && "save".equalsIgnoreCase(cmd.getArgument(2))) {
+				AccountProvider accProvider = new AccountProvider(player.getUniqueId());
+				OlympaPlayer op = accProvider.getFromCache();
+				((OlympaPlayerObject) op).addCustomPermission(spigotPerm, OlympaCore.getInstance().getOlympaServer());
+			}
 		}
 	}
 

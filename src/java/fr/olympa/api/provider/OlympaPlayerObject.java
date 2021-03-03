@@ -6,7 +6,9 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ import com.google.gson.annotations.Expose;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.groups.OlympaGroup;
+import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.player.OlympaPlayerInformations;
@@ -71,6 +74,8 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			//				player.discordOlympaId = object.get("discordOlympaId").getAsInt();
 			if (object.has("teamspeakId"))
 				player.teamspeakId = object.get("teamspeakId").getAsInt();
+			if (object.has("customPermissions"))
+				player.teamspeakId = context.deserialize(object.get("customPermissions"), HashMap.class);
 			return player;
 		}
 
@@ -89,13 +94,14 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_LAST_CONNECTION = new SQLColumn<OlympaPlayerObject>("last_connection", "TIMESTAMP NULL DEFAULT current_timestamp()", Types.TIMESTAMP).setUpdatable().setNotDefault();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_TS3_ID = new SQLColumn<OlympaPlayerObject>("ts3_id", "INT(11) DEFAULT NULL", Types.INTEGER).setUpdatable();
 	//	private static final SQLColumn<OlympaPlayerObject> COLUMN_DISCORD_ID = new SQLColumn<OlympaPlayerObject>("discord_olympa_id", "INT(11) DEFAULT NULL", Types.INTEGER).setUpdatable();
-	private static final SQLColumn<OlympaPlayerObject> COLUMN_NAME_HISTORY = new SQLColumn<OlympaPlayerObject>("name_history", "VARCHAR(10000) DEFAULT NULL", Types.VARCHAR).setUpdatable();
-	private static final SQLColumn<OlympaPlayerObject> COLUMN_IP_HISTORY = new SQLColumn<OlympaPlayerObject>("ip_history", "VARCHAR(10000) DEFAULT NULL", Types.VARCHAR).setUpdatable();
+	private static final SQLColumn<OlympaPlayerObject> COLUMN_NAME_HISTORY = new SQLColumn<OlympaPlayerObject>("name_history", "TEXT(65535) DEFAULT NULL", Types.VARCHAR).setUpdatable();
+	private static final SQLColumn<OlympaPlayerObject> COLUMN_IP_HISTORY = new SQLColumn<OlympaPlayerObject>("ip_history", "TEXT(65535) DEFAULT NULL", Types.VARCHAR).setUpdatable();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_GENDER = new SQLColumn<OlympaPlayerObject>("gender", "TINYINT(1) DEFAULT NULL", Types.TINYINT).setUpdatable();
 	private static final SQLColumn<OlympaPlayerObject> COLUMN_VANISH = new SQLColumn<OlympaPlayerObject>("vanish", "TINYINT(1) DEFAULT 0", Types.TINYINT).setUpdatable();
+	private static final SQLColumn<OlympaPlayerObject> COLUMN_CUSTOM_PERMISSIONS = new SQLColumn<OlympaPlayerObject>("custom_permissions", "TEXT(65535) DEFAULT NULL", Types.VARCHAR).setUpdatable();
 
 	static final List<SQLColumn<OlympaPlayerObject>> COLUMNS = Arrays.asList(COLUMN_ID, COLUMN_PSEUDO, COLUMN_UUID_SERVER, COLUMN_UUID_PREMIUM, COLUMN_GROUPS, COLUMN_EMAIL, COLUMN_PASSWORD, COLUMN_MONEY, COLUMN_IP, COLUMN_CREATED,
-			COLUMN_LAST_CONNECTION, COLUMN_TS3_ID/*, COLUMN_DISCORD_ID*/, COLUMN_NAME_HISTORY, COLUMN_IP_HISTORY, COLUMN_GENDER, COLUMN_VANISH);
+			COLUMN_LAST_CONNECTION, COLUMN_TS3_ID/*, COLUMN_DISCORD_ID*/, COLUMN_NAME_HISTORY, COLUMN_IP_HISTORY, COLUMN_GENDER, COLUMN_VANISH, COLUMN_CUSTOM_PERMISSIONS);
 
 	@Expose
 	long id = -1;
@@ -120,9 +126,11 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Expose
 	long lastConnection;
 	@Expose
-	TreeMap<Long, String> histName = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
+	Map<Long, String> histName = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
 	@Expose
-	TreeMap<Long, String> histIp = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
+	Map<OlympaPermission, OlympaServer> customPermissions = new HashMap<>();
+	@Expose
+	Map<Long, String> histIp = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
 	@Expose
 	boolean vanish;
 	@Expose
@@ -228,8 +236,45 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public TreeMap<OlympaGroup, Long> getGroups() {
+	public Map<OlympaGroup, Long> getGroups() {
 		return groups;
+	}
+
+	@Override
+	public Map<Long, String> getHistName() {
+		return histName;
+	}
+
+	@Override
+	public Map<OlympaPermission, OlympaServer> getCustomPermissions() {
+		return Collections.unmodifiableSortedMap((TreeMap<OlympaPermission, OlympaServer>) customPermissions);
+	}
+
+	public void addCustomPermission(OlympaPermission perm, OlympaServer serv) {
+		if (serv == null)
+			serv = OlympaServer.ALL;
+		customPermissions.put(perm, serv);
+		COLUMN_NAME_HISTORY.updateAsync(this, GsonCustomizedObjectTypeAdapter.GSON.toJson(customPermissions), null, null);
+	}
+
+	public void removeCustomPermission(OlympaPermission perm, OlympaServer serv) {
+		if (serv != null)
+			customPermissions.remove(perm, serv);
+		else
+			customPermissions.remove(perm);
+		COLUMN_NAME_HISTORY.updateAsync(this, GsonCustomizedObjectTypeAdapter.GSON.toJson(customPermissions), null, null);
+	}
+
+	public Boolean getConnected() {
+		return connected;
+	}
+
+	public Object getCachedPlayer() {
+		return cachedPlayer;
+	}
+
+	public OlympaPlayerInformations getCachedInformations() {
+		return cachedInformations;
 	}
 
 	@Override
@@ -248,12 +293,12 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public TreeMap<Long, String> getHistHame() {
+	public Map<Long, String> getHistHame() {
 		return histName;
 	}
 
 	@Override
-	public TreeMap<Long, String> getHistIp() {
+	public Map<Long, String> getHistIp() {
 		return histIp;
 	}
 
@@ -379,7 +424,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			histIps.entrySet().stream().forEach(entry -> histIp.put(entry.getKey(), entry.getValue()));
 		}
 	}
-	
+
 	@Override
 	public void loaded() {}
 

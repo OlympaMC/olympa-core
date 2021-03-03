@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.Consumer;
@@ -83,7 +84,7 @@ public class GroupCommand extends OlympaCommand {
 			return true;
 		}
 		if (args.length <= 1) {
-			TreeMap<OlympaGroup, Long> groups = olympaTarget.getGroups();
+			Map<OlympaGroup, Long> groups = olympaTarget.getGroups();
 			String targetNamePrefix = olympaTarget.getGroupPrefix() + olympaTarget.getName() + Prefix.INFO.getColor();
 			String groupString = olympaTarget.getGroupsToHumainString();
 			sendInfo("%player est dans le%s groupe%s %group."
@@ -118,7 +119,7 @@ public class GroupCommand extends OlympaCommand {
 			//					return true;
 
 			Gender gender = olympaTarget.getGender();
-			TreeMap<OlympaGroup, Long> oldGroups = olympaTarget.getGroups();
+			Map<OlympaGroup, Long> oldGroups = olympaTarget.getGroups();
 			String timestampString = new String();
 			if (timestamp != 0)
 				timestampString = " /groupendant &2" + Utils.timestampToDuration(timestamp) + "&a";
@@ -134,7 +135,7 @@ public class GroupCommand extends OlympaCommand {
 					}
 					state = ChangeType.ADD;
 					olympaTarget.addGroup(newGroup, timestamp);
-					Entry<OlympaGroup, Long> entry = olympaTarget.getGroups().firstEntry();
+					Entry<OlympaGroup, Long> entry = ((TreeMap<OlympaGroup, Long>) olympaTarget.getGroups()).firstEntry();
 					OlympaGroup principalGroup = entry.getKey();
 					Long timestamp2 = entry.getValue();
 					String timestampString2 = new String();
@@ -147,7 +148,7 @@ public class GroupCommand extends OlympaCommand {
 						return true;
 					}
 					olympaTarget.removeGroup(newGroup);
-					Entry<OlympaGroup, Long> entry = olympaTarget.getGroups().firstEntry();
+					Entry<OlympaGroup, Long> entry = ((TreeMap<OlympaGroup, Long>) olympaTarget.getGroups()).firstEntry();
 					OlympaGroup principalGroup = entry.getKey();
 					Long timestamp2 = entry.getValue();
 					String timestampString2 = new String();
