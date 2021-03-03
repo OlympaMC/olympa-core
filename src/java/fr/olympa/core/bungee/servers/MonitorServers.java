@@ -37,7 +37,7 @@ public class MonitorServers {
 	public static Stream<MonitorInfo> getServersSorted() {
 		return bungeeServers.values().stream().sorted((o1, o2) -> {
 			int i = Integer.compare(o1.getStatus().getId(), o2.getStatus().getId());
-			if (i == 0 && o2.getOnlinePlayers() != 0 && o1.getOnlinePlayers() != 0)
+			if (i == 0 && o2.getOnlinePlayers() != null && o1.getOnlinePlayers() != null)
 				i = Integer.compare(o2.getOnlinePlayers(), o1.getOnlinePlayers());
 			if (i == 0)
 				i = Integer.compare(o2.getPing(), o1.getPing());
