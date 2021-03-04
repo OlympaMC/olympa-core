@@ -26,7 +26,6 @@ import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.permission.OlympaSpigotPermission;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.provider.OlympaPlayerObject;
 import fr.olympa.api.server.ServerType;
 import fr.olympa.api.utils.Prefix;
@@ -42,11 +41,6 @@ public class PermissionCommand extends ComplexCommand {
 				arg -> OlympaPermission.permissions.entrySet().stream().filter(e -> e.getKey().equalsIgnoreCase(arg)).findFirst().orElse(null),
 				x -> String.format("La permission &4%s&c n'existe pas", x));
 		super.addArgumentParser("GROUPS", OlympaGroup.class, g -> g.getName());
-		//		super.addArgumentParser("GROUPS", (player, arg) -> {
-		//			return Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toList());
-		//		}, arg -> {
-		//			return Arrays.stream(OlympaGroup.values()).filter(e -> e.getName().equalsIgnoreCase(arg)).findFirst().orElse(null);
-		//		}, x -> String.format("Le groupe &4%s&c n'existe pas", x));
 	}
 
 	@Override
@@ -128,7 +122,7 @@ public class PermissionCommand extends ComplexCommand {
 		sendMessage(Prefix.DEFAULT_GOOD, "Le joueur &2%s&a n'a plus la permission bukkit &2%s&a.", target.getName(), cmd.<String>getArgument(0));
 	}
 
-	@Cmd(args = { "PERMISSION", "GROUPS|PLAYERS", "save" }, min = 2)
+	@Cmd(args = { "PERMISSION", "GROUPS|OLYMPA_PLAYER", "save" }, min = 2, description = "Donne une permission à un groupe ou un joueur. save (3) permet de sauvegarder la permission en bdd.")
 	public void allow(CommandContext cmd) {
 		Entry<String, OlympaPermission> entry = cmd.getArgument(0);
 		String permName = entry.getKey();
@@ -139,7 +133,8 @@ public class PermissionCommand extends ComplexCommand {
 		}
 		OlympaSpigotPermission spigotPerm = (OlympaSpigotPermission) perm;
 		OlympaGroup olympaGroup = null;
-		Player player = null;
+		OlympaPlayer op = null;
+		Player target = null;
 		if (spigotPerm.getServerType() != ServerType.SPIGOT) {
 			sendError("La permission &4%s&c est une permission &4%s&c.", permName, Utils.capitalize(spigotPerm.getServerType().name()));
 			return;
@@ -150,10 +145,11 @@ public class PermissionCommand extends ComplexCommand {
 				sendError("Le groupe &4%s&c a déjà la permission &4%s&c.", olympaGroup.getName(), permName);
 				return;
 			}
-		} else if (cmd.getArgument(1) instanceof Player) {
-			player = cmd.getArgument(1);
-			if (spigotPerm.hasPermission(player.getUniqueId())) {
-				sendError("Le joueur &4%s&c a déjà la permission &4%s&c.", player.getName(), permName);
+		} else if (cmd.getArgument(1) instanceof OlympaPlayer) {
+			op = cmd.getArgument(1);
+			target = op.getPlayer();
+			if (spigotPerm.hasPermission(op.getUniqueId())) {
+				sendError("Le joueur &4%s&c a déjà la permission &4%s&c.", op.getName(), permName);
 				return;
 			}
 		} else if (cmd.getArgument(1) instanceof String) {
@@ -174,23 +170,22 @@ public class PermissionCommand extends ComplexCommand {
 		if (olympaGroup != null) {
 			spigotPerm.allowGroup(olympaGroup);
 			sendMessage(Prefix.DEFAULT_GOOD, "Le group &2%s&a a désormais la permission &2%s&a.", olympaGroup.getName(), permName);
+			if (cmd.getArgumentsLength() > 2 && "save".equalsIgnoreCase(cmd.getArgument(2)))
+				sendError("Impossible de sauvegarder en bdd une permission pour le groupe.");
+		} else if (op != null) {
 			if (cmd.getArgumentsLength() > 2 && "save".equalsIgnoreCase(cmd.getArgument(2))) {
-				AccountProvider accProvider = new AccountProvider(player.getUniqueId());
-				OlympaPlayer op = accProvider.getFromCache();
-				((OlympaPlayerObject) op).removeCustomPermission(spigotPerm, OlympaCore.getInstance().getOlympaServer());
-			}
-		} else if (player != null) {
-			spigotPerm.allowPlayer(player);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le joueur &2%s&a a désormais la permission &2%s&a.", player.getName(), permName);
-			if (cmd.getArgumentsLength() > 2 && "save".equalsIgnoreCase(cmd.getArgument(2))) {
-				AccountProvider accProvider = new AccountProvider(player.getUniqueId());
-				OlympaPlayer op = accProvider.getFromCache();
 				((OlympaPlayerObject) op).addCustomPermission(spigotPerm, OlympaCore.getInstance().getOlympaServer());
+				sendMessage(Prefix.DEFAULT_GOOD, "La permission a été sauvegarder en bdd.");
 			}
+			if (target != null) {
+				spigotPerm.allowPlayer(target);
+				sendMessage(Prefix.DEFAULT_GOOD, "Le joueur &2%s&a a désormais la permission &2%s&a.", op.getName(), permName);
+			} else
+				sendMessage(Prefix.DEFAULT_BAD, "&2%s&a n'est pas connecté%s.", op.getName(), op.getTuneChar());
 		}
 	}
 
-	@Cmd(args = { "PERMISSION", "GROUPS|PLAYERS|ALL" }, min = 2)
+	@Cmd(args = { "PERMISSION", "GROUPS|OLYMPA_PLAYER|all", "save" }, min = 2, description = "Comme /p allow mais pour enlever. all (2) désactive pour tous le monde (sauf haut-staff).")
 	public void disallow(CommandContext cmd) {
 		Entry<String, OlympaPermission> entry = cmd.getArgument(0);
 		String permName = entry.getKey();
@@ -202,17 +197,19 @@ public class PermissionCommand extends ComplexCommand {
 		OlympaSpigotPermission spigotPerm = (OlympaSpigotPermission) perm;
 		Object arg1 = cmd.getArgument(1);
 		OlympaGroup olympaGroup = null;
-		Player player = null;
+		OlympaPlayer op = null;
+		Player target = null;
 		if (arg1 instanceof OlympaGroup) {
 			olympaGroup = cmd.getArgument(1);
 			if (!spigotPerm.hasPermission(olympaGroup)) {
 				sendError("Le groupe &4%s&c n'a pas la permission &4%s&c.", olympaGroup.getName(), permName);
 				return;
 			}
-		} else if (arg1 instanceof Player) {
-			player = cmd.getArgument(1);
-			if (!spigotPerm.hasPermission(player.getUniqueId())) {
-				sendError("Le joueur &4%s&c n'a pas la permission &4%s&c.", player.getName(), permName);
+		} else if (cmd.getArgument(1) instanceof OlympaPlayer) {
+			op = cmd.getArgument(1);
+			target = op.getPlayer();
+			if (spigotPerm.hasPermission(op.getUniqueId())) {
+				sendError("Le joueur &4%s&c a déjà la permission &4%s&c.", op.getName(), permName);
 				return;
 			}
 		} else if (arg1 instanceof String) {
@@ -230,9 +227,18 @@ public class PermissionCommand extends ComplexCommand {
 		if (olympaGroup != null) {
 			spigotPerm.disallowGroup(olympaGroup);
 			sendMessage(Prefix.DEFAULT_BAD, "Le group &4%s&c n'a désormais plus la permission &4%s&c.", olympaGroup.getName(), permName);
-		} else {
-			spigotPerm.disallowPlayer(player);
-			sendMessage(Prefix.DEFAULT_BAD, "Le joueur &4%s&c n'a désormais plus la permission &4%s&c.", player.getName(), permName);
+			if (cmd.getArgumentsLength() > 2 && "save".equalsIgnoreCase(cmd.getArgument(2)))
+				sendError("Impossible de sauvegarder en bdd une permission pour le groupe.");
+		} else if (op != null) {
+			if (cmd.getArgumentsLength() > 2 && "save".equalsIgnoreCase(cmd.getArgument(2))) {
+				((OlympaPlayerObject) op).addCustomPermission(spigotPerm, OlympaCore.getInstance().getOlympaServer());
+				sendMessage(Prefix.DEFAULT_GOOD, "La permission a été sauvegarder en bdd.");
+			}
+			if (target != null) {
+				sendMessage(Prefix.DEFAULT_BAD, "Le joueur &4%s&c n'a désormais plus la permission &4%s&c.", player.getName(), permName);
+				spigotPerm.disallowPlayer(target);
+			} else
+				sendMessage(Prefix.DEFAULT_BAD, "&2%s&a n'est pas connecté%s.", op.getName(), op.getTuneChar());
 		}
 	}
 	//   /permission see <groups|player>
