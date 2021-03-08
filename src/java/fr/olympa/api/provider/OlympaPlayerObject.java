@@ -75,7 +75,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 			if (object.has("teamspeakId"))
 				player.teamspeakId = object.get("teamspeakId").getAsInt();
 			if (object.has("customPermissions"))
-				player.teamspeakId = context.deserialize(object.get("customPermissions"), HashMap.class);
+				player.customPermissions = context.deserialize(object.get("customPermissions"), TreeMap.class);
 			return player;
 		}
 
