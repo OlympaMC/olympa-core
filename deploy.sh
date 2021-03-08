@@ -23,6 +23,7 @@ fi
 USE_BRANCH="master dev"
 
 ACTUAL_COMMIT_ID=`cat target/commitId`
+ACTUAL_COMMIT_ID_API=`cat target/commitIdAPI`
 
 
 if [ -n "$1" ]; then
@@ -58,18 +59,23 @@ elif [ -z "$BRANCH_NAME" ]; then
 	git checkout master --force
 fi
 
-if [ -n "$ACTUAL_COMMIT_ID" ]; then
+if [ -n "$ACTUAL_COMMIT_ID" ] && [ -n "$ACTUAL_COMMIT_ID_API" ]; then
 	git pull
 	if [ "$ACTUAL_COMMIT_ID" = `git rev-parse HEAD` ]; then
-		echo "\e[32mPas besoin de maven install, le jar est déjà crée.\e[0m"
-		exit 0
+		if [ "$ACTUAL_COMMIT_ID_API" = `cd ../olympaapi && git rev-parse HEAD` ]; then
+			echo "\e[32mPas besoin de maven install le core, l'api est up & le jar est déjà crée.\e[0m"
+			exit 0
+		else
+			echo "\e[32mIl faut build le core, l'api a été up.\e[0m"
+		fi
 	fi
 fi
 git pull && mvn install
 if [ "$?" -ne 0 ]; then
-	echo -e "\e[91m\n\nLe build du core a échoué !\e[0m"; exit $rc
+	echo -e "\e[91mLe build du core a échoué !\e[0m"; exit $rc
 else
 	echo `git rev-parse HEAD` > target/commitId
+	echo `cd ../olympaapi && git rev-parse HEAD` > target/commitIdAPI
 fi
-echo "\e[32mLe jar du commit $(cat target/commitId) a été crée.\e[0m"
+echo "\e[32mLe jar du commit de l'api $ACTUAL_COMMIT_ID_API avec le core $ACTUAL_COMMIT_ID a été crée.\e[0m"
 exit 0
