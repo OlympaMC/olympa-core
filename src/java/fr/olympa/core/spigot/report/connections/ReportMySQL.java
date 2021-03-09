@@ -141,7 +141,7 @@ public class ReportMySQL {
 		OlympaStatement opStatement = new OlympaStatement(StatementType.SELECT, tableName, new String[] { "target_id" }, orPlayers.toArray(String[]::new), null, null, 0, 0, new String[] {});
 		List<OlympaReport> reports = new ArrayList<>();
 		try (PreparedStatement statement = opStatement.createStatement()) {
-			int i = 0;
+			int i = 1;
 			Iterator<OlympaPlayer> it = players.iterator();
 			while (it.hasNext())
 				statement.setLong(i, it.next().getId());

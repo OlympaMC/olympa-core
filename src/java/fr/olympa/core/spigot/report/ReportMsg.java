@@ -89,12 +89,12 @@ public class ReportMsg {
 	}
 
 	public static void sendPanelTarget(CommandSender sender, String target, List<OlympaReport> reports) {
-		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Report contre %s :", target)).extraSpliterBN();
+		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Report contre %s (%d):", target, reports.size())).extraSpliterBN();
 		reports.stream().forEach(r -> {
-			OlympaPlayerInformations opTarget = AccountProvider.getPlayerInformations(r.getTargetId());
+			OlympaPlayerInformations opAuthor = AccountProvider.getPlayerInformations(r.getAuthorId());
 			ReportStatus status = r.getStatus();
 			ReportReason reason = r.getReason();
-			TxtComponentBuilder line = new TxtComponentBuilder("%s%s -> %s &e(%s) %s", status.getColor(), reason.getReasonUpper(), status.getName(), opTarget.getName(), Utils.tsToShortDur(r.getLastUpdate()));
+			TxtComponentBuilder line = new TxtComponentBuilder("%s%s -> %s &e(%s) %s", status.getColor(), reason.getReasonUpper(), status.getName(), opAuthor.getName(), Utils.tsToShortDur(r.getLastUpdate()));
 			line.onHoverText(String.join("\n", r.getLore()));
 			line.onClickCommand("/report seeId " + r.getId());
 			out.extra(line);
@@ -136,7 +136,7 @@ public class ReportMsg {
 	}
 
 	public static void sendPanelAuthor(CommandSender sender, String author, List<OlympaReport> reports) {
-		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Report de %s :", author)).extraSpliterBN();
+		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Report%s de %s (%d) :", Utils.withOrWithoutS(reports.size()), author, reports.size())).extraSpliterBN();
 		reports.stream().forEach(r -> {
 			OlympaPlayerInformations opAuthor = AccountProvider.getPlayerInformations(r.getAuthorId());
 			ReportStatus status = r.getStatus();
