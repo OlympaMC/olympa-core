@@ -70,22 +70,23 @@ public class ReportMsg {
 			out.extra(new TxtComponentBuilder("&aNote &2%s", note));
 		out.extra(new TxtComponentBuilder("&aDate &2%s &a(%s)", Utils.timestampToDateAndHour(report.getTime()), Utils.timestampToDuration(report.getTime())));
 		List<ReportStatusInfo> statusInfo = report.getStatusInfo();
-		if (statusInfo.size() > 1) {
-			out.extra(new TxtComponentBuilder("&aDerniers statuts &2"));
-			int i = 0;
-			for (ReportStatusInfo info : statusInfo) {
-				TxtComponentBuilder line = new TxtComponentBuilder(report.getStatus().getNameColored());
-				line.onHoverText(String.join("\n", info.getLore()));
-				if (i++ < statusInfo.size())
-					out.extra(new TxtComponentBuilder("&a, "));
-				else
-					out.extra(new TxtComponentBuilder("&a."));
-				out.extra(line);
-			}
-
-		}
-		out.extra(new TxtComponentBuilder("&aDerniers statuts &2%s",
-				statusInfo.stream().skip(1).map(rsi -> rsi.getStatus() + " &a(" + Utils.timestampToDuration(rsi.getTime()) + ")").collect(Collectors.joining("&a, &2")))).extraSpliterBN();
+		//		if (statusInfo.size() > 1) {
+		//			out.extra(new TxtComponentBuilder("&aDerniers status &2"));
+		//			int i = 0;
+		//			for (ReportStatusInfo info : statusInfo) {
+		//				TxtComponentBuilder line = new TxtComponentBuilder(report.getStatus().getNameColored());
+		//				line.onHoverText(String.join("\n", info.getLore()));
+		//				if (i++ < statusInfo.size())
+		//					out.extra(new TxtComponentBuilder("&a, "));
+		//				else
+		//					out.extra(new TxtComponentBuilder("&a."));
+		//				out.extra(line);
+		//			}
+		//
+		//		}
+		if (statusInfo.size() > 1)
+			out.extra(new TxtComponentBuilder("&aDerniers status &2%s", statusInfo.stream().skip(1).map(rsi -> rsi.getStatus() + " &a(" + Utils.timestampToDuration(rsi.getTime()) + ")")
+					.collect(Collectors.joining("&a, &2")))).extraSpliterBN();
 		sender.spigot().sendMessage(out.build());
 	}
 
@@ -97,7 +98,7 @@ public class ReportMsg {
 			ReportReason reason = r.getReason();
 			TxtComponentBuilder line = new TxtComponentBuilder("%s%s -> %s &e(%s) %s", status.getColor(), reason.getReasonUpper(), status.getName(), opTarget.getName(), Utils.tsToShortDur(r.getLastUpdate()));
 			line.onHoverText(String.join("\n", r.getLore()));
-			line.onClickCommand("/report seeid " + r.getId());
+			line.onClickCommand("/report seeId " + r.getId());
 			out.extra(line);
 		});
 		sender.spigot().sendMessage(out.build());
@@ -113,7 +114,7 @@ public class ReportMsg {
 			TxtComponentBuilder txtBuildeur = new TxtComponentBuilder("%s%s -> %s &e(%s) de %s", status.getColor(), reason.getReasonUpper(), status.getName(), opTarget.getName(), opAuthor.getName(),
 					Utils.tsToShortDur(r.getLastUpdate()));
 			txtBuildeur.onHoverText("\n", r.getLore());
-			txtBuildeur.onClickCommand("/report seeid " + r.getId());
+			txtBuildeur.onClickCommand("/report seeId " + r.getId());
 			out.extra(txtBuildeur);
 		});
 		sender.spigot().sendMessage(out.build());
@@ -127,9 +128,9 @@ public class ReportMsg {
 			TxtComponentBuilder line = new TxtComponentBuilder("&2%s &asignalement ouverts &2%s", rSize, opTarget.getName());
 			OlympaReport firstReport = entry.getValue().get(entry.getValue().size() - 1);
 			List<String> lore = firstReport.getLore();
-			lore.add("\n&4Clic pour voir tous les reports de &4" + opTarget.getName() + "&c !");
+			lore.add("\n&4Clique pour voir tous les reports de &4" + opTarget.getName() + "&c !");
 			line.onHoverText(String.join("\n", lore));
-			line.onClickCommand("/report see " + opTarget.getId());
+			line.onClickCommand("/report seeId " + opTarget.getId());
 			out.extra(line);
 			out.extra("\n");
 		});

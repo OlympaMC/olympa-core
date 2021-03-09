@@ -5,8 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -97,7 +99,8 @@ public class ReportMySQL {
 			statement.setLong(1, idTarget);
 			List<OlympaReport> report = new ArrayList<>();
 			ResultSet resultSet = selectPlayerStatement.executeQuery(statement);
-			while (resultSet.next()) report.add(get(resultSet));
+			while (resultSet.next())
+				report.add(get(resultSet));
 			resultSet.close();
 			return report;
 		}
@@ -110,7 +113,8 @@ public class ReportMySQL {
 			statement.setLong(1, idAuthor);
 			List<OlympaReport> report = new ArrayList<>();
 			ResultSet resultSet = selectAuthorStatement.executeQuery(statement);
-			while (resultSet.next()) report.add(get(resultSet));
+			while (resultSet.next())
+				report.add(get(resultSet));
 			resultSet.close();
 			return report;
 		}
@@ -121,14 +125,15 @@ public class ReportMySQL {
 		try (PreparedStatement statement = opStatement.createStatement()) {
 			List<OlympaReport> report = new ArrayList<>();
 			ResultSet resultSet = opStatement.executeQuery(statement);
-			while (resultSet.next()) report.add(get(resultSet));
+			while (resultSet.next())
+				report.add(get(resultSet));
 			resultSet.close();
 			return report;
 		}
 	}
 
 	public static Stream<Entry<OlympaPlayerInformations, List<OlympaReport>>> getConnectedReports() throws SQLException {
-		List<OlympaPlayer> players = (List<OlympaPlayer>) AccountProvider.getAll();
+		Collection<OlympaPlayer> players = AccountProvider.getAll();
 		Map<OlympaPlayerInformations, List<OlympaReport>> data = new HashMap<>();
 		Set<String> orPlayers = new HashSet<>();
 		for (int i = 1; i < players.size(); i++)
@@ -137,9 +142,12 @@ public class ReportMySQL {
 		List<OlympaReport> reports = new ArrayList<>();
 		try (PreparedStatement statement = opStatement.createStatement()) {
 			int i = 0;
-			while (i < players.size()) statement.setLong(i, players.get(i++).getId());
+			Iterator<OlympaPlayer> it = players.iterator();
+			while (it.hasNext())
+				statement.setLong(i, it.next().getId());
 			ResultSet resultSet = opStatement.executeQuery(statement);
-			while (resultSet.next()) reports.add(get(resultSet));
+			while (resultSet.next())
+				reports.add(get(resultSet));
 			resultSet.close();
 			OlympaPlayerInformations op;
 			for (OlympaReport r : reports) {
@@ -151,7 +159,7 @@ public class ReportMySQL {
 					listReports = new ArrayList<>();
 					listReports.add(r);
 					data.put(op, listReports);
-				}else
+				} else
 					listReports.add(r);
 			}
 			return data.entrySet().stream().sorted((o1, o2) -> o1.getValue().size() - o2.getValue().size());
