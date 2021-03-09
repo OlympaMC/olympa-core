@@ -35,9 +35,7 @@ public class ReportMsg {
 		if (LinkSpigotBungee.Provider.link.isSpigot()) {
 			out = ReportUtils.getAlert(report, authorName, targetName, targetServer, OlympaCore.getInstance().getServerName());
 			Bukkit.getConsoleSender().spigot().sendMessage(out);
-			OlympaCorePermissions.REPORT_SEEREPORT.getPlayers(players -> {
-				players.forEach(p -> p.spigot().sendMessage(out));
-			});
+			OlympaCorePermissions.REPORT_SEEREPORT.getPlayers(players -> players.forEach(p -> p.spigot().sendMessage(out)));
 		} else {
 			ProxyServer.getInstance().getConsole().sendMessage(ReportUtils.getAlert(report, authorName, targetName, targetServer, null));
 			OlympaCorePermissions.REPORT_SEEREPORT_OTHERSERV.getPlayersBungee(players -> {
@@ -91,7 +89,7 @@ public class ReportMsg {
 	}
 
 	public static void sendPanelTarget(CommandSender sender, String target, List<OlympaReport> reports) {
-		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Report contre %s :", target));
+		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Report contre %s :", target)).extraSpliterBN();
 		reports.stream().forEach(r -> {
 			OlympaPlayerInformations opTarget = AccountProvider.getPlayerInformations(r.getTargetId());
 			ReportStatus status = r.getStatus();

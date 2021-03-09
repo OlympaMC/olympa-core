@@ -45,7 +45,8 @@ public class ReportHandler {
 			author.closeInventory();
 		}
 		Bukkit.getPluginManager().callEvent(new OlympaReportAddEvent(author, target, report));
-		if (!RedisSpigotSend.sendReport(report))
-			ReportMsg.sendAlert(report, author.getName(), targetOlympaPlayer.getName(), targetServer);
+		//		if (!RedisSpigotSend.sendReport(report))
+		RedisSpigotSend.sendReport(report);
+		ReportMsg.sendAlert(report, author.getName(), targetOlympaPlayer.getName(), targetServer);
 	}
 }
