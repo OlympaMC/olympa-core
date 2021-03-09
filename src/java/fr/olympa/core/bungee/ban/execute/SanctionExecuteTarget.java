@@ -103,15 +103,13 @@ public class SanctionExecuteTarget {
 			if (banExecute.expire != 0) {
 				long mins = (banExecute.expire - Utils.getCurrentTimeInSeconds()) / 60;
 				if (banExecute.sanctionType.isBanType() && mins < SanctionHandler.minTimeBan || banExecute.sanctionType.isMuteType() && mins < SanctionHandler.minTimeMute) {
-					banExecute.getAuthorSender()
-							.sendMessage(
-									Prefix.DEFAULT_BAD.formatMessageB(config.getString("ban.cantbypasstime"), "minimal", banExecute.sanctionType.getName(!banExecute.isPermanant()), Utils.timeToDuration(SanctionHandler.minTimeMute * 60)));
+					banExecute.getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB(config.getString("ban.cantbypasstime"), "minimal",
+							banExecute.sanctionType.getName(!banExecute.isPermanant()), Utils.timeToDuration((banExecute.sanctionType.isMuteType() ? SanctionHandler.minTimeMute : SanctionHandler.minTimeBan) * 60)));
 					return false;
 				}
 				if (banExecute.sanctionType.isBanType() && mins > SanctionHandler.maxTimeBan || banExecute.sanctionType.isMuteType() && mins > SanctionHandler.maxTimeMute) {
-					banExecute.getAuthorSender()
-							.sendMessage(
-									Prefix.DEFAULT_BAD.formatMessageB(config.getString("ban.cantbypasstime"), "maximal", banExecute.sanctionType.getName(!banExecute.isPermanant()), Utils.timeToDuration(SanctionHandler.maxTimeBan * 60)));
+					banExecute.getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB(config.getString("ban.cantbypasstime"), "maximal",
+							banExecute.sanctionType.getName(!banExecute.isPermanant()), Utils.timeToDuration((banExecute.sanctionType.isMuteType() ? SanctionHandler.maxTimeMute : SanctionHandler.maxTimeBan) * 60)));
 					return false;
 				}
 				if (banExecute.getAuthorId() != 0 && banExecute.sanctionType != OlympaSanctionType.BANIP && OlympaCorePermissions.STAFF.hasPermission(olympaPlayers.get(0))
@@ -121,7 +119,9 @@ public class SanctionExecuteTarget {
 				}
 			}
 			sanction = add(banExecute.sanctionType, banExecute.getAuthorId(), banIdentifier, banExecute.reason, banExecute.expire, newStatus);
-		} else {
+		} else if (newStatus == OlympaSanctionStatus.END && banExecute.sanctionType == OlympaSanctionType.MUTE)
+			sanction = add(banExecute.sanctionType, banExecute.getAuthorId(), banIdentifier, banExecute.reason, banExecute.expire, newStatus);
+		else {
 			if (alreadyban != null)
 				sanction = alreadyban;
 			else {

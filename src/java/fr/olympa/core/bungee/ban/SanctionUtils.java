@@ -87,7 +87,7 @@ public class SanctionUtils {
 		sjDisconnect.add("");
 		sjDisconnect.add(String.format("&cRaison : &4%s", ColorUtils.joinRedEt(bans.stream().map(OlympaSanction::getReason).collect(Collectors.toList()))));
 		sjDisconnect.add("");
-		if (permanant) {
+		if (!permanant) {
 			sjDisconnect.add(String.format("&cDurée restante : &4%s&c", Utils.timestampToDuration(sanction.getExpires())));
 			sjDisconnect.add("");
 		}

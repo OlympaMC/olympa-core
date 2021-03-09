@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 
+import javax.annotation.Nullable;
+
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.chat.TxtComponentBuilder;
@@ -70,6 +72,7 @@ public class SanctionExecute {
 	private List<Object> targetsRaw = new ArrayList<>();
 	private List<String> unknownTargetType = new ArrayList<>();
 	long expire = 0;
+	@Nullable
 	String reason;
 
 	OlympaPlayer author;
@@ -119,7 +122,8 @@ public class SanctionExecute {
 	}
 
 	public void setReason(String reason) {
-		this.reason = Utils.capitalize(SanctionUtils.formatReason(reason));
+		if (reason != null)
+			this.reason = Utils.capitalize(SanctionUtils.formatReason(reason));
 	}
 
 	public void setSanctionType(OlympaSanctionType sanctionType) {

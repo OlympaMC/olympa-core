@@ -25,6 +25,7 @@ import fr.olympa.api.report.ReportReason;
 import fr.olympa.api.report.ReportStatus;
 import fr.olympa.api.report.ReportStatusInfo;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.spigot.report.ReportHandler;
 import fr.olympa.core.spigot.report.ReportMsg;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
 import fr.olympa.core.spigot.report.gui.ReportGui;
@@ -56,7 +57,7 @@ public class ReportCommand extends ComplexCommand {
 	public void wrongArg(CommandContext cmd) {
 		Player player = this.player;
 		OfflinePlayer target = cmd.getArgument(0);
-		if (target.getUniqueId().equals(player.getUniqueId()))
+		if (player != null && target.getUniqueId().equals(player.getUniqueId()))
 			sendError("Tu ne peux pas te report toi même. (enfin si mais que pour tester)");
 		//			return; TODO REMOVE comment
 		ReportReason reportReason = null;
@@ -65,6 +66,15 @@ public class ReportCommand extends ComplexCommand {
 			reportReason = cmd.getArgument(1);
 		if (cmd.getArgumentsLength() > 2)
 			note = cmd.getFrom(2);
+		if (player == null) {
+			try {
+				ReportHandler.report(player, target, reportReason, note);
+			} catch (SQLException e) {
+				sendError(e);
+				e.printStackTrace();
+			}
+			return;
+		}
 		if (reportReason != null)
 			ReportGuiConfirm.open(player, target, reportReason, note);
 		else

@@ -33,7 +33,9 @@ public class SanctionHandler {
 		OlympaSanction mute;
 		List<OlympaSanction> mutes = getMutes(player.getUniqueId());
 		Set<OlympaSanction> mutes2 = mutes.stream().map(mapper).collect(Collectors.toSet());
-		mutes.removeAll(mutes2.stream().filter(m -> m.getStatus() != OlympaSanctionStatus.ACTIVE).collect(Collectors.toSet()));
+		Set<OlympaSanction> expiredMutes = mutes2.stream().filter(m -> m.getStatus() != OlympaSanctionStatus.ACTIVE).collect(Collectors.toSet());
+		expiredMutes.forEach(os -> removeMute(os));
+		mutes.removeAll(expiredMutes);
 		mute = mutes2.stream().filter(m -> m.getStatus() == OlympaSanctionStatus.ACTIVE).findFirst().orElse(null);
 		return mute;
 	}
