@@ -59,6 +59,10 @@ public class SwearHandler {
 		return regexSwear.values();
 	}
 
+	public Map<String, Pattern> getMap() {
+		return regexSwear;
+	}
+
 	public String testAndReplace(String msg, String prefix, String suffix) {
 		Multimap<String, String> test = test(msg);
 		if (test.isEmpty())

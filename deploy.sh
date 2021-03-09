@@ -27,7 +27,7 @@ ACTUAL_COMMIT_ID_API=`cat target/commitIdAPI`
 
 
 if [ -n "$1" ]; then
-	if [ -n "$2" ] && [ "$2" = "date"]; then
+	if [ -n "$2" ] && [ "$2" = "date" ]; then
 		DATE="$2"
 	else
 		BRANCH_NAME="$1"
@@ -77,5 +77,5 @@ else
 	echo `git rev-parse HEAD` > target/commitId
 	echo `cd ../olympaapi && git rev-parse HEAD` > target/commitIdAPI
 fi
-echo "\e[32mLe jar du commit de l'api $ACTUAL_COMMIT_ID_API avec le core $ACTUAL_COMMIT_ID a été crée.\e[0m"
+echo "\e[32mLe jar du commit de l'api $(cat target/commitIdAPI) avec le core $(cat target/commitId) a été crée.\e[0m"
 exit 0

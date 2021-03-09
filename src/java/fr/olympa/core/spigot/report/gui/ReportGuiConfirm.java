@@ -40,6 +40,7 @@ public class ReportGuiConfirm extends OlympaGUI {
 		guiIventory.setItem(slot - 8, new OlympaItemBuild(signalName).lore("", signalReason).skullowner(target).build());
 
 		gui.create(player);
+
 	}
 
 	OfflinePlayer target;

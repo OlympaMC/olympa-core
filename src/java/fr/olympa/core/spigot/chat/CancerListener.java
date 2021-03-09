@@ -2,7 +2,9 @@ package fr.olympa.core.spigot.chat;
 
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -88,7 +90,7 @@ public class CancerListener implements Listener {
 			else
 				link = matcher2.group();
 			Set<String> linkWhitelist = new HashSet<>(OlympaCore.getInstance().getConfig().getStringList("chat.linkwhitelist"));
-			if (!linkWhitelist.stream().anyMatch(l -> link.contains(l))) {
+			if (linkWhitelist.stream().noneMatch(l -> link.contains(l))) {
 				event.setCancelled(true);
 				player.sendMessage(ColorUtils.color(Prefix.BAD + "Les liens sont interdits."));
 				Chat.sendToStaff("Lien", player, message, link);
@@ -151,45 +153,45 @@ public class CancerListener implements Listener {
 		try {
 			matcher = matchFlood.matcher(message);
 			int i = 0;
-			boolean find = false;
 			if (matcher.find())
 				for (String wordFlooded : message.split(" ")) {
 					if (Bukkit.getPlayer(wordFlooded) != null)
 						continue;
 					matcher = matchFlood.matcher(wordFlooded);
 					i = 0;
+					List<String> floodChars = new ArrayList<>();
 					while (matcher.find()) {
 						String charsFlooded = matcher.group();
+						floodChars.add(charsFlooded);
 						String charFlooded = matcher.group(1);
 						String wordWithoutFlood = wordFlooded.replace(charsFlooded, charFlooded);
 						message = message.replace(wordFlooded, wordWithoutFlood);
-						find = true;
 						if (++i > 50) {
 							OlympaCore.getInstance().sendMessage("&4ERROR &cBoucle infini dans la gestion de chat pour le flood.");
 							break;
 						}
 					}
-					if (find) {
+					if (!floodChars.isEmpty()) {
 						event.setMessage(message);
-						player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci d'éviter le flood."));
+						player.sendMessage(Prefix.BAD.formatMessage("Merci d'éviter le flood tel que &4%s&c.", String.join("&c, &4", floodChars)));
 					}
 				}
 			i = 0;
-			find = false;
-			// Si le message contient des charatères non autorisé
+			// Si le message contient des caractères non autorisé
 			matcher = matchNoWord.matcher(message);
+			List<String> badChars = new ArrayList<>();
 			while (matcher.find()) {
 				String chars = matcher.group();
+				badChars.add(chars);
 				message = message.replace(chars, "");
 				if (++i > 200) {
 					OlympaCore.getInstance().sendMessage("&4ERROR &cBoucle infini dans la gestion de chat pour les symboles interdits.");
 					break;
 				}
-				find = true;
 			}
-			if (find) {
+			if (!badChars.isEmpty()) {
 				event.setMessage(message);
-				player.sendMessage(ColorUtils.color(Prefix.BAD + "Les symboles chelou sont interdit."));
+				player.sendMessage(Prefix.BAD.formatMessage("Les symboles chelou tel que &4%s&c sont interdit.", String.join("&c, &4", badChars)));
 			}
 		} catch (Exception | NoClassDefFoundError e) {
 			e.printStackTrace();

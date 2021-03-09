@@ -73,7 +73,7 @@ public class MySQL extends SQLClass {
 	// Pour pas surcharger les requettes MySQL
 	// TODO -> cache redis pour le cache multi-server
 	static Set<String> allPlayersNamesCache = null;
-	
+
 	public static Set<String> getAllPlayersNames() {
 		if (allPlayersNamesCache != null)
 			return allPlayersNamesCache;
@@ -252,7 +252,8 @@ public class MySQL extends SQLClass {
 			statement.setString(1, ip);
 			List<OlympaPlayer> olympaPlayers = new ArrayList<>();
 			ResultSet resultSet = getPlayersByIPStatement.executeQuery(statement);
-			while (resultSet.next()) olympaPlayers.add(getOlympaPlayer(resultSet));
+			while (resultSet.next())
+				olympaPlayers.add(getOlympaPlayer(resultSet));
 			resultSet.close();
 			return olympaPlayers;
 		}
@@ -265,13 +266,14 @@ public class MySQL extends SQLClass {
 			statement.setString(1, "%" + ipHistory + "%");
 			List<OlympaPlayer> olympaPlayers = new ArrayList<>();
 			ResultSet resultSet = getPlayersByIPHistoryStatement.executeQuery(statement);
-			while (resultSet.next()) olympaPlayers.add(getOlympaPlayer(resultSet));
+			while (resultSet.next())
+				olympaPlayers.add(getOlympaPlayer(resultSet));
 			resultSet.close();
 			return olympaPlayers;
 		}
 	}
 
-	private static OlympaStatement getPlayersByAllIPStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE WHERE `ip` = ? OR `ip_history` LIKE ?");
+	private static OlympaStatement getPlayersByAllIPStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `ip` = ? OR `ip_history` LIKE ?");
 
 	public static Map<Boolean, List<OlympaPlayer>> getPlayersByAllIp(String ipAlreadyUsed) throws SQLException {
 		try (PreparedStatement statement = getPlayersByAllIPStatement.createStatement()) {
@@ -295,7 +297,8 @@ public class MySQL extends SQLClass {
 			statement.setString(1, "%" + nameHistory + "%");
 			List<OlympaPlayer> olympaPlayers = new ArrayList<>();
 			ResultSet resultSet = getPlayersByNameHistoryStatement.executeQuery(statement);
-			while (resultSet.next()) olympaPlayers.add(getOlympaPlayer(resultSet));
+			while (resultSet.next())
+				olympaPlayers.add(getOlympaPlayer(resultSet));
 			resultSet.close();
 			return olympaPlayers;
 		}
@@ -308,7 +311,8 @@ public class MySQL extends SQLClass {
 			statement.setString(1, regex);
 			Set<OlympaPlayer> olympaPlayers = new HashSet<>();
 			ResultSet resultSet = getPlayersByRegexStatement.executeQuery(statement);
-			while (resultSet.next()) olympaPlayers.add(getOlympaPlayer(resultSet));
+			while (resultSet.next())
+				olympaPlayers.add(getOlympaPlayer(resultSet));
 			resultSet.close();
 			return olympaPlayers;
 		}
@@ -327,7 +331,8 @@ public class MySQL extends SQLClass {
 			statement.setString(1, name);
 			Set<OlympaPlayer> olympaPlayers = new HashSet<>();
 			ResultSet resultSet = getPlayersBySimilarNameStatement.executeQuery(statement);
-			while (resultSet.next()) olympaPlayers.add(getOlympaPlayer(resultSet));
+			while (resultSet.next())
+				olympaPlayers.add(getOlympaPlayer(resultSet));
 			statement.close();
 			return olympaPlayers;
 		}
@@ -403,7 +408,8 @@ public class MySQL extends SQLClass {
 		try (PreparedStatement statement = getDuplicatePasswordStatement.createStatement()) {
 			Set<OlympaPlayer> olympaPlayers = new HashSet<>();
 			ResultSet resultSet = getDuplicatePasswordStatement.executeQuery(statement);
-			while (resultSet.next()) olympaPlayers.add(getOlympaPlayer(resultSet));
+			while (resultSet.next())
+				olympaPlayers.add(getOlympaPlayer(resultSet));
 			resultSet.close();
 			return olympaPlayers;
 		}

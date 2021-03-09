@@ -101,7 +101,7 @@ public class ReportMsg {
 			ReportStatus status = r.getStatus();
 			ReportReason reason = r.getReason();
 			TextComponent line = new TextComponent(TextComponent.fromLegacyText(
-					String.format("%s%s <- %s &e(%s)", status.getColor(), reason.getReasonUpper(), status.getName(), opTarget.getName(), Utils.timestampToDuration(r.getLastUpdate(), 1))));
+					String.format("%s%s <- %s &e(%s) %s", status.getColor(), reason.getReasonUpper(), status.getName(), opTarget.getName(), Utils.tsToShortDur(r.getLastUpdate()))));
 			line.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(String.join("\n", r.getLore()))));
 			line.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/report seeid " + r.getId()));
 			out.addExtra(line);

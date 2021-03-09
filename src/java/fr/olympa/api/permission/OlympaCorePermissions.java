@@ -45,8 +45,8 @@ public class OlympaCorePermissions {
 
 	public static final OlympaSpigotPermission CHAT_COLOR = new OlympaSpigotPermission(OlympaGroup.RESP_TECH);
 
-	public static final OlympaSpigotPermission REPORT_SEEREPORT = new OlympaSpigotPermission(OlympaGroup.MOD);
-	public static final OlympaBungeePermission REPORT_SEEREPORT_OTHERSERV = new OlympaBungeePermission(OlympaGroup.MOD);
+	public static final OlympaSpigotPermission REPORT_SEEREPORT = new OlympaSpigotPermission(OlympaGroup.ASSISTANT);
+	public static final OlympaBungeePermission REPORT_SEEREPORT_OTHERSERV = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
 	public static final OlympaSpigotPermission REPORT_COMMAND = new OlympaSpigotPermission(OlympaGroup.PLAYER);
 	public static final OlympaSpigotPermission REPORT_SEE_COMMAND = new OlympaSpigotPermission(OlympaGroup.ASSISTANT);
 	public static final OlympaSpigotPermission REPORT_CHANGE_COMMAND = new OlympaSpigotPermission(OlympaGroup.MOD);

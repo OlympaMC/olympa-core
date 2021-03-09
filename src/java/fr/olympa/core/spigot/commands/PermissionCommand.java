@@ -122,7 +122,7 @@ public class PermissionCommand extends ComplexCommand {
 		sendMessage(Prefix.DEFAULT_GOOD, "Le joueur &2%s&a n'a plus la permission bukkit &2%s&a.", target.getName(), cmd.<String>getArgument(0));
 	}
 
-	@Cmd(args = { "PERMISSION", "GROUPS|OLYMPA_PLAYER", "save" }, min = 2, description = "Donne une permission à un groupe ou un joueur. save (3) permet de sauvegarder la permission en bdd.")
+	@Cmd(args = { "PERMISSION", "GROUPS|OLYMPA_PLAYER|all", "save" }, min = 2, description = "Donne une permission à un groupe ou un joueur. save (3) permet de sauvegarder la permission en bdd.")
 	public void allow(CommandContext cmd) {
 		Entry<String, OlympaPermission> entry = cmd.getArgument(0);
 		String permName = entry.getKey();
@@ -154,7 +154,7 @@ public class PermissionCommand extends ComplexCommand {
 			}
 		} else if (cmd.getArgument(1) instanceof String) {
 			String all = cmd.getArgument(1);
-			if (!all.equals("ALL"))
+			if (!all.equalsIgnoreCase("ALL"))
 				return;
 			spigotPerm.enable();
 			sendMessage(Prefix.DEFAULT_GOOD, "La permission &2%s&a a été réactiver.", permName);
