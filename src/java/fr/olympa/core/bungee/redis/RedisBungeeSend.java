@@ -10,10 +10,19 @@ import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
+import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import net.md_5.bungee.api.config.ServerInfo;
 import redis.clients.jedis.Jedis;
 
 public class RedisBungeeSend {
+
+	// TODO Bungee recever
+	public static void sendSanction(ServerInfo serverFrom, UUID uuid, OlympaSanction sanction) {
+		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
+			jedis.publish(RedisChannel.SPIGOT_SEND_SANCTION.name(), serverFrom.getName() + ";" + uuid.toString() + ";" + new Gson().toJson(sanction));
+		}
+		RedisAccess.INSTANCE.disconnect();
+	}
 
 	public static void askGiveOlympaPlayer(ServerInfo serverFrom, ServerInfo serverTo, UUID uuid) {
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
