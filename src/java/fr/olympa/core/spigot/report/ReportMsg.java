@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import fr.olympa.api.LinkSpigotBungee;
+import fr.olympa.api.chat.TxtComponentBuilder;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.provider.AccountProvider;
@@ -23,9 +24,6 @@ import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 
 @SuppressWarnings("deprecation")
 public class ReportMsg {
@@ -60,105 +58,96 @@ public class ReportMsg {
 	public static void sendPanelId(CommandSender sender, OlympaReport report) {
 		OlympaPlayerInformations opTarget = AccountProvider.getPlayerInformations(report.getTargetId());
 		OlympaPlayerInformations opAuthor = AccountProvider.getPlayerInformations(report.getAuthorId());
-		TextComponent out = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_GOOD.formatMessage("Report de &2%s -> &2%s :", opAuthor.getName(), opTarget.getName())));
+		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD, "Report de &2%s -> &2%s :", opAuthor.getName(), opTarget.getName()).extraSpliterBN();
 		ReportReason reason = report.getReason();
 
-		out.addExtra(new TextComponent(TextComponent.fromLegacyText(String.format("&aN°&2%s", String.valueOf(report.getId())))));
-		out.addExtra(new TextComponent(TextComponent.fromLegacyText(String.format("&aStatus %s", report.getStatus().getNameColored()))));
-		out.addExtra(new TextComponent(TextComponent.fromLegacyText(String.format("&aServeur &2%s", report.getServerName()))));
-		out.addExtra(new TextComponent(TextComponent.fromLegacyText(String.format("&aRaison &2%s", reason.getReason()))));
+		out.extra(new TxtComponentBuilder("&aN°&2%s", String.valueOf(report.getId())));
+		out.extra(new TxtComponentBuilder("&aStatus %s", report.getStatus().getNameColored()));
+		out.extra(new TxtComponentBuilder("&aServeur &2%s", report.getServerName()));
+		out.extra(new TxtComponentBuilder("&aRaison &2%s", reason.getReason()));
 		String note = report.getNote();
 		if (note != null && !note.isBlank())
-			out.addExtra(new TextComponent(TextComponent.fromLegacyText(String.format("&aNote &2%s", note))));
-		out.addExtra(new TextComponent(TextComponent.fromLegacyText(String.format("&aDate &2%s &a(%s)", Utils.timestampToDateAndHour(report.getTime()), Utils.timestampToDuration(report.getTime())))));
+			out.extra(new TxtComponentBuilder("&aNote &2%s", note));
+		out.extra(new TxtComponentBuilder("&aDate &2%s &a(%s)", Utils.timestampToDateAndHour(report.getTime()), Utils.timestampToDuration(report.getTime())));
 		List<ReportStatusInfo> statusInfo = report.getStatusInfo();
 		if (statusInfo.size() > 1) {
-			out.addExtra(new TextComponent(TextComponent.fromLegacyText("&aDerniers statuts &2")));
+			out.extra(new TxtComponentBuilder("&aDerniers statuts &2"));
 			int i = 0;
 			for (ReportStatusInfo info : statusInfo) {
-				TextComponent line = new TextComponent(TextComponent.fromLegacyText(report.getStatus().getNameColored()));
-				line.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(String.join("\n", info.getLore()))));
+				TxtComponentBuilder line = new TxtComponentBuilder(report.getStatus().getNameColored());
+				line.onHoverText(String.join("\n", info.getLore()));
 				if (i++ < statusInfo.size())
-					out.addExtra(new TextComponent(TextComponent.fromLegacyText("&a, ")));
+					out.extra(new TxtComponentBuilder("&a, "));
 				else
-					out.addExtra(new TextComponent(TextComponent.fromLegacyText("&a.")));
-				out.addExtra(line);
+					out.extra(new TxtComponentBuilder("&a."));
+				out.extra(line);
 			}
 
 		}
-		out.addExtra(new TextComponent(TextComponent.fromLegacyText(
-				String.format("&aDerniers statuts &2%s",
-						statusInfo.stream().skip(1).map(rsi -> rsi.getStatus() + " &a(" + Utils.timestampToDuration(rsi.getTime()) + ")").collect(Collectors.joining("&a, &2"))))));
-
-		out.addExtra("\n");
-		sender.spigot().sendMessage(out);
+		out.extra(new TxtComponentBuilder("&aDerniers statuts &2%s",
+				statusInfo.stream().skip(1).map(rsi -> rsi.getStatus() + " &a(" + Utils.timestampToDuration(rsi.getTime()) + ")").collect(Collectors.joining("&a, &2")))).extraSpliterBN();
+		sender.spigot().sendMessage(out.build());
 	}
 
 	public static void sendPanelTarget(CommandSender sender, String target, List<OlympaReport> reports) {
-		TextComponent out = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_GOOD.formatMessage("Report contre %s :", target)));
+		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Report contre %s :", target));
 		reports.stream().forEach(r -> {
 			OlympaPlayerInformations opTarget = AccountProvider.getPlayerInformations(r.getTargetId());
 			ReportStatus status = r.getStatus();
 			ReportReason reason = r.getReason();
-			TextComponent line = new TextComponent(TextComponent.fromLegacyText(
-					String.format("%s%s <- %s &e(%s) %s", status.getColor(), reason.getReasonUpper(), status.getName(), opTarget.getName(), Utils.tsToShortDur(r.getLastUpdate()))));
-			line.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(String.join("\n", r.getLore()))));
-			line.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/report seeid " + r.getId()));
-			out.addExtra(line);
-			out.addExtra("\n");
+			TxtComponentBuilder line = new TxtComponentBuilder("%s%s -> %s &e(%s) %s", status.getColor(), reason.getReasonUpper(), status.getName(), opTarget.getName(), Utils.tsToShortDur(r.getLastUpdate()));
+			line.onHoverText(String.join("\n", r.getLore()));
+			line.onClickCommand("/report seeid " + r.getId());
+			out.extra(line);
 		});
-		sender.spigot().sendMessage(out);
+		sender.spigot().sendMessage(out.build());
 	}
 
 	public static void sendPanelLast(CommandSender sender, List<OlympaReport> reports) {
-		TextComponent out = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_GOOD.formatMessage("%s Derniers reports :", reports.size())));
+		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("%s Derniers reports :", reports.size())).extraSpliterBN();
 		reports.stream().forEach(r -> {
 			OlympaPlayerInformations opTarget = AccountProvider.getPlayerInformations(r.getTargetId());
 			OlympaPlayerInformations opAuthor = AccountProvider.getPlayerInformations(r.getAuthorId());
 			ReportStatus status = r.getStatus();
 			ReportReason reason = r.getReason();
-			TextComponent line = new TextComponent(TextComponent.fromLegacyText(
-					String.format("%s%s -> %s &e(%s)", status.getColor(), reason.getReasonUpper(), status.getName(), opAuthor.getName(), opTarget.getName(), Utils.timestampToDuration(r.getLastUpdate(), 1))));
-			line.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(String.join("\n", r.getLore()))));
-			line.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/report seeid " + r.getId()));
-			out.addExtra(line);
-			out.addExtra("\n");
+			TxtComponentBuilder txtBuildeur = new TxtComponentBuilder("%s%s -> %s &e(%s) de %s", status.getColor(), reason.getReasonUpper(), status.getName(), opTarget.getName(), opAuthor.getName(),
+					Utils.tsToShortDur(r.getLastUpdate()));
+			txtBuildeur.onHoverText("\n", r.getLore());
+			txtBuildeur.onClickCommand("/report seeid " + r.getId());
+			out.extra(txtBuildeur);
 		});
-		sender.spigot().sendMessage(out);
+		sender.spigot().sendMessage(out.build());
 	}
 
 	public static void sendPanelMax(CommandSender sender, Stream<Entry<OlympaPlayerInformations, List<OlympaReport>>> reports) {
-		TextComponent out = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_GOOD.formatMessage("Joueurs connectés avec le plus de report non observer :")));
+		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Joueurs connectés avec le plus de report non observer :")).extraSpliterBN();
 		reports.limit(10).forEach(entry -> {
 			int rSize = entry.getValue().size();
 			OlympaPlayerInformations opTarget = entry.getKey();
-			TextComponent line = new TextComponent(TextComponent.fromLegacyText(
-					String.format("&2%s &asignalement ouverts &2%s", rSize, opTarget.getName())));
+			TxtComponentBuilder line = new TxtComponentBuilder("&2%s &asignalement ouverts &2%s", rSize, opTarget.getName());
 			OlympaReport firstReport = entry.getValue().get(entry.getValue().size() - 1);
 			List<String> lore = firstReport.getLore();
 			lore.add("\n&4Clic pour voir tous les reports de &4" + opTarget.getName() + "&c !");
-			line.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(String.join("\n", lore))));
-			line.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/report see " + opTarget.getId()));
-			out.addExtra(line);
-			out.addExtra("\n");
+			line.onHoverText(String.join("\n", lore));
+			line.onClickCommand("/report see " + opTarget.getId());
+			out.extra(line);
+			out.extra("\n");
 		});
-		sender.spigot().sendMessage(out);
+		sender.spigot().sendMessage(out.build());
 	}
 
 	public static void sendPanelAuthor(CommandSender sender, String author, List<OlympaReport> reports) {
-		TextComponent out = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_GOOD.formatMessage("Report de %s :", author)));
+		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Report de %s :", author)).extraSpliterBN();
 		reports.stream().forEach(r -> {
 			OlympaPlayerInformations opAuthor = AccountProvider.getPlayerInformations(r.getAuthorId());
 			ReportStatus status = r.getStatus();
 			ReportReason reason = r.getReason();
-			TextComponent line = new TextComponent(TextComponent.fromLegacyText(
-					String.format("%s%s -> %s &e(%s)", status.getColor(), reason.getReasonUpper(), status.getName(), opAuthor.getName(), Utils.timestampToDuration(r.getLastUpdate(), 1))));
-			line.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(String.join("\n", r.getLore()))));
-			line.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/report seeid " + r.getId()));
-			out.addExtra(line);
-			out.addExtra("\n");
+			TxtComponentBuilder line = new TxtComponentBuilder("%s%s <- %s &e(%s)", status.getColor(), reason.getReasonUpper(), status.getName(), opAuthor.getName(), Utils.timestampToDuration(r.getLastUpdate(), 1));
+			line.onHoverText(String.join("\n", r.getLore()));
+			line.onClickCommand("/report seeid " + r.getId());
+			out.extra(line);
 		});
-		sender.spigot().sendMessage(out);
+		sender.spigot().sendMessage(out.build());
 	}
 
 }

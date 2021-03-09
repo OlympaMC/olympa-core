@@ -103,14 +103,14 @@ public class ReportCommand extends ComplexCommand {
 		}
 	}
 
-	@Cmd(args = "OFFLINE_PLAYERS|INTEGER|UUID", aliases = { "seeauthor" }, registerAliasesInTab = true, permissionName = "REPORT_SEE_COMMAND", syntax = "<joueur | uuid | idReport>", min = 1)
+	@Cmd(args = "INTEGER|UUID|OFFLINE_PLAYERS", aliases = { "seeauthor" }, registerAliasesInTab = true, permissionName = "REPORT_SEE_COMMAND", syntax = "<joueur | uuid | idReport>", min = 1)
 	public void see(CommandContext cmd) {
 		List<OlympaReport> reports = new ArrayList<>();
 		OlympaPlayer op = null;
 		long targetId = 0;
 		try {
 			if (cmd.getArgument(0) instanceof OfflinePlayer)
-				targetId = (op = AccountProvider.get(cmd.<OfflinePlayer>getArgument(0).getUniqueId())).getId();
+				targetId = (op = new AccountProvider(cmd.<OfflinePlayer>getArgument(0).getUniqueId()).get()).getId();
 			else if (cmd.getArgument(0) instanceof UUID)
 				targetId = (op = new AccountProvider(cmd.<UUID>getArgument(0)).get()).getId();
 			else if (cmd.getArgument(0) instanceof Integer)
@@ -198,7 +198,7 @@ public class ReportCommand extends ComplexCommand {
 	}
 
 	@Cmd(permissionName = "REPORT_SEE_COMMAND", min = 0)
-	public void seeConncted(CommandContext cmd) {
+	public void seeConnected(CommandContext cmd) {
 		Stream<Entry<OlympaPlayerInformations, List<OlympaReport>>> reports = null;
 		try {
 			reports = ReportMySQL.getConnectedReports();
