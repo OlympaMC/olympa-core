@@ -88,6 +88,14 @@ public class GroupListener implements Listener {
 		}
 		PermissionAttachment attachment = player.addAttachment(OlympaCore.getInstance());
 		olympaPlayer.getGroup().getAllGroups().sorted(Comparator.comparing(OlympaGroup::getPower)).forEach(group -> group.runtimePermissions.forEach((perm, value) -> attachment.setPermission(perm, value)));
+		olympaPlayer.getCustomPermissions().entrySet().stream().filter(e -> e.getValue() == null || e.getValue().equals(OlympaCore.getInstance().getOlympaServer()) && (e.getKey().contains(".") || !e.getKey().contains("_")))
+				.forEach(e -> {
+					String permName = e.getKey();
+					if (permName.indexOf(0) == '-')
+						attachment.setPermission(permName.substring(1), false);
+					else
+						attachment.setPermission(permName, true);
+				});
 		player.recalculatePermissions();
 		((CraftServer) Bukkit.getServer()).getHandle().getServer().getCommandDispatcher().a(((CraftPlayer) player).getHandle());
 	}

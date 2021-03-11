@@ -128,7 +128,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	@Expose
 	Map<Long, String> histName = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
 	@Expose
-	Map<OlympaPermission, OlympaServer> customPermissions = new HashMap<>();
+	Map<String, OlympaServer> customPermissions = new HashMap<>();
 	@Expose
 	Map<Long, String> histIp = new TreeMap<>(Comparator.comparing(Long::longValue).reversed());
 	@Expose
@@ -246,23 +246,28 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	}
 
 	@Override
-	public Map<OlympaPermission, OlympaServer> getCustomPermissions() {
-		return Collections.unmodifiableSortedMap((TreeMap<OlympaPermission, OlympaServer>) customPermissions);
+	public boolean hasCustomPermission(String per, OlympaServer serv) {
+		return customPermissions.entrySet().stream().anyMatch(e -> e.getKey().equals(per) && (e.getValue() == null || e.getValue().equals(serv)));
+	}
+
+	@Override
+	public Map<String, OlympaServer> getCustomPermissions() {
+		return Collections.unmodifiableSortedMap((TreeMap<String, OlympaServer>) customPermissions);
 	}
 
 	public void addCustomPermission(OlympaPermission perm, OlympaServer serv) {
 		if (serv == null)
 			serv = OlympaServer.ALL;
-		customPermissions.put(perm, serv);
-		COLUMN_NAME_HISTORY.updateAsync(this, GsonCustomizedObjectTypeAdapter.GSON.toJson(customPermissions), null, null);
+		customPermissions.put(perm.getName(), serv);
+		COLUMN_CUSTOM_PERMISSIONS.updateAsync(this, GsonCustomizedObjectTypeAdapter.GSON.toJson(customPermissions), null, null);
 	}
 
 	public void removeCustomPermission(OlympaPermission perm, OlympaServer serv) {
 		if (serv != null)
-			customPermissions.remove(perm, serv);
+			customPermissions.remove(perm.getName(), serv);
 		else
-			customPermissions.remove(perm);
-		COLUMN_NAME_HISTORY.updateAsync(this, GsonCustomizedObjectTypeAdapter.GSON.toJson(customPermissions), null, null);
+			customPermissions.remove(perm.getName());
+		COLUMN_CUSTOM_PERMISSIONS.updateAsync(this, GsonCustomizedObjectTypeAdapter.GSON.toJson(customPermissions), null, null);
 	}
 
 	public Boolean getConnected() {
