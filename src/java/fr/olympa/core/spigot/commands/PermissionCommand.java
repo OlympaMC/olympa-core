@@ -185,7 +185,7 @@ public class PermissionCommand extends ComplexCommand {
 		}
 	}
 
-	@Cmd(args = { "PERMISSION", "GROUPS|OLYMPA_PLAYERS|all", "save" }, min = 2, description = "Comme /p allow mais pour enlever. all (2) désactive pour tous le monde (sauf haut-staff).")
+	@Cmd(args = { "PERMISSION", "GROUPS|OLYMPA_PLAYERS", "save" }, min = 2, description = "Comme /p allow mais pour enlever. all (2) désactive pour tous le monde (sauf haut-staff).")
 	public void disallow(CommandContext cmd) {
 		Entry<String, OlympaPermission> entry = cmd.getArgument(0);
 		String permName = entry.getKey();
@@ -214,7 +214,7 @@ public class PermissionCommand extends ComplexCommand {
 			}
 		} else if (arg1 instanceof String) {
 			String all = cmd.getArgument(1);
-			if (!all.equals("ALL"))
+			if (!all.equalsIgnoreCase("ALL"))
 				return;
 			spigotPerm.disable();
 			sendMessage(Prefix.DEFAULT_GOOD, "La permission &2%s&a a été désactiver pour tous le monde, sauf pour le haut-staff et les perms par joueur.", permName);

@@ -1,11 +1,13 @@
 package fr.olympa.core.spigot.groups;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -16,7 +18,7 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.chat.ColorUtils;
+import fr.olympa.api.chat.Chat;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
@@ -24,7 +26,6 @@ import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
 
@@ -44,14 +45,13 @@ public class GroupListener implements Listener {
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
 
 		calculatePermissions(olympaPlayer, event.getPlayer());
-
 		Map<OlympaGroup, Long> groups = olympaPlayer.getGroups();
 
 		List<OlympaGroup> oldGroups = groups.entrySet().stream().filter(entry -> entry.getValue() != 0 && entry.getValue() < now).map(entry -> entry.getKey()).collect(Collectors.toList());
 		if (oldGroups.isEmpty())
 			return;
+		OlympaGroup oldFirstGroup = olympaPlayer.getGroup();
 		oldGroups.forEach(oldGroup -> olympaPlayer.removeGroup(oldGroup));
-
 		if (groups.isEmpty())
 			olympaPlayer.addGroup(OlympaGroup.PLAYER);
 
@@ -60,11 +60,19 @@ public class GroupListener implements Listener {
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(player, ChangeType.REMOVE, olympaPlayer, oldGroups.toArray(OlympaGroup[]::new)));
 		account.saveToRedis(olympaPlayer);
 		account.saveToCache(olympaPlayer);
+		List<String> out = new ArrayList<>();
+		out.add("&m------------------------------");
+		out.add("");
 		if (oldGroups.size() == 1)
-			player.sendMessage(ColorUtils.color(Prefix.INFO + "Ton grade &6" + oldGroups.get(0).getName() + "&e a expiré, tu es désormais &6" + olympaPlayer.getGroupsToHumainString() + "&e."));
+			out.add("&cTon grade &4" + oldGroups.get(0).getName() + "&c a expiré.");
 		else
-			player.sendMessage(
-					ColorUtils.color(Prefix.INFO + "Tes grades &6" + oldGroups.stream().map(OlympaGroup::getName).collect(Collectors.joining(", ")) + "&e ont expiré, tu es désormais &6" + olympaPlayer.getGroupsToHumainString() + "&e."));
+			out.add("&cTes grades &4" + oldGroups.stream().map(OlympaGroup::getName).collect(Collectors.joining(", ")) + "&c ont expiré.");
+		if (oldFirstGroup != olympaPlayer.getGroup())
+			out.add("&2Tu es désormais &a" + olympaPlayer.getGroupPrefix() + player.getName() + "&e.");
+		out.add("");
+		out.add("&m------------------------------");
+		player.sendMessage(Chat.getCenteredMessage(out));
+		player.playSound(player.getLocation(), Sound.ENTITY_BAT_DEATH, 1.5f, 0.5f);
 	}
 
 	private void calculatePermissions(OlympaPlayer olympaPlayer, Player player) {

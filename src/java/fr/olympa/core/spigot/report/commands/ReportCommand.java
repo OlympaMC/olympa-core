@@ -113,7 +113,7 @@ public class ReportCommand extends ComplexCommand {
 		}
 	}
 
-	@Cmd(args = "INTEGER|UUID|OFFLINE_PLAYERS", aliases = { "seeauthor" }, registerAliasesInTab = true, permissionName = "REPORT_SEE_COMMAND", syntax = "<joueur | uuid | idReport>", min = 1)
+	@Cmd(args = "OFFLINE_PLAYERS|UUID|INTEGER", aliases = { "seeauthor" }, registerAliasesInTab = true, permissionName = "REPORT_SEE_COMMAND", syntax = "<joueur | uuid | idReport>", min = 1)
 	public void see(CommandContext cmd) {
 		List<OlympaReport> reports = new ArrayList<>();
 		OlympaPlayer op = null;
@@ -130,7 +130,7 @@ public class ReportCommand extends ComplexCommand {
 				return;
 			}
 			if (reports.isEmpty())
-				if (cmd.label.equals("seeauthor"))
+				if (cmd.label.equalsIgnoreCase("seeauthor"))
 					reports.addAll(ReportMySQL.getReportsByAuthor(targetId));
 				else
 					reports.addAll(ReportMySQL.getReportByTarget(targetId));
@@ -146,7 +146,7 @@ public class ReportCommand extends ComplexCommand {
 		}
 		if (cmd.getArgument(0) instanceof Integer)
 			ReportMsg.sendPanelId(sender, reports.get(0));
-		else if (cmd.label.equals("seeauthor"))
+		else if (cmd.label.equalsIgnoreCase("seeauthor"))
 			ReportMsg.sendPanelAuthor(sender, target, reports);
 		else
 			ReportMsg.sendPanelTarget(sender, target, reports);
