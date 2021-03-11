@@ -40,6 +40,11 @@ public class NewSpigotCommand extends ComplexCommand {
 		getPlayer().getInventory().addItem(new MapCaptcha(cmd.getArgument(0)).getMap());
 	}
 
+	@Cmd
+	public void offlinePlayers(CommandContext cmd) {
+		sender.sendMessage("Joueurs offlines : " + plugin.getServer().getOfflinePlayers().length);
+	}
+
 	//	@Cmd(args = { "ALIGNMENT", "ALIGNMENT" })
 	//	public void table(CommandContext cmd) {
 	//		//		Alignment

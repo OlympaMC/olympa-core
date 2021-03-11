@@ -77,6 +77,10 @@ public class AccountProvider implements OlympaAccount {
 		return cache.values();
 	}
 
+	public static Collection<OlympaPlayerInformations> getAllPlayersInformations() {
+		return cachedInformations.values();
+	}
+
 	static {
 		CacheStats.addDebugMap("PLAYERS", AccountProvider.cache);
 		CacheStats.addDebugMap("PLAYERS_INFO", AccountProvider.cachedInformations);
@@ -105,7 +109,7 @@ public class AccountProvider implements OlympaAccount {
 	public static OlympaPlayer getFromRedis(String name) {
 		OlympaPlayer olympaPlayer = null;
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			olympaPlayer = jedis.keys("*").stream().filter(v -> v.contains(name)).map(v -> GsonCustomizedObjectTypeAdapter.GSON.fromJson(v, playerClass))
+			olympaPlayer = jedis.keys("player:*").stream().filter(v -> v.contains(name)).map(v -> GsonCustomizedObjectTypeAdapter.GSON.fromJson(v, playerClass))
 					.filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
 		}
 		RedisAccess.INSTANCE.disconnect();
@@ -115,7 +119,7 @@ public class AccountProvider implements OlympaAccount {
 	public static OlympaPlayer getFromRedis(long id) {
 		OlympaPlayer olympaPlayer = null;
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			olympaPlayer = jedis.keys("*").stream().filter(v -> v.contains(String.valueOf(id))).map(value -> GsonCustomizedObjectTypeAdapter.GSON.fromJson(value, playerClass))
+			olympaPlayer = jedis.keys("player:*").stream().filter(v -> v.contains(String.valueOf(id))).map(value -> GsonCustomizedObjectTypeAdapter.GSON.fromJson(value, playerClass))
 					.filter(p -> p.getId() == id).findFirst().orElse(null);
 		}
 		RedisAccess.INSTANCE.disconnect();

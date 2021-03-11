@@ -29,9 +29,9 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 
 	public NewBungeeCommand(Plugin plugin) {
 		super(plugin, "bungee", "Diverses gestion du serveur bungee.", OlympaCorePermissions.BUNGEE_COMMAND, "bung");
-		addArgumentParser("CACHE", sender -> CacheStats.getCaches().keySet(), x -> CacheStats.getCache(x), x -> "&4%s&c doit être un id de cache qui existe.");
-		addArgumentParser("DEBUG_LIST", sender -> CacheStats.getDebugLists().keySet(), x -> CacheStats.getDebugList(x), x -> "&4%s&c doit être un id de debugList qui existe.");
-		addArgumentParser("DEBUG_MAP", sender -> CacheStats.getDebugMaps().keySet(), x -> CacheStats.getDebugMap(x), x -> "&4%s&c doit être un id de debugMap qui existe.");
+		addArgumentParser("CACHE", (sender, arg) -> CacheStats.getCaches().keySet(), x -> CacheStats.getCache(x), x -> "&4%s&c doit être un id de cache qui existe.");
+		addArgumentParser("DEBUG_LIST", (sender, arg) -> CacheStats.getDebugLists().keySet(), x -> CacheStats.getDebugList(x), x -> "&4%s&c doit être un id de debugList qui existe.");
+		addArgumentParser("DEBUG_MAP", (sender, arg) -> CacheStats.getDebugMaps().keySet(), x -> CacheStats.getDebugMap(x), x -> "&4%s&c doit être un id de debugMap qui existe.");
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_CACHE", args = { "CACHE", "clear|print" })
