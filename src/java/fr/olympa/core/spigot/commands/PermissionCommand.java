@@ -94,7 +94,7 @@ public class PermissionCommand extends ComplexCommand {
 		sendMessage(Prefix.NONE, sj.toString());
 	}
 
-	@Cmd(player = true, min = 1, syntax = "<bukkit permission>", args = { "permission", "PLAYERS" })
+	@Cmd(min = 1, syntax = "<bukkit permission>", args = { "permission", "PLAYERS" })
 	public void giveBukkitPerm(CommandContext cmd) {
 		Player target;
 		if (cmd.getArgumentsLength() > 1)
@@ -108,7 +108,7 @@ public class PermissionCommand extends ComplexCommand {
 		sendMessage(Prefix.DEFAULT_GOOD, "Le joueur &2%s&a a désormais la permission bukkit &2%s&a.", target.getName(), cmd.<String>getArgument(0));
 	}
 
-	@Cmd(player = true, min = 1, syntax = "<bukkit permission>", args = { "permission", "PLAYERS" })
+	@Cmd(min = 1, syntax = "<bukkit permission>", args = { "permission", "PLAYERS" })
 	public void removeBukkitPerm(CommandContext cmd) {
 		Player target;
 		if (cmd.getArgumentsLength() > 1)
@@ -122,7 +122,7 @@ public class PermissionCommand extends ComplexCommand {
 		sendMessage(Prefix.DEFAULT_GOOD, "Le joueur &2%s&a n'a plus la permission bukkit &2%s&a.", target.getName(), cmd.<String>getArgument(0));
 	}
 
-	@Cmd(args = { "PERMISSION", "GROUPS|OLYMPA_PLAYER|all", "save" }, min = 2, description = "Donne une permission à un groupe ou un joueur. save (3) permet de sauvegarder la permission en bdd.")
+	@Cmd(args = { "PERMISSION", "GROUPS|OLYMPA_PLAYERS|all", "save" }, min = 2, description = "Donne une permission à un groupe ou un joueur. save (3) permet de sauvegarder la permission en bdd.")
 	public void allow(CommandContext cmd) {
 		Entry<String, OlympaPermission> entry = cmd.getArgument(0);
 		String permName = entry.getKey();
@@ -185,7 +185,7 @@ public class PermissionCommand extends ComplexCommand {
 		}
 	}
 
-	@Cmd(args = { "PERMISSION", "GROUPS|OLYMPA_PLAYER|all", "save" }, min = 2, description = "Comme /p allow mais pour enlever. all (2) désactive pour tous le monde (sauf haut-staff).")
+	@Cmd(args = { "PERMISSION", "GROUPS|OLYMPA_PLAYERS|all", "save" }, min = 2, description = "Comme /p allow mais pour enlever. all (2) désactive pour tous le monde (sauf haut-staff).")
 	public void disallow(CommandContext cmd) {
 		Entry<String, OlympaPermission> entry = cmd.getArgument(0);
 		String permName = entry.getKey();

@@ -49,7 +49,7 @@ public class BungeeComplexCommand extends BungeeCommand implements IComplexComma
 		addArgumentParser("PLAYERS", (sender, arg) -> plugin.getProxy().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toList()), x -> {
 			return plugin.getProxy().getPlayer(x);
 		}, x -> String.format("Le joueur &4%s&c est introuvable", x));
-		addArgumentParser("OLYMPA_PLAYER", (sender, arg) -> arg.length() > 2 ? MySQL.getNamesBySimilarName(arg) : plugin.getProxy().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toList()), x -> {
+		addArgumentParser("OLYMPA_PLAYERS", (sender, arg) -> arg.length() > 2 ? MySQL.getNamesBySimilarName(arg) : plugin.getProxy().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toList()), x -> {
 			try {
 				return AccountProvider.get(x);
 			} catch (SQLException e) {

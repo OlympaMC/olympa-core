@@ -36,7 +36,7 @@ public class AccountProvider implements OlympaAccount {
 	private static String REDIS_KEY = "player:";
 	private static int cachePlayer = 60;
 	private static Map<UUID, OlympaPlayer> cache = new HashMap<>();
-	private static Map<Long, OlympaPlayerInformations> cachedInformations = new HashMap<>();
+	public static Map<Long, OlympaPlayerInformations> cachedInformations = new HashMap<>();
 
 	public static Class<? extends OlympaPlayer> playerClass = OlympaPlayerObject.class;
 	public static OlympaPlayerProvider pluginPlayerProvider = OlympaPlayerObject::new;
@@ -77,7 +77,7 @@ public class AccountProvider implements OlympaAccount {
 		return cache.values();
 	}
 
-	{
+	static {
 		CacheStats.addDebugMap("PLAYERS", AccountProvider.cache);
 		CacheStats.addDebugMap("PLAYERS_INFO", AccountProvider.cachedInformations);
 	}

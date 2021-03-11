@@ -6,7 +6,6 @@ import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.server.ServerStatus;
-import fr.olympa.api.utils.Utils;
 import fr.olympa.api.utils.spigot.TPSUtils;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.CommandSender;
@@ -39,8 +38,8 @@ public class ListServerCommand extends BungeeCommand {
 				sb.add(TPSUtils.getRamUsageColor(serverInfo.getRamUsage()) + "% RAM");
 			if (serverInfo.getThreads() != null)
 				sb.add(serverInfo.getThreads() + "/" + serverInfo.getAllThreads() + " threads");
-			if (serverInfo.getLastModifiedCore() > 0)
-				sb.add("&6Last up core : " + Utils.tsToShortDur(serverInfo.getLastModifiedCore()));
+			if (serverInfo.getLastModifiedCore() != null && !serverInfo.getLastModifiedCore().isBlank())
+				sb.add("&6Last up core : " + serverInfo.getLastModifiedCore());
 			if (serverInfo.getError() != null && !serverInfo.getError().isBlank())
 				sb.add(status.getColor() + "Erreur : " + serverInfo.getError());
 			sj.add(sb.toString());

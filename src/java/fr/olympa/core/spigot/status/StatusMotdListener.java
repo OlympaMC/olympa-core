@@ -27,7 +27,7 @@ public class StatusMotdListener implements Listener {
 		sj.add(String.valueOf(machineInfo.getThreads() + "/" + machineInfo.getAllThreadsCreated()));
 		sj.add(core.getFirstVersion());
 		sj.add(core.getLastVersion());
-		sj.add(Utils.timestampToDuration(core.getLastModifiedTime()));
+		sj.add(Utils.tsToShortDur(core.getLastModifiedTime()));
 		event.setMotd(sj.toString());
 	}
 }

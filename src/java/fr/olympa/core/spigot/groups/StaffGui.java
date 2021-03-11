@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
@@ -23,7 +23,7 @@ public class StaffGui extends OlympaGUI {
 
 	private static Sorting<OlympaPlayer> SORT_STAFF;
 	{
-		Map<Function<OlympaPlayer, Long>, Boolean> map = new HashMap<>();
+		Map<ToLongFunction<OlympaPlayer>, Boolean> map = new HashMap<>();
 		map.put(op -> (long) op.getGroup().getPower(), false);
 		map.put(op -> op.getLastConnection(), true);
 		SORT_STAFF = new Sorting<>(map);

@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
@@ -65,9 +65,10 @@ public class RedisSpigotSend {
 			}
 			RedisAccess.INSTANCE.disconnect();
 		};
-		if (LinkSpigotBungee.Provider.link.isEnabled()) {
+		if (LinkSpigotBungee.Provider.link.isEnabled())
 			LinkSpigotBungee.Provider.link.launchAsync(run);
-		}else run.run();
+		else
+			run.run();
 	}
 
 	public static void sendOlympaPlayerToBungee(OlympaPlayer olympaPlayer, String serverTo) {
@@ -134,7 +135,7 @@ public class RedisSpigotSend {
 	public static boolean sendReport(OlympaReport report) {
 		long i;
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			i = jedis.publish(RedisChannel.SPIGOT_REPORT_SEND.name(), new Gson().toJson(report));
+			i = jedis.publish(RedisChannel.SPIGOT_REPORT_SEND.name(), new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().toJson(report));
 		}
 		RedisAccess.INSTANCE.disconnect();
 		return i != 0;

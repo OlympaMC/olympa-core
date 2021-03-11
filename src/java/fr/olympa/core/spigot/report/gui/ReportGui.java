@@ -1,7 +1,6 @@
 package fr.olympa.core.spigot.report.gui;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collection;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -15,12 +14,15 @@ import fr.olympa.api.report.ReportReason;
 public class ReportGui extends OlympaGUI {
 
 	public static void open(Player player, OfflinePlayer target2, String note) {
-		ReportGui gui = new ReportGui("&6Report &e" + target2.getName(), 3, target2, note);
+		Collection<ReportReason> reportReasons = ReportReason.values();
+		ReportGui gui = new ReportGui("&6Report &e" + target2.getName(), reportReasons.size() / 9 + 2, target2, note);
 
-		List<OlympaItemBuild> items = ReportReason.values().stream().map(rr -> (OlympaItemBuild) rr.getItem()).collect(Collectors.toList());
-		int slot = gui.inv.getSize() / 2 - items.size() / 2;
-		for (OlympaItemBuild item : items)
-			gui.inv.setItem(slot++, item.build());
+		int slot = gui.inv.getSize() / 2 - reportReasons.size() / 2;
+		for (ReportReason rp : reportReasons)
+			if (rp.getItem() != null)
+				gui.inv.setItem(slot++, ((OlympaItemBuild) rp.getItem()).build());
+			else
+				new NullPointerException("L'item du ReportReason " + rp.getName() + " n'a été ajouté. Il est juste caché.");
 		gui.create(player);
 	}
 

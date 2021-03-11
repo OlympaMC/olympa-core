@@ -36,7 +36,7 @@ public class MonitorInfo {
 	private Float tps;
 	private String firstVersion = "unknown";
 	private String lastVersion = "unknown";
-	private int lastModifiedCore;
+	private String lastModifiedCore;
 
 	public MonitorInfo(ServerInfo server, long time, ServerPing serverPing, Throwable error) {
 		serverName = server.getName();
@@ -67,18 +67,18 @@ public class MonitorInfo {
 					allThreads = RegexMatcher.INT.parse(threadsWithAllThreads[1]);
 			}
 			if (motd.length >= 5)
-				lastVersion = motd[4];
+				firstVersion = motd[4];
 			if (motd.length >= 6)
-				firstVersion = motd[5];
-			if (motd.length >= 7 && RegexMatcher.INT.is(motd[6]))
-				lastModifiedCore = RegexMatcher.INT.parse(motd[6]);
+				lastVersion = motd[5];
+			if (motd.length >= 7)
+				lastModifiedCore = motd[6];
 		} else {
 			status = ServerStatus.CLOSE;
 			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "");
 		}
 	}
 
-	public int getLastModifiedCore() {
+	public String getLastModifiedCore() {
 		return lastModifiedCore;
 	}
 
