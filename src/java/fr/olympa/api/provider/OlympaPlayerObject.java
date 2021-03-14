@@ -252,7 +252,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public Map<String, OlympaServer> getCustomPermissions() {
-		return Collections.unmodifiableSortedMap((TreeMap<String, OlympaServer>) customPermissions);
+		return Collections.unmodifiableMap(customPermissions);
 	}
 
 	public void addCustomPermission(OlympaPermission perm, OlympaServer serv) {
