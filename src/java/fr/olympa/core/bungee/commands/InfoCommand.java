@@ -72,6 +72,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 		out2 = new TextComponent(TextComponent.fromLegacyText("§3Première connexion : §b" + Utils.timestampToDuration(target.getFirstConnection())));
 		out2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§3Le: §b" + Utils.timestampToDate(target.getFirstConnection()))));
 		out.addExtra(out2);
+		out.addExtra("\n");
 		if (targetProxied == null) {
 			out2 = new TextComponent(TextComponent.fromLegacyText("§3Dernière : §b" + Utils.timestampToDuration(target.getLastConnection())));
 			out2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§3Le: §b" + Utils.timestampToDate(target.getLastConnection()))));
@@ -100,7 +101,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 		}
 		if (target.isPremium())
 			out.addExtra(TxtComponentBuilder.of(null, "&3Premium : &boui", ClickEvent.Action.COPY_TO_CLIPBOARD, target.getPremiumUniqueId().toString(), HoverEvent.Action.SHOW_TEXT,
-					new Text("&eClique pour copier l'UUID premium dans le presse-papier")));
+					new Text("§eClique pour copier l'UUID premium dans le presse-papier")));
 		else
 			out.addExtra(new TextComponent(TextComponent.fromLegacyText("§3Premium : §bnon")));
 
@@ -110,7 +111,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 		out.addExtra("\n");
 		out.addExtra(
 				TxtComponentBuilder.of(null, "&3UUID : &b" + target.getUniqueId(), ClickEvent.Action.COPY_TO_CLIPBOARD, target.getUniqueId().toString(), HoverEvent.Action.SHOW_TEXT,
-						new Text("&eClique pour copier l'UUID dans le presse-papier")));
+						new Text("§eClique pour copier l'UUID dans le presse-papier")));
 		out.addExtra("\n");
 		if (hasPermission(OlympaCorePermissions.INFO_COMMAND_EXTRA)) {
 			out2 = new TextComponent(TextComponent.fromLegacyText("§3IP : §b[Cachée]"));
@@ -124,11 +125,11 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 				List<OlympaPlayer> usersAllNow = usersAll.get(true);
 				List<OlympaPlayer> usersAllHistory = usersAll.get(false);
 				if (!usersAllNow.isEmpty())
-					sj.add("§cIP partagée actuellement avec " + ColorUtils.joinRedEt(usersAllNow));
+					sj.add("§cIP partagée actuellement (dernière IP utilisé pour les deux) avec " + ColorUtils.joinRedEt(usersAllNow));
 				if (!usersAllHistory.isEmpty())
-					sj.add("§cIP déjà partager avec " + ColorUtils.joinRedEt(usersAllHistory));
+					sj.add("§cIP déjà partager (IP dans l'historique) avec " + ColorUtils.joinRedEt(usersAllHistory));
 				if (!users.isEmpty())
-					sj.add("§cIP déjà utiliser sur les pseudo " + ColorUtils.joinRedEt(users));
+					sj.add("§cL'IP a déjà essayé utiliser les pseudo " + ColorUtils.joinRedEt(users));
 				if (hasPermission(OlympaCorePermissions.INFO_COMMAND_EXTRA_EXTRA))
 					sj.add("§e" + new Gson().toJson(ipInfo));
 			} catch (SQLException e) {

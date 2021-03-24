@@ -24,7 +24,7 @@ public class StaffGui extends OlympaGUI {
 	private static Sorting<OlympaPlayer> SORT_STAFF;
 	{
 		Map<ToLongFunction<OlympaPlayer>, Boolean> map = new HashMap<>();
-		map.put(op -> (long) op.getGroup().getPower(), false);
+		map.put(op -> (long) op.getGroup().getPower(), true);
 		map.put(op -> op.getLastConnection(), true);
 		SORT_STAFF = new Sorting<>(map);
 

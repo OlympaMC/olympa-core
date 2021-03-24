@@ -118,19 +118,20 @@ public class ReportCommand extends ComplexCommand {
 		List<OlympaReport> reports = new ArrayList<>();
 		OlympaPlayer op = null;
 		long targetId = 0;
+		boolean isSeeAuthor = cmd.isAliase("seeauthor");
 		try {
-			if (cmd.getArgument(0) instanceof OfflinePlayer)
-				targetId = (op = new AccountProvider(cmd.<OfflinePlayer>getArgument(0).getUniqueId()).get()).getId();
+			if (cmd.getArgument(0) instanceof Integer)
+				targetId = cmd.<Integer>getArgument(0);
 			else if (cmd.getArgument(0) instanceof UUID)
 				targetId = (op = new AccountProvider(cmd.<UUID>getArgument(0)).get()).getId();
-			else if (cmd.getArgument(0) instanceof Integer)
-				targetId = cmd.<Integer>getArgument(0);
+			else if (cmd.getArgument(0) instanceof OfflinePlayer)
+				targetId = (op = new AccountProvider(cmd.<OfflinePlayer>getArgument(0).getUniqueId()).get()).getId();
 			else {
 				sendUsage(cmd.label);
 				return;
 			}
 			if (reports.isEmpty())
-				if (cmd.label.equalsIgnoreCase("seeauthor"))
+				if (isSeeAuthor)
 					reports.addAll(ReportMySQL.getReportsByAuthor(targetId));
 				else
 					reports.addAll(ReportMySQL.getReportByTarget(targetId));
@@ -146,7 +147,7 @@ public class ReportCommand extends ComplexCommand {
 		}
 		if (cmd.getArgument(0) instanceof Integer)
 			ReportMsg.sendPanelId(sender, reports.get(0));
-		else if (cmd.label.equalsIgnoreCase("seeauthor"))
+		else if (isSeeAuthor)
 			ReportMsg.sendPanelAuthor(sender, target, reports);
 		else
 			ReportMsg.sendPanelTarget(sender, target, reports);
