@@ -73,7 +73,7 @@ public class MySQL extends SQLClass {
 	// Pour pas surcharger les requettes MySQL
 	// TODO -> cache redis pour le cache multi-server
 	static Set<String> allPlayersNamesCache = null;
-
+	
 	public static Set<String> getAllPlayersNames() {
 		if (allPlayersNamesCache != null)
 			return allPlayersNamesCache;
@@ -125,6 +125,25 @@ public class MySQL extends SQLClass {
 			OlympaPlayerInformationsObject opInfo = null;
 			if (resultSet.next())
 				opInfo = new OlympaPlayerInformationsObject(id, resultSet.getString("pseudo"), RegexMatcher.UUID.parse(resultSet.getString("uuid_server")));
+			resultSet.close();
+			return opInfo;
+		}
+	}
+
+	private static OlympaStatement getPlayerInformationsByNameStatement = new OlympaStatement("SELECT `id`, `pseudo`, `uuid_server` FROM " + table + " WHERE `pseudo` = ?");
+
+	/**
+	 * Permet de récupérer les informations d'un joueur dans la base de données grâce à
+	 * son nom
+	 * @throws SQLException
+	 */
+	public static OlympaPlayerInformations getPlayerInformations(String name) throws SQLException {
+		try (PreparedStatement statement = getPlayerInformationsByNameStatement.createStatement()) {
+			statement.setString(1, name);
+			ResultSet resultSet = getPlayerInformationsByNameStatement.executeQuery(statement);
+			OlympaPlayerInformationsObject opInfo = null;
+			if (resultSet.next())
+				opInfo = new OlympaPlayerInformationsObject(resultSet.getLong("id"), resultSet.getString("pseudo"), RegexMatcher.UUID.parse(resultSet.getString("uuid_server")));
 			resultSet.close();
 			return opInfo;
 		}

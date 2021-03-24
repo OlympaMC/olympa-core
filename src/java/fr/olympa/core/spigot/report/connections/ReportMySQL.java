@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -37,7 +38,7 @@ public class ReportMySQL {
 			int i = 1;
 			statement.setLong(i++, report.getTargetId());
 			statement.setLong(i++, report.getAuthorId());
-			statement.setInt(i++, report.getReason().getId());
+			statement.setString(i++, report.getReasonName());
 			statement.setTimestamp(i++, new Timestamp(report.getTime() * 1000L));
 			statement.setString(i++, report.getServerName());
 			if (report.getNote() != null)
@@ -65,7 +66,7 @@ public class ReportMySQL {
 			int i = 1;
 			statement.setLong(i++, report.getTargetId());
 			statement.setLong(i++, report.getAuthorId());
-			statement.setInt(i++, report.getReason().getId());
+			statement.setString(i++, report.getReasonName());
 			statement.setTimestamp(i++, new Timestamp(report.getTime() * 1000L));
 			statement.setString(i++, report.getServerName());
 			List<ReportStatusInfo> statusInfo = report.getStatusInfo();
@@ -97,12 +98,13 @@ public class ReportMySQL {
 	public static List<OlympaReport> getReportByTarget(long idTarget) throws SQLException {
 		try (PreparedStatement statement = selectPlayerStatement.createStatement()) {
 			statement.setLong(1, idTarget);
-			List<OlympaReport> report = new ArrayList<>();
+			List<OlympaReport> reports = new ArrayList<>();
 			ResultSet resultSet = selectPlayerStatement.executeQuery(statement);
 			while (resultSet.next())
-				report.add(get(resultSet));
+				reports.add(get(resultSet));
 			resultSet.close();
-			return report;
+			Collections.reverse(reports);
+			return reports;
 		}
 	}
 
@@ -111,24 +113,27 @@ public class ReportMySQL {
 	public static List<OlympaReport> getReportsByAuthor(long idAuthor) throws SQLException {
 		try (PreparedStatement statement = selectAuthorStatement.createStatement()) {
 			statement.setLong(1, idAuthor);
-			List<OlympaReport> report = new ArrayList<>();
+			List<OlympaReport> reports = new ArrayList<>();
 			ResultSet resultSet = selectAuthorStatement.executeQuery(statement);
 			while (resultSet.next())
-				report.add(get(resultSet));
+				reports.add(get(resultSet));
 			resultSet.close();
-			return report;
+			Collections.reverse(reports);
+			return reports;
 		}
+
 	}
 
 	public static List<OlympaReport> getLastReports(int startNumber, int number) throws SQLException {
-		OlympaStatement opStatement = new OlympaStatement(StatementType.SELECT, tableName, null, startNumber, number, new String[] {});
+		OlympaStatement opStatement = new OlympaStatement(StatementType.SELECT, tableName, null, startNumber, number);
 		try (PreparedStatement statement = opStatement.createStatement()) {
-			List<OlympaReport> report = new ArrayList<>();
+			List<OlympaReport> reports = new ArrayList<>();
 			ResultSet resultSet = opStatement.executeQuery(statement);
 			while (resultSet.next())
-				report.add(get(resultSet));
+				reports.add(get(resultSet));
 			resultSet.close();
-			return report;
+			Collections.reverse(reports);
+			return reports;
 		}
 	}
 

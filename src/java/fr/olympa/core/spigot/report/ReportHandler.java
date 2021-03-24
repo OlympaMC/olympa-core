@@ -44,8 +44,8 @@ public class ReportHandler {
 			throw new SQLException("&4REPORT &cImpossible de récupérer l'id olympaPlayer de " + target.getName());
 		}
 		OlympaReport report = new OlympaReport(targetOlympaPlayer.getId(), authorOlympaPlayer.getId(), reason, OlympaCore.getInstance().getServerName(), note);
-		report.authorName = authorOlympaPlayer.getName();
-		report.targetName = target.getName();
+		report.setAuthorName(authorOlympaPlayer.getName());
+		report.setTargetName(target.getName());
 		try {
 			ReportMySQL.createReport(report);
 			String msg = ColorUtils.color(Prefix.DEFAULT_GOOD + "Tu as signaler &2" + target.getName() + "&a pour &2" + reason.getReason() + "&a.");

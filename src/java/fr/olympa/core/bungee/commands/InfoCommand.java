@@ -121,9 +121,12 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 				String ip = target.getIp();
 				OlympaVpn ipInfo = VpnHandler.get(ip);
 				List<String> users = ipInfo.getUsers();
+				users.remove(target.getName());
 				Map<Boolean, List<OlympaPlayer>> usersAll = MySQL.getPlayersByAllIp(ip);
 				List<OlympaPlayer> usersAllNow = usersAll.get(true);
+				usersAllNow.remove(target);
 				List<OlympaPlayer> usersAllHistory = usersAll.get(false);
+				usersAllHistory.remove(target);
 				if (!usersAllNow.isEmpty())
 					sj.add("§cIP partagée actuellement (dernière IP utilisé pour les deux) avec " + ColorUtils.joinRedEt(usersAllNow));
 				if (!usersAllHistory.isEmpty())

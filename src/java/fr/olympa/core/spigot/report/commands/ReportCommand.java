@@ -17,7 +17,6 @@ import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.command.complex.ComplexCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.report.OlympaReport;
@@ -35,11 +34,11 @@ public class ReportCommand extends ComplexCommand {
 
 	public ReportCommand(Plugin plugin) {
 		super(plugin, "report", "Signale un joueur", OlympaCorePermissions.REPORT_COMMAND, "signale");
-		addArgumentParser("REPORTREASON", sender -> ReportReason.values().stream().map(ReportReason::getReasonClear).collect(Collectors.toList()), x -> {
+		addArgumentParser("REPORTREASON", (sender, arg) -> ReportReason.values().stream().map(r -> r.getReason().replace(" ", "_")).collect(Collectors.toList()), x -> {
 			return ReportReason.getByReason(x.replace("_", " "));
-		}, x -> String.format("&4%s&c doit être une raison tel que &4%s&c", x, ReportReason.values().stream().map(ReportReason::getReasonClear).collect(Collectors.joining(", "))));
+		}, x -> String.format("&4%s&c doit être une raison tel que &4%s&c", x, ReportReason.values().stream().map(r -> r.getReason().replace(" ", "_")).collect(Collectors.joining(", "))));
 
-		addArgumentParser("REPORTSTATUS", sender -> Arrays.asList(ReportStatus.values()).stream().map(ReportStatus::getName).collect(Collectors.toList()), x -> {
+		addArgumentParser("REPORTSTATUS", (sender, arg) -> Arrays.asList(ReportStatus.values()).stream().map(ReportStatus::getName).collect(Collectors.toList()), x -> {
 			return ReportStatus.get(x);
 		}, x -> String.format("&4%s&c doit être un status tel que &4%s&c", x, Arrays.asList(ReportStatus.values()).stream().map(ReportStatus::getName).collect(Collectors.joining(", "))));
 	}
@@ -54,7 +53,7 @@ public class ReportCommand extends ComplexCommand {
 	//	}
 
 	@Cmd(args = { "PLAYERS", "REPORTREASON", "Informations complémentaire du report" }, min = 1, syntax = "<joueur> [status] [note]", otherArg = true)
-	public void wrongArg(CommandContext cmd) {
+	public void otherArg(CommandContext cmd) {
 		Player player = this.player;
 		OfflinePlayer target = cmd.getArgument(0);
 		if (player != null && target.getUniqueId().equals(player.getUniqueId()))
@@ -66,16 +65,14 @@ public class ReportCommand extends ComplexCommand {
 			reportReason = cmd.getArgument(1);
 		if (cmd.getArgumentsLength() > 2)
 			note = cmd.getFrom(2);
-		if (player == null) {
+		if (player == null)
 			try {
 				ReportHandler.report(player, target, reportReason, note);
 			} catch (SQLException e) {
 				sendError(e);
 				e.printStackTrace();
 			}
-			return;
-		}
-		if (reportReason != null)
+		else if (reportReason != null)
 			ReportGuiConfirm.open(player, target, reportReason, note);
 		else
 			ReportGui.open(player, target, note);
@@ -113,20 +110,23 @@ public class ReportCommand extends ComplexCommand {
 		}
 	}
 
-	@Cmd(args = "OFFLINE_PLAYERS|UUID|INTEGER", aliases = { "seeauthor" }, registerAliasesInTab = true, permissionName = "REPORT_SEE_COMMAND", syntax = "<joueur | uuid | idReport>", min = 1)
+	@Cmd(args = "UUID|INTEGER|OLYMPA_PLAYERS_INFO", aliases = { "seeauthor" }, registerAliasesInTab = true, permissionName = "REPORT_SEE_COMMAND", syntax = "<joueur | uuid | idReport>", min = 1)
 	public void see(CommandContext cmd) {
 		List<OlympaReport> reports = new ArrayList<>();
-		OlympaPlayer op = null;
+		OlympaPlayerInformations opi = null;
 		long targetId = 0;
-		boolean isSeeAuthor = cmd.isAliase("seeauthor");
+		boolean isSeeAuthor = cmd.isAlias("seeauthor");
 		try {
-			if (cmd.getArgument(0) instanceof Integer)
+			if (cmd.getArgument(0) instanceof Integer) {
 				targetId = cmd.<Integer>getArgument(0);
-			else if (cmd.getArgument(0) instanceof UUID)
-				targetId = (op = new AccountProvider(cmd.<UUID>getArgument(0)).get()).getId();
-			else if (cmd.getArgument(0) instanceof OfflinePlayer)
-				targetId = (op = new AccountProvider(cmd.<OfflinePlayer>getArgument(0).getUniqueId()).get()).getId();
-			else {
+				opi = AccountProvider.getPlayerInformations(targetId);
+			} else if (cmd.getArgument(0) instanceof UUID) {
+				opi = AccountProvider.getPlayerInformations(cmd.<UUID>getArgument(0));
+				targetId = opi.getId();
+			} else if (cmd.getArgument(0) instanceof OlympaPlayerInformations) {
+				targetId = cmd.<OlympaPlayerInformations>getArgument(0).getId();
+				opi = cmd.<OlympaPlayerInformations>getArgument(0);
+			} else {
 				sendUsage(cmd.label);
 				return;
 			}
@@ -140,7 +140,7 @@ public class ReportCommand extends ComplexCommand {
 			sendError("Une erreur est survenu avec la base de donnés.");
 			return;
 		}
-		String target = op != null ? op.getName() : cmd.getArgument(0) instanceof Integer ? String.valueOf(cmd.<Integer>getArgument(0)) : cmd.<String>getArgument(0);
+		String target = opi != null ? opi.getName() : cmd.getArgument(0) instanceof Integer ? String.valueOf(cmd.<Integer>getArgument(0)) : cmd.<String>getArgument(0);
 		if (reports.isEmpty()) {
 			player.sendMessage(Prefix.DEFAULT_BAD.formatMessage("Aucun report trouvé avec &4%s&c.", target));
 			return;

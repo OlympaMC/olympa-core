@@ -14,7 +14,6 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.report.OlympaReport;
-import fr.olympa.api.report.ReportReason;
 import fr.olympa.api.report.ReportStatus;
 import fr.olympa.api.report.ReportStatusInfo;
 import fr.olympa.api.report.ReportUtils;
@@ -25,7 +24,6 @@ import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 
-@SuppressWarnings("deprecation")
 public class ReportMsg {
 
 	//	private static Cache<String, List<OlympaReport>> cache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
@@ -47,22 +45,19 @@ public class ReportMsg {
 
 	public static void sendAlert(OlympaReport report) {
 		OlympaPlayerInformations targetOlympaPlayer;
-		OlympaPlayerInformations authorOlympaPlayer;
 		targetOlympaPlayer = AccountProvider.getPlayerInformations(report.getTargetId());
-		authorOlympaPlayer = AccountProvider.getPlayerInformations(report.getAuthorId());
-		RedisSpigotSend.askPlayerServer(targetOlympaPlayer.getUUID(), t -> sendAlert(report, authorOlympaPlayer.getName(), targetOlympaPlayer.getName(), t));
+		report.resolveAuthorName();
+		RedisSpigotSend.askPlayerServer(targetOlympaPlayer.getUUID(), t -> sendAlert(report, report.getAuthorName(), targetOlympaPlayer.getName(), t));
 	}
 
 	public static void sendPanelId(CommandSender sender, OlympaReport report) {
-		OlympaPlayerInformations opTarget = AccountProvider.getPlayerInformations(report.getTargetId());
-		OlympaPlayerInformations opAuthor = AccountProvider.getPlayerInformations(report.getAuthorId());
-		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD, "Report de &2%s -> &2%s :", opAuthor.getName(), opTarget.getName()).extraSpliterBN();
-		ReportReason reason = report.getReason();
+		report.resolveAll();
+		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD, "Report de &2%s -> &2%s :", report.getAuthorName(), report.getTargetName()).extraSpliterBN();
 
 		out.extra(new TxtComponentBuilder("&aN°&2%s", String.valueOf(report.getId())));
 		out.extra(new TxtComponentBuilder("&aStatus %s", report.getStatus().getNameColored()));
 		out.extra(new TxtComponentBuilder("&aServeur &2%s", report.getServerName()));
-		out.extra(new TxtComponentBuilder("&aRaison &2%s", reason.getReason()));
+		out.extra(new TxtComponentBuilder("&aRaison &2%s", report.getReasonName()));
 		String note = report.getNote();
 		if (note != null && !note.isBlank())
 			out.extra(new TxtComponentBuilder("&aNote &2%s", note));
@@ -83,18 +78,17 @@ public class ReportMsg {
 		//
 		//		}
 		if (statusInfo.size() > 1)
-			out.extra(new TxtComponentBuilder("&aDerniers status &2%s", statusInfo.stream().skip(1).map(rsi -> rsi.getStatus() + " &a(" + Utils.timestampToDuration(rsi.getTime()) + ")")
+			out.extra(new TxtComponentBuilder("&aDerniers status &2%s", statusInfo.stream().limit(statusInfo.size() - 1l).map(rsi -> rsi.getStatus().getNameColored() + " &a(" + Utils.timestampToDuration(rsi.getTime()) + ")")
 					.collect(Collectors.joining("&a, &2")))).extraSpliterBN();
 		sender.spigot().sendMessage(out.build());
 	}
 
 	public static void sendPanelTarget(CommandSender sender, String target, List<OlympaReport> reports) {
-		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Report contre %s (%d):", target, reports.size())).extraSpliterBN();
+		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Report%s contre %s (%d):", Utils.withOrWithoutS(reports.size()), target, reports.size())).extraSpliterBN();
 		reports.stream().forEach(r -> {
-			OlympaPlayerInformations opAuthor = AccountProvider.getPlayerInformations(r.getAuthorId());
+			r.resolveAuthorName();
 			ReportStatus status = r.getStatus();
-			ReportReason reason = r.getReason();
-			TxtComponentBuilder line = new TxtComponentBuilder("%s%s -> %s &e(%s) %s", status.getColor(), reason.getReasonUpper(), status.getName(), opAuthor.getName(), Utils.tsToShortDur(r.getLastUpdate()));
+			TxtComponentBuilder line = new TxtComponentBuilder("%s%s -> %s &e(%s) %s", status.getColor(), r.getReasonNameUpper(), status.getName(), r.getAuthorName(), Utils.tsToShortDur(r.getLastUpdate()));
 			line.onHoverText(String.join("\n", r.getLore()));
 			line.onClickCommand("/report seeId " + r.getId());
 			out.extra(line);
@@ -103,13 +97,11 @@ public class ReportMsg {
 	}
 
 	public static void sendPanelLast(CommandSender sender, List<OlympaReport> reports) {
-		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("%s Derniers reports :", reports.size())).extraSpliterBN();
+		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("%s Derniers report%s :", reports.size(), Utils.withOrWithoutS(reports.size()))).extraSpliterBN();
 		reports.stream().forEach(r -> {
-			OlympaPlayerInformations opTarget = AccountProvider.getPlayerInformations(r.getTargetId());
-			OlympaPlayerInformations opAuthor = AccountProvider.getPlayerInformations(r.getAuthorId());
+			r.resolveAll();
 			ReportStatus status = r.getStatus();
-			ReportReason reason = r.getReason();
-			TxtComponentBuilder txtBuildeur = new TxtComponentBuilder("%s%s -> %s &e(%s) de %s", status.getColor(), reason.getReasonUpper(), status.getName(), opTarget.getName(), opAuthor.getName(),
+			TxtComponentBuilder txtBuildeur = new TxtComponentBuilder("%s%s -> %s &e(%s) de %s", status.getColor(), r.getReasonNameUpper(), status.getName(), r.getTargetName(), r.getAuthorName(),
 					Utils.tsToShortDur(r.getLastUpdate()));
 			txtBuildeur.onHoverText("\n", r.getLore());
 			txtBuildeur.onClickCommand("/report seeId " + r.getId());
@@ -130,7 +122,6 @@ public class ReportMsg {
 			line.onHoverText(String.join("\n", lore));
 			line.onClickCommand("/report seeId " + opTarget.getId());
 			out.extra(line);
-			out.extra("\n");
 		});
 		sender.spigot().sendMessage(out.build());
 	}
@@ -138,12 +129,11 @@ public class ReportMsg {
 	public static void sendPanelAuthor(CommandSender sender, String author, List<OlympaReport> reports) {
 		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Report%s de %s (%d) :", Utils.withOrWithoutS(reports.size()), author, reports.size())).extraSpliterBN();
 		reports.stream().forEach(r -> {
-			OlympaPlayerInformations opAuthor = AccountProvider.getPlayerInformations(r.getAuthorId());
+			r.resolveTargetName();
 			ReportStatus status = r.getStatus();
-			ReportReason reason = r.getReason();
-			TxtComponentBuilder line = new TxtComponentBuilder("%s%s <- %s &e(%s)", status.getColor(), reason.getReasonUpper(), status.getName(), opAuthor.getName(), Utils.timestampToDuration(r.getLastUpdate(), 1));
+			TxtComponentBuilder line = new TxtComponentBuilder("%s%s <- %s &e(%s)", status.getColor(), r.getReasonNameUpper(), status.getName(), r.getTargetName(), Utils.timestampToDuration(r.getLastUpdate(), 1));
 			line.onHoverText(String.join("\n", r.getLore()));
-			line.onClickCommand("/report seeid " + r.getId());
+			line.onClickCommand("/report seeId " + r.getId());
 			out.extra(line);
 		});
 		sender.spigot().sendMessage(out.build());

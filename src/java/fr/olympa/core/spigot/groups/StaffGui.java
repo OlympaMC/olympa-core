@@ -21,10 +21,11 @@ import fr.olympa.api.utils.Utils;
 
 public class StaffGui extends OlympaGUI {
 
-	private static Sorting<OlympaPlayer> SORT_STAFF;
-	{
+	private static final Sorting<OlympaPlayer> SORT_STAFF;
+
+	static {
 		Map<ToLongFunction<OlympaPlayer>, Boolean> map = new HashMap<>();
-		map.put(op -> (long) op.getGroup().getPower(), true);
+		map.put(op -> (long) op.getGroup().getPower(), false);
 		map.put(op -> op.getLastConnection(), true);
 		SORT_STAFF = new Sorting<>(map);
 

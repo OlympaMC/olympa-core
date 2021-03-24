@@ -143,7 +143,21 @@ public class AccountProvider implements OlympaAccount {
 		if (info == null)
 			try {
 				info = MySQL.getPlayerInformations(uuid);
-				cachedInformations.put(info.getId(), info);
+				if (info != null)
+					cachedInformations.put(info.getId(), info);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		return info;
+	}
+
+	public static synchronized OlympaPlayerInformations getPlayerInformations(String name) {
+		OlympaPlayerInformations info = cachedInformations.values().stream().filter(opi -> opi.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+		if (info == null)
+			try {
+				info = MySQL.getPlayerInformations(name);
+				if (info != null)
+					cachedInformations.put(info.getId(), info);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
