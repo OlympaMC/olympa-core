@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -132,6 +133,9 @@ public class VanishListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerPickupItem(EntityPickupItemEvent event) {
+		if (event.getEntityType() != EntityType.PLAYER)
+			return;
+		
 		//		Location locationOfItem = event.getEntity().getLocation();
 		Player player = (Player) event.getEntity();
 		if (!(event.getEntity() instanceof Player))
@@ -141,3 +145,5 @@ public class VanishListener implements Listener {
 			event.setCancelled(true);
 	}
 }
+
+
