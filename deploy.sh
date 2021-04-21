@@ -16,10 +16,11 @@
 # ./deploy.sh dev
 
 # DÉPENDANCES
-(cd /home/repo/olympaapi/ && sh ./deploy.sh $1)
+(cd /home/repo/olympaapi/ && sh ./deploy.sh $1
 if [ "$?" -ne 0 ]; then
 	echo -e "\e[91mArrêt de la création des JAR. Erreur code $rc\e[0m"; exit $rc
 fi
+)
 
 # PARAMETRES
 PLUGIN_NAME="core"
