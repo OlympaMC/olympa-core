@@ -15,13 +15,15 @@
 # ./deploy.sh master
 # ./deploy.sh dev
 
+# DÉPENDANCES
 (cd /home/repo/olympaapi/ && sh ./deploy.sh $1)
 if [ "$?" -ne 0 ]; then
 	echo -e "\e[91mArrêt de la création des JAR. Erreur code $rc\e[0m"; exit $rc
 fi
 
+# PARAMETRES
+PLUGIN_NAME="core"
 USE_BRANCH="master dev"
-
 ACTUAL_COMMIT_ID=`cat target/commitId`
 ACTUAL_COMMIT_ID_API=`cat target/commitIdAPI`
 
@@ -33,9 +35,21 @@ if [ -n "$1" ]; then
 		SERV="$2"
 	fi
 else
-	echo -e  "\e[0;36mTu peux choisir la version du core en ajoutant une date (ex './deploy.sh date \"2021-02-26 18:30:00\"') ou une branch (ex './deploy.sh dev').\e[0m"
+	echo -e  "\e[0;36mTu peux choisir la version du $PLUGIN_NAME en ajoutant une date (ex './deploy.sh date \"2021-02-26 18:30:00\"') ou une branch (ex './deploy.sh dev').\e[0m"
 fi
-
+git pull --all
+if [ "$?" -ne 0 ]; then
+	echo -e "\e[91mEchec du git pull ! Regarde les conflits. Code erreur $rc\e[0m"
+	echo -e "\e[91mTentative de git reset\e[0m"
+	git reset --hard HEAD
+	if [ "$?" -ne 0 ]; then
+		echo -e "\e[91mEchec du git reset ! Code erreur $rc\e[0m"; exit $rc
+	fi
+	git pull --all
+	if [ "$?" -ne 0 ]; then
+		echo -e "\e[91mEchec du git pull ! Regarde les conflits. Code erreur $rc\e[0m"; exit $rc
+	fi
+fi
 if [ -n "$BRANCH_NAME" ]; then
 	exists=`git show-ref refs/heads/$BRANCH_NAME`
 	if [ -n "$exists" ]; then
@@ -43,38 +57,29 @@ if [ -n "$BRANCH_NAME" ]; then
 	else
 		unset BRANCH_NAME
 	fi
-	#if [ `git branch --list $BRANCH_NAME` ]; then
-	#elif [[ $BRANCH_NAME =~ ^[0-9A-Fa-f]{1,}$ ]] ; then
-	#	git checkout $BRANCH_NAME --force
-	#else
-	#	unset BRANCH_NAME
-	#fi
 fi
-
 if [ -n "$DATE" ] && [ "$DATE" != "" ]; then
 	git checkout 'master@{$DATE}' --force
 elif [ -z "$BRANCH_NAME" ]; then
 	git reset --hard HEAD
 	git checkout master --force
 fi
-
 if [ -n "$ACTUAL_COMMIT_ID" ] && [ -n "$ACTUAL_COMMIT_ID_API" ]; then
-	git pull
 	if [ "$ACTUAL_COMMIT_ID" = `git rev-parse HEAD` ]; then
 		if [ "$ACTUAL_COMMIT_ID_API" = `cd ../olympaapi && git rev-parse HEAD` ]; then
-			echo -e  "\e[32mPas besoin de maven install le core, l'api est up & le jar est déjà crée.\e[0m"
+			echo -e  "\e[32mPas besoin de maven install le $PLUGIN_NAME, l'api est up & le jar est déjà crée.\e[0m"
 			exit 0
 		else
-			echo -e  "\e[32mIl faut build le core, l'api a été up.\e[0m"
+			echo -e  "\e[32mIl faut build le $PLUGIN_NAME, l'api a été up.\e[0m"
 		fi
 	fi
 fi
-git pull && mvn install
+mvn install
 if [ "$?" -ne 0 ]; then
-	echo -e "\e[91mLe build du core a échoué ! Erreur $rc\e[0m"; exit $rc
+	echo -e "\e[91mLe build du $PLUGIN_NAME a échoué ! Erreur $rc\e[0m"; exit $rc
 else
 	echo `git rev-parse HEAD` > target/commitId
 	echo `cd ../olympaapi && git rev-parse HEAD` > target/commitIdAPI
 fi
-echo -e "\e[32mLe jar du commit de l'api $(cat target/commitIdAPI) avec le core $(cat target/commitId) a été crée.\e[0m"
+echo -e "\e[32mLe jar du commit de l'api $(cat target/commitIdAPI) avec le $PLUGIN_NAME $(cat target/commitId) a été crée.\e[0m"
 exit 0
