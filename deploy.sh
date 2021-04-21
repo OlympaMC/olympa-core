@@ -1,4 +1,3 @@
-
 #!/bin/sh
 ##   ____  _
 ##  / __ \| |
@@ -12,8 +11,9 @@
 ## Script to deploy api with good version
 ## Author > Tristiisch
 #
-# $1 = 1979-02-26 ou <branchName>
-# $2 = 18:30:00
+# ./deploy.sh date "2021-02-26 18:30:00"
+# ./deploy.sh master
+# ./deploy.sh dev
 
 (cd /home/repo/olympaapi/ && sh ./deploy.sh $1)
 if [ "$?" -ne 0 ]; then
@@ -24,7 +24,6 @@ USE_BRANCH="master dev"
 
 ACTUAL_COMMIT_ID=`cat target/commitId`
 ACTUAL_COMMIT_ID_API=`cat target/commitIdAPI`
-
 
 if [ -n "$1" ]; then
 	if [ -n "$2" ] && [ "$2" = "date" ]; then
