@@ -17,7 +17,7 @@
 
 (cd /home/repo/olympaapi/ && sh ./deploy.sh $1)
 if [ "$?" -ne 0 ]; then
-	echo "\e[91mArrêt de la création des JAR.\e[0m"; exit $rc
+	echo "\e[91mArrêt de la création des JAR. Erreur code $rc\e[0m"; exit $rc
 fi
 
 USE_BRANCH="master dev"
@@ -34,7 +34,7 @@ if [ -n "$1" ]; then
 		SERV="$2"
 	fi
 else
-	echo "\e[0;36mTu peux choisir la version du core en ajoutant une date (ex ./deploy.sh date \"1979-02-26 18:30:00\") ou une branch (ex ./deploy.sh dev).\e[0m"
+	echo "\e[0;36mTu peux choisir la version du core en ajoutant une date (ex './deploy.sh date \"2021-02-26 18:30:00\"') ou une branch (ex './deploy.sh dev').\e[0m"
 fi
 
 if [ -n "$BRANCH_NAME" ]; then
@@ -72,7 +72,7 @@ if [ -n "$ACTUAL_COMMIT_ID" ] && [ -n "$ACTUAL_COMMIT_ID_API" ]; then
 fi
 git pull && mvn install
 if [ "$?" -ne 0 ]; then
-	echo -e "\e[91mLe build du core a échoué !\e[0m"; exit $rc
+	echo -e "\e[91mLe build du core a échoué ! Erreur $rc\e[0m"; exit $rc
 else
 	echo `git rev-parse HEAD` > target/commitId
 	echo `cd ../olympaapi && git rev-parse HEAD` > target/commitIdAPI
