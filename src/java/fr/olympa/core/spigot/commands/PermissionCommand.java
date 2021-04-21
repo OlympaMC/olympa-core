@@ -41,7 +41,6 @@ public class PermissionCommand extends ComplexCommand {
 		super.addArgumentParser("PERMISSION", (player, arg) -> OlympaPermission.permissions.entrySet().stream().map(Entry::getKey).collect(Collectors.toList()),
 				arg -> OlympaPermission.permissions.entrySet().stream().filter(e -> e.getKey().equalsIgnoreCase(arg)).findFirst().orElse(null),
 				x -> String.format("La permission &4%s&c n'existe pas", x));
-		super.addArgumentParser("GROUPS", OlympaGroup.class, g -> g.getName());
 	}
 
 	@Override
