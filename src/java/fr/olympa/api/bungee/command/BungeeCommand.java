@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.config.BungeeCustomConfig;
+import fr.olympa.api.bungee.permission.OlympaBungeePermission;
 import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.command.CommandArgument;
 import fr.olympa.api.command.IOlympaCommand;
@@ -49,7 +50,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 	protected String command;
 	protected String description;
 	protected boolean bypassAuth = false;
-	protected OlympaPermission permission;
+	protected OlympaBungeePermission permission;
 	protected Map<List<CommandArgument>, Boolean> args = new LinkedHashMap<>();
 	List<String> commands = new ArrayList<>();
 
@@ -76,7 +77,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 		this.command = command;
 	}
 
-	public BungeeCommand(Plugin plugin, String command, String description, OlympaPermission permission, String... aliases) {
+	public BungeeCommand(Plugin plugin, String command, String description, OlympaBungeePermission permission, String... aliases) {
 		super(command, null, aliases);
 		this.plugin = plugin;
 		this.description = description;
@@ -85,7 +86,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 		this.aliases = aliases;
 	}
 
-	public BungeeCommand(Plugin plugin, String command, OlympaPermission permission, String... aliases) {
+	public BungeeCommand(Plugin plugin, String command, OlympaBungeePermission permission, String... aliases) {
 		super(command, null, aliases);
 		this.plugin = plugin;
 		this.command = command;
@@ -93,7 +94,7 @@ public abstract class BungeeCommand extends Command implements IOlympaCommand, T
 		this.aliases = aliases;
 	}
 
-	public BungeeCommand(Plugin plugin, String command, OlympaPermission permission, String[] aliases, String description, String usageString, boolean allowConsole, Integer minArg) {
+	public BungeeCommand(Plugin plugin, String command, OlympaBungeePermission permission, String[] aliases, String description, String usageString, boolean allowConsole, Integer minArg) {
 		super(command, null, aliases);
 		this.plugin = plugin;
 		this.command = command;
