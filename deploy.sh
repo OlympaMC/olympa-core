@@ -36,7 +36,7 @@ if [ -n "$1" ]; then
 		SERV="$2"
 	fi
 else
-	echo -e  "\e[0;36mTu peux choisir la version du $PLUGIN_NAME en ajoutant une date (ex './deploy.sh date \"2021-02-26 18:30:00\"') ou une branch (ex './deploy.sh dev').\e[0m"
+	echo -e "\e[0;36mTu peux choisir la version du $PLUGIN_NAME en ajoutant une date (ex './deploy.sh date \"2021-02-26 18:30:00\"') ou une branch (ex './deploy.sh dev').\e[0m"
 fi
 git pull --all
 if [ "$?" -ne 0 ]; then
@@ -68,10 +68,10 @@ fi
 if [ -n "$ACTUAL_COMMIT_ID" ] && [ -n "$ACTUAL_COMMIT_ID_API" ]; then
 	if [ "$ACTUAL_COMMIT_ID" = `git rev-parse HEAD` ]; then
 		if [ "$ACTUAL_COMMIT_ID_API" = `cd ../olympaapi && git rev-parse HEAD` ]; then
-			echo -e  "\e[32mPas besoin de maven install le $PLUGIN_NAME, l'api est up & le jar est déjà crée.\e[0m"
+			echo -e "\e[32mPas besoin de maven install le $PLUGIN_NAME, l'api est up & le jar est déjà crée.\e[0m"
 			exit 0
 		else
-			echo -e  "\e[32mIl faut build le $PLUGIN_NAME, l'api a été up.\e[0m"
+			echo -e "\e[32mIl faut build le $PLUGIN_NAME, l'api a été up.\e[0m"
 		fi
 	fi
 fi
