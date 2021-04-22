@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.redis.RedisAccess;
@@ -73,7 +74,7 @@ public class RedisBungeeSend {
 		if (MonitorServers.getServers().isEmpty())
 			return false;
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			jedis.publish(RedisChannel.BUNGEE_SEND_SERVERSINFOS2.name(), MonitorServers.getServers().stream().map(t -> new Gson().toJson(t)).collect(Collectors.joining("\n")));
+			jedis.publish(RedisChannel.BUNGEE_SEND_SERVERSINFOS2.name(), MonitorServers.getServers().stream().map(t -> new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().toJson(t)).collect(Collectors.joining("\n")));
 		}
 		return true;
 	}
