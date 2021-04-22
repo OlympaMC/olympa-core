@@ -13,8 +13,10 @@ import com.google.common.collect.ImmutableMap;
 import fr.olympa.api.bungee.task.BungeeTaskManager;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
+import fr.olympa.core.bungee.redis.receiver.SpigotAskMonitorInfoReceiver;
 import net.md_5.bungee.api.config.ServerInfo;
 
 public class MonitorServers {
@@ -94,7 +96,8 @@ public class MonitorServers {
 		task.scheduleSyncRepeatingTask("monitor_serveurs", () -> {
 			for (ServerInfo serverInfo : plugin.getProxy().getServersCopy().values())
 				updateServer(serverInfo, false);
-			RedisBungeeSend.sendServerInfos(bungeeServers.values());
+			if (Utils.getCurrentTimeInSeconds() - SpigotAskMonitorInfoReceiver.lastTimeAsk > 30)
+				RedisBungeeSend.sendServerInfos(bungeeServers.values());
 			for (OlympaServer olympaServer : olympaServers.keySet())
 				updateOlympaServer(olympaServer);
 		}, 1, 15, TimeUnit.SECONDS);
