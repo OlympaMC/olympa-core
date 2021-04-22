@@ -7,7 +7,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -47,6 +49,7 @@ import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.redis.RedisChannel;
 import fr.olympa.api.region.tracking.RegionManager;
 import fr.olympa.api.report.ReportReason;
+import fr.olympa.api.server.MonitorInfo;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
@@ -54,6 +57,7 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.ErrorLoggerHandler;
 import fr.olympa.api.utils.ErrorOutputStream;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
@@ -76,6 +80,7 @@ import fr.olympa.core.spigot.protocolsupport.ViaVersionHook;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.redis.receiver.BungeeAskPlayerServerReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeSendOlympaPlayerReceiver;
+import fr.olympa.core.spigot.redis.receiver.BungeeServerInfoReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeServerNameReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeTeamspeakIdReceiver;
 import fr.olympa.core.spigot.redis.receiver.SpigotCommandReceiver;
@@ -342,6 +347,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			registerRedisSub(redisAccess.connect(), new BungeeAskPlayerServerReceiver(), RedisChannel.BUNGEE_SEND_PLAYERSERVER.name());
 			registerRedisSub(redisAccess.connect(), new SpigotCommandReceiver(), RedisChannel.SPIGOT_COMMAND.name());
 			registerRedisSub(redisAccess.connect(), new BungeeTeamspeakIdReceiver(), RedisChannel.BUNGEE_SEND_TEAMSPEAKID.name());
+			registerRedisSub(redisAccess.connect(), new BungeeServerInfoReceiver(), RedisChannel.BUNGEE_SEND_SERVERSINFOS2.name());
 			RedisSpigotSend.askServerName();
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
@@ -372,6 +378,26 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			jedis.subscribe(sub, channel);
 			jedis.disconnect();
 		}, "Redis sub " + channel).start();
+	}
+
+	private long lastAskTime;
+
+	/**
+	 * Pour récupérer les dernières informations des serveurs spigot si possible en temps réel. Si les données sont plus anciennes de 30 secondes, on demande au bungee des nouvelles données
+	 * renvoyé par {@link fr.olympa.api.customevents.MonitorServerInfoReceiveEvent#MonitorServerInfoReceiveEvent monitorServerInfoReceiveEvent}
+	 */
+	@Override
+	public void retreiveMonitorInfos(Consumer<List<MonitorInfo>> callback) {
+		long time = Utils.getCurrentTimeInSeconds();
+		if (monitorInfos.isEmpty())
+			RedisSpigotSend.askServerInfo(callback);
+		else {
+			if (time - lastAskTime > 30)
+				RedisSpigotSend.askServerInfo(null);
+			callback.accept(monitorInfos);
+		}
+		lastAskTime = time;
+		retreiveMonitorInfos(callback);
 	}
 
 	@Override

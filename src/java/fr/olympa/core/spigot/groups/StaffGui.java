@@ -1,9 +1,8 @@
 package fr.olympa.core.spigot.groups;
 
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 
@@ -24,9 +23,9 @@ public class StaffGui extends OlympaGUI {
 	private static final Sorting<OlympaPlayer> SORT_STAFF;
 
 	static {
-		Map<ToLongFunction<OlympaPlayer>, Boolean> map = new HashMap<>();
-		map.put(op -> (long) op.getGroup().getPower(), false);
-		map.put(op -> op.getLastConnection(), true);
+		LinkedHashMap<ToLongFunction<OlympaPlayer>, Boolean> map = new LinkedHashMap<>();
+		map.put(op -> (long) op.getGroup().getPower(), true);
+		map.put(op -> op.getLastConnection(), false);
 		SORT_STAFF = new Sorting<>(map);
 
 	}
@@ -39,9 +38,9 @@ public class StaffGui extends OlympaGUI {
 		for (OlympaPlayer s : staff) {
 			int i2 = i;
 			ItemUtils.skull(x -> inv.setItem(i2, x), s.getGroup().getPrefix(s.getGender()) + s.getName(), s.getName(),
-					"", "&7" + s.getGroupsToHumainString(),
-					"&8Dernière connexion " + Utils.timestampToDuration(s.getLastConnection()),
-					"&7Premium " + (s.getPremiumUniqueId() != null ? "Oui" : "Non"));
+					"", "§7" + s.getGroupsToHumainString(),
+					s.isConnected() ? "§8Connecté" + s.getTuneChar() : "§8Dernière connexion " + Utils.timestampToDuration(s.getLastConnection()),
+					"§7Premium " + (s.getPremiumUniqueId() != null ? "Oui" : "Non"));
 			i++;
 		}
 

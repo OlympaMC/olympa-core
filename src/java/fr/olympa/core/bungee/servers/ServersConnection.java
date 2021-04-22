@@ -56,7 +56,7 @@ public class ServersConnection {
 	}
 
 	public static boolean canPlayerConnect(ServerInfo server) {
-		MonitorInfo monitor = MonitorServers.getMonitor(server);
+		MonitorInfoBungee monitor = MonitorServers.getMonitor(server);
 		return monitor != null && monitor.getStatus().canConnect();
 	}
 
@@ -66,10 +66,10 @@ public class ServersConnection {
 
 	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except, ProxiedPlayer w8forConnect) {
 		if (!olympaServer.hasMultiServers())
-			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(MonitorInfo::getServerInfo).orElse(null);
+			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(MonitorInfoBungee::getServerInfo).orElse(null);
 
 		Map<ServerInfo, Integer> servers = MonitorServers.getServers(olympaServer).values().stream()
-				.filter(x -> x.getStatus().canConnect() && (except == null || !except.getName().equals(x.getName())) && (!olympaServer.hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
+				.filter(x -> x.getStatus().canConnect() && (except == null || !except.getName().equals(x.getName())) && (!x.getOlympaServer().hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
 				.collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayers()));
 		ServerInfo bestServer = servers.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(Entry::getKey).findFirst().orElse(null);
 		if (bestServer != null)

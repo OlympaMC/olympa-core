@@ -28,7 +28,7 @@ public class ServersListener implements Listener {
 	public void onServerKick(ServerKickEvent event) {
 		ServerInfo serverKicked = event.getKickedFrom();
 		ProxiedPlayer player = event.getPlayer();
-		Entry<OlympaServer, Integer> entryOlympaServer = MonitorInfo.getOlympaServer(serverKicked.getName());
+		Entry<OlympaServer, Integer> entryOlympaServer = MonitorInfoBungee.getOlympaServer(serverKicked.getName());
 		OlympaServer olympaServer = entryOlympaServer != null ? entryOlympaServer.getKey() : null;
 		if (olympaServer == null || olympaServer == OlympaServer.AUTH) {
 			event.setCancelled(false);

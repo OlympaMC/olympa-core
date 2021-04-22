@@ -69,6 +69,7 @@ import fr.olympa.core.bungee.redis.receiver.SpigotOlympaPlayerReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotReportReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotServerChangeStatusReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotServerSwitchReceiver;
+import fr.olympa.core.bungee.redis.receiver.SpigotServerSwitchReceiver2;
 import fr.olympa.core.bungee.redis.receiver.site.SiteGroupChangeReceiver;
 import fr.olympa.core.bungee.security.BasicSecurityListener;
 import fr.olympa.core.bungee.servers.MonitorServers;
@@ -117,7 +118,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	public boolean isEnabled() {
 		return true;
 	}
-	
+
 	@Override
 	public void onDisable() {
 		if (task != null)
@@ -318,6 +319,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 			registerRedisSub(redisAccess.connect(), new SpigotReportReceiver(), RedisChannel.SPIGOT_REPORT_SEND.name());
 			registerRedisSub(redisAccess.connect(), new SiteGroupChangeReceiver(), RedisChannel.SITE_GROUP_CHANGE.name());
 			registerRedisSub(redisAccess.connect(), new BungeeCommandReceiver(), RedisChannel.BUNGEE_COMMAND.name());
+			registerRedisSub(redisAccess.connect(), new SpigotAskServerNameReceiver(), RedisChannel.SPIGOT_ASK_SERVERINFO.name());
+			registerRedisSub(redisAccess.connect(), new SpigotServerSwitchReceiver2(), RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER2.name());
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)
