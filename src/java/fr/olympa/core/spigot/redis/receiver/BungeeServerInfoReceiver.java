@@ -11,7 +11,7 @@ import redis.clients.jedis.JedisPubSub;
 
 public class BungeeServerInfoReceiver extends JedisPubSub {
 
-	private static List<Consumer<List<MonitorInfo>>> callbacksRegister;
+	private static List<Consumer<List<MonitorInfo>>> callbacksRegister = new ArrayList<>();
 
 	public static List<Consumer<List<MonitorInfo>>> getCallbacksRegister() {
 		return callbacksRegister;
