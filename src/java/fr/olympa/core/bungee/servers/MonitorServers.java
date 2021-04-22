@@ -94,7 +94,7 @@ public class MonitorServers {
 		task.scheduleSyncRepeatingTask("monitor_serveurs", () -> {
 			for (ServerInfo serverInfo : plugin.getProxy().getServersCopy().values())
 				updateServer(serverInfo, false);
-			RedisBungeeSend.sendServerInfos();
+			RedisBungeeSend.sendServerInfos(bungeeServers.values());
 			for (OlympaServer olympaServer : olympaServers.keySet())
 				updateOlympaServer(olympaServer);
 		}, 1, 15, TimeUnit.SECONDS);
