@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.chat.ColorUtils;
+import fr.olympa.api.server.MonitorInfo;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
@@ -28,7 +29,7 @@ public class ServersListener implements Listener {
 	public void onServerKick(ServerKickEvent event) {
 		ServerInfo serverKicked = event.getKickedFrom();
 		ProxiedPlayer player = event.getPlayer();
-		Entry<OlympaServer, Integer> entryOlympaServer = MonitorInfoBungee.getOlympaServer(serverKicked.getName());
+		Entry<OlympaServer, Integer> entryOlympaServer = MonitorInfo.getOlympaServer(serverKicked.getName());
 		OlympaServer olympaServer = entryOlympaServer != null ? entryOlympaServer.getKey() : null;
 		if (olympaServer == null || olympaServer == OlympaServer.AUTH) {
 			event.setCancelled(false);
@@ -82,12 +83,12 @@ public class ServersListener implements Listener {
 			event.setKickReasonComponent(TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du Serveur %s < Ta version (%s)", serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
 		}
 		if (!kickReason.contains("ban")) {
-			if (!player.getServer().getInfo().getName().equals(serverKicked.getName())) {
-				event.setCancelled(true);
-				event.setCancelServer(null);
-				//				player.sendMessage(TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Impossible de se connecter au serveur &4%s&c : &4%s&c.", serverKicked.getName(), kickReason)));
-				return;
-			}
+			//			if (player.getServer() != null && player.getServer().getInfo().getName().equals(serverKicked.getName())) {
+			//				event.setCancelled(true);
+			//				event.setCancelServer(null);
+			//				player.sendMessage(TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Impossible de se connecter au serveur &4%s&c : &4%s&c.", serverKicked.getName(), kickReason)));
+			//				return;
+			//			}
 			ServerInfo serverInfolobby = ServersConnection.getBestServer(OlympaServer.LOBBY, serverKicked);
 			if (serverInfolobby == null)
 				return;
