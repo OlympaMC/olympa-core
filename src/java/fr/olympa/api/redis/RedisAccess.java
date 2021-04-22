@@ -66,7 +66,7 @@ public class RedisAccess {
 		ClassLoader previous = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(Jedis.class.getClassLoader());
 		JedisPoolConfig config = new JedisPoolConfig();
-		config.setMaxTotal(12); // le Saint-Graal ? par défaut à 8
+		config.setMaxTotal(20); // le Saint-Graal ? par défaut à 8
 		config.setMaxIdle(12);
 		pool = new JedisPool(config, redisCredentials.getIp(), redisCredentials.getPort());
 		Thread.currentThread().setContextClassLoader(previous);
