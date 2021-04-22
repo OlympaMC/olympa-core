@@ -194,6 +194,11 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new RestartCommand(this).registerPreProcess();
 		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
 		ReportReason.registerReason(ReportReason.class);
+		BungeeServerInfoReceiver.registerCallback(mi -> {
+			lastInfo = Utils.getCurrentTimeInSeconds();
+			monitorInfos.clear();
+			monitorInfos.addAll(mi);
+		});
 		super.onEnable();
 		if (config != null) {
 			setupRedis();
@@ -380,24 +385,15 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		}, "Redis sub " + channel).start();
 	}
 
-	private long lastAskTime;
-
-	/**
-	 * Pour récupérer les dernières informations des serveurs spigot si possible en temps réel. Si les données sont plus anciennes de 30 secondes, on demande au bungee des nouvelles données
-	 * renvoyé par {@link fr.olympa.api.customevents.MonitorServerInfoReceiveEvent#MonitorServerInfoReceiveEvent monitorServerInfoReceiveEvent}
-	 */
 	@Override
-	public void retreiveMonitorInfos(Consumer<List<MonitorInfo>> callback) {
-		long time = Utils.getCurrentTimeInSeconds();
-		if (monitorInfos.isEmpty())
-			RedisSpigotSend.askServerInfo(callback);
-		else {
-			if (time - lastAskTime > 30)
+	public void retreiveMonitorInfos(Consumer<List<MonitorInfo>> callback, boolean freshDoubleCallBack) {
+		if (monitorInfos.isEmpty() || Utils.getCurrentTimeInSeconds() - lastInfo > 10)
+			if (freshDoubleCallBack)
+				RedisSpigotSend.askServerInfo(callback);
+			else
 				RedisSpigotSend.askServerInfo(null);
+		if (callback != null)
 			callback.accept(monitorInfos);
-		}
-		lastAskTime = time;
-		retreiveMonitorInfos(callback);
 	}
 
 	@Override

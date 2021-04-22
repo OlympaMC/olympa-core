@@ -54,7 +54,8 @@ public class RedisSpigotSend {
 	 * Déclanche {@link fr.olympa.api.customevents.MonitorServerInfoReceiveEvent#MonitorServerInfoReceiveEvent monitorServerInfoReceiveEvent}
 	 */
 	public static void askServerInfo(Consumer<List<MonitorInfo>> callback) {
-		askServerInfo.add(callback);
+		if (callback != null)
+			askServerInfo.add(callback);
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
 			try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 				String serverName = OlympaCore.getInstance().getServerName();
