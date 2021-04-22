@@ -11,7 +11,7 @@ public class SpigotAskServerNameReceiver extends JedisPubSub {
 	@Override
 	public void onMessage(String channel, String message) {
 		ServerInfo serverInfo = ServersConnection.getServerByNameOrIpPort(message);
-		OlympaBungee.getInstance().sendMessage("&2%2&a demande les informations des autres serveurs.", serverInfo.getName());
+		OlympaBungee.getInstance().sendMessage("&2%s&a demande les informations des autres serveurs.", serverInfo.getName());
 		RedisBungeeSend.sendServerInfos();
 	}
 }
