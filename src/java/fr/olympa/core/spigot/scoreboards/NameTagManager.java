@@ -13,6 +13,7 @@ import fr.olympa.api.scoreboard.tab.FakeTeam;
 import fr.olympa.api.scoreboard.tab.Nametag;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
+import net.md_5.bungee.api.ChatColor;
 
 public class NameTagManager {
 
@@ -57,7 +58,16 @@ public class NameTagManager {
 			return;
 		//		new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers()).send(toPlayers);
 		Set<FakeTeam> allTeams = getTeamsOfPlayer(playerName);
-		FakeTeam team = new FakeTeam(nameTag.getPrefix().isBlank() ? "" : nameTag.getPrefix() + " ", nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix(), sortPriority);
+		String prefix;
+		String rawPrefix = nameTag.getPrefix();
+		if (rawPrefix.isBlank()) {
+			prefix = "";
+		}else {
+			prefix = rawPrefix;
+			if (!ChatColor.stripColor(rawPrefix).isBlank()) prefix += " ";
+		}
+		String suffix = nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix();
+		FakeTeam team = new FakeTeam(prefix, suffix, sortPriority);
 		team.addMember(playerName);
 		team.addViewers(toPlayers);
 		PacketWrapper.create(team).send(toPlayers);

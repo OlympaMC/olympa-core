@@ -206,7 +206,7 @@ public class UtilsCommand extends ComplexCommand {
 		sendSuccess("%d points:", region.getLocations().size());
 		for (Location location : region.getLocations())
 			sendMessage(Prefix.DEFAULT, "- " + SpigotUtils.convertLocationToHumanString(location));
-		sendSuccess("%d flag(s): §e%s", trackedRegion.getFlags().size(), trackedRegion.getFlags().stream().map(flag -> flag.getClass().getSimpleName()).collect(Collectors.joining(",", "[", "]")));
+		sendSuccess("%d flag(s): §e%s", trackedRegion.getFlags().size(), trackedRegion.getFlags().stream().map(flag -> flag.getClass().isAnonymousClass() ? flag.getClass().getName() : flag.getClass().getSimpleName()).collect(Collectors.joining(", ", "[", "]")));
 		sendSuccess("Priorité: §e%s", trackedRegion.getPriority().name());
 	}
 

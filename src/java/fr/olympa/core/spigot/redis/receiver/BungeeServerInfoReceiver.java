@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.google.gson.Gson;
+
 import fr.olympa.api.server.MonitorInfo;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
-import protocolsupport.libs.com.google.gson.Gson;
 import redis.clients.jedis.JedisPubSub;
 
 public class BungeeServerInfoReceiver extends JedisPubSub {
