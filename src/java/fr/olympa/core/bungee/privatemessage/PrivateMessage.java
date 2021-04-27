@@ -53,7 +53,7 @@ public class PrivateMessage {
 			return;
 		}
 
-		TextComponent msgPlayer = new TextComponent(TextComponent.fromLegacyText(ColorUtils.color("&6Message &c\u2B06 " + emeraldTarget.getGroupPrefix() + target.getName() + "&b : ")));
+		TextComponent msgPlayer = new TextComponent(TextComponent.fromLegacyText(ColorUtils.color("&6Message &c\u2B06 " + emeraldTarget.getNameWithPrefix() + "&b : ")));
 		msgPlayer.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ColorUtils.color("&aRépondre à " + emeraldTarget.getGroupPrefix() + target.getName())).create()));
 		msgPlayer.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + target.getName() + " "));
 		msgPlayer.addExtra(new TextComponent(TextComponent.fromLegacyText(message)));

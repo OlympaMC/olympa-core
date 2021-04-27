@@ -106,7 +106,7 @@ public class DataManagmentListener implements Listener {
 			event.setJoinMessage(null);
 			return;
 		}
-		event.setJoinMessage(ColorUtils.color(String.format("&7[&a+&7] %s%s", olympaPlayer.getGroupPrefix(), player.getDisplayName())));
+		event.setJoinMessage(ColorUtils.color(String.format("&7[&a+&7] %s", olympaPlayer.getNameWithPrefix())));
 		//		 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, Reflection.getPlayerConnection(player)));
 
 	}
@@ -157,7 +157,7 @@ public class DataManagmentListener implements Listener {
 		AccountProvider account = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = account.getFromCache();
 		if (olympaPlayer != null)
-			event.setQuitMessage(ColorUtils.format("&7[&c-&7] %s%s", olympaPlayer.getGroupPrefix(), player.getDisplayName()));
+			event.setQuitMessage(ColorUtils.format("&7[&c-&7] %s", olympaPlayer.getNameWithPrefix()));
 		else
 			event.setQuitMessage(null);
 	}

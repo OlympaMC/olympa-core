@@ -63,7 +63,7 @@ public class PlayerHistory {
 			return;
 		}
 
-		TextComponent msg = new TextComponent(ColorUtils.color("&6Historique des sanctions de " + olympaTarget.getGroupPrefix() + olympaTarget.getName() + "&6:\n"));
+		TextComponent msg = new TextComponent(ColorUtils.color("&6Historique des sanctions de " + olympaTarget.getNameWithPrefix() + "&6:\n"));
 		msg.addExtra(ColorUtils.color("&6Bans: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.BAN).count() + " "));
 		msg.addExtra(ColorUtils.color("&6Mute: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.MUTE).count() + " "));
 		msg.addExtra(ColorUtils.color("&6Kick: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.KICK).count() + "\n"));

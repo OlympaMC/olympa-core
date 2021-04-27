@@ -36,8 +36,7 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 		defaultHandler = new NametagHandler() {
 			@Override
 			public void updateNameTag(Nametag nametag, OlympaPlayer op, OlympaPlayer to) {
-				String prefix = op.getGroupPrefix();
-				nametag.appendPrefix(prefix.substring(0, prefix.length() - 1));
+				nametag.appendPrefix(op.getGroupPrefix().stripTrailing());
 			}
 			
 			@Override

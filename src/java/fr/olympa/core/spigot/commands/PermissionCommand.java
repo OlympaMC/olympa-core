@@ -245,7 +245,7 @@ public class PermissionCommand extends ComplexCommand {
 			olympaGroup = cmd.getArgument(0);
 			OlympaGroup olympaGroup2 = olympaGroup;
 			List<String> noPermission = OlympaPermission.permissions.entrySet().stream().filter(entry -> !entry.getValue().hasPermission(olympaGroup2)).map(Entry::getKey).collect(Collectors.toList());
-			sendMessage(Prefix.DEFAULT_GOOD, "&2%s&a a %s permission%s sur %s.", olympaGroup.getPrefix(), allPerms.size() - noPermission.size(), noPermission.size() > 1 ? "s" : "", allPerms.size());
+			sendMessage(Prefix.DEFAULT_GOOD, "&2%s&a a %s permission%s sur %s.", olympaGroup.getName(), allPerms.size() - noPermission.size(), noPermission.size() > 1 ? "s" : "", allPerms.size());
 			if (!noPermission.isEmpty())
 				sendMessage(Prefix.DEFAULT_BAD, "Il manque l%s permission%s :\n&6%s", noPermission.size() > 1 ? "es" : "a", noPermission.size() > 1 ? "s" : "", String.join("&e, &6", noPermission));
 		} else if (cmd.getArgument(0) instanceof OlympaPlayer) {

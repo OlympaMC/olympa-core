@@ -68,7 +68,7 @@ public class GroupListener implements Listener {
 		else
 			out.add("&cTes grades &4" + oldGroups.stream().map(OlympaGroup::getName).collect(Collectors.joining(", ")) + "&c ont expiré.");
 		if (oldFirstGroup != olympaPlayer.getGroup())
-			out.add("&2Tu es désormais &a" + olympaPlayer.getGroupPrefix() + player.getName() + "&e.");
+			out.add("&2Tu es désormais &a" + olympaPlayer.getNameWithPrefix() + "&e.");
 		out.add("");
 		out.add("&m------------------------------");
 		player.sendMessage(Chat.getCenteredMessage(out));
