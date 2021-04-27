@@ -185,6 +185,10 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 	@Override
 	public void onEnable() {
+		
+		//TODO supprimer cette classe quand le débug sera fini !
+		getServer().getPluginManager().registerEvents(new DebugTheTwo(), this);
+		
 		LinkSpigotBungee.Provider.link = this;
 		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(new OnLoadListener(), this);
