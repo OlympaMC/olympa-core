@@ -292,7 +292,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 
 		try {
-			File file = new File(OlympaCore.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+			File file = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
 			BasicFileAttributes attr;
 			attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
 			lastModifiedTime = attr.lastModifiedTime().toMillis() / 1000L;

@@ -7,9 +7,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
 
+import fr.olympa.api.module.OlympaModule;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.api.utils.machine.MachineInfo;
+import fr.olympa.api.utils.machine.ServerDebugInfo;
 import fr.olympa.api.utils.spigot.TPS;
 import fr.olympa.core.spigot.OlympaCore;
 
@@ -28,6 +30,9 @@ public class StatusMotdListener implements Listener {
 		sj.add(core.getFirstVersion());
 		sj.add(core.getLastVersion());
 		sj.add(Utils.tsToShortDur(core.getLastModifiedTime()));
+		sj.add(new ServerDebugInfo(core).toString());
 		event.setMotd(sj.toString());
+		if (OlympaModule.DEBUG)
+			core.sendMessage("&rDEBUG ServerDebugInfo > %s ", new ServerDebugInfo(core).toString());
 	}
 }
