@@ -173,9 +173,11 @@ public class OlympaSanction {
 	@SuppressWarnings("deprecation")
 	public Set<ProxiedPlayer> getOnlinePlayers() {
 		Set<ProxiedPlayer> onlinePlayers = new HashSet<>();
-		if (getTargetType() == OlympaSanctionTargetType.OLYMPA_ID)
-			onlinePlayers.add(ProxyServer.getInstance().getPlayer(AccountProvider.getPlayerInformations(getTargetId()).getUUID()));
-		else
+		if (getTargetType() == OlympaSanctionTargetType.OLYMPA_ID) {
+			ProxiedPlayer player = ProxyServer.getInstance().getPlayer(AccountProvider.getPlayerInformations(getTargetId()).getUUID());
+			if (player != null)
+				onlinePlayers.add(player);
+		} else
 			onlinePlayers = ProxyServer.getInstance().getPlayers().stream().filter(p -> p.getAddress().getAddress().getHostName().equals(getTargetIp())).collect(Collectors.toSet());
 		return onlinePlayers;
 	}

@@ -2,8 +2,6 @@ package fr.olympa.core.spigot;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -140,12 +138,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		return versionHandler.getViaVersion();
 	}
 
-	private long lastModifiedTime;
-
-	public long getLastModifiedTime() {
-		return lastModifiedTime;
-	}
-
 	@Override
 	public Connection getDatabase() throws SQLException {
 		return database.getConnection();
@@ -185,10 +177,10 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 	@Override
 	public void onEnable() {
-		
+
 		//TODO supprimer cette classe quand le débug sera fini !
 		getServer().getPluginManager().registerEvents(new DebugTheTwo(), this);
-		
+
 		LinkSpigotBungee.Provider.link = this;
 		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(new OnLoadListener(), this);
@@ -294,15 +286,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		defaultGroup.setRuntimePermission("bukkit.command.plugins", false);
 		defaultGroup.setRuntimePermission("bukkit.command.help", false);
 		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
-
-		try {
-			File file = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
-			BasicFileAttributes attr;
-			attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-			lastModifiedTime = attr.lastModifiedTime().toMillis() / 1000L;
-		} catch (Exception | NoClassDefFoundError e) {
-			e.printStackTrace();
-		}
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 			players.forEach(p -> {

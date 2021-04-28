@@ -119,9 +119,10 @@ public class SanctionExecuteTarget {
 				}
 			}
 			sanction = add(banExecute.sanctionType, banExecute.getAuthorId(), banIdentifier, banExecute.reason, banExecute.expire, newStatus);
-		} else if (newStatus == OlympaSanctionStatus.END && banExecute.sanctionType == OlympaSanctionType.MUTE)
-			sanction = add(banExecute.sanctionType, banExecute.getAuthorId(), banIdentifier, banExecute.reason, banExecute.expire, newStatus);
-		else {
+
+			//		} else if (newStatus == OlympaSanctionStatus.END && banExecute.sanctionType == OlympaSanctionType.MUTE)
+			//			sanction = add(banExecute.sanctionType, banExecute.getAuthorId(), banIdentifier, banExecute.reason, banExecute.expire, newStatus);
+		} else {
 			if (alreadyban != null)
 				sanction = alreadyban;
 			else {
@@ -139,7 +140,6 @@ public class SanctionExecuteTarget {
 				SanctionHandler.removeMute(sanction);
 				sanction.getOnlinePlayers().forEach(p -> p.sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("Tu as été unmute.")));
 			}
-
 		}
 		sanctions = Arrays.asList(sanction);
 		return true;
