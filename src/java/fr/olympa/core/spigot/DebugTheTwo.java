@@ -18,6 +18,17 @@ import net.minecraft.server.v1_16_R3.PacketPlayOutChat;
 
 public class DebugTheTwo implements Listener {
 	
+	private Field componentField;
+	
+	public DebugTheTwo() {
+		try {
+			componentField = PacketPlayOutChat.class.getDeclaredField("a");
+			componentField.setAccessible(true);
+		} catch (NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		handlePlayerPackets(e.getPlayer());
@@ -53,23 +64,17 @@ public class DebugTheTwo implements Listener {
             	if (packet instanceof PacketPlayOutChat) {
             		PacketPlayOutChat chat = ((PacketPlayOutChat)packet);
             		
-            		Field f = PacketPlayOutChat.class.getDeclaredField("a");
-            		f.setAccessible(true);
-            		IChatBaseComponent component = f.get(chat) == null ? null : (IChatBaseComponent) f.get(chat);
-            		
-            		if (component != null)
-            			System.out.println("INTERCEPTED : " + component.getString());
+            		IChatBaseComponent component = (IChatBaseComponent) componentField.get(chat);
             		
         			try {
-                		
-                		if (component != null && component.getString().contains("2")) {
-                			throw new UnsupportedOperationException("§4Un petit 2 a été attrapé ! Message intercepté");
-                		}	            		
+                		if (component != null && component.getString().equals("2")) {
+                			throw new UnsupportedOperationException("§4Un petit 2 a été attrapé ! Intercepté avant d'être envoyé à " + player.getName());
+                		}
+
+        				super.write(channelHandlerContext, packet, channelPromise);
         			} catch(Exception ex) {
         				ex.printStackTrace();
         			}
-
-    				super.write(channelHandlerContext, packet, channelPromise);
         			return;
             	}
             	
@@ -78,7 +83,7 @@ public class DebugTheTwo implements Listener {
         };
 
         ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline();
-        pipeline.addBefore("packet_handler", player.getName() + "_2", channelDuplexHandler);
+        pipeline.addBefore("packet_handler", player.getName() + "_debug_the_2", channelDuplexHandler);
 
     }
 }
