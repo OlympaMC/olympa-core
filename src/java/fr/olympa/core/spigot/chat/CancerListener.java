@@ -50,10 +50,10 @@ public class CancerListener implements Listener {
 		// Si le chat est mute, cancel message
 		if (serverSettings.isChatMute()) {
 			if (OlympaCorePermissions.CHAT_MUTEDBYPASS.hasPermission(olympaPlayer)) {
-				player.sendMessage(ColorUtils.color(Prefix.INFO + "Le chat est désactivé pour les autres joueurs."));
+				Prefix.INFO.sendMessage(player, "Le chat est désactivé pour les autres joueurs.");
 				return;
 			}
-			player.sendMessage(ColorUtils.color(Prefix.BAD + "Le chat est désactivé."));
+			Prefix.BAD.sendMessage(player, "Le chat est désactivé.");
 			event.setCancelled(true);
 			return;
 		}
@@ -67,14 +67,14 @@ public class CancerListener implements Listener {
 		long time = currentTime - olympaTchat.getLastMsgTime();
 		if (olympaTchat.isLastMsg(msgNFD) && time < 10) {
 			event.setCancelled(true);
-			player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci de ne pas répéter le même message."));
+			Prefix.BAD.sendMessage(player, "Merci de ne pas répéter le même message.");
 			return;
 		}
 
 		// Si le chat est slow, met un cooldown entre chaque message
 		if (serverSettings.isChatSlow() && time < serverSettings.getTimeCooldown()) {
 			event.setCancelled(true);
-			player.sendMessage(ColorUtils.join(Prefix.BAD + "Merci de patienter %s secondes entre chaque messages.", String.valueOf(serverSettings.getTimeCooldown())));
+			Prefix.BAD.sendMessage(player, "Merci de patienter %d secondes entre chaque messages.", serverSettings.getTimeCooldown());
 			olympaTchat.setLastMsgTime(currentTime);
 			return;
 		}
@@ -92,7 +92,7 @@ public class CancerListener implements Listener {
 			Set<String> linkWhitelist = new HashSet<>(OlympaCore.getInstance().getConfig().getStringList("chat.linkwhitelist"));
 			if (linkWhitelist.stream().noneMatch(l -> link.contains(l))) {
 				event.setCancelled(true);
-				player.sendMessage(ColorUtils.color(Prefix.BAD + "Les liens sont interdits."));
+				Prefix.BAD.sendMessage(player, "Les liens sont interdits.");
 				Chat.sendToStaff("Lien", player, message, link);
 				return;
 			}
@@ -103,7 +103,7 @@ public class CancerListener implements Listener {
 		if (matcher.find()) {
 			String ip = matcher.group();
 			event.setCancelled(true);
-			player.sendMessage(ColorUtils.color(Prefix.BAD + "Les adresses IPs sont interdites."));
+			Prefix.BAD.sendMessage(player, "Les adresses IPs sont interdites.");
 			Chat.sendToStaff("IP", player, message, ip);
 			return;
 		}
@@ -120,7 +120,7 @@ public class CancerListener implements Listener {
 			matcher = regex.matcher(msgNFD);
 			if (matcher.find() && Bukkit.getPlayer(matcher.group()) == null) {
 				event.setCancelled(true);
-				player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci de rester correct."));
+				Prefix.BAD.sendMessage(player, "Merci de rester correct.");
 				Chat.sendToStaff("Insulte", player, message);
 				return;
 			}

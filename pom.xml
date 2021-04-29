@@ -45,11 +45,13 @@
 			<version>9221cc31d5</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
+		<!--
+		  <dependency>
 			<groupId>me.lucko</groupId>
 			<artifactId>commodore</artifactId>
 			<version>1.9</version>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>us.myles</groupId>
 			<artifactId>viaversion</artifactId>
