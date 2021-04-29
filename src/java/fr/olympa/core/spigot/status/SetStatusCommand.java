@@ -75,8 +75,6 @@ public class SetStatusCommand extends OlympaCommand {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		//		if (args.length == 1)
-		//			return Utils.startWords(args[0], ServerStatus.getNames());
 		return null;
 	}
 
