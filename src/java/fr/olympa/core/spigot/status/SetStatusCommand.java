@@ -28,21 +28,13 @@ public class SetStatusCommand extends OlympaCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		ServerStatus oldStatus = OlympaCore.getInstance().getStatus();
-		boolean saveToConfig = false;
 		OlympaCore coreInstance = OlympaCore.getInstance();
+		ServerStatus oldStatus = coreInstance.getStatus();
 		if (args.length == 0) {
 			this.sendMessage(Prefix.DEFAULT, "Le serveur est actuellement en mode " + oldStatus.getNameColored() + "&7.");
 			return true;
 		}
 
-		if (args.length > 1)
-			if (args[1].equalsIgnoreCase("save"))
-				saveToConfig = true;
-			else {
-				this.sendMessage(Prefix.BAD, "Pour sauvegarder le statut  dans la config, fait &4%s&c.", "/" + label + " " + args[0] + " save");
-				return true;
-			}
 		ServerStatus newStatus = ServerStatus.get(args[0]);
 		if (newStatus == null) {
 			sendUsage(label);
@@ -69,17 +61,16 @@ public class SetStatusCommand extends OlympaCommand {
 			needPermission.getPlayers(succes, empty);
 		}
 		sendSuccess("Le serveur est désormais en mode " + newStatus.getNameColored() + "&a, il était avant en mode " + oldStatus.getNameColored() + "&a.");
-		if (saveToConfig) {
-			CustomConfig config = coreInstance.getConfig();
-			if (config == null)
-				this.sendMessage(Prefix.BAD, "La config par default n'est pas charger, impossible de sauvegarder le changement de statut.");
-			else {
-				config.set("version", newStatus.getName());
-				config.save();
-				sendSuccess("La config a été sauvegarder.");
-			}
+		CustomConfig config = coreInstance.getConfig();
+		if (config == null)
+			this.sendMessage(Prefix.BAD, "La config par default n'est pas charger, impossible de sauvegarder le changement de statut.");
+		else {
+			config.set("status", newStatus.getName());
+			config.save();
+			sendSuccess("La config a été également sauvegarder.");
 		}
 		return false;
+
 	}
 
 	@Override
