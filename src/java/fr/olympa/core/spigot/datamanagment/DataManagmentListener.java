@@ -107,6 +107,8 @@ public class DataManagmentListener implements Listener {
 			return;
 		}
 		event.setJoinMessage(ColorUtils.color(String.format("&7[&a+&7] %s", olympaPlayer.getNameWithPrefix())));
+		OlympaCore instance = OlympaCore.getInstance();
+		instance.sendMessage("&eDebug Player version of %s is %s.", player.getName(), instance.getVersionHandler().getVersion(player).getName());
 		//		 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, Reflection.getPlayerConnection(player)));
 
 	}

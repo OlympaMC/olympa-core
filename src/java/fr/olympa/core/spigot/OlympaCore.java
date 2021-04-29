@@ -134,6 +134,10 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		this.firstVersion = firstVersion;
 	}
 
+	public VersionHandler getVersionHandler() {
+		return versionHandler;
+	}
+
 	public ViaVersionHook getViaVersionHook() {
 		return versionHandler.getViaVersion();
 	}
@@ -179,7 +183,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	public void onEnable() {
 
 		//TODO supprimer cette classe quand le débug sera fini !
-		getServer().getPluginManager().registerEvents(new DebugTheTwo(), this);
+		//getServer().getPluginManager().registerEvents(new DebugTheTwo(), this);
 
 		LinkSpigotBungee.Provider.link = this;
 		PluginManager pluginManager = getServer().getPluginManager();

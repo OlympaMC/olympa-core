@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
+import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaSpigotPermission;
 import fr.olympa.api.server.ServerStatus;
@@ -21,43 +22,63 @@ import fr.olympa.core.spigot.OlympaCore;
 public class SetStatusCommand extends OlympaCommand {
 
 	public SetStatusCommand(Plugin plugin) {
-		super(plugin, "setstatus", "Permet de modifier le status d'un serveur.", OlympaCorePermissions.SETSTATUS_COMMAND, "setstate");
+		super(plugin, "setstatus", "Permet de modifier le statut d'un serveur spigot.", OlympaCorePermissions.SETSTATUS_COMMAND, "setstatut");
 		this.addArgs(false, ServerStatus.getNames());
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		ServerStatus status = OlympaCore.getInstance().getStatus();
+		ServerStatus oldStatus = OlympaCore.getInstance().getStatus();
+		boolean saveToConfig = false;
+		OlympaCore coreInstance = OlympaCore.getInstance();
 		if (args.length == 0) {
-			this.sendMessage(Prefix.DEFAULT, "Le serveur est actuellement en mode " + status.getNameColored() + "&7.");
+			this.sendMessage(Prefix.DEFAULT, "Le serveur est actuellement en mode " + oldStatus.getNameColored() + "&7.");
 			return true;
 		}
-		ServerStatus status2 = ServerStatus.get(args[0]);
-		if (status2 == null) {
+
+		if (args.length > 1)
+			if (args[1].equalsIgnoreCase("save"))
+				saveToConfig = true;
+			else {
+				this.sendMessage(Prefix.BAD, "Pour sauvegarder le statut  dans la config, fait &4%s&c.", "/" + label + " " + args[0] + " save");
+				return true;
+			}
+		ServerStatus newStatus = ServerStatus.get(args[0]);
+		if (newStatus == null) {
 			sendUsage(label);
 			return true;
 		}
-		if (status == status2) {
-			sendError("Le serveur est déjà en mode " + status.getNameColored() + "&c.");
+		if (oldStatus == newStatus) {
+			sendError("Le serveur est déjà en mode " + oldStatus.getNameColored() + "&c.");
 			return true;
 		}
-		OlympaSpigotPermission needPermission = (OlympaSpigotPermission) status2.getPermission();
+		OlympaSpigotPermission needPermission = (OlympaSpigotPermission) newStatus.getPermission();
 		if (needPermission != null && !needPermission.hasSenderPermission(sender)) {
-			sendError("Tu n'a pas la permission d'être connecter si tu met le mode " + status.getNameColored() + "&c.");
+			sendError("Tu n'a pas la permission d'être connecter si tu met le mode " + oldStatus.getNameColored() + "&c.");
 			return true;
 		}
-		OlympaCore.getInstance().setStatus(status2);
+		coreInstance.setStatus(newStatus);
 		if (needPermission != null) {
 			Consumer<? super Set<Player>> succes = players -> {
-				this.sendMessage(players, Prefix.ERROR, "Le serveur est désormais en mode %s&c.", status.getNameColored());
+				this.sendMessage(players, Prefix.ERROR, "Le serveur est désormais en mode %s&c.", oldStatus.getNameColored());
 			};
 			Consumer<? super Collection<? extends Player>> empty = players -> {
-				players.forEach(player -> player.kickPlayer(SpigotUtils.connectScreen("&eDésolé le serveur est désormais en mode " + status.getNameColored() + "&e.\nEt tu n'y a plus accès. (pas d'inquiétudes, c'est temporaire !)")));
-				sendSuccess("Tu as kick " + players.size() + " joueur, qui n'ont pas la permission &6&n" + status.getPermission().toString() + "&a.");
+				sendSuccess("Tu as kick " + players.size() + " joueur, qui n'ont pas la permission &6&n" + needPermission.getName() + "&a.");
+				players.forEach(player -> player.kickPlayer(SpigotUtils.connectScreen("&eDésolé le serveur est désormais en mode " + newStatus.getNameColored() + "&e.\nEt tu n'y a plus accès. (pas d'inquiétudes, c'est temporaire !)")));
 			};
 			needPermission.getPlayers(succes, empty);
 		}
-		sendSuccess("Le serveur est désormais en mode " + status2.getNameColored() + "&a, il était avant en mode " + status.getNameColored() + "&a.");
+		sendSuccess("Le serveur est désormais en mode " + newStatus.getNameColored() + "&a, il était avant en mode " + oldStatus.getNameColored() + "&a.");
+		if (saveToConfig) {
+			CustomConfig config = coreInstance.getConfig();
+			if (config == null)
+				this.sendMessage(Prefix.BAD, "La config par default n'est pas charger, impossible de sauvegarder le changement de statut.");
+			else {
+				config.set("version", newStatus.getName());
+				config.save();
+				sendSuccess("La config a été sauvegarder.");
+			}
+		}
 		return false;
 	}
 

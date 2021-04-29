@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.utils.spigot.ProtocolAPI;
@@ -47,7 +48,14 @@ public class ViaVersionHook {
 			if (version == null)
 				return "unknown";
 		}
+
 		return version;
+	}
+
+	public ProtocolAPI getPlayerVersion(Player player) {
+		if (viaVersion == null)
+			return null;
+		return ProtocolAPI.get(Via.getAPI().getPlayerVersion(player));
 	}
 
 	public String getVersionSupported() {

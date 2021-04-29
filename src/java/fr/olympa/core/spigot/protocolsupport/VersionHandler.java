@@ -3,6 +3,8 @@ package fr.olympa.core.spigot.protocolsupport;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.bukkit.entity.Player;
+
 import fr.olympa.api.utils.spigot.ProtocolAPI;
 import fr.olympa.core.spigot.OlympaCore;
 import protocolsupport.api.ProtocolVersion;
@@ -32,6 +34,17 @@ public class VersionHandler {
 
 	public ViaVersionHook getViaVersion() {
 		return viaVersion;
+	}
+
+	public ProtocolAPI getVersion(Player player) {
+		ProtocolAPI protocol;
+		if (protocolSupport != null)
+			protocol = protocolSupport.getPlayerVersion(player);
+		else if (viaVersion != null)
+			protocol = viaVersion.getPlayerVersion(player);
+		else
+			protocol = ProtocolAPI.getDefaultProtocol();
+		return protocol;
 	}
 
 	public String[] getRangeVersionArray() {
