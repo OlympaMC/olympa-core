@@ -11,6 +11,7 @@ import fr.olympa.api.chat.TableGenerator.Alignment;
 import fr.olympa.api.chat.TableGenerator.Receiver;
 import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
+import fr.olympa.api.module.OlympaModule;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Prefix;
@@ -32,6 +33,27 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 		addArgumentParser("CACHE", (sender, arg) -> CacheStats.getCaches().keySet(), x -> CacheStats.getCache(x), x -> "&4%s&c doit être un id de cache qui existe.");
 		addArgumentParser("DEBUG_LIST", (sender, arg) -> CacheStats.getDebugLists().keySet(), x -> CacheStats.getDebugList(x), x -> "&4%s&c doit être un id de debugList qui existe.");
 		addArgumentParser("DEBUG_MAP", (sender, arg) -> CacheStats.getDebugMaps().keySet(), x -> CacheStats.getDebugMap(x), x -> "&4%s&c doit être un id de debugMap qui existe.");
+	}
+
+	@Cmd(args = "on|off", min = 1)
+	public void debugModule(CommandContext cmd) {
+		String arg0 = cmd.getArgument(0);
+		Boolean toOn;
+		if (arg0.equalsIgnoreCase("on"))
+			toOn = true;
+		else if (arg0.equalsIgnoreCase("off"))
+			toOn = false;
+		else
+			toOn = null;
+		if (toOn == null)
+			sendMessage(Prefix.DEFAULT, "Le module &8%s&7 est %s", "de debug", OlympaModule.DEBUG ? "&2Activé" : "&4Désativé");
+		else if (toOn) {
+			OlympaModule.DEBUG = true;
+			sendMessage(Prefix.DEFAULT_GOOD, "Le module %s est désormais %s", "de debug", OlympaModule.DEBUG ? "&2Activé" : "&4Désativé");
+		} else {
+			OlympaModule.DEBUG = false;
+			sendMessage(Prefix.DEFAULT_BAD, "Le module %s est désormais %s", "de debug", OlympaModule.DEBUG ? "&2Activé" : "&4Désativé");
+		}
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_CACHE", args = { "CACHE", "clear|print" })
