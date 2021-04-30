@@ -25,7 +25,7 @@ public class ListServerCommand extends BungeeCommand {
 			TxtComponentBuilder out2 = new TxtComponentBuilder().extra(" ");
 
 			out2.extra("&7[%s&7]", status.getNameColored());
-			out2.extra("%s%s&e:", status.getColor() + serverInfo.getName());
+			out2.extra("%s%s&e:", status.getColor(), serverInfo.getName());
 			if (serverInfo.getOnlinePlayers() != null)
 				out2.extra("%s/%s", serverInfo.getOnlinePlayers(), serverInfo.getMaxPlayers());
 			if (serverInfo.getTps() != null)

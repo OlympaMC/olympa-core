@@ -21,13 +21,12 @@ public class ReportGuiChoose extends OlympaGUI {
 
 		List<Player> potentials = new ArrayList<>();
 		EntityDamageEvent lastDmgCause = player.getLastDamageCause();
+		if (player.getKiller() != null)
+			potentials.add(player.getKiller());
 		if (lastDmgCause != null && lastDmgCause.getEntity() instanceof Player)
 			potentials.add((Player) lastDmgCause.getEntity());
-		potentials.add(player.getKiller());
-
 		if (potentials.isEmpty())
 			potentials = Bukkit.getOnlinePlayers().stream().limit(6 * 9).collect(Collectors.toList());
-
 		List<OlympaItemBuild> items = potentials.stream().map(p -> new OlympaItemBuild("&cReport &4" + p.getName()).skullowner(p)).collect(Collectors.toList());
 		ReportGuiChoose gui = new ReportGuiChoose("&6Report", items.size() / 9);
 		int slot = gui.inv.getSize() / 2 - items.size() / 2;

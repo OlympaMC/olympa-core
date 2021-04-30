@@ -64,6 +64,8 @@ public class MonitorInfoBungee extends MonitorInfo {
 		} else {
 			status = ServerStatus.CLOSE;
 			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "");
+			if (!this.error.isEmpty())
+				error.printStackTrace();
 		}
 	}
 

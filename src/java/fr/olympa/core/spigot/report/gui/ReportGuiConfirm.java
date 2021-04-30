@@ -29,10 +29,12 @@ public class ReportGuiConfirm extends OlympaGUI {
 		Inventory guiIventory = gui.getInventory();
 		int slot = guiIventory.getSize() / 2 - 1;
 		OlympaItemBuild yesBuild = new OlympaItemBuild(Material.GREEN_STAINED_GLASS_PANE, "&aConfirmer")
-				.lore("", "&4[&c!&4] &cVous devez être sûr de votre report", "   &cIl sera enregistrer et vous pouvez", "   &cêtre sanctionner si vous en abusez")
+				.lore("", "&4[&c!&4] &cTu dois être sûr de ton report", "    &cIl sera enregistrer et tu pourras", "    &cêtre sanctionner si tu en abuses")
 				.clone();
 		if (note != null)
 			yesBuild.addLoreBefore("&cNote: &4" + note);
+		else
+			yesBuild.addLoreBefore("&4Ajoute un message en passant par la", "commande à la place du GUI tel que", "&4/report " + target.getName() + " " + reason.getReasonOneWord() + " [msg]&c.");
 		yesBuild.addLoreBefore("&cRaison: &4" + reason.getReason());
 		gui.yes = yesBuild.build();
 		guiIventory.setItem(slot, gui.yes);

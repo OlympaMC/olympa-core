@@ -17,7 +17,8 @@ public class ReportGui extends OlympaGUI {
 		List<ReportReason> reportReasons = ReportReason.valuesSorted();
 		ReportGui gui = new ReportGui("&6Report &e" + target2.getName(), reportReasons.size() / 9 + 2, target2, note);
 
-		int slot = gui.inv.getSize() / 2 - reportReasons.size() / 2;
+		//		int slot = gui.inv.getSize() / 2 - reportReasons.size() / 2;
+		int slot = 0;
 		for (ReportReason rp : reportReasons)
 			if (rp.getItem() != null)
 				gui.inv.setItem(slot++, ((OlympaItemBuild) rp.getItem()).build());
