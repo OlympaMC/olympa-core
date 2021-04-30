@@ -36,7 +36,7 @@ public class ListServerCommand extends BungeeCommand {
 
 			StringJoiner sb = new StringJoiner(" ", "&e", "");
 			if (serverInfo.getRamUsage() != null)
-				sb.add(TPSUtils.getRamUsageColor(serverInfo.getRamUsage()) + "%RAM");
+				sb.add(TPSUtils.getRamUsageColor(serverInfo.getRamUsage()) + "%%RAM");
 			if (serverInfo.getThreads() != null)
 				sb.add(serverInfo.getThreads() + "/" + serverInfo.getAllThreads() + "threads");
 			if (serverInfo.getPing() != null)
