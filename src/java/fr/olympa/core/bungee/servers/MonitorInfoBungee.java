@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.servers;
 
+import java.util.Arrays;
 import java.util.Map.Entry;
 
 import fr.olympa.api.LinkSpigotBungee;
@@ -54,19 +55,23 @@ public class MonitorInfoBungee extends MonitorInfo {
 				lastVersion = motd[5];
 			if (motd.length >= 7)
 				lastModifiedCore = motd[6];
-			try {
-				if (motd.length >= 8)
-					serverDebugInfo = ServerDebug.fromJson(motd[7]);
-				if (serverDebugInfo != null && OlympaModule.DEBUG)
+
+			if (serverDebugInfo != null && OlympaModule.DEBUG) {
+				String json = String.join(" ", Arrays.copyOfRange(motd, 7, motd.length));
+				LinkSpigotBungee.Provider.link.sendMessage("JSON reçu %s", json);
+				try {
+					if (motd.length >= 8)
+						serverDebugInfo = ServerDebug.fromJson(json);
 					LinkSpigotBungee.Provider.link.sendMessage("&eDEBUG Génial, le ServerDebugInfo de %s a été reçu via le motd. Let's goooo !", serverName);
-			} catch (Error e) {
-				e.printStackTrace();
+				} catch (Error e) {
+					e.printStackTrace();
+				}
 			}
 		} else {
 			status = ServerStatus.CLOSE;
 			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "");
 			if (!this.error.isEmpty())
-				OlympaBungee.getInstance().sendMessage("Le serveur &4%s&c renvoie une erreur lors du ping %s", serverInfo.getName(), this.error);
+				OlympaBungee.getInstance().sendMessage("&cLe serveur &4%s&c renvoie une erreur lors du ping %s", serverInfo.getName(), this.error);
 		}
 	}
 
