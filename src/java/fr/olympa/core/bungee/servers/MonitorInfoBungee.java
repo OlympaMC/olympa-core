@@ -7,7 +7,8 @@ import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.module.OlympaModule;
 import fr.olympa.api.server.MonitorInfo;
 import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.server.ServerDebugInfo;
+import fr.olympa.api.server.ServerDebug;
+import fr.olympa.api.server.ServerDebugInit;
 import fr.olympa.api.server.ServerStatus;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Players;
@@ -16,7 +17,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 public class MonitorInfoBungee extends MonitorInfo {
 
 	ServerInfo serverInfo;
-	ServerDebugInfo serverDebugInfo;
+	ServerDebugInit serverDebugInfo;
 
 	public MonitorInfoBungee(ServerInfo serverInfo, long time, ServerPing serverPing, Throwable error) {
 		this.serverInfo = serverInfo;
@@ -55,10 +56,10 @@ public class MonitorInfoBungee extends MonitorInfo {
 				lastModifiedCore = motd[6];
 			try {
 				if (motd.length >= 8)
-					serverDebugInfo = ServerDebugInfo.fromJson(motd[7]);
+					serverDebugInfo = ServerDebug.fromJson(motd[7]);
 				if (serverDebugInfo != null && OlympaModule.DEBUG)
 					LinkSpigotBungee.Provider.link.sendMessage("&eDEBUG Génial, le ServerDebugInfo de %s a été reçu via le motd. Let's goooo !", serverName);
-			} catch (Exception e) {
+			} catch (Error e) {
 				e.printStackTrace();
 			}
 		} else {
