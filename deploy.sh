@@ -18,7 +18,7 @@
 # DÉPENDANCES
 (cd /home/repo/olympaapi/ && sh ./deploy.sh $1
 if [ "$?" -ne 0 ]; then
-	echo -e "\e[91mArrêt de la création des JAR. Erreur code $rc\e[0m"; exit $rc
+	echo -e "\e[91mErreur > Arrêt de la création des JAR\e[0m"; exit 1
 fi
 )
 
@@ -40,15 +40,15 @@ else
 fi
 git pull --all
 if [ "$?" -ne 0 ]; then
-	echo -e "\e[91mEchec du git pull ! Regarde les conflits. Code erreur $rc\e[0m"
+	echo -e "\e[91mEchec du git pull ! Regarde les conflits.\e[0m"
 	echo -e "\e[91mTentative de git reset\e[0m"
 	git reset --hard HEAD
 	if [ "$?" -ne 0 ]; then
-		echo -e "\e[91mEchec du git reset ! Code erreur $rc\e[0m"; exit $rc
+		echo -e "\e[91mEchec du git reset !\e[0m"; exit 1
 	fi
 	git pull --all
 	if [ "$?" -ne 0 ]; then
-		echo -e "\e[91mEchec du git pull ! Regarde les conflits. Code erreur $rc\e[0m"; exit $rc
+		echo -e "\e[91mEchec du git pull ! Regarde les conflits.\e[0m"; exit 1
 	fi
 fi
 if [ -n "$BRANCH_NAME" ]; then
@@ -77,7 +77,7 @@ if [ -n "$ACTUAL_COMMIT_ID" ] && [ -n "$ACTUAL_COMMIT_ID_API" ]; then
 fi
 mvn install
 if [ "$?" -ne 0 ]; then
-	echo -e "\e[91mLe build du $PLUGIN_NAME a échoué ! Erreur $rc\e[0m"; exit $rc
+	echo -e "\e[91mLe build du $PLUGIN_NAME a échoué ! Erreur 1\e[0m"; exit 1
 else
 	echo `git rev-parse HEAD` > target/commitId
 	echo `cd ../olympaapi && git rev-parse HEAD` > target/commitIdAPI
