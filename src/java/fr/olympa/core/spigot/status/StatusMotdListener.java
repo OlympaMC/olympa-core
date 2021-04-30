@@ -8,9 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
 
 import fr.olympa.api.module.OlympaModule;
+import fr.olympa.api.server.ServerDebugInfo;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.machine.MachineInfo;
-import fr.olympa.api.utils.machine.ServerDebugInfo;
 import fr.olympa.api.utils.spigot.TPS;
 import fr.olympa.core.spigot.OlympaCore;
 
