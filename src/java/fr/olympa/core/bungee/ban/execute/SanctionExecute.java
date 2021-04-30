@@ -33,8 +33,6 @@ public class SanctionExecute {
 
 	public static SanctionExecute formatArgs(BungeeCommand bungeeCommand, String[] args) {
 		SanctionExecute me = new SanctionExecute(bungeeCommand);
-		me.setTargetsString(Arrays.asList(args[0].split(",")));
-
 		List<String> targetsString = Arrays.asList(args[0].split(","));
 		for (String target : targetsString)
 			if (RegexMatcher.IP.is(target))
@@ -60,6 +58,8 @@ public class SanctionExecute {
 			String time = matcherDuration.group(1);
 			String unit = matcherDuration.group(3);
 			reason = allArgs.substring(matcherDuration.group().length());
+			if (reason.isBlank())
+				reason = null;
 			me.setExpire(SanctionUtils.toTimeStamp(Integer.parseInt(time), unit));
 		} else
 			reason = allArgs;
@@ -158,6 +158,14 @@ public class SanctionExecute {
 			}
 	}
 
+	private boolean checkValidTarget() {
+		List<String> unknownTarget = new ArrayList<>();
+
+		if (targets.isEmpty())
+			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("&cCible &4%s&c introuvable.", ColorUtils.joinRed(targetsString)));
+		return false;
+	}
+
 	private boolean printfErrorIfAny() {
 		if (targetsRaw.isEmpty())
 			if (!unknownTargetType.isEmpty())
@@ -179,8 +187,8 @@ public class SanctionExecute {
 	}
 
 	private boolean getOlympaPlayersFromArgs() {
-		List<OlympaPlayer> olympaPlayers = null;
-		for (Object t : targetsRaw)
+		for (Object t : targetsRaw) {
+			List<OlympaPlayer> olympaPlayers = null;
 			try {
 				if (t instanceof InetAddress)
 					olympaPlayers = MySQL.getPlayersByIp(((InetAddress) t).getHostAddress());
@@ -201,13 +209,14 @@ public class SanctionExecute {
 				e.printStackTrace();
 				cmd.sendError(e);
 			}
+		}
 		// Never join data
 		if (targets.isEmpty())
 			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("&cCible &4%s&c introuvable.", ColorUtils.joinRed(targetsString)));
 		return !targets.isEmpty();
 	}
 
-	private boolean detectSanction() {
+	private boolean detectSanctions() {
 		for (Object t : targetsRaw)
 			try {
 				if (t instanceof InetAddress)
@@ -220,16 +229,12 @@ public class SanctionExecute {
 					OlympaPlayer op = AccountProvider.get((String) t);
 					if (op != null)
 						targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(op.getId()), t));
-				} else if (t instanceof Long) {
-					Long l = (Long) t;
-					targets.add(new SanctionExecuteTarget(Arrays.asList(BanMySQL.getSanction(l)), t));
-				}
+				} else if (t instanceof Long)
+					targets.add(new SanctionExecuteTarget(Arrays.asList(BanMySQL.getSanction((Long) t)), t));
 			} catch (SQLException e) {
 				e.printStackTrace();
 				cmd.sendError(e);
 			}
-		if (targets.stream().allMatch(e -> e == null))
-			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("&cCasier de &4%s&c vierge.", ColorUtils.joinRed(targetsString)));
 		return !targets.isEmpty();
 	}
 
@@ -239,7 +244,7 @@ public class SanctionExecute {
 				getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Le format de &4%s&c n'est pas connu. Utilise l'un des format suivants: pseudo, IP, UUID ou ID de sanction.", ColorUtils.joinRed(unknownTargetType)));
 			else
 				getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Rajoute une cible : pseudo, IP, UUID ou sanction."));
-		if (!detectSanction())
+		if (!detectSanctions())
 			return;
 
 		List<OlympaSanction> allSanctions = new ArrayList<>();
@@ -247,7 +252,7 @@ public class SanctionExecute {
 			if (t != null)
 				allSanctions.addAll(t.getSanctions());
 		if (allSanctions.isEmpty())
-			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("&cAucun résultat valide pour &4%s&c.", ColorUtils.joinRed(targetsString)));
+			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("&cCasier de &4%s&c vierge.", ColorUtils.joinRed(targetsString)));
 		else if (allSanctions.size() == 1) {
 			OlympaSanction s = allSanctions.get(0);
 			getAuthorSender().sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("Une seule sanction trouvée pour %s.", ColorUtils.joinGreenEt(targetsString)));

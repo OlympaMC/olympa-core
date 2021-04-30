@@ -1,18 +1,18 @@
 package fr.olympa.core.bungee.ban.commands;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class UnmuteCommand extends BungeeCommand {
 
@@ -57,7 +57,10 @@ public class UnmuteCommand extends BungeeCommand {
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		switch (args.length) {
 		case 1:
-			return Utils.startWords(args[0], ProxyServer.getInstance().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toList()));
+			return Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
+		case 2:
+			List<String> reasons = Arrays.asList("Demande de déban acceptée", "Erreur", "Tromper de Joueur", "Augmentation de peine", "Réduction de peine");
+			return Utils.startWords(args[1], reasons);
 		default:
 			return new ArrayList<>();
 		}

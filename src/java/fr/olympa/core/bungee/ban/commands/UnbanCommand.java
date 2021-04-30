@@ -13,9 +13,8 @@ import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class UnbanCommand extends BungeeCommand implements TabExecutor {
+public class UnbanCommand extends BungeeCommand {
 
 	public UnbanCommand(Plugin plugin) {
 		super(plugin, "unban", OlympaCorePermissions.BAN_UNBAN_COMMAND, "pardon", "unbann");
@@ -70,7 +69,7 @@ public class UnbanCommand extends BungeeCommand implements TabExecutor {
 		case 1:
 			return Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
 		case 2:
-			List<String> reasons = Arrays.asList("Demande de déban acceptée", "Erreur", "Tromper de Joueur", "Augmentation de peine", "Réduction de peine");
+			List<String> reasons = Arrays.asList("Demande de démute acceptée", "Erreur", "Tromper de Joueur", "Augmentation de peine", "Réduction de peine");
 			return Utils.startWords(args[1], reasons);
 		default:
 			return new ArrayList<>();

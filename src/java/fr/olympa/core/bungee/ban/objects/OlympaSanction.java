@@ -26,12 +26,6 @@ public class OlympaSanction {
 		return target;
 	}
 
-	public static int getNextId() {
-		return 0;
-		// TODO add
-		// return MySQL.getNextId("sanctions", "id");
-	}
-
 	private long id;
 	private OlympaSanctionType type;
 	private OlympaSanctionTargetType targetType;
@@ -237,7 +231,7 @@ public class OlympaSanction {
 		return new ComponentBuilder(ColorUtils.color("&6Information sanction n°&e" + getId() + "\n"))
 				.append(ColorUtils.color("&6Joueur: &e" + playerNames + "\n"))
 				.append(ColorUtils.color("&6Auteur: &e" + getAuthorName() + "\n"))
-				.append(ColorUtils.color("&6Type: &e" + getType().getName(isPermanent()) + "\n"))
+				.append(ColorUtils.color("&6Type: &e" + getType().getName(!isPermanent()) + "\n"))
 				.append(ColorUtils.color("&6Raison: &e" + getReason() + "\n"))
 				.append(ColorUtils.color("&6Crée: &e" + Utils.timestampToDateAndHour(getCreated()) + "\n"))
 				.append(ColorUtils.color("&6Expire: &e" + (getExpires() != 0 ? Utils.timestampToDateAndHour(getExpires()) + "\n&6Durée de base: &e" + Utils

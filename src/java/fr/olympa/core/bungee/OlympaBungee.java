@@ -110,7 +110,6 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	protected BungeeCustomConfig maintConfig;
 	private BungeeTaskManager task;
 	private ServerStatus status;
-	private RedisAccess redisAccess;
 
 	public Configuration getConfig() {
 		return defaultConfig.getConfig();
@@ -308,8 +307,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		}, "Redis sub " + channel);
 		Thread.UncaughtExceptionHandler h = (th, ex) -> {
 			ex.printStackTrace();
-			if (redisAccess != null)
-				registerRedisSub(redisAccess.connect(), sub, channel);
+			if (RedisAccess.INSTANCE != null)
+				registerRedisSub(RedisAccess.INSTANCE.connect(), sub, channel);
 		};
 		t.setUncaughtExceptionHandler(h);
 		t.start();
@@ -320,7 +319,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		if (is != null && is.length != 0)
 			i1 = is[0] + 1;
 		int i = i1;
-		redisAccess = RedisAccess.init(defaultConfig.getConfig());
+		RedisAccess redisAccess = RedisAccess.init(defaultConfig.getConfig());
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
 			registerRedisSub(redisAccess.getConnection(), new SpigotGroupChangeReceiverOnBungee(), RedisChannel.SPIGOT_CHANGE_GROUP.name());

@@ -2,9 +2,12 @@ package fr.olympa.core.bungee.servers;
 
 import java.util.Map.Entry;
 
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.match.RegexMatcher;
+import fr.olympa.api.module.OlympaModule;
 import fr.olympa.api.server.MonitorInfo;
 import fr.olympa.api.server.OlympaServer;
+import fr.olympa.api.server.ServerDebugInfo;
 import fr.olympa.api.server.ServerStatus;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Players;
@@ -13,6 +16,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 public class MonitorInfoBungee extends MonitorInfo {
 
 	ServerInfo serverInfo;
+	ServerDebugInfo serverDebugInfo;
 
 	public MonitorInfoBungee(ServerInfo serverInfo, long time, ServerPing serverPing, Throwable error) {
 		this.serverInfo = serverInfo;
@@ -49,6 +53,14 @@ public class MonitorInfoBungee extends MonitorInfo {
 				lastVersion = motd[5];
 			if (motd.length >= 7)
 				lastModifiedCore = motd[6];
+			try {
+				if (motd.length >= 8)
+					serverDebugInfo = ServerDebugInfo.fromJson(motd[7]);
+				if (serverDebugInfo != null && OlympaModule.DEBUG)
+					LinkSpigotBungee.Provider.link.sendMessage("&eDEBUG Génial, le ServerDebugInfo de %s a été reçu via le motd. Let's goooo !", serverName);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		} else {
 			status = ServerStatus.CLOSE;
 			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "");

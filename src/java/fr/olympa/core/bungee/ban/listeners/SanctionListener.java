@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.provider.BungeeNewPlayerEvent;
+import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
@@ -22,6 +21,7 @@ import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.LoginEvent;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
@@ -35,6 +35,13 @@ public class SanctionListener implements Listener {
 	public SanctionListener() {
 		commandDisableWhenMuted.addAll(PrivateMessage.privateMessageCommand);
 		commandDisableWhenMuted.addAll(PrivateMessage.replyCommand);
+	}
+
+	@EventHandler
+	public void on2Disconnect(PlayerDisconnectEvent event) {
+		ProxiedPlayer player = event.getPlayer();
+		List<OlympaSanction> playerMutes = SanctionHandler.getMutes(player.getUniqueId());
+		playerMutes.forEach(mute -> SanctionHandler.removeMute(mute));
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -57,7 +64,6 @@ public class SanctionListener implements Listener {
 		}
 		if (sanctions.isEmpty())
 			return;
-
 		List<OlympaSanction> bans = sanctions.stream().filter(sanction -> sanction.getType() == OlympaSanctionType.BAN || sanction.getType() == OlympaSanctionType.BANIP).collect(Collectors.toList());
 		if (!bans.isEmpty()) {
 			OlympaSanction ban = bans.stream().sorted((s1, s2) -> Boolean.compare(s2.isPermanent(), s1.isPermanent())).findFirst().orElse(null);
@@ -80,10 +86,10 @@ public class SanctionListener implements Listener {
 	//		});
 	//	}
 
-	@EventHandler
-	public void onBungeeNewPlayerEvent(BungeeNewPlayerEvent event) {
-
-	}
+	//	@EventHandler
+	//	public void onBungeeNewPlayerEvent(BungeeNewPlayerEvent event) {
+	//
+	//	}
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerChat(ChatEvent event) {
@@ -96,10 +102,13 @@ public class SanctionListener implements Listener {
 			return;
 		ProxiedPlayer player = (ProxiedPlayer) event.getSender();
 		OlympaSanction mute = SanctionHandler.isMutedThenEnd(player);
+		Configuration config = OlympaBungee.getInstance().getConfig();
 		if (mute != null) {
 			event.setCancelled(true);
-			Configuration config = OlympaBungee.getInstance().getConfig();
-			player.sendMessage(ColorUtils.format(config.getString("ban.youaremuted"), mute.getReason(), Utils.timestampToDuration(mute.getExpires())));
+			if (mute.isPermanent())
+				player.sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Tu es mute pour &4%s&c.", mute.getReason()));
+			else
+				player.sendMessage(Prefix.DEFAULT_BAD.formatMessageB(config.getString("ban.youaremuted"), mute.getReason(), Utils.timestampToDuration(mute.getExpires())));
 		}
 	}
 }

@@ -30,7 +30,7 @@ public class SanctionUtils {
 		List<String> units2 = new ArrayList<>();
 		for (List<String> s2 : units)
 			units2.add(String.join("|", s2));
-		matchDuration = Pattern.compile("^(?i)(\\d+)(\\s*)(" + String.join("|", units2) + ")\\s");
+		matchDuration = Pattern.compile("^(?i)(\\d+)(\\s*)(" + String.join("|", units2) + ")\\b");
 	}
 
 	public static Matcher matchDuration(String s) {

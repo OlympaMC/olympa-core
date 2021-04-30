@@ -138,11 +138,6 @@ public class SanctionExecuteTarget {
 				banExecute.getAuthorSender().sendMessage(ColorUtils.color(config.getString("ban.errordb")));
 				return false;
 			}
-
-			if (sanction.getType() == OlympaSanctionType.MUTE) {
-				SanctionHandler.removeMute(sanction);
-				sanction.getOnlinePlayers().forEach(p -> p.sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("Tu as été unmute.")));
-			}
 		}
 		sanctions = Arrays.asList(sanction);
 		return true;
@@ -163,10 +158,10 @@ public class SanctionExecuteTarget {
 			else if (type == OlympaSanctionType.MUTE)
 				SanctionHandler.addMute(sanction);
 		} else if (sanction.getStatus() == OlympaSanctionStatus.CANCEL)
-			if (type == OlympaSanctionType.BAN || type == OlympaSanctionType.BANIP) {
-
-			} else if (type == OlympaSanctionType.MUTE)
+			if (type == OlympaSanctionType.MUTE) {
 				SanctionHandler.removeMute(sanction);
+				sanction.getOnlinePlayers().forEach(p -> p.sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("Tu as été unmute.")));
+			}
 	}
 
 	@SuppressWarnings("deprecation")
