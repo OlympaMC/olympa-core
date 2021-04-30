@@ -56,7 +56,7 @@ public class MonitorInfoBungee extends MonitorInfo {
 			if (motd.length >= 7)
 				lastModifiedCore = motd[6];
 
-			if (serverDebugInfo != null && OlympaModule.DEBUG) {
+			if (OlympaModule.DEBUG) {
 				String json = String.join(" ", Arrays.copyOfRange(motd, 7, motd.length));
 				LinkSpigotBungee.Provider.link.sendMessage("JSON reçu %s", json);
 				try {

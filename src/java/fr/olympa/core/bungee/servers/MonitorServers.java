@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableMap;
 
 import fr.olympa.api.bungee.task.BungeeTaskManager;
-import fr.olympa.api.module.OlympaModule;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.Utils;
@@ -57,8 +56,8 @@ public class MonitorServers {
 	}
 
 	public static void updateServer(ServerInfo serverInfo, boolean instantUpdate, Consumer<ServerInfo> sucess) {
-		if (OlympaModule.DEBUG)
-			OlympaBungee.getInstance().sendMessage("&eDebug §7Serveur §e" + serverInfo.getName() + " a été ping.");
+		//		if (OlympaModule.DEBUG)
+		//			OlympaBungee.getInstance().sendMessage("&eDebug §7Serveur §e" + serverInfo.getName() + " a été ping.");
 		long nano = System.nanoTime();
 		serverInfo.ping((result, error) -> {
 			MonitorInfoBungee info = new MonitorInfoBungee(serverInfo, nano, result, error);
