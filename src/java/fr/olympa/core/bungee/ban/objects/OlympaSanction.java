@@ -234,7 +234,7 @@ public class OlympaSanction {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return new ComponentBuilder(ColorUtils.color("&6Information sanction n°&e" + getId() + "\n\n"))
+		return new ComponentBuilder(ColorUtils.color("&6Information sanction n°&e" + getId() + "\n"))
 				.append(ColorUtils.color("&6Joueur: &e" + playerNames + "\n"))
 				.append(ColorUtils.color("&6Auteur: &e" + getAuthorName() + "\n"))
 				.append(ColorUtils.color("&6Type: &e" + getType().getName(isPermanent()) + "\n"))

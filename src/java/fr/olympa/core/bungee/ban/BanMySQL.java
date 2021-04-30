@@ -49,7 +49,7 @@ public class BanMySQL {
 			pstate.setString(i++, olympaban.getReason());
 			pstate.setLong(i++, olympaban.getAuthor());
 			if (olympaban.getExpires() == 0)
-				pstate.setObject(i++, null);
+				pstate.setTimestamp(i++, null);
 			else
 				pstate.setTimestamp(i++, new Timestamp(olympaban.getCreated() * 1000L));
 			pstate.setLong(i, olympaban.getStatus().getId());
@@ -119,6 +119,11 @@ public class BanMySQL {
 		//			}
 		//		else
 		//			throw new IllegalArgumentException(targetDb + " is not INT or IP.");
+
+		long expire = 0;
+		Timestamp expireTimeStamp = resultSet.getTimestamp("expires");
+		if (expireTimeStamp != null)
+			expire = resultSet.getTimestamp("expires").getTime() / 1000L;
 		OlympaSanction sanction = new OlympaSanction(
 				resultSet.getInt("id"),
 				OlympaSanctionType.getByID(resultSet.getInt("type_id")),
@@ -126,7 +131,7 @@ public class BanMySQL {
 				resultSet.getLong("author_id"),
 				resultSet.getString("reason"),
 				resultSet.getTimestamp("created").getTime() / 1000L,
-				resultSet.getTimestamp("expires").getTime() / 1000L,
+				expire,
 				OlympaSanctionStatus.getStatus(resultSet.getInt("status_id")));
 		String history = resultSet.getString("history");
 		if (history != null)

@@ -245,7 +245,7 @@ public class SanctionExecute {
 			getAuthorSender().sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("Une seule sanction trouvée pour %s.", ColorUtils.joinGreenEt(targetsString)));
 			getAuthorSender().sendMessage(s.toBaseComplement());
 		} else {
-			TxtComponentBuilder builder = new TxtComponentBuilder(Prefix.DEFAULT_GOOD, "%d résultats pour %s (%s).", allSanctions.size(), ColorUtils.joinGreenEt(targetsString)).extraSpliterBN();
+			TxtComponentBuilder builder = new TxtComponentBuilder(Prefix.DEFAULT_GOOD, "%d résultats pour %s.", allSanctions.size(), ColorUtils.joinGreenEt(targetsString)).extraSpliterBN();
 			for (OlympaSanction sanction : allSanctions)
 				builder.extra(new TxtComponentBuilder("%d - %s %s %s", sanction.getId(), sanction.getStatus().getNameColored(), sanction.getAuthorName(), sanction.getReason()).onHoverText(sanction.toBaseComplement()));
 			getAuthorSender().sendMessage(builder.build());

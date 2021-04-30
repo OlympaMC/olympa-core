@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
+import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
@@ -68,10 +69,12 @@ public class MuteCommand extends BungeeCommand {
 			return postentielNames;
 		case 2:
 			List<String> units = new ArrayList<>();
+			if (args[1].isBlank())
+				return Arrays.asList("15min", "30min", "1h", "2h", "3h", "6h", "12h", "1j");
+			String arg1 = RegexMatcher.INT.replace(args[1], "");
 			for (List<String> unit : SanctionUtils.units)
 				for (String u : unit)
-					for (int i = 1; i < 20; i++)
-						units.add(i + u);
+					units.add(arg1 + u);
 			return Utils.startWords(args[1], units);
 		case 3:
 			List<String> reasons = Arrays.asList("Insulte", "Provocation", "Spam", "Harcèlement", "Publicité");
