@@ -179,22 +179,30 @@ public class SanctionExecute {
 	}
 
 	private boolean getOlympaPlayersFromArgs() {
+		List<OlympaPlayer> olympaPlayers = null;
 		for (Object t : targetsRaw)
 			try {
 				if (t instanceof InetAddress)
-					targets.add(new SanctionExecuteTarget(t, MySQL.getPlayersByIp(((InetAddress) t).getHostAddress())));
-				else if (t instanceof UUID)
-					targets.add(new SanctionExecuteTarget(t, Arrays.asList(new AccountProvider((UUID) t).get())));
-				else if (t instanceof String)
-					targets.add(new SanctionExecuteTarget(t, Arrays.asList(AccountProvider.get((String) t))));
-				else if (t instanceof Long)
-					targets.add(new SanctionExecuteTarget(t, Arrays.asList(AccountProvider.get((Long) t))));
+					olympaPlayers = MySQL.getPlayersByIp(((InetAddress) t).getHostAddress());
+				else {
+					OlympaPlayer olympaPlayer = null;
+					if (t instanceof UUID)
+						olympaPlayer = new AccountProvider((UUID) t).get();
+					else if (t instanceof String)
+						olympaPlayer = AccountProvider.get((String) t);
+					else if (t instanceof Long)
+						olympaPlayer = AccountProvider.get((Long) t);
+					if (olympaPlayer != null)
+						olympaPlayers = Arrays.asList(olympaPlayer);
+				}
+				if (olympaPlayers != null && !olympaPlayers.isEmpty())
+					targets.add(new SanctionExecuteTarget(t, olympaPlayers));
 			} catch (SQLException e) {
 				e.printStackTrace();
 				cmd.sendError(e);
 			}
 		// Never join data
-		if (targets.stream().allMatch(e -> e == null))
+		if (targets.isEmpty())
 			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("&cCible &4%s&c introuvable.", ColorUtils.joinRed(targetsString)));
 		return !targets.isEmpty();
 	}

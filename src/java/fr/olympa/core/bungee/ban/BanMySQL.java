@@ -32,7 +32,7 @@ public class BanMySQL {
 	`status_id` INT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
-	
+
 	 */
 	/**
 	 * Ajoute un sanction/mute
@@ -51,7 +51,8 @@ public class BanMySQL {
 			if (olympaban.getExpires() == 0)
 				pstate.setTimestamp(i++, null);
 			else
-				pstate.setTimestamp(i++, new Timestamp(olympaban.getCreated() * 1000L));
+				pstate.setTimestamp(i++, new Timestamp(olympaban.getExpires() * 1000L));
+			pstate.setTimestamp(i++, new Timestamp(olympaban.getCreated() * 1000L));
 			pstate.setLong(i, olympaban.getStatus().getId());
 			statement.executeUpdate(pstate);
 			ResultSet resultSet = pstate.getGeneratedKeys();
