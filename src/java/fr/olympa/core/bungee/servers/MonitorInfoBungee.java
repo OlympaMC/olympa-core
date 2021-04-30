@@ -8,7 +8,6 @@ import fr.olympa.api.module.OlympaModule;
 import fr.olympa.api.server.MonitorInfo;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerDebug;
-import fr.olympa.api.server.ServerDebugInit;
 import fr.olympa.api.server.ServerStatus;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Players;
@@ -17,7 +16,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 public class MonitorInfoBungee extends MonitorInfo {
 
 	ServerInfo serverInfo;
-	ServerDebugInit serverDebugInfo;
+	ServerDebug serverDebugInfo;
 
 	public MonitorInfoBungee(ServerInfo serverInfo, long time, ServerPing serverPing, Throwable error) {
 		this.serverInfo = serverInfo;
