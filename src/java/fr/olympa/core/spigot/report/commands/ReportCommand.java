@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -28,6 +29,7 @@ import fr.olympa.core.spigot.report.ReportHandler;
 import fr.olympa.core.spigot.report.ReportMsg;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
 import fr.olympa.core.spigot.report.gui.ReportGui;
+import fr.olympa.core.spigot.report.gui.ReportGuiChoose;
 import fr.olympa.core.spigot.report.gui.ReportGuiConfirm;
 
 public class ReportCommand extends ComplexCommand {
@@ -43,14 +45,14 @@ public class ReportCommand extends ComplexCommand {
 		}, x -> String.format("&4%s&c doit être un status tel que &4%s&c", x, Arrays.asList(ReportStatus.values()).stream().map(ReportStatus::getName).collect(Collectors.joining(", "))));
 	}
 
-	//	@Override
-	//	public boolean noArguments(CommandSender sender) {
-	//		if (sender instanceof Player) {
-	//			ReportGuiChoose.open(player);
-	//			return true;
-	//		}
-	//		return false;
-	//	}
+	@Override
+	public boolean noArguments(CommandSender sender) {
+		if (sender instanceof Player) {
+			ReportGuiChoose.open(player);
+			return true;
+		}
+		return false;
+	}
 
 	@Cmd(args = { "PLAYERS", "REPORTREASON", "Informations complémentaire du report" }, min = 1, syntax = "<joueur> [status] [note]", otherArg = true)
 	public void otherArg(CommandContext cmd) {
@@ -122,12 +124,17 @@ public class ReportCommand extends ComplexCommand {
 				opi = AccountProvider.getPlayerInformations(targetId);
 			} else if (cmd.getArgument(0) instanceof UUID) {
 				opi = AccountProvider.getPlayerInformations(cmd.<UUID>getArgument(0));
-				targetId = opi.getId();
+				if (opi != null)
+					targetId = opi.getId();
 			} else if (cmd.getArgument(0) instanceof OlympaPlayerInformations) {
 				targetId = cmd.<OlympaPlayerInformations>getArgument(0).getId();
 				opi = cmd.<OlympaPlayerInformations>getArgument(0);
 			} else {
 				sendUsage(cmd.label);
+				return;
+			}
+			if (opi == null) {
+				player.sendMessage(Prefix.DEFAULT_BAD.formatMessage("Le joueur est introuvable."));
 				return;
 			}
 			if (reports.isEmpty())

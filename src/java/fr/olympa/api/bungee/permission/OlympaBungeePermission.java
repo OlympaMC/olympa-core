@@ -46,19 +46,20 @@ public class OlympaBungeePermission extends OlympaPermission {
 	public ServerType getServerType() {
 		return ServerType.BUNGEE;
 	}
-	
+
 	public void getPlayersBungee(Consumer<? super Set<ProxiedPlayer>> success) {
 		Set<ProxiedPlayer> players = ProxyServer.getInstance().getPlayers().stream().filter(p -> {
 			try {
 				return this.hasPermission(new AccountProvider(p.getUniqueId()).get());
-			}catch (SQLException e) {
+			} catch (SQLException e) {
 				e.printStackTrace();
 				return false;
 			}
 		}).collect(Collectors.toSet());
 		if (!players.isEmpty())
 			success.accept(players);
-		success.accept(null);
+		else
+			success.accept(null);
 	}
 
 	@Override

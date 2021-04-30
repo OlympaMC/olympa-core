@@ -204,11 +204,15 @@ public class SanctionExecute {
 			try {
 				if (t instanceof InetAddress)
 					targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(((InetAddress) t).getHostAddress()), t));
-				else if (t instanceof UUID)
-					targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(t), t));
-				else if (t instanceof String)
-					targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(AccountProvider.get((String) t)), t));
-				else if (t instanceof Long) {
+				else if (t instanceof UUID) {
+					OlympaPlayer op = new AccountProvider((UUID) t).get();
+					if (op != null)
+						targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(op.getId()), t));
+				} else if (t instanceof String) {
+					OlympaPlayer op = AccountProvider.get((String) t);
+					if (op != null)
+						targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(op.getId()), t));
+				} else if (t instanceof Long) {
 					Long l = (Long) t;
 					targets.add(new SanctionExecuteTarget(Arrays.asList(BanMySQL.getSanction(l)), t));
 				}

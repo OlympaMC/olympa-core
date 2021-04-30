@@ -19,7 +19,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 public class BanCommand extends BungeeCommand implements TabExecutor {
 
 	public BanCommand(Plugin plugin) {
-		super(plugin, "ban", OlympaCorePermissions.BAN_BAN_COMMAND, "tempban");
+		super(plugin, "ban", OlympaCorePermissions.BAN_BAN_COMMAND, "tempban", "bann");
 		minArg = 2;
 		usageString = "<joueur|uuid|id|ip> [temps] <motif>";
 	}

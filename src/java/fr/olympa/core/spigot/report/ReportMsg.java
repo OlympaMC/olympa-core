@@ -53,15 +53,16 @@ public class ReportMsg {
 	public static void sendPanelId(CommandSender sender, OlympaReport report) {
 		report.resolveAll();
 		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD, "Report de &2%s -> &2%s :", report.getAuthorName(), report.getTargetName()).extraSpliterBN();
-
-		out.extra(new TxtComponentBuilder("&aN°&2%s", String.valueOf(report.getId())));
-		out.extra(new TxtComponentBuilder("&aStatus %s", report.getStatus().getNameColored()));
+		String id = String.valueOf(report.getId());
+		out.extra(new TxtComponentBuilder("&aN°&2%s", id));
+		out.extra(new TxtComponentBuilder("&aStatut %s", report.getStatus().getNameColored()));
 		out.extra(new TxtComponentBuilder("&aServeur &2%s", report.getServerName()));
 		out.extra(new TxtComponentBuilder("&aRaison &2%s", report.getReasonName()));
 		String note = report.getNote();
 		if (note != null && !note.isBlank())
 			out.extra(new TxtComponentBuilder("&aNote &2%s", note));
 		out.extra(new TxtComponentBuilder("&aDate &2%s &a(%s)", Utils.timestampToDateAndHour(report.getTime()), Utils.timestampToDuration(report.getTime())));
+		out.extra(new TxtComponentBuilder("&6[&eChanger Statut]").onClickSuggest("/report change " + id).extraSpliter(" ").extra("&6[&eTous]").onClickSuggest("/report see " + report.getTargetName()));
 		List<ReportStatusInfo> statusInfo = report.getStatusInfo();
 		//		if (statusInfo.size() > 1) {
 		//			out.extra(new TxtComponentBuilder("&aDerniers status &2"));
@@ -78,7 +79,8 @@ public class ReportMsg {
 		//
 		//		}
 		if (statusInfo.size() > 1)
-			out.extra(new TxtComponentBuilder("&aDerniers status &2%s", statusInfo.stream().limit(statusInfo.size() - 1l).map(rsi -> rsi.getStatus().getNameColored() + " &a(" + Utils.timestampToDuration(rsi.getTime()) + ")")
+			out.extra(new TxtComponentBuilder("&aDerniers statut &2%s", statusInfo.stream().limit(statusInfo.size() - 1l)
+					.map(rsi -> rsi.getStatus().getNameColored() + rsi.getTime() != null ? " &a(" + Utils.timestampToDuration(rsi.getTime()) + ")" : "")
 					.collect(Collectors.joining("&a, &2")))).extraSpliterBN();
 		sender.spigot().sendMessage(out.build());
 	}
@@ -111,8 +113,8 @@ public class ReportMsg {
 	}
 
 	public static void sendPanelMax(CommandSender sender, Stream<Entry<OlympaPlayerInformations, List<OlympaReport>>> reports) {
-		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Joueurs connectés avec le plus de report non observer :")).extraSpliterBN();
-		reports.limit(10).forEach(entry -> {
+		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Joueurs connectés avec le plus de report non traités :")).extraSpliterBN();
+		reports.sorted((e1, e2) -> e1.getValue().size() - e2.getValue().size()).limit(10).forEach(entry -> {
 			int rSize = entry.getValue().size();
 			OlympaPlayerInformations opTarget = entry.getKey();
 			TxtComponentBuilder line = new TxtComponentBuilder("&2%s &asignalement ouverts &2%s", rSize, opTarget.getName());
@@ -120,7 +122,7 @@ public class ReportMsg {
 			List<String> lore = firstReport.getLore();
 			lore.add("\n&4Clique pour voir tous les reports de &4" + opTarget.getName() + "&c !");
 			line.onHoverText(String.join("\n", lore));
-			line.onClickCommand("/report seeId " + opTarget.getId());
+			line.onClickCommand("/report see " + opTarget.getName());
 			out.extra(line);
 		});
 		sender.spigot().sendMessage(out.build());

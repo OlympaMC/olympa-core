@@ -73,6 +73,7 @@ public class SanctionExecuteTarget {
 	@SuppressWarnings("deprecation")
 	public boolean save(SanctionExecute banExecute) throws SQLException {
 		OlympaSanctionStatus newStatus = banExecute.newStatus;
+		boolean isCasualKick = banExecute.sanctionType == OlympaSanctionType.KICK && newStatus == OlympaSanctionStatus.END;
 		if (identifier instanceof InetAddress) {
 			if (banExecute.sanctionType == OlympaSanctionType.BAN)
 				banExecute.sanctionType = OlympaSanctionType.BANIP;
@@ -90,9 +91,11 @@ public class SanctionExecuteTarget {
 		players = olympaPlayers.stream().map(op -> ProxyServer.getInstance().getPlayer(op.getUniqueId())).filter(p -> p != null && p.isConnected()).collect(Collectors.toList());
 
 		Configuration config = OlympaBungee.getInstance().getConfig();
-		OlympaSanction alreadyban = BanMySQL.getSanctionActive(banIdentifier, banExecute.sanctionType);
+		OlympaSanction alreadyban = null;
+		if (!isCasualKick)
+			alreadyban = BanMySQL.getSanctionActive(banIdentifier, banExecute.sanctionType);
 		OlympaSanction sanction;
-		if (newStatus == OlympaSanctionStatus.ACTIVE) {
+		if (newStatus == OlympaSanctionStatus.ACTIVE || isCasualKick) {
 			if (alreadyban != null) {
 				TextComponent msg = new TextComponent(Prefix.DEFAULT_BAD.formatMessageB(config.getString("ban.alreadysanctionned"), identifier, banExecute.sanctionType.getName(!alreadyban.isPermanent()), alreadyban.getReason()));
 				msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, alreadyban.toBaseComplement()));
@@ -120,7 +123,7 @@ public class SanctionExecuteTarget {
 			}
 			sanction = add(banExecute.sanctionType, banExecute.getAuthorId(), banIdentifier, banExecute.reason, banExecute.expire, newStatus);
 
-			//		} else if (newStatus == OlympaSanctionStatus.END && banExecute.sanctionType == OlympaSanctionType.MUTE)
+			//		} else if (newStatus == OlympaSanctionStatus.END && banExecute.sanctionType == OlympaSanctionType.MUTE) {
 			//			sanction = add(banExecute.sanctionType, banExecute.getAuthorId(), banIdentifier, banExecute.reason, banExecute.expire, newStatus);
 		} else {
 			if (alreadyban != null)

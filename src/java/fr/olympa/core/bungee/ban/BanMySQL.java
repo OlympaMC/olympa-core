@@ -48,8 +48,10 @@ public class BanMySQL {
 			pstate.setString(i++, olympaban.getTarget());
 			pstate.setString(i++, olympaban.getReason());
 			pstate.setLong(i++, olympaban.getAuthor());
-			pstate.setTimestamp(i++, new Timestamp(olympaban.getExpires() * 1000L));
-			pstate.setTimestamp(i++, new Timestamp(olympaban.getCreated() * 1000L));
+			if (olympaban.getExpires() == 0)
+				pstate.setObject(i++, null);
+			else
+				pstate.setTimestamp(i++, new Timestamp(olympaban.getCreated() * 1000L));
 			pstate.setLong(i, olympaban.getStatus().getId());
 			statement.executeUpdate(pstate);
 			ResultSet resultSet = pstate.getGeneratedKeys();
@@ -128,7 +130,7 @@ public class BanMySQL {
 				OlympaSanctionStatus.getStatus(resultSet.getInt("status_id")));
 		String history = resultSet.getString("history");
 		if (history != null)
-			for (String hist : history.split(","))
+			for (String hist : history.split(";"))
 				sanction.addHistory(OlympaSanctionHistory.fromJson(hist));
 		sanction = SanctionHandler.expireIfNeeded(sanction);
 		return sanction;

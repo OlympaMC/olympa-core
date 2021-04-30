@@ -141,7 +141,7 @@ public class ReportMySQL {
 		Collection<OlympaPlayer> players = AccountProvider.getAll();
 		Map<OlympaPlayerInformations, List<OlympaReport>> data = new HashMap<>();
 		Set<String> orPlayers = new HashSet<>();
-		for (int i = 1; i < players.size(); i++)
+		for (OlympaPlayer player : players)
 			orPlayers.add("target_id");
 		OlympaStatement opStatement = new OlympaStatement(StatementType.SELECT, tableName, new String[] { "target_id" }, orPlayers.toArray(String[]::new), null, null, 0, 0, new String[] {});
 		List<OlympaReport> reports = new ArrayList<>();
@@ -149,7 +149,7 @@ public class ReportMySQL {
 			int i = 1;
 			Iterator<OlympaPlayer> it = players.iterator();
 			while (it.hasNext())
-				statement.setLong(i, it.next().getId());
+				statement.setLong(i++, it.next().getId());
 			ResultSet resultSet = opStatement.executeQuery(statement);
 			while (resultSet.next())
 				reports.add(get(resultSet));

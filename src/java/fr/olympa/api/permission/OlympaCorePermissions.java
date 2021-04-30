@@ -35,6 +35,7 @@ public class OlympaCorePermissions {
 	public static final OlympaBungeePermission BAN_SEEBANMSG = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaBungeePermission BAN_SEEBANMSG_FULL = new OlympaBungeePermission(OlympaGroup.RESP_BUILDER);
 	public static final OlympaBungeePermission BAN_BYPASS_BAN = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
+	public static final OlympaBungeePermission BAN_BANMENU_COMMAND = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
 
 	public static final OlympaSpigotPermission UTILS_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH);
 	public static final OlympaSpigotPermission GETUUID_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
