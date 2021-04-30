@@ -8,6 +8,7 @@ import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
+import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import redis.clients.jedis.JedisPubSub;
@@ -35,7 +36,10 @@ public class SpigotGroupChangedReceiver extends JedisPubSub {
 		olympaAccount.saveToCache(oldOlympaPlayer);
 		olympaAccount.saveToRedis(oldOlympaPlayer);
 		//olympaAccount.saveToDb(oldOlympaPlayer);
-
+		if (newOlympaPlayer.getGroups().size() > 1)
+			Prefix.DEFAULT_GOOD.sendMessage(player, "Tes groupes ont été changés. Tu as désormais les groupes suivant : &2%d&a.", newOlympaPlayer.getGroupsToHumainString());
+		else
+			Prefix.DEFAULT_GOOD.sendMessage(player, "Ton groupe a été changé. Tu as désormais dans le groupe &2%d&a.", newOlympaPlayer.getGroupsToHumainString());
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(player, state, newOlympaPlayer, null, timestamp, groupChanged));
 		RedisSpigotSend.sendModificationsReceive(newOlympaPlayer.getUniqueId());
 		OlympaCore.getInstance().sendMessage("&a[Redis] PLAYER change groupe for " + newOlympaPlayer.getName() + " to " + oldOlympaPlayer.getGroupsToHumainString() + " from server " + from);

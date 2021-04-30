@@ -77,7 +77,7 @@ if [ -n "$ACTUAL_COMMIT_ID" ] && [ -n "$ACTUAL_COMMIT_ID_API" ]; then
 fi
 mvn install
 if [ "$?" -ne 0 ]; then
-	echo -e "\e[91mLe build du $PLUGIN_NAME a échoué ! Erreur 1\e[0m"; exit 1
+	echo -e "\e[91mLe build du $PLUGIN_NAME a échoué !\e[0m"; exit 1
 else
 	echo `git rev-parse HEAD` > target/commitId
 	echo `cd ../olympaapi && git rev-parse HEAD` > target/commitIdAPI

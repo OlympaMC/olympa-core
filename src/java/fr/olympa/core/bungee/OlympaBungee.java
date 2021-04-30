@@ -63,8 +63,8 @@ import fr.olympa.core.bungee.privatemessage.PrivateMessageToggleCommand;
 import fr.olympa.core.bungee.privatemessage.ReplyCommand;
 import fr.olympa.core.bungee.protocol.ProtocolListener;
 import fr.olympa.core.bungee.redis.receiver.BungeeCommandReceiver;
-import fr.olympa.core.bungee.redis.receiver.SpigotAskServerNameReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotAskMonitorInfoReceiver;
+import fr.olympa.core.bungee.redis.receiver.SpigotAskServerNameReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotGroupChangeReceiverOnBungee;
 import fr.olympa.core.bungee.redis.receiver.SpigotOlympaPlayerReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotReportReceiver;
@@ -110,6 +110,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	protected BungeeCustomConfig maintConfig;
 	private BungeeTaskManager task;
 	private ServerStatus status;
+	private RedisAccess redisAccess;
 
 	public Configuration getConfig() {
 		return defaultConfig.getConfig();
@@ -301,7 +302,17 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	}
 
 	public void registerRedisSub(Jedis jedis, JedisPubSub sub, String channel) {
-		new Thread(() -> jedis.subscribe(sub, channel), "Redis sub " + channel).start();
+		Thread t = new Thread(() -> {
+			jedis.subscribe(sub, channel);
+			jedis.disconnect();
+		}, "Redis sub " + channel);
+		Thread.UncaughtExceptionHandler h = (th, ex) -> {
+			ex.printStackTrace();
+			if (redisAccess != null)
+				registerRedisSub(redisAccess.connect(), sub, channel);
+		};
+		t.setUncaughtExceptionHandler(h);
+		t.start();
 	}
 
 	private void setupRedis(int... is) {
@@ -309,7 +320,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		if (is != null && is.length != 0)
 			i1 = is[0] + 1;
 		int i = i1;
-		RedisAccess redisAccess = RedisAccess.init(defaultConfig.getConfig());
+		redisAccess = RedisAccess.init(defaultConfig.getConfig());
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
 			registerRedisSub(redisAccess.getConnection(), new SpigotGroupChangeReceiverOnBungee(), RedisChannel.SPIGOT_CHANGE_GROUP.name());

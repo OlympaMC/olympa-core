@@ -111,6 +111,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	private String lastVersion = "unknown";
 	private String firstVersion = "unknown";
 	private ErrorOutputStream errorOutputStream;
+	private RedisAccess redisAccess;
 
 	public String getLastVersion() {
 		return lastVersion;
@@ -370,10 +371,17 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	}
 
 	public void registerRedisSub(Jedis jedis, JedisPubSub sub, String channel) {
-		new Thread(() -> {
+		Thread t = new Thread(() -> {
 			jedis.subscribe(sub, channel);
 			jedis.disconnect();
-		}, "Redis sub " + channel).start();
+		}, "Redis sub " + channel);
+		Thread.UncaughtExceptionHandler h = (th, ex) -> {
+			ex.printStackTrace();
+			if (redisAccess != null)
+				registerRedisSub(redisAccess.connect(), sub, channel);
+		};
+		t.setUncaughtExceptionHandler(h);
+		t.start();
 	}
 
 	@Override
