@@ -9,6 +9,7 @@ import fr.olympa.api.server.MonitorInfo;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerDebug;
 import fr.olympa.api.server.ServerStatus;
+import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Players;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -65,7 +66,7 @@ public class MonitorInfoBungee extends MonitorInfo {
 			status = ServerStatus.CLOSE;
 			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "");
 			if (!this.error.isEmpty())
-				error.printStackTrace();
+				OlympaBungee.getInstance().sendMessage("Le serveur &4%s&c renvoie une erreur lors du ping %s", serverInfo.getName(), this.error);
 		}
 	}
 
