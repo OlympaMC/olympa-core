@@ -191,7 +191,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
-		new RestartCommand(this).registerPreProcess();
+		new RestartCommand(this).registerPreProcess().register();
 		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
 		ReportReason.registerReason(ReportReason.class);
 		BungeeServerInfoReceiver.registerCallback(mi -> {

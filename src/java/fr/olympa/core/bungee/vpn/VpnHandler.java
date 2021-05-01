@@ -26,7 +26,7 @@ import net.md_5.bungee.api.connection.PendingConnection;
 public class VpnHandler {
 
 	private static List<String> inCheck = new ArrayList<>();
-	public static Cache<String, OlympaVpn> cache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).removalListener(notification -> {
+	public static Cache<String, OlympaVpn> cache = CacheBuilder.newBuilder().recordStats().expireAfterWrite(10, TimeUnit.SECONDS).removalListener(notification -> {
 		OlympaVpn olympaVpn = (OlympaVpn) notification.getValue();
 		//		OlympaBungee.getInstance().sendMessage("&6DEBUG VPN > notification %s id %d ip %s", notification.getCause(), olympaVpn.getId(), notification.getKey());
 

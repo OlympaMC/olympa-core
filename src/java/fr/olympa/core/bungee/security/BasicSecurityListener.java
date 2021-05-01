@@ -29,7 +29,7 @@ import net.md_5.bungee.event.EventPriority;
 @SuppressWarnings("deprecation")
 public class BasicSecurityListener implements Listener {
 
-	private static final Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(100).build();
+	private static final Cache<String, String> cache = CacheBuilder.newBuilder().recordStats().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(100).build();
 
 	{
 		CacheStats.addCache("WHO_PING", BasicSecurityListener.cache);

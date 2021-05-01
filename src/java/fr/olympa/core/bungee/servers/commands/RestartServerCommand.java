@@ -16,7 +16,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 public class RestartServerCommand extends BungeeCommand implements TabExecutor {
 
 	public RestartServerCommand(Plugin plugin) {
-		super(plugin, "restartserv", OlympaCorePermissions.SERVER_START_COMMAND, "restartserver");
+		super(plugin, "restartserv", OlympaCorePermissions.SERVER_START_COMMAND);
 		minArg = 1;
 		usageString = "<" + plugin.getProxy().getServers().entrySet().stream().map(entry -> entry.getKey()).collect(Collectors.joining("|")) + ">";
 	}
