@@ -12,6 +12,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import fr.olympa.api.module.OlympaModule.ModuleApi;
 import fr.olympa.api.permission.OlympaAPIPermissions;
+import fr.olympa.api.permission.OlympaSpigotPermission;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.scoreboard.tab.INametagApi.NametagHandler;
@@ -19,7 +20,6 @@ import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.vanish.IVanishApi;
 import fr.olympa.core.spigot.OlympaCore;
 
-@SuppressWarnings("deprecation")
 public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 
 	NametagHandler handler;
@@ -67,7 +67,7 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 	public void disable(OlympaPlayer olympaPlayer, boolean showMessage) {
 		Player player = olympaPlayer.getPlayer();
 		OlympaCore plugin = OlympaCore.getInstance();
-		player.removePotionEffect(PotionEffectType.INVISIBILITY);
+		player.removePotionEffect(PotionEffectType.NIGHT_VISION);
 		player.setCollidable(true);
 		removeVanishMetadata(player);
 		INametagApi api = plugin.getNameTagApi();
@@ -77,17 +77,37 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 			Prefix.DEFAULT_BAD.sendMessage(player, "Tu n'es plus en vanish.");
 	}
 
+	public void enable(OlympaPlayer olympaPlayer, boolean showMessage, boolean isSuperVanish) {
+		Player player = olympaPlayer.getPlayer();
+		OlympaCore plugin = OlympaCore.getInstance();
+		player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
+		player.setCollidable(false);
+		addVanishMetadata(player);
+		INametagApi api = plugin.getNameTagApi();
+		//		new OlympaSpigotPermission(olympaPlayer.getGroup()).getPlayers(null, noPerm -> noPerm.forEach(noAdmin -> noAdmin.hidePlayer(plugin, player)));
+		//		OlympaAPIPermissions.VANISH_SEE.getOlympaPlayers(playerPerm -> {
+		new OlympaSpigotPermission(olympaPlayer.getGroup()).getOlympaPlayers(playerPerm -> {
+			api.callNametagUpdate(olympaPlayer, playerPerm);
+			olympaPlayer.getPlayer().showPlayer(plugin, player);
+		}, noPerm -> noPerm.forEach(noStaff -> noStaff.getPlayer().hidePlayer(plugin, player)));
+		if (showMessage)
+			if (isSuperVanish)
+				Prefix.DEFAULT_GOOD.sendMessage(player, "Tu es désormais en super-vanish, le staff.");
+			else
+				Prefix.DEFAULT_GOOD.sendMessage(player, "Tu es désormais en vanish.");
+	}
+
 	@Override
 	public void enable(OlympaPlayer olympaPlayer, boolean showMessage) {
 		Player player = olympaPlayer.getPlayer();
 		OlympaCore plugin = OlympaCore.getInstance();
-		//		new OlympaSpigotPermission(olympaPlayer.getGroup()).getPlayers(null, noPerm -> noPerm.forEach(noAdmin -> noAdmin.hidePlayer(plugin, player)));
-		player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false), true);
+		player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
 		player.setCollidable(false);
 		addVanishMetadata(player);
 		INametagApi api = plugin.getNameTagApi();
-		OlympaAPIPermissions.VANISH_SEE.getOlympaPlayers(playerPerm -> {
-			//			NametagAPI api = SpigotModule.NAME_TAG.getApi();
+		//		new OlympaSpigotPermission(olympaPlayer.getGroup()).getPlayers(null, noPerm -> noPerm.forEach(noAdmin -> noAdmin.hidePlayer(plugin, player)));
+		//		OlympaAPIPermissions.VANISH_SEE.getOlympaPlayers(playerPerm -> {
+		new OlympaSpigotPermission(olympaPlayer.getGroup()).getOlympaPlayers(playerPerm -> {
 			api.callNametagUpdate(olympaPlayer, playerPerm);
 			olympaPlayer.getPlayer().showPlayer(plugin, player);
 		}, noPerm -> noPerm.forEach(noStaff -> noStaff.getPlayer().hidePlayer(plugin, player)));
