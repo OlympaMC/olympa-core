@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import fr.olympa.api.scoreboard.tab.FakeTeam;
@@ -58,13 +57,14 @@ public class NameTagManager {
 			return;
 		//		new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers()).send(toPlayers);
 		Set<FakeTeam> allTeams = getTeamsOfPlayer(playerName);
-		String prefix;
-		String rawPrefix = nameTag.getPrefix();
+		String prefix = nameTag.getPrefix();
+		String suffix = nameTag.getSuffix();
+		/*String rawPrefix = nameTag.getPrefix();
 		if (ChatColor.stripColor(rawPrefix).isBlank())
 			prefix = rawPrefix;
 		else
 			prefix = rawPrefix + " ";
-		String suffix = nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix();
+		suffix = nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix();*/
 		FakeTeam team = new FakeTeam(prefix, suffix, sortPriority);
 		team.addMember(playerName);
 		team.addViewers(toPlayers);
