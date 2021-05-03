@@ -21,7 +21,7 @@ public class ErrorLoggerHandler extends Handler {
 		if (record.getThrown() != null) {
 			String stackTrace = ExceptionUtils.getStackTrace(record.getThrown());
 			try {
-				sendError.accept(record.getLevel().getName() + " [" + record.getLoggerName() + "] " + record.getMessage().replaceAll("executing task \\d*", "executing task XXX") + "\n" + stackTrace);
+				sendError.accept(record.getLevel().getName() + " [" + record.getLoggerName() + "] " + record.getMessage().replaceAll("executing task \\d+", "executing task XXX").replaceAll("Task \\d+ for", "Task XXX for") + "\n" + stackTrace);
 			}catch (Exception ex) {
 				OlympaCore.getInstance().sendMessage("§cUne erreur est survenue durant le passage d'une erreur au bungee via redis:\n%s", stackTrace);
 			}
