@@ -27,6 +27,7 @@ import fr.olympa.api.command.essentials.FlyCommand;
 import fr.olympa.api.command.essentials.GamemodeCommand;
 import fr.olympa.api.command.essentials.InvseeCommand;
 import fr.olympa.api.command.essentials.ItemCommand;
+import fr.olympa.api.command.essentials.ListCommand;
 import fr.olympa.api.command.essentials.PingCommand;
 import fr.olympa.api.command.essentials.tp.TpCommand;
 import fr.olympa.api.config.CustomConfig;
@@ -279,6 +280,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new StaffCommand(this).register();
 		new ItemCommand(this).register();
 		new NewSpigotCommand(this).register().registerPreProcess();
+		new ListCommand(this).register().registerPreProcess();
 
 		new AntiWD(this);
 		getTask().runTask(() -> versionHandler = new VersionHandler(this));
