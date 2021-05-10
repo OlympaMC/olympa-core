@@ -112,6 +112,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	private String lastVersion = "unknown";
 	private String firstVersion = "unknown";
 	private ErrorOutputStream errorOutputStream;
+	
+	public GamemodeCommand gamemodeCommand = null;
 
 	public String getLastVersion() {
 		return lastVersion;
@@ -265,7 +267,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new TpsCommand(this).registerPreProcess();
 		new UtilsCommand(this).register();
 		new GenderCommand(this).register();
-		new GamemodeCommand(this).register().registerPreProcess();
+		gamemodeCommand = (GamemodeCommand) new GamemodeCommand(this).register().registerPreProcess();
 		new InvseeCommand(this).register();
 		new EcseeCommand(this).register();
 		new FlyCommand(this).register();
