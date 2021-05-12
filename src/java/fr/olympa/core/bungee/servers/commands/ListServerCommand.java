@@ -22,7 +22,7 @@ public class ListServerCommand extends BungeeCommand {
 		TxtComponentBuilder out = new TxtComponentBuilder("&6Liste des serveurs :").extraSpliterBN();
 		MonitorServers.getServersSorted().forEach(serverInfo -> {
 			ServerStatus status = serverInfo.getStatus();
-			TxtComponentBuilder out2 = new TxtComponentBuilder().extra(" ");
+			TxtComponentBuilder out2 = new TxtComponentBuilder().extraSpliter(" ");
 
 			out2.extra("&7[%s&7]", status.getNameColored());
 			out2.extra("%s%s&e:", status.getColor(), serverInfo.getName());
@@ -38,13 +38,13 @@ public class ListServerCommand extends BungeeCommand {
 			if (serverInfo.getRamUsage() != null)
 				sb.add(TPSUtils.getRamUsageColor(serverInfo.getRamUsage()) + "%%RAM");
 			if (serverInfo.getThreads() != null)
-				sb.add(serverInfo.getThreads() + "/" + serverInfo.getAllThreads() + "threads");
+				sb.add(serverInfo.getThreads() + "threads");
 			if (serverInfo.getPing() != null)
 				sb.add(serverInfo.getPing() + "ms");
 			if (serverInfo.getLastModifiedCore() != null && !serverInfo.getLastModifiedCore().isBlank())
 				sb.add("\n&6Last up core : " + serverInfo.getLastModifiedCore());
 
-			out2.onHoverText(sb.toString());
+			out2.onHoverText(sb.toString()).console(proxiedPlayer == null);
 			out.extra(out2);
 		});
 		sender.sendMessage(out.build());
