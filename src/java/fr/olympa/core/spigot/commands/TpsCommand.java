@@ -7,8 +7,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
+import fr.olympa.api.machine.MachineMessage;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.utils.machine.MachineUtils;
 
 public class TpsCommand extends OlympaCommand {
 
@@ -18,7 +18,7 @@ public class TpsCommand extends OlympaCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		sendComponents(MachineUtils.getInfos(player == null));
+		sendComponents(new MachineMessage(player == null).getInfoMessage().build());
 		return false;
 	}
 

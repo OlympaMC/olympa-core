@@ -9,8 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
+import fr.olympa.api.machine.OlympaRuntime;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.utils.machine.OlympaRuntime;
 
 public class RestartCommand extends OlympaCommand {
 

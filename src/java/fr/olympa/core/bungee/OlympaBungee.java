@@ -35,6 +35,7 @@ import fr.olympa.core.bungee.ban.commands.UnbanCommand;
 import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
 import fr.olympa.core.bungee.commands.BungeeBroadcastCommand;
+import fr.olympa.core.bungee.commands.BungeeLagCommand;
 import fr.olympa.core.bungee.commands.BungeePingCommand;
 import fr.olympa.core.bungee.commands.InfoCommand;
 import fr.olympa.core.bungee.commands.IpCommand;
@@ -133,6 +134,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	@Override
 	public void onEnable() {
 		instance = this;
+
 		LinkSpigotBungee.Provider.link = this;
 		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
 		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
@@ -208,7 +210,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		new RestartServerCommand(this).register();
 		new LobbyCommand(this).register();
 		new LeaveQueueCommand(this).register();
-		//new BungeeLagCommand(this).register();
+		new BungeeLagCommand(this).register();
 		new RedisCommand(this).register();
 		new BungeePingCommand(this).register();
 		new BungeeQueueCommand(this).register();

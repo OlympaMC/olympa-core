@@ -15,9 +15,9 @@ import fr.olympa.api.module.OlympaModule;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.machine.MachineUtils;
 import fr.olympa.core.bungee.antibot.AntiBotHandler;
 import fr.olympa.core.bungee.connectionqueue.QueueHandler;
+import fr.olympa.core.bungee.machine.BungeeInfo;
 import fr.olympa.core.bungee.security.SecurityHandler;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import fr.olympa.core.bungee.vpn.OlympaVpn;
@@ -73,7 +73,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_TPS")
 	public void tps(CommandContext cmd) {
-		sender.sendMessage(MachineUtils.getInfos(isConsole()));
+		sender.sendMessage(new BungeeInfo(proxiedPlayer == null).getInfoMessage().build());
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
