@@ -78,6 +78,7 @@ import fr.olympa.core.spigot.protocolsupport.VersionHandler;
 import fr.olympa.core.spigot.protocolsupport.ViaVersionHook;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.redis.receiver.BungeeAskPlayerServerReceiver;
+import fr.olympa.core.spigot.redis.receiver.BungeeAskSomething;
 import fr.olympa.core.spigot.redis.receiver.BungeeSendOlympaPlayerReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeServerInfoReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeServerNameReceiver;
@@ -112,7 +113,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	private String lastVersion = "unknown";
 	private String firstVersion = "unknown";
 	private ErrorOutputStream errorOutputStream;
-	
+
 	public GamemodeCommand gamemodeCommand = null;
 
 	public String getLastVersion() {
@@ -255,7 +256,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		pluginManager.registerEvents(new StatusMotdListener(), this);
 		pluginManager.registerEvents(new ChatListener(), this);
 		pluginManager.registerEvents(new CommandListener(), this);
-		pluginManager.registerEvents(new StatusMotdListener(), this);
 		pluginManager.registerEvents(regionManager = new RegionManager(), this);
 
 		new GroupCommand(this).register();
@@ -348,6 +348,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			registerRedisSub(redisAccess.connect(), new SpigotCommandReceiver(), RedisChannel.SPIGOT_COMMAND.name());
 			registerRedisSub(redisAccess.connect(), new BungeeTeamspeakIdReceiver(), RedisChannel.BUNGEE_SEND_TEAMSPEAKID.name());
 			registerRedisSub(redisAccess.connect(), new BungeeServerInfoReceiver(), RedisChannel.BUNGEE_SEND_SERVERSINFOS2.name());
+			registerRedisSub(redisAccess.connect(), new BungeeAskSomething(), RedisChannel.BUNGEE_ASK_SOMETHING.name());
 			RedisSpigotSend.askServerName();
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {

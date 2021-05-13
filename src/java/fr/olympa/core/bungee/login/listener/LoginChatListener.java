@@ -20,6 +20,10 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
+/**
+ * TODO add message for information, /discord link, /changepassword ...
+ *
+ */
 public class LoginChatListener implements Listener {
 
 	private TextComponent joinMessageCrackNew;
@@ -40,7 +44,7 @@ public class LoginChatListener implements Listener {
 
 		joinMessageCrackNew = base.duplicate();
 		TextComponent link = new TextComponent();
-		addLegacyText(link, "§aCrée ton compte avec §2/register <mot de passe>§a ou §2clique ici§a.");
+		addLegacyText(link, "§aCrée ton compte avec §2/register <mot de passe>§a <- Clique.");
 		link.setHoverEvent(hoverTooltip);
 		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/register "));
 		joinMessageCrackNew.addExtra(link);
@@ -53,14 +57,6 @@ public class LoginChatListener implements Listener {
 		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/login "));
 		joinMessageCrackCreated.addExtra(link);
 		joinMessageCrackCreated.addExtra(end);
-
-		joinMessagePremiumNew = base.duplicate();
-		link = new TextComponent();
-		addLegacyText(link, "§aCrée-toi un compte sur le site avec §2/register <mot de passe>§a.");
-		link.setHoverEvent(hoverTooltip);
-		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/register "));
-		joinMessagePremiumNew.addExtra(link);
-		joinMessagePremiumNew.addExtra(end);
 
 		joinMessagePremiumCreated = base.duplicate();
 		joinMessagePremiumCreated.addExtra(end);

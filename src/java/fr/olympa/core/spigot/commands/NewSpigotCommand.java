@@ -1,5 +1,6 @@
 package fr.olympa.core.spigot.commands;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
@@ -13,6 +14,7 @@ import fr.olympa.api.module.OlympaModule;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.spigot.login.PlayerLogin;
 
 public class NewSpigotCommand extends ComplexCommand {
 
@@ -35,9 +37,12 @@ public class NewSpigotCommand extends ComplexCommand {
 		CacheStats.executeOnList(this, cmd);
 	}
 
-	@Cmd(min = 1, args = "INTEGER")
+	@Cmd(min = 1, args = "INTEGER|PLAYER")
 	public void captcha(CommandContext cmd) {
-		getPlayer().getInventory().addItem(new MapCaptcha(cmd.getArgument(0)).getMap());
+		if (cmd.getArgument(0) instanceof Player)
+			PlayerLogin.captchaToPlayer(cmd.getArgument(0));
+		else
+			getPlayer().getInventory().addItem(new MapCaptcha(cmd.getArgument(0)).getMap());
 	}
 
 	@Cmd
