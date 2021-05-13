@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +18,11 @@ import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.task.OlympaTask;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.spigot.OlympaCore;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
+import net.minecraft.server.v1_16_R3.PacketPlayInChat;
 
 public class PlayerLogin {
 
@@ -28,10 +34,34 @@ public class PlayerLogin {
 		return w8forCaptcha;
 	}
 
+	private static void unhandlePlayerPacket(Player p) {
+		Channel channel = ((CraftPlayer) p).getHandle().playerConnection.networkManager.channel;
+		channel.eventLoop().submit(() -> {
+			channel.pipeline().remove(p.getName() + "_Captcha");
+			return null;
+		});
+	}
+
+	private static void handlePlayerPackets(Player p) {
+		ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
+			@Override
+			public void channelRead(ChannelHandlerContext channelHandlerContext, Object handledPacket) throws Exception {
+				if (w8forCaptcha.containsKey(p) && !(handledPacket instanceof PacketPlayInChat))
+					return;
+				super.channelRead(channelHandlerContext, handledPacket);
+			}
+		};
+
+		ChannelPipeline pipeline = ((CraftPlayer) p).getHandle().playerConnection.networkManager.channel.pipeline();
+		pipeline.addBefore("packet_handler", p.getName() + "_Captcha", channelDuplexHandler);
+	}
+
 	public static void add(Player player, PlayerLogin pl) {
 		if (w8forCaptcha.isEmpty())
 			core.getServer().getPluginManager().registerEvents(listener, core);
 		PlayerLogin.w8forCaptcha.put(player, pl);
+		handlePlayerPackets(player);
+		Prefix.DEFAULT_BAD.sendMessage(player, "Tu dois répondre au captcha dans le chat.");
 	}
 
 	public static boolean isIn(Player p) {
@@ -42,6 +72,7 @@ public class PlayerLogin {
 		PlayerLogin.w8forCaptcha.remove(player);
 		if (w8forCaptcha.isEmpty())
 			HandlerList.unregisterAll(listener);
+		unhandlePlayerPacket(player);
 	}
 
 	public static CustomConfig contentsConfig = new CustomConfig(OlympaCore.getInstance(), "loginContents.yml");
@@ -82,7 +113,7 @@ public class PlayerLogin {
 		playerLogin.playerContents.returnHisInventory();
 		if (playerLogin.location != null)
 			player.teleport(playerLogin.location);
-		w8forCaptcha.remove(player);
+		remove(player);
 		return true;
 	}
 
@@ -93,16 +124,17 @@ public class PlayerLogin {
 			location = player.getLocation();
 			player.teleport(core.getSpawn());
 		}
+		player.getLocation().setPitch(40);
 		PlayerContents playerContents = new PlayerContents(contentsConfig, player);
 		PlayerLogin playerLogin = new PlayerLogin(playerContents, location);
-		w8forCaptcha.put(player, playerLogin);
+		add(player, playerLogin);
 		playerContents.clearInventory();
 		task.runTaskAsynchronously(() -> {
 			MapCaptcha map = new MapCaptcha();
 			playerLogin.setMap(map);
 			ItemStack item = map.getMap();
 			PlayerInventory playerInv = player.getInventory();
-			for (int i = 1; i < 9; i++)
+			for (int i = 0; i <= 8; i++)
 				playerInv.setItem(i, item);
 		});
 	}
