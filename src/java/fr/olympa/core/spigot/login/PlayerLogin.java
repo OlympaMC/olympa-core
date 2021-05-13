@@ -23,7 +23,11 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import net.minecraft.server.v1_16_R3.PacketPlayInChat;
+import net.minecraft.server.v1_16_R3.PacketPlayInFlying.PacketPlayInLook;
+import net.minecraft.server.v1_16_R3.PacketPlayInFlying.PacketPlayInPosition;
+import net.minecraft.server.v1_16_R3.PacketPlayInFlying.PacketPlayInPositionLook;
 import net.minecraft.server.v1_16_R3.PacketPlayInKeepAlive;
+import net.minecraft.server.v1_16_R3.PacketPlayInWindowClick;
 
 public class PlayerLogin {
 
@@ -47,10 +51,9 @@ public class PlayerLogin {
 		ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
 			@Override
 			public void channelRead(ChannelHandlerContext channelHandlerContext, Object handledPacket) throws Exception {
-				if (w8forCaptcha.containsKey(p) && !(handledPacket instanceof PacketPlayInChat) && !(handledPacket instanceof PacketPlayInKeepAlive)) {
-					System.out.println("packet IN " + handledPacket.getClass().getSimpleName() + " of " + p.getName() + " was cancel.");
+				if (w8forCaptcha.containsKey(p) && !(handledPacket instanceof PacketPlayInChat) && !(handledPacket instanceof PacketPlayInKeepAlive) && !(handledPacket instanceof PacketPlayInPositionLook)
+						&& !(handledPacket instanceof PacketPlayInPosition) && !(handledPacket instanceof PacketPlayInLook) && !(handledPacket instanceof PacketPlayInWindowClick))
 					return;
-				}
 				super.channelRead(channelHandlerContext, handledPacket);
 			}
 		};
@@ -106,12 +109,7 @@ public class PlayerLogin {
 		if (!playerLogin.map.getAnswer().equals(answer)) {
 			playerLogin.setMap(null);
 			Prefix.DEFAULT_BAD.sendMessage(player, "La réponse est mauvaise, ce n'est pas '%s'. Réessaye !", answer);
-			task.runTaskAsynchronously(() -> {
-				MapCaptcha map = new MapCaptcha();
-				playerLogin.setMap(map);
-				player.getInventory().clear();
-				player.getInventory().addItem(map.getMap());
-			});
+			setCaptchaToPlayer(player);
 			return false;
 		}
 		playerLogin.playerContents.clearInventory();
@@ -132,9 +130,9 @@ public class PlayerLogin {
 			playerLogin.setMap(map);
 			ItemStack item = map.getMap();
 			PlayerInventory playerInv = player.getInventory();
+			playerInv.clear();
 			for (int i = 0; i <= 8; i++)
 				playerInv.setItem(i, item);
-			Prefix.DEFAULT_BAD.sendMessage(player, "Tu dois répondre au captcha dans le chat.");
 		});
 	}
 
@@ -152,5 +150,6 @@ public class PlayerLogin {
 			add(player, playerLogin);
 		} else
 			setCaptchaToPlayer(player);
+		Prefix.DEFAULT_BAD.sendMessage(player, "Tu dois répondre au captcha dans le chat.");
 	}
 }
