@@ -37,7 +37,7 @@ public class NewSpigotCommand extends ComplexCommand {
 		CacheStats.executeOnList(this, cmd);
 	}
 
-	@Cmd(min = 1, args = "INTEGER|PLAYER")
+	@Cmd(min = 1, args = "INTEGER|PLAYERS")
 	public void captcha(CommandContext cmd) {
 		if (cmd.getArgument(0) instanceof Player)
 			PlayerLogin.captchaToPlayer(cmd.getArgument(0));
