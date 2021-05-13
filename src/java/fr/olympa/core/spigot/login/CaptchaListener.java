@@ -4,6 +4,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -41,6 +43,20 @@ public class CaptchaListener implements Listener {
 		if (!(event.getWhoClicked() instanceof Player))
 			return;
 		Player player = (Player) event.getWhoClicked();
+		if (PlayerLogin.isIn(player))
+			event.setCancelled(true);
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onBlockPlace(BlockPlaceEvent event) {
+		Player player = event.getPlayer();
+		if (PlayerLogin.isIn(player))
+			event.setCancelled(true);
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onBlockBreak(BlockBreakEvent event) {
+		Player player = event.getPlayer();
 		if (PlayerLogin.isIn(player))
 			event.setCancelled(true);
 	}

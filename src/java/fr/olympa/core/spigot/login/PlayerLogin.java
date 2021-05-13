@@ -1,11 +1,14 @@
 package fr.olympa.core.spigot.login;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -15,6 +18,7 @@ import org.bukkit.inventory.PlayerInventory;
 import fr.olympa.api.captcha.MapCaptcha;
 import fr.olympa.api.captcha.PlayerContents;
 import fr.olympa.api.config.CustomConfig;
+import fr.olympa.api.region.shapes.Cuboid;
 import fr.olympa.api.task.OlympaTask;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.spigot.OlympaCore;
@@ -22,17 +26,23 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
+import net.minecraft.server.v1_16_R3.Packet;
+import net.minecraft.server.v1_16_R3.PacketListenerPlayIn;
+import net.minecraft.server.v1_16_R3.PacketPlayInBlockDig;
 import net.minecraft.server.v1_16_R3.PacketPlayInChat;
 import net.minecraft.server.v1_16_R3.PacketPlayInFlying.PacketPlayInLook;
 import net.minecraft.server.v1_16_R3.PacketPlayInFlying.PacketPlayInPosition;
 import net.minecraft.server.v1_16_R3.PacketPlayInFlying.PacketPlayInPositionLook;
 import net.minecraft.server.v1_16_R3.PacketPlayInKeepAlive;
+import net.minecraft.server.v1_16_R3.PacketPlayInTeleportAccept;
 import net.minecraft.server.v1_16_R3.PacketPlayInWindowClick;
 
 public class PlayerLogin {
 
 	static OlympaCore core = OlympaCore.getInstance();
 	private static Map<Player, PlayerLogin> w8forCaptcha = new HashMap<>();
+	private static List<Class<? extends Packet<PacketListenerPlayIn>>> allowedPackets = List.of(PacketPlayInChat.class, PacketPlayInKeepAlive.class, PacketPlayInPositionLook.class,
+			PacketPlayInPosition.class, PacketPlayInLook.class, PacketPlayInWindowClick.class, PacketPlayInTeleportAccept.class, PacketPlayInBlockDig.class);
 	static CaptchaListener listener = new CaptchaListener();
 
 	public static Map<Player, PlayerLogin> getW8forCaptcha() {
@@ -51,8 +61,8 @@ public class PlayerLogin {
 		ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
 			@Override
 			public void channelRead(ChannelHandlerContext channelHandlerContext, Object handledPacket) throws Exception {
-				if (w8forCaptcha.containsKey(p) && !(handledPacket instanceof PacketPlayInChat) && !(handledPacket instanceof PacketPlayInKeepAlive) && !(handledPacket instanceof PacketPlayInPositionLook)
-						&& !(handledPacket instanceof PacketPlayInPosition) && !(handledPacket instanceof PacketPlayInLook) && !(handledPacket instanceof PacketPlayInWindowClick)) {
+
+				if (w8forCaptcha.containsKey(p) && !allowedPackets.stream().anyMatch(clazz -> handledPacket.getClass().isAssignableFrom(clazz))) {
 					System.out.println("packet IN " + handledPacket.getClass().getSimpleName() + " of " + p.getName() + " was cancel.");
 					return;
 				}
@@ -71,7 +81,34 @@ public class PlayerLogin {
 			PlayerLogin.w8forCaptcha.put(player, pl);
 			handlePlayerPackets(player);
 		}
+		setHidingBlock(player);
 		setCaptchaToPlayer(player);
+	}
+
+	public static void removeHidingBlock(Player p) {
+		PlayerLogin playerLogin = w8forCaptcha.get(p);
+		if (playerLogin != null && playerLogin.blockLocs != null && !playerLogin.blockLocs.isEmpty()) {
+			playerLogin.blockLocs.forEach(l -> p.sendBlockChange(l, l.getBlock().getBlockData()));
+			playerLogin.blockLocs.clear();
+		}
+	}
+
+	public static void setHidingBlock(Player p) {
+		Location loc = p.getLocation();
+		PlayerLogin playerLogin = w8forCaptcha.get(p);
+		if (playerLogin == null)
+			throw new UnsupportedOperationException("PlayerLogin is not set for " + p.getName());
+		if (playerLogin.blockLocs != null && !playerLogin.blockLocs.isEmpty()) {
+			playerLogin.blockLocs.forEach(l -> p.sendBlockChange(l, l.getBlock().getBlockData()));
+			playerLogin.blockLocs.clear();
+		}
+		BlockData blockdata = Material.BLACK_CONCRETE.createBlockData();
+		List<Location> locs = new Cuboid(new Location(loc.getWorld(), loc.getBlockX() - 1, loc.getBlockY() - 1, loc.getBlockZ() - 1), new Location(loc.getWorld(), loc.getBlockX() + 2, loc.getBlockY() + 1, loc.getBlockZ() + 1))
+				.getPerimeterLocations();
+		locs.add(new Location(loc.getWorld(), loc.getBlockX(), loc.getBlockY() - 1, loc.getBlockZ()));
+		locs.add(new Location(loc.getWorld(), loc.getBlockX(), loc.getBlockY() + 2, loc.getBlockZ()));
+		playerLogin.blockLocs = locs;
+		locs.forEach(l -> p.sendBlockChange(l, blockdata));
 	}
 
 	public static boolean isIn(Player p) {
@@ -83,6 +120,7 @@ public class PlayerLogin {
 		if (w8forCaptcha.isEmpty())
 			HandlerList.unregisterAll(listener);
 		unhandlePlayerPacket(player);
+		removeHidingBlock(player);
 	}
 
 	public static CustomConfig contentsConfig = new CustomConfig(OlympaCore.getInstance(), "loginContents.yml");
@@ -95,7 +133,10 @@ public class PlayerLogin {
 	@Nullable
 	MapCaptcha map;
 	PlayerContents playerContents;
+	@Nullable
 	Location location;
+	@Nullable
+	List<Location> blockLocs;
 
 	public void setMap(MapCaptcha map) {
 		this.map = map;
