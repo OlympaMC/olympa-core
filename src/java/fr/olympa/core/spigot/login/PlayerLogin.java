@@ -52,8 +52,10 @@ public class PlayerLogin {
 			@Override
 			public void channelRead(ChannelHandlerContext channelHandlerContext, Object handledPacket) throws Exception {
 				if (w8forCaptcha.containsKey(p) && !(handledPacket instanceof PacketPlayInChat) && !(handledPacket instanceof PacketPlayInKeepAlive) && !(handledPacket instanceof PacketPlayInPositionLook)
-						&& !(handledPacket instanceof PacketPlayInPosition) && !(handledPacket instanceof PacketPlayInLook) && !(handledPacket instanceof PacketPlayInWindowClick))
+						&& !(handledPacket instanceof PacketPlayInPosition) && !(handledPacket instanceof PacketPlayInLook) && !(handledPacket instanceof PacketPlayInWindowClick)) {
+					System.out.println("packet IN " + handledPacket.getClass().getSimpleName() + " of " + p.getName() + " was cancel.");
 					return;
+				}
 				super.channelRead(channelHandlerContext, handledPacket);
 			}
 		};

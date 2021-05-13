@@ -62,7 +62,7 @@ public class CaptchaListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPlayerMove(PlayerTeleportEvent event) {
+	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 		if (PlayerLogin.isIn(player) && !event.getCause().equals(TeleportCause.PLUGIN)) {
 			Prefix.DEFAULT_BAD.sendMessage(player, "Réponds au captcha dans le chat pour continuer.");
