@@ -23,6 +23,7 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import net.minecraft.server.v1_16_R3.PacketPlayInChat;
+import net.minecraft.server.v1_16_R3.PacketPlayInKeepAlive;
 
 public class PlayerLogin {
 
@@ -46,8 +47,10 @@ public class PlayerLogin {
 		ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
 			@Override
 			public void channelRead(ChannelHandlerContext channelHandlerContext, Object handledPacket) throws Exception {
-				if (w8forCaptcha.containsKey(p) && !(handledPacket instanceof PacketPlayInChat))
+				if (w8forCaptcha.containsKey(p) && !(handledPacket instanceof PacketPlayInChat) && !(handledPacket instanceof PacketPlayInKeepAlive)) {
+					System.out.println("packet IN " + handledPacket.getClass().getSimpleName() + " of " + p.getName() + " was cancel.");
 					return;
+				}
 				super.channelRead(channelHandlerContext, handledPacket);
 			}
 		};
@@ -59,9 +62,11 @@ public class PlayerLogin {
 	public static void add(Player player, PlayerLogin pl) {
 		if (w8forCaptcha.isEmpty())
 			core.getServer().getPluginManager().registerEvents(listener, core);
-		PlayerLogin.w8forCaptcha.put(player, pl);
-		handlePlayerPackets(player);
-		Prefix.DEFAULT_BAD.sendMessage(player, "Tu dois répondre au captcha dans le chat.");
+		if (!isIn(player)) {
+			PlayerLogin.w8forCaptcha.put(player, pl);
+			handlePlayerPackets(player);
+		}
+		setCaptchaToPlayer(player);
 	}
 
 	public static boolean isIn(Player p) {
@@ -117,25 +122,35 @@ public class PlayerLogin {
 		return true;
 	}
 
-	public static void captchaToPlayer(Player player) {
+	public static void setCaptchaToPlayer(Player player) {
 		OlympaTask task = core.getTask();
-		Location location = null;
-		if (core.getSpawn() != null) {
-			location = player.getLocation();
-			player.teleport(core.getSpawn());
-		}
-		player.getLocation().setPitch(40);
-		PlayerContents playerContents = new PlayerContents(contentsConfig, player);
-		PlayerLogin playerLogin = new PlayerLogin(playerContents, location);
-		add(player, playerLogin);
-		playerContents.clearInventory();
 		task.runTaskAsynchronously(() -> {
 			MapCaptcha map = new MapCaptcha();
+			PlayerLogin playerLogin = w8forCaptcha.get(player);
+			if (playerLogin == null)
+				throw new UnsupportedOperationException("PlayerLogin is not set for " + player.getName());
 			playerLogin.setMap(map);
 			ItemStack item = map.getMap();
 			PlayerInventory playerInv = player.getInventory();
 			for (int i = 0; i <= 8; i++)
 				playerInv.setItem(i, item);
+			Prefix.DEFAULT_BAD.sendMessage(player, "Tu dois répondre au captcha dans le chat.");
 		});
+	}
+
+	public static void captchaToPlayer(Player player) {
+		if (!isIn(player)) {
+			Location location = null;
+			if (core.getSpawn() != null) {
+				location = player.getLocation();
+				player.teleport(core.getSpawn());
+			}
+			player.getLocation().setPitch(40);
+			PlayerContents playerContents = new PlayerContents(contentsConfig, player);
+			PlayerLogin playerLogin = new PlayerLogin(playerContents, location);
+			playerContents.clearInventory();
+			add(player, playerLogin);
+		} else
+			setCaptchaToPlayer(player);
 	}
 }
