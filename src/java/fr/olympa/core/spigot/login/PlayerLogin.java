@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
@@ -61,7 +62,6 @@ public class PlayerLogin {
 		ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
 			@Override
 			public void channelRead(ChannelHandlerContext channelHandlerContext, Object handledPacket) throws Exception {
-
 				if (w8forCaptcha.containsKey(p) && !allowedPackets.stream().anyMatch(clazz -> handledPacket.getClass().isAssignableFrom(clazz))) {
 					System.out.println("packet IN " + handledPacket.getClass().getSimpleName() + " of " + p.getName() + " was cancel.");
 					return;
@@ -86,6 +86,7 @@ public class PlayerLogin {
 	}
 
 	public static void removeHidingBlock(Player p) {
+		p.setGameMode(GameMode.SURVIVAL);
 		PlayerLogin playerLogin = w8forCaptcha.get(p);
 		if (playerLogin != null && playerLogin.blockLocs != null && !playerLogin.blockLocs.isEmpty()) {
 			playerLogin.blockLocs.forEach(l -> p.sendBlockChange(l, l.getBlock().getBlockData()));
@@ -94,6 +95,7 @@ public class PlayerLogin {
 	}
 
 	public static void setHidingBlock(Player p) {
+		p.setGameMode(GameMode.ADVENTURE);
 		Location loc = p.getLocation();
 		PlayerLogin playerLogin = w8forCaptcha.get(p);
 		if (playerLogin == null)
@@ -103,12 +105,9 @@ public class PlayerLogin {
 			playerLogin.blockLocs.clear();
 		}
 		BlockData blockdata = Material.BLACK_CONCRETE.createBlockData();
-		List<Location> locs = new Cuboid(new Location(loc.getWorld(), loc.getBlockX() - 1, loc.getBlockY() - 1, loc.getBlockZ() - 1), new Location(loc.getWorld(), loc.getBlockX() + 2, loc.getBlockY() + 1, loc.getBlockZ() + 1))
-				.getPerimeterLocations();
-		locs.add(new Location(loc.getWorld(), loc.getBlockX(), loc.getBlockY() - 1, loc.getBlockZ()));
-		locs.add(new Location(loc.getWorld(), loc.getBlockX(), loc.getBlockY() + 2, loc.getBlockZ()));
-		playerLogin.blockLocs = locs;
-		locs.forEach(l -> p.sendBlockChange(l, blockdata));
+		playerLogin.blockLocs = new Cuboid(new Location(loc.getWorld(), loc.getBlockX() - 1, loc.getBlockY() - 1, loc.getBlockZ() - 1), new Location(loc.getWorld(), loc.getBlockX() + 2, loc.getBlockY() + 1, loc.getBlockZ() + 1))
+				.getCubeLocations();
+		playerLogin.blockLocs.forEach(l -> p.sendBlockChange(l, blockdata));
 	}
 
 	public static boolean isIn(Player p) {
@@ -116,11 +115,11 @@ public class PlayerLogin {
 	}
 
 	public static void remove(Player player) {
+		removeHidingBlock(player);
 		PlayerLogin.w8forCaptcha.remove(player);
 		if (w8forCaptcha.isEmpty())
 			HandlerList.unregisterAll(listener);
 		unhandlePlayerPacket(player);
-		removeHidingBlock(player);
 	}
 
 	public static CustomConfig contentsConfig = new CustomConfig(OlympaCore.getInstance(), "loginContents.yml");
@@ -144,7 +143,6 @@ public class PlayerLogin {
 
 	public static boolean captchaGood(Player player, String answer) {
 		PlayerLogin playerLogin = w8forCaptcha.get(player);
-		OlympaTask task = core.getTask();
 		if (playerLogin == null || playerLogin.map == null) {
 			Prefix.DEFAULT_BAD.sendMessage(player, "Merci de patienter pendant la génération d'un nouveau captcha", answer);
 			return false;
@@ -186,7 +184,7 @@ public class PlayerLogin {
 				location = player.getLocation();
 				player.teleport(core.getSpawn());
 			}
-			player.getLocation().setPitch(40);
+			player.getLocation().setYaw(40);
 			PlayerContents playerContents = new PlayerContents(contentsConfig, player);
 			PlayerLogin playerLogin = new PlayerLogin(playerContents, location);
 			playerContents.clearInventory();
