@@ -11,7 +11,7 @@
 ## Script to deploy api with good version
 ## Author > Tristiisch
 #
-# ./deploy.sh date "2021-02-26 18:30:00"
+# ./deploy.sh date "master@2021-02-26 18:30:00"
 # ./deploy.sh master
 # ./deploy.sh dev
 
@@ -29,7 +29,7 @@ ACTUAL_COMMIT_ID=`cat target/commitId`
 ACTUAL_COMMIT_ID_API=`cat target/commitIdAPI`
 
 if [ -n "$1" ]; then
-	if [ -n "$2" ] && [ "$2" = "date" ]; then
+	if [ -n "$2" ] && [ "$1" = "date" ]; then
 		DATE="$2"
 	else
 		BRANCH_NAME="$1"
@@ -47,19 +47,20 @@ if [ "$?" -ne 0 ]; then
 	fi
 	git pull --all
 	if [ "$?" -ne 0 ]; then
-		echo -e "\e[91mEchec du git pull !\e[0m" && rm target/commit*; exit 1
+		git checkout $BRANCH_NAME --force
+		if [ "$?" -ne 0 ]; then
+			echo -e "\e[91mEchec du git pull & checkout !\e[0m" && rm target/commit*; exit 1
+		fi
 	fi
 fi
 if [ -n "$BRANCH_NAME" ]; then
-	exists=`git show-ref refs/heads/$BRANCH_NAME`
-	if [ -n "$exists" ]; then
-		git checkout $BRANCH_NAME --force
-	else
+	git checkout $BRANCH_NAME --force
+	if [ "$?" -ne 0 ]; then
 		echo -e "\e[91mLa branch $BRANCH_NAME n'existe pas !\e[0m"; exit 1
 	fi
 fi
 if [ -n "$DATE" ] && [ "$DATE" != "" ]; then
-	git checkout 'master@{$DATE}' --force
+	git checkout '$DATE' --force
 elif [ -z "$BRANCH_NAME" ]; then
 	git checkout master --force
 fi
