@@ -56,7 +56,7 @@ public class VpnListener implements Listener {
 		}
 		if ((olympaVpn.isProxy() || olympaVpn.isHosting()) && (olympaVpn.getWhitelistUsers() == null || !olympaVpn.getWhitelistUsers().contains(connection.getName()))) {
 			System.out.println("§cVPN DETECTED > " + connection.getName() + " " + connection.getAddress().getAddress().getHostAddress());
-			event.setCancelReason(BungeeUtils.connectScreen("&cImpossible d'utiliser un VPN.\n\n&e&lSi tu pense qu'il y a une erreur, contacte un membre du staff."));
+			event.setCancelReason(BungeeUtils.connectScreen("&cImpossible d'utiliser un VPN.\n\n&e&lSi tu penses qu'il y a une erreur, contacte un membre du staff."));
 			event.setCancelled(true);
 			return;
 		}

@@ -84,7 +84,7 @@ public class AuthListener implements Listener {
 				response = MojangAPI.getFromName(connection);
 			} catch (IOException e) {
 				e.printStackTrace();
-				event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenu avec les serveurs d'authentifications de Mojang.\n&eCode d'erreur: &l#BungeeMojangNewPlayer"));
+				event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue avec les serveurs d'authentifications de Mojang.\n&eCode d'erreur: &l#BungeeMojangNewPlayer"));
 				event.setCancelled(true);
 				return;
 			}
@@ -147,7 +147,7 @@ public class AuthListener implements Listener {
 					return;
 				}*/
 				if (!name.equals(olympaPlayer.getName())) {
-					event.setCancelReason(BungeeUtils.connectScreen("&aTu as mal écrit ton pseudo, connecte toi avec &2" + olympaPlayer.getName() + "&a.\n&eLà tu utilise le pseudo " + name + "."));
+					event.setCancelReason(BungeeUtils.connectScreen("&aTu as mal écrit ton pseudo, connecte toi avec &2" + olympaPlayer.getName() + "&a.\n&eTu utilises actuellement le pseudo " + name + "."));
 					event.setCancelled(true);
 					return;
 				}
@@ -155,11 +155,11 @@ public class AuthListener implements Listener {
 				connection.setOnlineMode(true);
 		}
 		if (!connection.isOnlineMode() && !SecurityHandler.ALLOW_CRACK) {
-			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Crack sont temporairement désactivées. Désolé du dérangement.\nMerci de réessayer plus tard ..."));
+			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Crack sont temporairement désactivées. Désolé du dérangement.\nMerci de réessayer plus tard..."));
 			event.setCancelled(true);
 			return;
 		} else if (connection.isOnlineMode() && !SecurityHandler.ALLOW_PREMIUM) {
-			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Premium sont temporairement désactivées. Désolé du dérangement.\nMerci de réessayer plus tard ..."));
+			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Premium sont temporairement désactivées. Désolé du dérangement.\nMerci de réessayer plus tard..."));
 			event.setCancelled(true);
 			return;
 		}

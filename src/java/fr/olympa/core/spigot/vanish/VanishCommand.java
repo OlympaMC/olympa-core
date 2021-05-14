@@ -24,7 +24,7 @@ public class VanishCommand extends OlympaCommand {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (vanishApi == null)
-			sendMessage(Prefix.DEFAULT_BAD, "Le module de Vanish est désactiver, commande impossible.");
+			sendMessage(Prefix.DEFAULT_BAD, "Le module de Vanish est désactivé, commande impossible.");
 		else if (vanishApi.isVanished(player))
 			vanishApi.disable(getOlympaPlayer(), true);
 		else

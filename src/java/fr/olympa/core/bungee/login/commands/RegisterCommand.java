@@ -77,7 +77,7 @@ public class RegisterCommand extends BungeeCommand {
 			OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, proxiedPlayer));
 			if (olympaPlayerLoginEvent.cancelIfNeeded())
 				return;
-			this.sendMessage(Prefix.DEFAULT_GOOD, "Youpi ! Ton compte est créé.");
+			this.sendMessage(Prefix.DEFAULT_GOOD, "Super ! Ton compte est créé.");
 		} else {
 			OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, proxiedPlayer));
 			if (olympaPlayerLoginEvent.cancelIfNeeded())

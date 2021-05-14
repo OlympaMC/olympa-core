@@ -74,7 +74,7 @@ public class CancerListener implements Listener {
 		// Si le chat est slow, met un cooldown entre chaque message
 		if (serverSettings.isChatSlow() && time < serverSettings.getTimeCooldown()) {
 			event.setCancelled(true);
-			Prefix.BAD.sendMessage(player, "Merci de patienter %d secondes entre chaque messages.", serverSettings.getTimeCooldown());
+			Prefix.BAD.sendMessage(player, "Merci de patienter %d secondes entre chaque message.", serverSettings.getTimeCooldown());
 			olympaTchat.setLastMsgTime(currentTime);
 			return;
 		}
@@ -191,7 +191,7 @@ public class CancerListener implements Listener {
 			}
 			if (!badChars.isEmpty()) {
 				event.setMessage(message);
-				player.sendMessage(Prefix.BAD.formatMessage("Les symboles chelou tel que &4%s&c sont interdit.", String.join("&c, &4", badChars)));
+				player.sendMessage(Prefix.BAD.formatMessage("L'utilisation de symboles non standards tels que &4%s&c est restreinte.", String.join("&c, &4", badChars)));
 			}
 		} catch (Exception | NoClassDefFoundError e) {
 			e.printStackTrace();

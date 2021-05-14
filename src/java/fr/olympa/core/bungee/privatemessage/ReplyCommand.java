@@ -20,6 +20,7 @@ public class ReplyCommand extends BungeeCommand {
 		PrivateMessage.replyCommand.add(command);
 		PrivateMessage.replyCommand.addAll(Arrays.asList(aliases));
 		allowConsole = false;
+		description = "Répondre au dernier message privé.";
 		minArg = 1;
 		usageString = "<message>";
 	}

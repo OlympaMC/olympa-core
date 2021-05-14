@@ -18,7 +18,7 @@ import fr.olympa.core.spigot.OlympaCore;
 public class GenderCommand extends OlympaCommand {
 	
 	public GenderCommand(Plugin plugin) {
-		super(plugin, "genre", "Change ton sexe. Accorde le grade et différents messages.", OlympaCorePermissions.GENDER_COMMAND, "sexe");
+		super(plugin, "genre", "Change ton genre. Accorde le grade et différents messages.", OlympaCorePermissions.GENDER_COMMAND, "sexe");
 		addArgs(true, Gender.getNames());
 		allowConsole = false;
 		minArg = 1;
@@ -33,18 +33,18 @@ public class GenderCommand extends OlympaCommand {
 			sendUsage(label);
 		Gender olympaGender = olympaPlayer.getGender();
 		if (olympaGender != Gender.UNSPECIFIED) {
-			sendError("Tu as déjà choisi le sexe &4%s&c.", Utils.capitalize(olympaGender.getName()));
+			sendError("Tu as déjà choisi le genre &4%s&c.", Utils.capitalize(olympaGender.getName()));
 			return false;
 		}
 		
 		if (gender == olympaGender) {
-			sendError("Tu as déjà le sexe &4%s&c.", Utils.capitalize(gender.getName()));
+			sendError("Tu as déjà le genre &4%s&c.", Utils.capitalize(gender.getName()));
 			return false;
 		}
 		olympaPlayer.setGender(gender);
 		new AccountProvider(player.getUniqueId()).saveToRedis(olympaPlayer);
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new PlayerSexChangeEvent(player, olympaPlayer, true));
-		sendError("Tu as choisi le sexe &2%s&a.", Utils.capitalize(gender.getName()));
+		sendError("Tu as choisi le genre &2%s&a.", Utils.capitalize(gender.getName()));
 		return false;
 	}
 	

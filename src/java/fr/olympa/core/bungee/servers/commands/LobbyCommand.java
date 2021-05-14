@@ -15,6 +15,7 @@ public class LobbyCommand extends BungeeCommand {
 	
 	public LobbyCommand(Plugin plugin) {
 		super(plugin, "lobby", OlympaCorePermissions.LOBBY_COMMAND, "hub");
+		description = "Te renvoie au serveur lobby.";
 		allowConsole = false;
 	}
 	

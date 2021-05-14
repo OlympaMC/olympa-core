@@ -42,7 +42,7 @@ public class ServersListener implements Listener {
 
 		OlympaBungee.getInstance().sendMessage("§6" + player.getName() + "§7 a été kick pour \"§e" + kickReason + "§7\" (état : " + event.getState() + ")");
 		if (kickReason.contains("whitelist")) {
-			event.setKickReasonComponent(TextComponent.fromLegacyText(Prefix.BAD + "Tu n'a pas accès au serveur &4" + serverKicked.getName() + "&c."));
+			event.setKickReasonComponent(TextComponent.fromLegacyText(Prefix.BAD + "Tu n'as pas accès au serveur &4" + serverKicked.getName() + "&c."));
 			return;
 		}
 		if (kickReason.contains("restarting") || kickReason.contains("closed")) {
