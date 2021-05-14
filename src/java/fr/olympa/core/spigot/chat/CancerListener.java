@@ -83,9 +83,10 @@ public class CancerListener implements Listener {
 		// Si le message contient des liens, cancel message
 		Matcher matcher = matchLink.matcher(msgNFD);
 		Matcher matcher2 = matchLink2.matcher(msgNFD);
-		if (matcher.find() || matcher2.find()) {
+		boolean find1 = matcher.find();
+		if (find1 || matcher2.find()) {
 			String link;
-			if (matcher.find())
+			if (find1)
 				link = matcher.group();
 			else
 				link = matcher2.group();
