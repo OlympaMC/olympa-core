@@ -13,7 +13,7 @@ import fr.olympa.core.spigot.redis.RedisSpigotSend;
 public class ToggleErrors extends OlympaCommand {
 	
 	public ToggleErrors(Plugin plugin) {
-		super(plugin, "errors", "Permet de désactiver/réactiver l'envoi des erreurs sur Discord", OlympaAPIPermissions.ERRORS_COMMAND, "discorderrors");
+		super(plugin, "errors", "Permet de désactiver/réactiver l'envoi des erreurs sur Discord.", OlympaAPIPermissions.ERRORS_COMMAND, "discorderrors");
 	}
 	
 	@Override

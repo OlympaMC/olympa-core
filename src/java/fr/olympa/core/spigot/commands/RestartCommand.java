@@ -15,7 +15,7 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 public class RestartCommand extends OlympaCommand {
 
 	public RestartCommand(Plugin plugin) {
-		super(plugin, "restart", "Redémarre le serveur", OlympaCorePermissions.SERVER_RESTART_COMMAND);
+		super(plugin, "restart", "Redémarre le serveur.", OlympaCorePermissions.SERVER_RESTART_COMMAND);
 		allowConsole = true;
 	}
 

@@ -20,7 +20,6 @@ import org.spigotmc.SpigotConfig;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
 import fr.olympa.api.command.CommandListener;
-import fr.olympa.api.command.essentials.AfkCommand;
 import fr.olympa.api.command.essentials.ColorCommand;
 import fr.olympa.api.command.essentials.EcseeCommand;
 import fr.olympa.api.command.essentials.FlyCommand;
@@ -271,7 +270,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new InvseeCommand(this).register();
 		new EcseeCommand(this).register();
 		new FlyCommand(this).register();
-		new AfkCommand(this).register();
 		new ConfigCommand(this).register();
 		new PermissionCommand(this).register();
 		new PingCommand(this).register();

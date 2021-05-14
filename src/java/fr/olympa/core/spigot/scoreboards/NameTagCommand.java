@@ -24,7 +24,7 @@ public class NameTagCommand extends ComplexCommand {
 
 	public NameTagCommand(OlympaCore plugin, NametagAPI api) {
 		//		super(plugin, "nametag", "Gestion et test des nameTag", OlympaCorePermissions.NAMETAG_COMMAND, "nt");
-		super(plugin, "nametag", "Gestion et test des nameTag", OlympaCorePermissions.SPIGOT_LAG_COMMAND, "nt");
+		super(plugin, "nametag", "Gestion et test des nameTag.", OlympaCorePermissions.SPIGOT_LAG_COMMAND, "nt");
 		this.api = api;
 	}
 

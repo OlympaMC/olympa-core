@@ -39,7 +39,7 @@ import fr.olympa.core.spigot.redis.RedisSpigotSend;
 public class GroupCommand extends OlympaCommand {
 
 	public GroupCommand(Plugin plugin) {
-		super(plugin, "group", "Permet la gestion des groupes de Olympa.", OlympaCorePermissions.GROUP_COMMAND, "groupe", "rank");
+		super(plugin, "group", "Permet de gérer les groupes d'un joueur Olympa.", OlympaCorePermissions.GROUP_COMMAND, "groupe", "rank");
 		addArgs(false, "JOUEUR");
 		addArgs(false, "group");
 		addArgs(false, "time");

@@ -16,7 +16,7 @@ public class VanishCommand extends OlympaCommand {
 	private IVanishApi vanishApi;
 
 	public VanishCommand(Plugin plugin, IVanishApi vanishApi) {
-		super(plugin, "vanish", "Permet de se mettre en Vanish", OlympaAPIPermissions.VANISH_COMMAND, "v");
+		super(plugin, "vanish", "Permet de se mettre en Vanish.", OlympaAPIPermissions.VANISH_COMMAND, "v");
 		allowConsole = false;
 		this.vanishApi = vanishApi;
 	}

@@ -17,7 +17,7 @@ import fr.olympa.api.utils.Prefix;
 public class ConfigCommand extends ComplexCommand {
 
 	public ConfigCommand(Plugin plugin) {
-		super(plugin, "config", "Gère les configs spigot", OlympaCorePermissions.SPIGOT_CONFIG_COMMAND);
+		super(plugin, "config", "Gère les configs spigot.", OlympaCorePermissions.SPIGOT_CONFIG_COMMAND);
 		addArgumentParser("CONFIGS", (sender, arg) -> CustomConfig.getConfigs().stream().map(CustomConfig::getName).collect(Collectors.toList()), x -> {
 			return CustomConfig.getConfig(x);
 		}, x -> String.format("&cLa config &4%s&c n'existe pas.", x));

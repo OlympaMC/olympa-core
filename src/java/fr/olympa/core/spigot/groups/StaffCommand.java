@@ -15,7 +15,7 @@ import fr.olympa.core.spigot.OlympaCore;
 public class StaffCommand extends OlympaCommand {
 
 	public StaffCommand(Plugin plugin) {
-		super(plugin, "staff", "Permet de voir le staff.", (OlympaSpigotPermission) null);
+		super(plugin, "staff", "Affiche une liste des joueurs du staff.", (OlympaSpigotPermission) null);
 		isAsynchronous = true;
 		allowConsole = false;
 	}

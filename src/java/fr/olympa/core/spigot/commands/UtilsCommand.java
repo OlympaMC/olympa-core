@@ -55,7 +55,7 @@ import net.minecraft.server.v1_16_R3.TileEntityTypes;
 public class UtilsCommand extends ComplexCommand {
 
 	public UtilsCommand(Plugin plugin) {
-		super(plugin, "utils", "Commandes diverses", OlympaCorePermissions.UTILS_COMMAND);
+		super(plugin, "utils", "Commandes de développement diverses.", OlympaCorePermissions.UTILS_COMMAND);
 
 		super.addArgumentParser("FILE", sender -> Arrays.stream(OlympaCore.getInstance().getDataFolder().listFiles()).map(File::getName).collect(Collectors.toList()), x -> new File(OlympaCore.getInstance().getDataFolder(), x), null);
 		super.addArgumentParser("REGION", sender -> new ArrayList<>(OlympaCore.getInstance().getRegionManager().getTrackedRegions().keySet()), OlympaCore.getInstance().getRegionManager().getTrackedRegions()::get,
