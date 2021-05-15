@@ -73,11 +73,11 @@ public class DataManagmentListener implements Listener {
 			}
 			if (i == 5 || i == 8) {
 				olympaPlayer = olympaAccount.getFromRedis();
-				LinkSpigotBungee.Provider.link.sendMessage("&4OlympaPlayer de %s pas encore trouvé, essaye de récupérer via redis n°%d résultat: %s", uuid, i + 1, olympaPlayer != null);
+				LinkSpigotBungee.Provider.link.sendMessage("&4OlympaPlayer de %s pas encore trouvé, tentative de le récupérer via redis n°%d. Résultat: %s", uuid, i + 1, olympaPlayer != null);
 			} else if (i == 9)
 				try {
 					olympaPlayer = olympaAccount.fromDb();
-					LinkSpigotBungee.Provider.link.sendMessage("&4OlympaPlayer de %s pas encore trouvé, essaye de récupérer via bdd (risque de perte de données majeur) n°%d résultat: %s", uuid, i + 1, olympaPlayer != null);
+					LinkSpigotBungee.Provider.link.sendMessage("&4OlympaPlayer de %s pas encore trouvé, tentative de le récupérer via BDD (risque de perte de données majeure) n°%d. Résultat: %s", uuid, i + 1, olympaPlayer != null);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -102,13 +102,13 @@ public class DataManagmentListener implements Listener {
 		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
 
 		if (olympaPlayer == null) {
-			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur est impossible, contacte-vite le staff. \n§eCode d'erreur: §l#Nucléaire"));
+			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur ne peut normalement pas se produire, contacte vite le staff. \n§eCode d'erreur: §l#NucléaireHigh"));
 			event.setJoinMessage(null);
 			return;
 		}
 		event.setJoinMessage(ColorUtils.color(String.format("&7[&a+&7] %s", olympaPlayer.getNameWithPrefix())));
 		OlympaCore instance = OlympaCore.getInstance();
-		instance.sendMessage("&eDebug Player version of %s is %s.", player.getName(), instance.getVersionHandler().getVersion(player).getName());
+		instance.sendMessage("Version de §6%s§e : §6%s.", player.getName(), instance.getVersionHandler().getVersion(player).getName());
 		//		 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, Reflection.getPlayerConnection(player)));
 
 	}
@@ -119,7 +119,7 @@ public class DataManagmentListener implements Listener {
 		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
 
 		if (olympaPlayer == null) {
-			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur est impossible, contacte-vite le staff. \n§eCode d'erreur: §l#Nucléaire"));
+			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur ne peut normalement pas se produire, contacte vite le staff. \n§eCode d'erreur: §l#NucléaireHighest"));
 			event.setJoinMessage(null);
 			return;
 		}
@@ -137,17 +137,11 @@ public class DataManagmentListener implements Listener {
 
 			} catch (SQLException e) {
 				e.printStackTrace();
-				OlympaCore.getInstance().getTask().runTask(() -> {
-					player.kickPlayer(SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotJoin"));
-					event.setJoinMessage(null);
-				});
+				OlympaCore.getInstance().getTask().runTask(() -> player.kickPlayer(SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SQLSpigotJoin")));
 				return;
 			} catch (Exception e) {
 				e.printStackTrace();
-				OlympaCore.getInstance().getTask().runTask(() -> {
-					player.kickPlayer(SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SpigotJoin"));
-					event.setJoinMessage(null);
-				});
+				OlympaCore.getInstance().getTask().runTask(() -> player.kickPlayer(SpigotUtils.connectScreen("§cUne erreur est survenue. \n\n§e§lMerci de la signaler au staff.\n§eCode d'erreur: §l#SpigotJoin")));
 				return;
 			}
 		});
@@ -170,7 +164,7 @@ public class DataManagmentListener implements Listener {
 		AccountProvider account = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = account.getFromCache();
 		if (olympaPlayer != null) {
-			//MySQL.savePlayerPluginDatas(olympaPlayer); maintenant c'est update en temps-réel
+			olympaPlayer.unloaded();
 			account.saveToRedis(olympaPlayer);
 			account.removeFromCache();
 		}

@@ -434,6 +434,9 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 	public void loaded() {}
 
 	@Override
+	public void unloaded() {}
+	
+	@Override
 	public void removeGroup(OlympaGroup group) {
 		groups.remove(group);
 		updateGroups();

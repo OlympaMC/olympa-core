@@ -77,6 +77,7 @@ import fr.olympa.core.bungee.redis.receiver.site.SiteGroupChangeReceiver;
 import fr.olympa.core.bungee.security.BasicSecurityListener;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersListener;
+import fr.olympa.core.bungee.servers.commands.ListPlayerCommand;
 import fr.olympa.core.bungee.servers.commands.ListServerCommand;
 import fr.olympa.core.bungee.servers.commands.LobbyCommand;
 import fr.olympa.core.bungee.servers.commands.RestartBungeeCommand;
@@ -198,6 +199,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		new PrivateMessageCommand(this).register();
 		new PrivateMessageToggleCommand(this).register();
 		new ListServerCommand(this).register();
+		new ListPlayerCommand(this).register();
 		new MaintenanceCommand(this).register();
 		new LoginCommand(this).register().registerPreProcess();
 		new RegisterCommand(this).register().registerPreProcess();

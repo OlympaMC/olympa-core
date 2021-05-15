@@ -61,6 +61,7 @@ public class OlympaCorePermissions {
 	public static final OlympaBungeePermission STAFF_CHAT = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 
 	public static final OlympaBungeePermission SERVER_LIST_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaBungeePermission PLAYER_LIST_COMMAND = new OlympaBungeePermission(OlympaGroup.DEV);
 	public static final OlympaBungeePermission SERVER_START_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaBungeePermission SERVER_RESTART_BUNGEE_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaSpigotPermission SERVER_RESTART_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
