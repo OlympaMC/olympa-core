@@ -12,6 +12,7 @@ import fr.olympa.api.server.OlympaServer;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
+import fr.olympa.core.bungee.redis.receiver.SpigotPlayerPack;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -131,6 +132,7 @@ public class OlympaLoginListener implements Listener {
 	@EventHandler
 	public void onServerConnected(ServerConnectedEvent event) {
 		ProxiedPlayer player = event.getPlayer();
+		SpigotPlayerPack.serverConnected(player, event.getServer());
 		ServersConnection.removeTryToConnect(player, true);
 		CachePlayer cache = DataHandler.get(player.getName());
 		if (cache != null) {

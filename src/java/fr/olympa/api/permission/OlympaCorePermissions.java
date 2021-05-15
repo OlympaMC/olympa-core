@@ -61,6 +61,7 @@ public class OlympaCorePermissions {
 	public static final OlympaBungeePermission STAFF_CHAT = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 
 	public static final OlympaBungeePermission SERVER_LIST_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaBungeePermission PLAYER_LIST_COMMAND = new OlympaBungeePermission(OlympaGroup.DEV);
 	public static final OlympaBungeePermission SERVER_START_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaBungeePermission SERVER_RESTART_BUNGEE_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaSpigotPermission SERVER_RESTART_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
@@ -96,6 +97,7 @@ public class OlympaCorePermissions {
 	public static final OlympaBungeePermission BUNGEE_COMMAND_SETTINGS = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaBungeePermission BUNGEE_COMMAND_ANTIBOT = new OlympaBungeePermission(OlympaGroup.RESP_BUILDER, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaBungeePermission BUNGEE_COMMAND_CACHE = new OlympaBungeePermission(OlympaGroup.RESP_TECH, OlympaGroup.ADMIN).lockPermission();
+	public static final OlympaBungeePermission BUNGEE_COMMAND_RESOURCE_PACK = new OlympaBungeePermission(OlympaGroup.RESP_TECH, OlympaGroup.ADMIN).lockPermission();
 	public static final OlympaSpigotPermission SPIGOT_COMMAND = new OlympaSpigotPermission(OlympaGroup.PLAYER);
 	public static final OlympaSpigotPermission SPIGOT_COMMAND_ANTIBOT = new OlympaSpigotPermission(OlympaGroup.RESP_BUILDER, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaSpigotPermission SPIGOT_COMMAND_CACHE = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, OlympaGroup.ADMIN).lockPermission();

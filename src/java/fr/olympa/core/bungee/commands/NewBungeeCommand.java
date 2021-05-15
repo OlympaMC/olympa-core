@@ -18,6 +18,7 @@ import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.antibot.AntiBotHandler;
 import fr.olympa.core.bungee.connectionqueue.QueueHandler;
 import fr.olympa.core.bungee.machine.BungeeInfo;
+import fr.olympa.core.bungee.redis.receiver.SpigotPlayerPack;
 import fr.olympa.core.bungee.security.SecurityHandler;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import fr.olympa.core.bungee.vpn.OlympaVpn;
@@ -292,4 +293,18 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 			break;
 		}
 	}
+	
+	@Cmd (permissionName = "BUNGEE_COMMAND_RESOURCE_PACK", min = 1, args = { "toggle|get" })
+	public void resourcePack(CommandContext cmd) {
+		switch (cmd.<String>getArgument(0)) {
+		case "toggle":
+			sendSuccess("La gestion des resources packs est désormais %s§a.", (SpigotPlayerPack.enabled = !SpigotPlayerPack.enabled) ? "§aactivée" : "§cdésactivée");
+			break;
+		case "get":
+			sendInfo("Resource pack vides envoyés : %d", SpigotPlayerPack.emptySent);
+			sendInfo("Joueurs ayant un resource pack de serveur : %d", SpigotPlayerPack.hasPack.size());
+			break;
+		}
+	}
+	
 }

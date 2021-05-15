@@ -68,6 +68,7 @@ import fr.olympa.core.bungee.redis.receiver.SpigotAskMonitorInfoReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotAskServerNameReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotGroupChangeReceiverOnBungee;
 import fr.olympa.core.bungee.redis.receiver.SpigotOlympaPlayerReceiver;
+import fr.olympa.core.bungee.redis.receiver.SpigotPlayerPack;
 import fr.olympa.core.bungee.redis.receiver.SpigotReportReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotServerChangeStatusReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotServerSwitchReceiver;
@@ -76,6 +77,7 @@ import fr.olympa.core.bungee.redis.receiver.site.SiteGroupChangeReceiver;
 import fr.olympa.core.bungee.security.BasicSecurityListener;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersListener;
+import fr.olympa.core.bungee.servers.commands.ListPlayerCommand;
 import fr.olympa.core.bungee.servers.commands.ListServerCommand;
 import fr.olympa.core.bungee.servers.commands.LobbyCommand;
 import fr.olympa.core.bungee.servers.commands.RestartBungeeCommand;
@@ -197,6 +199,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		new PrivateMessageCommand(this).register();
 		new PrivateMessageToggleCommand(this).register();
 		new ListServerCommand(this).register();
+		new ListPlayerCommand(this).register();
 		new MaintenanceCommand(this).register();
 		new LoginCommand(this).register().registerPreProcess();
 		new RegisterCommand(this).register().registerPreProcess();
@@ -334,6 +337,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 			registerRedisSub(redisAccess.connect(), new BungeeCommandReceiver(), RedisChannel.BUNGEE_COMMAND.name());
 			registerRedisSub(redisAccess.connect(), new SpigotServerSwitchReceiver2(), RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER2.name());
 			registerRedisSub(redisAccess.connect(), new SpigotAskMonitorInfoReceiver(), RedisChannel.SPIGOT_ASK_SERVERINFO.name());
+			registerRedisSub(redisAccess.connect(), new SpigotPlayerPack(), RedisChannel.SPIGOT_PLAYER_RESOUREPACK.name());
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)

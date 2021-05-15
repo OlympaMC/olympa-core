@@ -402,4 +402,10 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		this.status = status;
 		RedisSpigotSend.changeStatus(status);
 	}
+	
+	@Override
+	public void usesPack(Player p) {
+		RedisSpigotSend.sendPlayerPack(p);
+	}
+	
 }
