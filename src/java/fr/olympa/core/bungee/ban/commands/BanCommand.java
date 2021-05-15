@@ -7,7 +7,7 @@ import java.util.List;
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;
@@ -36,7 +36,7 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		switch (args.length) {
 		case 1:
-			return Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
+			return Utils.startWords(args[0], AccountProvider.getSQL().getNamesBySimilarName(args[0]));
 		case 2:
 			List<String> units = new ArrayList<>();
 			if (args[1].isBlank())

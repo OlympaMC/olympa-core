@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
@@ -28,7 +28,7 @@ public class UnbanIp {
 	public static void unBan(UUID author, CommandSender sender, String ip, String[] args) {
 		List<OlympaPlayer> olympaTargets;
 		try {
-			olympaTargets = MySQL.getPlayersByIp(ip);
+			olympaTargets = AccountProvider.getSQL().getPlayersByIp(ip);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return;

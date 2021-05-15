@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
@@ -28,7 +28,7 @@ public class IpHistory {
 		List<OlympaSanction> bans = BanMySQL.getSanctions(ip);
 		List<OlympaPlayer> players = null;
 		try {
-			players = MySQL.getPlayersByIp(ip);
+			players = AccountProvider.getSQL().getPlayersByIp(ip);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return;

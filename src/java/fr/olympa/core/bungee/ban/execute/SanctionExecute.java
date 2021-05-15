@@ -19,7 +19,6 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.BanMySQL;
@@ -191,7 +190,7 @@ public class SanctionExecute {
 			List<OlympaPlayer> olympaPlayers = null;
 			try {
 				if (t instanceof InetAddress)
-					olympaPlayers = MySQL.getPlayersByIp(((InetAddress) t).getHostAddress());
+					olympaPlayers = AccountProvider.getSQL().getPlayersByIp(((InetAddress) t).getHostAddress());
 				else {
 					OlympaPlayer olympaPlayer = null;
 					if (t instanceof UUID)

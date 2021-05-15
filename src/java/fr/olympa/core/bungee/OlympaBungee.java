@@ -407,5 +407,4 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	public void launchAsync(Runnable run) {
 		getTask().runTaskAsynchronously(run);
 	}
-
 }

@@ -11,7 +11,7 @@ import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -77,7 +77,7 @@ public class IpCommand extends BungeeComplexCommand {
 
 		Map<Boolean, List<OlympaPlayer>> all;
 		try {
-			all = MySQL.getPlayersByAllIp(potentielIP);
+			all = AccountProvider.getSQL().getPlayersByAllIp(potentielIP);
 		} catch (SQLException e) {
 			sendError(e);
 			e.printStackTrace();

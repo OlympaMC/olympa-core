@@ -15,7 +15,6 @@ import fr.olympa.api.chat.TxtComponentBuilder;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.BanMySQL;
@@ -48,7 +47,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 			try {
 				target = AccountProvider.get(args[0]);
 				if (target == null) {
-					sendUnknownPlayer(args[0], MySQL.getNamesBySimilarChars(args[0]));
+					sendUnknownPlayer(args[0], AccountProvider.getSQL().getNamesBySimilarChars(args[0]));
 					return;
 				}
 				targetProxied = ProxyServer.getInstance().getPlayer(target.getUniqueId());
@@ -122,7 +121,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 				OlympaVpn ipInfo = VpnHandler.get(ip);
 				List<String> users = ipInfo.getUsers();
 				users.remove(target.getName());
-				Map<Boolean, List<OlympaPlayer>> usersAll = MySQL.getPlayersByAllIp(ip);
+				Map<Boolean, List<OlympaPlayer>> usersAll = AccountProvider.getSQL().getPlayersByAllIp(ip);
 				List<OlympaPlayer> usersAllNow = usersAll.get(true);
 				usersAllNow.remove(target);
 				List<OlympaPlayer> usersAllHistory = usersAll.get(false);
@@ -153,7 +152,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		if (args.length == 1) {
 			List<String> postentielNames;
-			postentielNames = Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
+			postentielNames = Utils.startWords(args[0], AccountProvider.getSQL().getNamesBySimilarName(args[0]));
 			return postentielNames;
 		}
 		return new ArrayList<>();

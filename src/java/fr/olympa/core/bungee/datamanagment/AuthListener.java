@@ -11,10 +11,11 @@ import java.util.concurrent.TimeUnit;
 
 import fr.olympa.api.bungee.mojangapi.MojangAPI;
 import fr.olympa.api.bungee.mojangapi.objects.UuidResponse;
+import fr.olympa.api.bungee.player.CachePlayer;
+import fr.olympa.api.bungee.player.DataHandler;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.provider.BungeeNewPlayerEvent;
-import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -104,7 +105,7 @@ public class AuthListener implements Listener {
 
 				// Vérifie si le joueur n'a pas changé de nom.
 				try {
-					olympaPlayer = MySQL.getPlayerByPremiumUuid(uuidPremium);
+					olympaPlayer = AccountProvider.getSQL().getPlayerByPremiumUuid(uuidPremium);
 				} catch (SQLException e) {
 					e.printStackTrace();
 					event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#SQLBungeePreLogin"));
@@ -205,11 +206,11 @@ public class AuthListener implements Listener {
 				UUID uuidCrack = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(StandardCharsets.UTF_8));
 
 				// Vérifie que l'uuid n'est pas déjà utiliser
-				OlympaPlayer uuidAlreadyExist = MySQL.getPlayer(uuidCrack);
+				OlympaPlayer uuidAlreadyExist = AccountProvider.getSQL().getPlayer(uuidCrack);
 				if (uuidAlreadyExist != null)
 					do {
 						uuidCrack = UUID.randomUUID();
-						uuidAlreadyExist = MySQL.getPlayer(uuidCrack);
+						uuidAlreadyExist = AccountProvider.getSQL().getPlayer(uuidCrack);
 					} while (uuidAlreadyExist != null);
 
 				olympaAccount = new AccountProvider(uuidCrack);

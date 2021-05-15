@@ -27,7 +27,6 @@ import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.api.utils.UtilsCore;
@@ -66,7 +65,7 @@ public class GroupCommand extends OlympaCommand {
 				try {
 					olympaTarget = AccountProvider.get(args[0]);
 					if (olympaTarget == null) {
-						this.sendUnknownPlayer(args[0], MySQL.getNamesBySimilarName(args[0]));
+						this.sendUnknownPlayer(args[0], AccountProvider.getSQL().getNamesBySimilarName(args[0]));
 						return true;
 					} else
 						olympaAccount = new AccountProvider(olympaTarget.getUniqueId());
@@ -205,7 +204,7 @@ public class GroupCommand extends OlympaCommand {
 			List<String> potentialArgs = new ArrayList<>();
 			potentialArgs.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
 			if (args[0].length() > 2)
-				potentialArgs.addAll(MySQL.getNamesBySimilarName(args[0]));
+				potentialArgs.addAll(AccountProvider.getSQL().getNamesBySimilarName(args[0]));
 			return Utils.startWords(args[0], potentialArgs);
 		} else if (args.length == 2)
 			return Utils.startWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toList()));

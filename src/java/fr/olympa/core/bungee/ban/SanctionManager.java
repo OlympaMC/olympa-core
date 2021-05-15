@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
@@ -81,7 +80,7 @@ public class SanctionManager {
 				break;
 			case BANIP:
 				onlineTargets = ProxyServer.getInstance().getPlayers().stream().filter(t2 -> t2.getAddress().getAddress().getHostAddress().equals(target)).collect(Collectors.toList());
-				playersNames = MySQL.getPlayersByIp((String) target).stream().map(OlympaPlayer::getName).collect(Collectors.toList());
+				playersNames = AccountProvider.getSQL().getPlayersByIp((String) target).stream().map(OlympaPlayer::getName).collect(Collectors.toList());
 				break;
 			default:
 				return false;

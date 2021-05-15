@@ -6,7 +6,7 @@ import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
@@ -67,7 +67,7 @@ public class UnbanCommand extends BungeeCommand {
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		switch (args.length) {
 		case 1:
-			return Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
+			return Utils.startWords(args[0], AccountProvider.getSQL().getNamesBySimilarName(args[0]));
 		case 2:
 			List<String> reasons = Arrays.asList("Demande de démute acceptée", "Erreur", "Tromper de Joueur", "Augmentation de peine", "Réduction de peine");
 			return Utils.startWords(args[1], reasons);

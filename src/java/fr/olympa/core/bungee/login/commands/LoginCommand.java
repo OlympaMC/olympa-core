@@ -3,12 +3,12 @@ package fr.olympa.core.bungee.login.commands;
 import java.sql.SQLException;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
+import fr.olympa.api.bungee.player.DataHandler;
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.SanctionManager;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
-import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.HandlerLogin;
 import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.utils.BungeeUtils;

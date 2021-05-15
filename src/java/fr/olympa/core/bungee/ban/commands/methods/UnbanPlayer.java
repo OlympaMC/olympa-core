@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.sql.MySQL;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
@@ -43,7 +42,7 @@ public class UnbanPlayer {
 			if (target != null)
 				olympaTarget = new AccountProvider(target.getUniqueId()).get();
 			else {
-				olympaTarget = MySQL.getPlayer(targetUUID);
+				olympaTarget = AccountProvider.getSQL().getPlayer(targetUUID);
 				if (olympaTarget == null) {
 					sender.sendMessage(config.getString("ban.messages.playerneverjoin").replace("%player%", args[0]));
 					return;

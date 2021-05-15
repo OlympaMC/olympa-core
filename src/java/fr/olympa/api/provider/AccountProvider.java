@@ -22,7 +22,6 @@ import fr.olympa.api.player.OlympaPlayerInformations;
 import fr.olympa.api.player.OlympaPlayerProvider;
 import fr.olympa.api.redis.RedisAccess;
 import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.sql.SQLClass;
 import fr.olympa.api.sql.SQLColumn;
 import fr.olympa.api.sql.SQLTable;
 import fr.olympa.api.utils.CacheStats;
@@ -43,9 +42,15 @@ public class AccountProvider implements OlympaAccount {
 	private static SQLTable<? extends OlympaPlayer> pluginPlayerTable = null;
 
 	private static SQLTable<OlympaPlayerObject> olympaPlayerTable;
+	private static MySQL playerSQL;
 
-	public static void init(SQLClass sqlClass) throws SQLException {
+	public static MySQL getSQL() {
+		return playerSQL;
+	}
+
+	public static void init(MySQL sqlClass) throws SQLException {
 		olympaPlayerTable = new SQLTable<>(sqlClass.getTableCleanName(), OlympaPlayerObject.COLUMNS).createOrAlter();
+		playerSQL = sqlClass;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -95,15 +100,15 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	public static OlympaPlayer getFromDatabase(String name) throws SQLException {
-		return MySQL.getPlayer(name);
+		return playerSQL.getPlayer(name);
 	}
 
 	public static OlympaPlayer getFromDatabase(UUID uuid) throws SQLException {
-		return MySQL.getPlayer(uuid);
+		return playerSQL.getPlayer(uuid);
 	}
 
 	public static OlympaPlayer getFromDatabase(long id) throws SQLException {
-		return MySQL.getPlayer(id);
+		return playerSQL.getPlayer(id);
 	}
 
 	public static OlympaPlayer getFromRedis(String name) {
@@ -130,7 +135,7 @@ public class AccountProvider implements OlympaAccount {
 		OlympaPlayerInformations info = cachedInformations.get(id);
 		if (info == null)
 			try {
-				info = MySQL.getPlayerInformations(id);
+				info = playerSQL.getPlayerInformations(id);
 				cachedInformations.put(id, info);
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -142,7 +147,7 @@ public class AccountProvider implements OlympaAccount {
 		OlympaPlayerInformations info = cachedInformations.values().stream().filter(opi -> opi.getUUID().equals(uuid)).findFirst().orElse(null);
 		if (info == null)
 			try {
-				info = MySQL.getPlayerInformations(uuid);
+				info = playerSQL.getPlayerInformations(uuid);
 				if (info != null)
 					cachedInformations.put(info.getId(), info);
 			} catch (SQLException e) {
@@ -155,7 +160,7 @@ public class AccountProvider implements OlympaAccount {
 		OlympaPlayerInformations info = cachedInformations.values().stream().filter(opi -> opi.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
 		if (info == null)
 			try {
-				info = MySQL.getPlayerInformations(name);
+				info = playerSQL.getPlayerInformations(name);
 				if (info != null)
 					cachedInformations.put(info.getId(), info);
 			} catch (SQLException e) {
@@ -254,7 +259,7 @@ public class AccountProvider implements OlympaAccount {
 	}
 
 	public OlympaPlayer fromDb() throws SQLException {
-		return MySQL.getPlayer(uuid);
+		return playerSQL.getPlayer(uuid);
 	}
 
 	@Override
