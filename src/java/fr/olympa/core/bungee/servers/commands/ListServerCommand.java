@@ -14,7 +14,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class ListServerCommand extends BungeeCommand {
 
 	public ListServerCommand(Plugin plugin) {
-		super(plugin, "listserv", OlympaCorePermissions.SERVER_LIST_COMMAND, "listserver");
+		super(plugin, "listserver", OlympaCorePermissions.SERVER_LIST_COMMAND);
 	}
 
 	@Override
