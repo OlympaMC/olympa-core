@@ -29,10 +29,46 @@ public class MySQL implements PlayerSQL {
 	DbConnection dbConnection;
 	String table;
 
+	private OlympaStatement getNameFromUUIDStatement;
+	private OlympaStatement getPlayerInformationsByIdStatement;
+	private OlympaStatement getPlayerInformationsByNameStatement;
+	private OlympaStatement getPlayerInformationsByUUIDStatement;
+	private OlympaStatement getPlayerByIdStatement;
+	private OlympaStatement getPlayerByPseudoStatement;
+	private OlympaStatement getPlayerByUUIDServerStatement;
+	private OlympaStatement getPlayerByUUIDPremiumStatement;
+	private OlympaStatement getPlayerByTS3Statement;
+	private OlympaStatement getPlayersByIPStatement;
+	private OlympaStatement getPlayersByIPHistoryStatement;
+	private OlympaStatement getPlayersByAllIPStatement;
+	private OlympaStatement getPlayersByNameHistoryStatement;
+	private OlympaStatement getPlayersByRegexStatement;
+	private OlympaStatement getPlayersBySimilarNameStatement;
+	private OlympaStatement getNamesBySimilarName;
+	private OlympaStatement getDuplicatePasswordStatement;
+	private OlympaStatement playerExistStatement;
+
 	public MySQL(DbConnection dbConnection) {
 		this.dbConnection = dbConnection;
 		table = String.format("`%s`.`%s`", "commun", "players");
-		//		registerKeys(MySQL.class);
+		getNameFromUUIDStatement = new OlympaStatement("SELECT `pseudo` FROM " + table + " WHERE `uuid_server` = ?");
+		getPlayerInformationsByIdStatement = new OlympaStatement("SELECT `pseudo`, `uuid_server` FROM " + table + " WHERE `id` = ?");
+		getPlayerInformationsByNameStatement = new OlympaStatement("SELECT `id`, `pseudo`, `uuid_server` FROM " + table + " WHERE `pseudo` = ?");
+		getPlayerByIdStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `id` = ?");
+		getPlayerByPseudoStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `pseudo` = ?");
+		getPlayerByUUIDPremiumStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `uuid_premium` = ?");
+		getPlayerInformationsByUUIDStatement = new OlympaStatement("SELECT `pseudo`, `id` FROM " + table + " WHERE `uuid_server` = ?");
+		getPlayerByUUIDServerStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `uuid_server` = ?");
+		getPlayerByTS3Statement = new OlympaStatement("SELECT * FROM " + table + " WHERE `ts3_id` = ?");
+		getPlayersByIPStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `ip` = ?");
+		getPlayersByIPHistoryStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `ip_history` LIKE ?");
+		getPlayersByAllIPStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `ip` = ? OR `ip_history` LIKE ?");
+		getPlayersByNameHistoryStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `name_history` LIKE ?");
+		getPlayersByRegexStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `pseudo` REGEXP ?");
+		getPlayersBySimilarNameStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `pseudo` LIKE ?");
+		getNamesBySimilarName = new OlympaStatement("SELECT pseudo FROM " + table + " WHERE `pseudo` LIKE ?");
+		getDuplicatePasswordStatement = new OlympaStatement("SELECT * FROM " + table + " ORDER BY password HAVING COUNT(password) > 1");
+		playerExistStatement = new OlympaStatement("SELECT `id` FROM " + table + " WHERE `uuid_server` = ?");
 	}
 
 	public String getTable() {
@@ -42,8 +78,6 @@ public class MySQL implements PlayerSQL {
 	public String getTableCleanName() {
 		return table.replace("`", "");
 	}
-
-	private OlympaStatement getNameFromUUIDStatement = new OlympaStatement("SELECT `pseudo` FROM " + table + " WHERE `uuid_server` = ?");
 
 	/**
 	 * Récupère le nom exacte d'un joueur dans la base de données à l'aide de son
@@ -61,8 +95,6 @@ public class MySQL implements PlayerSQL {
 			return null;
 		}
 	}
-
-	private OlympaStatement getPlayerInformationsByIdStatement = new OlympaStatement("SELECT `pseudo`, `uuid_server` FROM " + table + " WHERE `id` = ?");
 
 	/**
 	 * Permet de récupérer les informations d'un joueur dans la base de données grâce à
@@ -82,8 +114,6 @@ public class MySQL implements PlayerSQL {
 		}
 	}
 
-	private OlympaStatement getPlayerInformationsByNameStatement = new OlympaStatement("SELECT `id`, `pseudo`, `uuid_server` FROM " + table + " WHERE `pseudo` = ?");
-
 	/**
 	 * Permet de récupérer les informations d'un joueur dans la base de données grâce à
 	 * son nom
@@ -101,8 +131,6 @@ public class MySQL implements PlayerSQL {
 			return opInfo;
 		}
 	}
-
-	private OlympaStatement getPlayerInformationsByUUIDStatement = new OlympaStatement("SELECT `pseudo`, `id` FROM " + table + " WHERE `uuid_server` = ?");
 
 	/**
 	 * Permet de récupérer les informations d'un joueur dans la base de données grâce à
@@ -122,8 +150,6 @@ public class MySQL implements PlayerSQL {
 		}
 	}
 
-	private OlympaStatement getPlayerByIdStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `id` = ?");
-
 	/**
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son id
@@ -142,8 +168,6 @@ public class MySQL implements PlayerSQL {
 		}
 	}
 
-	private OlympaStatement getPlayerByPseudoStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `pseudo` = ?");
-
 	/**
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son pseudo
@@ -161,8 +185,6 @@ public class MySQL implements PlayerSQL {
 			return op;
 		}
 	}
-
-	private OlympaStatement getPlayerByUUIDServerStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `uuid_server` = ?");
 
 	/**
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
@@ -183,8 +205,6 @@ public class MySQL implements PlayerSQL {
 		}
 	}
 
-	private OlympaStatement getPlayerByUUIDPremiumStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `uuid_premium` = ?");
-
 	/**
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
 	 * son uuid premium
@@ -202,8 +222,6 @@ public class MySQL implements PlayerSQL {
 			return olympaPlayer;
 		}
 	}
-
-	private OlympaStatement getPlayerByTS3Statement = new OlympaStatement("SELECT * FROM " + table + " WHERE `ts3_id` = ?");
 
 	/**
 	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
@@ -223,8 +241,6 @@ public class MySQL implements PlayerSQL {
 		}
 	}
 
-	private OlympaStatement getPlayersByIPStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `ip` = ?");
-
 	public List<OlympaPlayer> getPlayersByIp(String ip) throws SQLException {
 		try (PreparedStatement statement = getPlayersByIPStatement.createStatement()) {
 			statement.setString(1, ip);
@@ -237,8 +253,6 @@ public class MySQL implements PlayerSQL {
 		}
 	}
 
-	private OlympaStatement getPlayersByIPHistoryStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `ip_history` LIKE ?");
-
 	public List<OlympaPlayer> getPlayersByIpHistory(String ipHistory) throws SQLException {
 		try (PreparedStatement statement = getPlayersByIPHistoryStatement.createStatement()) {
 			statement.setString(1, "%" + ipHistory + "%");
@@ -250,8 +264,6 @@ public class MySQL implements PlayerSQL {
 			return olympaPlayers;
 		}
 	}
-
-	private OlympaStatement getPlayersByAllIPStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `ip` = ? OR `ip_history` LIKE ?");
 
 	public Map<Boolean, List<OlympaPlayer>> getPlayersByAllIp(String ipAlreadyUsed) throws SQLException {
 		try (PreparedStatement statement = getPlayersByAllIPStatement.createStatement()) {
@@ -268,8 +280,6 @@ public class MySQL implements PlayerSQL {
 		}
 	}
 
-	private OlympaStatement getPlayersByNameHistoryStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `name_history` LIKE ?");
-
 	@Override
 	public List<OlympaPlayer> getPlayersByNameHistory(String nameHistory) throws SQLException {
 		try (PreparedStatement statement = getPlayersByNameHistoryStatement.createStatement()) {
@@ -283,8 +293,6 @@ public class MySQL implements PlayerSQL {
 		}
 	}
 
-	private OlympaStatement getPlayersByRegexStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `pseudo` REGEXP ?");
-
 	@Override
 	public Set<OlympaPlayer> getPlayersByRegex(String regex) throws SQLException {
 		try (PreparedStatement statement = getPlayersByRegexStatement.createStatement()) {
@@ -297,8 +305,6 @@ public class MySQL implements PlayerSQL {
 			return olympaPlayers;
 		}
 	}
-
-	private OlympaStatement getPlayersBySimilarNameStatement = new OlympaStatement("SELECT * FROM " + table + " WHERE `pseudo` LIKE ?");
 
 	@Override
 	public Set<String> getPlayersBySimilarChars(String name) throws SQLException {
@@ -344,8 +350,6 @@ public class MySQL implements PlayerSQL {
 		}
 	}
 
-	private OlympaStatement getNamesBySimilarName = new OlympaStatement("SELECT pseudo FROM " + table + " WHERE `pseudo` LIKE ?");
-
 	@Override
 	public Set<String> getNamesBySimilarChars(String name) throws SQLException {
 		return getNamesBySimilarName(Utils.insertChar(name, "%"));
@@ -382,8 +386,6 @@ public class MySQL implements PlayerSQL {
 		return null;
 	}
 
-	private OlympaStatement getDuplicatePasswordStatement = new OlympaStatement("SELECT * FROM " + table + " ORDER BY password HAVING COUNT(password) > 1");
-
 	public Set<OlympaPlayer> getDuplicatePassword() throws SQLException {
 		try (PreparedStatement statement = getDuplicatePasswordStatement.createStatement()) {
 			Set<OlympaPlayer> olympaPlayers = new HashSet<>();
@@ -394,8 +396,6 @@ public class MySQL implements PlayerSQL {
 			return olympaPlayers;
 		}
 	}
-
-	private OlympaStatement playerExistStatement = new OlympaStatement("SELECT `id` FROM " + table + " WHERE `uuid_server` = ?");
 
 	@Override
 	public boolean playerExist(UUID playerUUID) throws SQLException {
@@ -445,61 +445,4 @@ public class MySQL implements PlayerSQL {
 		state.close();
 		return result;
 	}
-
-	/* Idée bof TODO
-	 private OlympaStatement getPlayerNamesStatement = new OlympaStatement("SELECT `pseudo` FROM " + table);
-	// Pour pas surcharger les requettes MySQL
-	// TODO -> cache redis pour le cache multi-server
-	Set<String> allPlayersNamesCache = null;
-
-	public Set<String> getAllPlayersNames() {
-		if (allPlayersNamesCache != null)
-			return allPlayersNamesCache;
-		Set<String> names = new HashSet<>();
-		try {
-			ResultSet resultSet = getPlayerNamesStatement.getStatement().executeQuery();
-			while (resultSet.next())
-				names.add(resultSet.getString(1));
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-		if (!names.isEmpty())
-			//			Only Spigot
-			//			OlympaCore.getInstance().getTask().runTaskLater("clearAllPlayersNamesCache", () -> allPlayersNamesCache = null, 10 * 60 * 20);
-			allPlayersNamesCache = names;
-		return names;
-	}*/
-
-	//	SQLKey id = new SQLKey((Function<OlympaPlayer, Long>) x -> x.getId(), x -> x.getKey().getLong(x.getValue()));
-	//	SQLKey pseudo = new SQLKey((Function<OlympaPlayer, String>) x -> x.getName(), x -> x.getKey().getString(x.getValue()));
-	//	SQLKey uuid_server = new SQLKey((Function<OlympaPlayer, UUID>) x -> x.getUniqueId(), x -> (UUID) RegexMatcher.UUID.parse(x.getKey().getString(x.getValue())));
-	//	SQLKey uuid_premium = new SQLKey((Function<OlympaPlayer, UUID>) x -> x.getPremiumUniqueId(), (SetFunction<Entry<ResultSet, String>, UUID>) uuid_server.set, true);
-	//	SQLKey groups = new SQLKey((Function<OlympaPlayer, String>) x -> x.getGroupsToString());
-	//	SQLKey email = new SQLKey((Function<OlympaPlayer, String>) x -> x.getEmail());
-	//	SQLKey password = new SQLKey((Function<OlympaPlayer, String>) x -> x.getPassword());
-	//	SQLKey money = new SQLKey((Function<OlympaPlayer, Integer>) x -> x.getMoney());
-	//	SQLKey ip = new SQLKey((Function<OlympaPlayer, String>) x -> x.getIp());
-	//	SQLKey created = new SQLKey((Function<OlympaPlayer, Long>) x -> x.getFirstConnection());
-	//	SQLKey last_connection = new SQLKey((Function<OlympaPlayer, Timestamp>) x -> new Timestamp(x.getLastConnection() * 1000L));
-	//	SQLKey ts3_id = new SQLKey((Function<OlympaPlayer, Integer>) x -> x.getTeamspeakId());
-	//	SQLKey name_history = new SQLKey((Function<OlympaPlayer, String>) x -> GsonCustomizedObjectTypeAdapter.GSON.toJson(x.getHistHame()));
-	//	SQLKey ip_history = new SQLKey((Function<OlympaPlayer, String>) x -> GsonCustomizedObjectTypeAdapter.GSON.toJson(x.getHistIp()));
-	//	SQLKey gender = new SQLKey((Function<OlympaPlayer, Integer>) x -> x.getGender().ordinal());
-	//	SQLKey vanish = new SQLKey((Function<OlympaPlayer, Boolean>) x -> x.isVanish());
-
-	//	private Map<String, SQLKey> tablesKeys;
-	//
-	//	private void registerKeys(Class<? extends SQLClass> clazz) {
-	//		for (Field field : clazz.getDeclaredFields())
-	//			if (field.getType().isAssignableFrom(SQLKey.class)) {
-	//				System.out.println("Field : " + field.getName());
-	//				try {
-	//					tablesKeys.put(field.getName(), (SQLKey) field.get(null));
-	//				} catch (IllegalArgumentException | IllegalAccessException e) {
-	//					e.printStackTrace();
-	//				}
-	//			}
-	//
-	//	}
 }

@@ -7,13 +7,13 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import fr.olympa.api.bungee.customevent.OlympaPlayerLoginEvent;
 import fr.olympa.api.match.RegexMatcher;
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.PendingConnection;

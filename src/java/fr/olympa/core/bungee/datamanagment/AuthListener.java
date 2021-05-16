@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import fr.olympa.api.bungee.customevent.OlympaPlayerLoginEvent;
 import fr.olympa.api.bungee.mojangapi.MojangAPI;
 import fr.olympa.api.bungee.mojangapi.objects.UuidResponse;
 import fr.olympa.api.bungee.player.CachePlayer;
@@ -20,7 +21,6 @@ import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.antibot.AntiBotHandler;
-import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.security.SecurityHandler;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
