@@ -27,24 +27,35 @@ public class BungeePackets {
 		regPacket.setAccessible(true);
 	}
 	
-	private static <P extends DefinedPacket> void regPacket(Class<P> packetClass, Supplier<P> constructor, int protocol, int id) throws ReflectiveOperationException {
-		Object[] array = (Object[]) Array.newInstance(protocolMapping, 1);
-		array[0] = map.invoke(null, protocol, id);
+	private static <P extends DefinedPacket> void regPacket(Class<P> packetClass, Supplier<P> constructor, ProtocolMapping... mappings) throws ReflectiveOperationException {
+		Object[] array = (Object[]) Array.newInstance(protocolMapping, mappings.length);
+		int i = 0;
+		for (ProtocolMapping mapping : mappings) array[i++] = map.invoke(null, mapping.protocol, mapping.id);
 		regPacket.invoke(TO_CLIENT, packetClass, constructor, array);
 	}
 	
 	public static void registerPackets() throws ReflectiveOperationException {
 		processReflexion();
 		
-		regPacket(ResourcePackSendPacket.class, ResourcePackSendPacket::new, ProtocolAPI.V1_8.getProtocolNumber(), 0x48);
-		regPacket(ResourcePackSendPacket.class, ResourcePackSendPacket::new, ProtocolAPI.V1_9.getProtocolNumber(), 0x32);
-		regPacket(ResourcePackSendPacket.class, ResourcePackSendPacket::new, ProtocolAPI.V1_12.getProtocolNumber(), 0x33);
-		regPacket(ResourcePackSendPacket.class, ResourcePackSendPacket::new, ProtocolAPI.V1_12_1.getProtocolNumber(), 0x34);
-		regPacket(ResourcePackSendPacket.class, ResourcePackSendPacket::new, ProtocolAPI.V1_13.getProtocolNumber(), 0x37);
-		regPacket(ResourcePackSendPacket.class, ResourcePackSendPacket::new, ProtocolAPI.V1_14.getProtocolNumber(), 0x39);
-		regPacket(ResourcePackSendPacket.class, ResourcePackSendPacket::new, ProtocolAPI.V1_15.getProtocolNumber(), 0x3A);
-		regPacket(ResourcePackSendPacket.class, ResourcePackSendPacket::new, ProtocolAPI.V1_16.getProtocolNumber(), 0x39);
-		regPacket(ResourcePackSendPacket.class, ResourcePackSendPacket::new, ProtocolAPI.V1_16_2.getProtocolNumber(), 0x38);
+		regPacket(ResourcePackSendPacket.class, ResourcePackSendPacket::new,
+				new ProtocolMapping(ProtocolAPI.V1_8, 0x48),
+				new ProtocolMapping(ProtocolAPI.V1_9, 0x32),
+				new ProtocolMapping(ProtocolAPI.V1_12, 0x33),
+				new ProtocolMapping(ProtocolAPI.V1_12_1, 0x34),
+				new ProtocolMapping(ProtocolAPI.V1_13, 0x37),
+				new ProtocolMapping(ProtocolAPI.V1_14, 0x39),
+				new ProtocolMapping(ProtocolAPI.V1_15, 0x3A),
+				new ProtocolMapping(ProtocolAPI.V1_16, 0x39),
+				new ProtocolMapping(ProtocolAPI.V1_16_2, 0x38));
+	}
+	
+	public static class ProtocolMapping {
+		private final int protocol, id;
+		
+		public ProtocolMapping(ProtocolAPI protocol, int id) {
+			this.protocol = protocol.getProtocolNumber();
+			this.id = id;
+		}
 	}
 	
 }
