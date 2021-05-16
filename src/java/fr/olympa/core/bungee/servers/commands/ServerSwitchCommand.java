@@ -18,7 +18,7 @@ public class ServerSwitchCommand extends BungeeComplexCommand {
 
 	}
 
-	@Cmd(otherArg = true, args = { "SERVERS", "PLAYERS" }, min = 1)
+	@Cmd (otherArg = true, args = { "SERVERS", "OLYMPA_PLAYERS" }, min = 1)
 	public void otherArg(CommandContext cmd) {
 		ProxiedPlayer target = null;
 		ServerInfo server = cmd.getArgument(0);
