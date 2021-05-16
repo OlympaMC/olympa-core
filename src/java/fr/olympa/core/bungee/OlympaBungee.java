@@ -58,6 +58,7 @@ import fr.olympa.core.bungee.maintenance.MaintenanceCommand;
 import fr.olympa.core.bungee.maintenance.MaintenanceListener;
 import fr.olympa.core.bungee.motd.MotdListener;
 import fr.olympa.core.bungee.nick.NickCommand;
+import fr.olympa.core.bungee.packets.BungeePackets;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageCommand;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageListener;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageToggleCommand;
@@ -269,6 +270,12 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
 		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
+		
+		try {
+			BungeePackets.registerPackets();
+		}catch (ReflectiveOperationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

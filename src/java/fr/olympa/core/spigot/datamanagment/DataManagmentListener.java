@@ -129,11 +129,14 @@ public class DataManagmentListener implements Listener {
 				if (player.isOnline()) {
 					if (AccountProvider.loadPlayerDatas(olympaPlayer))
 						Bukkit.broadcastMessage("§d§k##§6 Bienvenue au joueur " + olympaPlayer.getGroup().getColor() + "§l" + player.getName() + "§6 qui rejoint le serveur ! §d§k##");
-
-					OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
-					Bukkit.getPluginManager().callEvent(loginevent);
+					
+					if (player.isOnline()) {
+						OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
+						Bukkit.getPluginManager().callEvent(loginevent);
+					}else
+						OlympaCore.getInstance().sendMessage("§c⚠ Le joueur %s s'est déconnecté avant que son OlympaPlayer ne soit complètement chargé.", player.getName());
 				} else
-					OlympaCore.getInstance().sendMessage("§c⚠ Le joueur %s s'est déconnecté avant que son OlympaPlayer ne soit complètement chargé.", player.getName());
+					OlympaCore.getInstance().sendMessage("§c⚠ Le joueur %s s'est déconnecté avant que son OlympaPlayer n'ait tenté de se charger.", player.getName());
 
 			} catch (SQLException e) {
 				e.printStackTrace();

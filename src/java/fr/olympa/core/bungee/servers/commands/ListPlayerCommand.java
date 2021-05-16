@@ -34,7 +34,10 @@ public class ListPlayerCommand extends BungeeCommand {
 			servers.computeIfAbsent(MonitorServers.getMonitor(player.getServer().getInfo()), server -> new ArrayList<>()).add(player);
 		});
 		
-		servers.forEach((server, players) -> {
+		servers.entrySet().stream().sorted((o1, o2) -> Integer.compare(o2.getValue().size(), o1.getValue().size())).forEach(entry -> {
+			MonitorInfoBungee server = entry.getKey();
+			List<ProxiedPlayer> players = entry.getValue();
+			
 			TxtComponentBuilder out2 = new TxtComponentBuilder().extraSpliter(" ");
 			
 			out2.extra("§7[%s§7]", server.getStatus().getNameColored());

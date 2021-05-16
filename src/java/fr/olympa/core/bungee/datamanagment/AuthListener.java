@@ -21,6 +21,7 @@ import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.antibot.AntiBotHandler;
+import fr.olympa.core.bungee.redis.receiver.SpigotPlayerPack;
 import fr.olympa.core.bungee.security.SecurityHandler;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
@@ -290,6 +291,7 @@ public class AuthListener implements Listener {
 			olympaAccount.removeFromRedis();
 			//olympaAccount.saveToDb(olympaPlayer);
 		}, 4, TimeUnit.SECONDS);
+		SpigotPlayerPack.playerLeaves(player);
 		OlympaBungee.getInstance().sendMessage("§7Déconnexion du joueur §e" + player.getName() + (event.getPlayer().getServer() == null ? "" : " §7(serveur §6" + event.getPlayer().getServer().getInfo().getName() + "§7)"));
 	}
 

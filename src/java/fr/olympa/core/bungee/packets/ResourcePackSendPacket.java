@@ -1,4 +1,4 @@
-package fr.olympa.core.bungee.utils;
+package fr.olympa.core.bungee.packets;
 
 import java.beans.ConstructorProperties;
 import java.util.Locale;
@@ -32,6 +32,10 @@ import net.md_5.bungee.protocol.DefinedPacket;
  * Created by Phoenix616 on 24.03.2015.
  */
 public class ResourcePackSendPacket extends DefinedPacket {
+	
+	static {
+		
+	}
 	
 	private String url;
 	private String hash;

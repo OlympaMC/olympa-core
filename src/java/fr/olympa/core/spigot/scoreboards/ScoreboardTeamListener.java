@@ -44,8 +44,8 @@ public class ScoreboardTeamListener implements Listener {
 			return;
 		
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
-		nameTagApi.callNametagUpdate(AccountProvider.get(player.getUniqueId()));
+		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
+		nameTagApi.callNametagUpdate(olympaPlayer);
 		List<OlympaPlayer> self = Arrays.asList(olympaPlayer);
 		for (OlympaPlayer other : AccountProvider.getAll())
 			if (other != olympaPlayer && other.getPlayer() != null && other.getPlayer().isOnline())

@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.packets.ResourcePackSendPacket;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersConnection;
-import fr.olympa.core.bungee.utils.ResourcePackSendPacket;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
@@ -40,6 +40,10 @@ public class SpigotPlayerPack extends JedisPubSub {
 				emptySent++;
 			}
 		}
+	}
+	
+	public static void playerLeaves(ProxiedPlayer player) {
+		hasPack.remove(player.getUniqueId());
 	}
 	
 }
