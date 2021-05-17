@@ -46,7 +46,11 @@ public class ListPlayerCommand extends BungeeCommand {
 			
 			for (int i = 0; i < players.size(); i++) {
 				ProxiedPlayer player = players.get(i);
-				OlympaPlayer oplayer = AccountProvider.get(player.getUniqueId());
+				OlympaPlayer oplayer;
+				AccountProvider account = new AccountProvider(player.getUniqueId());
+				oplayer = account.getFromCache();
+				if (oplayer == null) oplayer = account.getFromRedis();
+				
 				TxtComponentBuilder playerC;
 				if (oplayer == null) {
 					playerC = new TxtComponentBuilder("§f%s", player.getName()).onHoverText("Impossible de trouver un OlympaPlayer");

@@ -219,22 +219,19 @@ public class MotdListener implements Listener {
 			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§c[§6Beta&c] &e-> &binscrit-toi sur www.olympa.fr")));
 			break;
 		case CLOSE_BETA:
-			players.setSample(new PlayerInfoBuilder().append("").append("&cBêta Fermée").append("").append("&eSeul le staff et quelques amis")
-					.append("&eont accès au serveur.").append("").append(discord).append(teamspeak).append(twitter).append(site).append("").build());
-			//			players.setSample(new ServerPing.PlayerInfo[] {
-			//					new ServerPing.PlayerInfo(prefix, UUID.randomUUID()),
-			//					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-			//					new ServerPing.PlayerInfo("§cPremière Bêta Fermée", UUID.randomUUID()),
-			//					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-			//					new ServerPing.PlayerInfo("§eSeul le staff et quelques amis", UUID.randomUUID()),
-			//					new ServerPing.PlayerInfo("§eont accès au serveur.", UUID.randomUUID()),
-			//					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-			//					new ServerPing.PlayerInfo(teamspeak, UUID.randomUUID()),
-			//					new ServerPing.PlayerInfo(twitter, UUID.randomUUID()),
-			//					new ServerPing.PlayerInfo(discord, UUID.randomUUID()),
-			//					new ServerPing.PlayerInfo(site, UUID.randomUUID()),
-			//					new ServerPing.PlayerInfo("", UUID.randomUUID()),
-			//					new ServerPing.PlayerInfo(suffix, UUID.randomUUID()), });
+			players.setSample(new PlayerInfoBuilder()
+					.append("")
+					.append("&cBêta Fermée")
+					.append("")
+					.append("&eSeul le staff et quelques amis")
+					.append("&eont accès au serveur.")
+					.append("")
+					.append(discord)
+					.append(teamspeak)
+					.append(twitter)
+					.append(site)
+					.append("")
+					.build());
 			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
 			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§6Bêta fermée")));
 			break;
