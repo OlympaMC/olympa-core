@@ -16,7 +16,7 @@ public class BungeeBroadcastCommand extends BungeeCommand {
 	
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		int i = broadcastToAll(Prefix.DEFAULT, String.join(" ", args));
+		int i = broadcastToAll(Prefix.BROADCAST_SERVER, String.join(" ", args));
 		sendSuccess("Message envoyé à %d entités (dont console).", i);
 	}
 	

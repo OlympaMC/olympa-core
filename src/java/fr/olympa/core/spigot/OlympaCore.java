@@ -28,6 +28,7 @@ import fr.olympa.api.command.essentials.InvseeCommand;
 import fr.olympa.api.command.essentials.ItemCommand;
 import fr.olympa.api.command.essentials.ListCommand;
 import fr.olympa.api.command.essentials.PingCommand;
+import fr.olympa.api.command.essentials.SayCommand;
 import fr.olympa.api.command.essentials.tp.TpCommand;
 import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.customevents.SpigotConfigReloadEvent;
@@ -264,6 +265,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new PluginCommand(this).registerPreProcess();
 		new HelpCommand(this).register().registerPreProcess();
 		new TpsCommand(this).registerPreProcess();
+		new SayCommand(this).registerPreProcess();
 		new UtilsCommand(this).register();
 		new GenderCommand(this).register();
 		gamemodeCommand = (GamemodeCommand) new GamemodeCommand(this).register().registerPreProcess();
