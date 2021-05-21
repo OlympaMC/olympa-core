@@ -67,8 +67,8 @@ public class VanishListener implements Listener {
 					PacketPlayOutPlayerInfo packet = (PacketPlayOutPlayerInfo) msg;
 					List<PlayerInfoData> infos = (List<PlayerInfoData>) datasField.get(packet);
 					for (PlayerInfoData data : infos) {
-						if (data.a().getId().equals(player.getUniqueId())) continue;
 						if (data.c() == EnumGamemode.SPECTATOR) {
+							if (data.a().getId().equals(player.getUniqueId())) continue;
 							modeField.set(data, EnumGamemode.ADVENTURE);
 						}
 					}
