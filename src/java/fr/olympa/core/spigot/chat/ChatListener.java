@@ -69,7 +69,7 @@ public class ChatListener implements Listener {
 		for (Entry<Player, String> entry : mentionned.entrySet()) {
 			Player target = entry.getKey();
 			String arg = entry.getValue();
-			String messageToTarget = new String(message);
+			String messageToTarget = message;
 			String format = event.getFormat();
 			do
 				messageToTarget = messageToTarget.replace(arg, "§6" + target.getName() + getChatColor(format));

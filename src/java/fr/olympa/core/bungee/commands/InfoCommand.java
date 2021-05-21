@@ -65,7 +65,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 		}
 
 		TextComponent out = new TextComponent();
-		TextComponent out2 = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_GOOD.formatMessage("§6Info ", target.getName())));
+		TextComponent out2 = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_GOOD.formatMessage("§6Info §e%s #%d", target.getName(), target.getId())));
 		out.addExtra(out2);
 		out.addExtra("\n");
 		out2 = new TextComponent(TextComponent.fromLegacyText("§3Première connexion : §b" + Utils.timestampToDuration(target.getFirstConnection())));

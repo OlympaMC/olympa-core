@@ -1,9 +1,13 @@
 package fr.olympa.core.spigot.vanish;
 
+import java.lang.reflect.Field;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
@@ -27,9 +31,27 @@ import org.bukkit.inventory.Inventory;
 import fr.olympa.api.vanish.IVanishApi;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.module.CoreModules;
+import io.netty.channel.ChannelDuplexHandler;
+import net.minecraft.server.v1_16_R3.EnumGamemode;
+import net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo.PlayerInfoData;
 
 public class VanishListener implements Listener {
 
+	private Field datasField;
+	private Field modeField;
+
+	public VanishListener() {
+		try {
+			datasField = PacketPlayOutPlayerInfo.class.getDeclaredField("b");
+			datasField.setAccessible(true);
+			modeField = PacketPlayOutPlayerInfo.PlayerInfoData.class.getDeclaredField("c");
+			modeField.setAccessible(true);
+		}catch (ReflectiveOperationException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
@@ -37,6 +59,23 @@ public class VanishListener implements Listener {
 		//		player.getActivePotionEffects().removeIf(p -> p.getType() == PotionEffectType.INVISIBILITY && p.getDuration() == 0);
 
 		CoreModules.VANISH.getApi().getVanished().forEach(vanishPlayer -> player.hidePlayer(plugin, vanishPlayer));
+		
+		if (datasField == null) return;
+		((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline().addBefore("packet_handler", "hide_spectators", new ChannelDuplexHandler() {
+			public void write(io.netty.channel.ChannelHandlerContext ctx, Object msg, io.netty.channel.ChannelPromise promise) throws Exception {
+				if (msg instanceof PacketPlayOutPlayerInfo) {
+					PacketPlayOutPlayerInfo packet = (PacketPlayOutPlayerInfo) msg;
+					List<PlayerInfoData> infos = (List<PlayerInfoData>) datasField.get(packet);
+					for (PlayerInfoData data : infos) {
+						if (data.a().getId().equals(player.getUniqueId())) continue;
+						if (data.c() == EnumGamemode.SPECTATOR) {
+							modeField.set(data, EnumGamemode.ADVENTURE);
+						}
+					}
+				}
+				super.write(ctx, msg, promise);
+			};
+		});
 	}
 
 	@EventHandler
