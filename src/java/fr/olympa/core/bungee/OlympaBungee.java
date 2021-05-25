@@ -23,7 +23,6 @@ import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.CacheStats;
-import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.commands.BanCommand;
 import fr.olympa.core.bungee.ban.commands.BanHistoryCommand;
 import fr.olympa.core.bungee.ban.commands.BanIpCommand;
@@ -109,7 +108,6 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	}
 
 	protected DbConnection database = null;
-	protected long uptime = Utils.getCurrentTimeInSeconds();
 	protected BungeeCustomConfig defaultConfig;
 	protected BungeeCustomConfig maintConfig;
 	private BungeeTaskManager task;
@@ -270,10 +268,10 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
 		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
-		
+
 		try {
 			BungeePackets.registerPackets();
-		}catch (ReflectiveOperationException e) {
+		} catch (ReflectiveOperationException e) {
 			e.printStackTrace();
 		}
 	}
@@ -402,16 +400,6 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	@Override
 	public BungeeTaskManager getTask() {
 		return task;
-	}
-
-	@Override
-	public String getUptime() {
-		return Utils.timestampToDuration(uptime);
-	}
-
-	@Override
-	public long getUptimeLong() {
-		return uptime;
 	}
 
 	@Override

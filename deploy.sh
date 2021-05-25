@@ -15,12 +15,16 @@
 # ./deploy.sh master
 # ./deploy.sh dev
 
+BASEDIR=$(dirname "$0")
+
 # DÉPENDANCES
-(cd /home/repo/olympaapi/ && sh ./deploy.sh $1
+
+cd /home/repo/olympaapi/ && sh ./deploy.sh $1
 if [ "$?" -ne 0 ]; then
 	echo -e "\e[91mErreur > Arrêt de la création des JAR\e[0m"; exit 1
 fi
-)
+
+cd $BASEDIR
 
 # PARAMETRES
 PLUGIN_NAME="core"
@@ -61,7 +65,8 @@ fi
 if [ -n "$DATE" ] && [ "$DATE" != "" ]; then
 	git checkout 'master@{$DATE}' --force
 elif [ -z "$BRANCH_NAME" ]; then
-	git checkout master --force
+	echo -e "\e[32mIl faut ajouter une branch en argument 1. Souvent dev ou master, marche aussi avec un commit.\e[0m"
+	exit 0
 fi
 if [ -n "$ACTUAL_COMMIT_ID" ] && [ -n "$ACTUAL_COMMIT_ID_API" ]; then
 	if [ "$ACTUAL_COMMIT_ID" = `git rev-parse HEAD` ]; then
