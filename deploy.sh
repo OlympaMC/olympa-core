@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ##   ____  _
 ##  / __ \| |
 ## | |  | | |_   _ _ __ ___  _ __   __ _
@@ -11,7 +11,6 @@
 ## Script to deploy api with good version
 ## Author > Tristiisch
 #
-# ./deploy.sh date "2021-02-26 18:30:00"
 # ./deploy.sh master
 # ./deploy.sh dev
 
@@ -24,7 +23,7 @@ ACTUAL_COMMIT_ID_API=`cat $BASEDIR/target/commitIdAPI`
 
 # DÉPENDANCES
 
-cd /home/repo/olympa-api/ && sh ./deploy.sh $1
+cd /home/repo/olympa-api/ && bash ./deploy.sh master justGitPull
 if [ "$?" -ne 0 ]; then
 	echo -e "\e[91mErreur > Arrêt du maven build du $PLUGIN_NAME\e[0m"; exit 1
 fi
@@ -32,40 +31,32 @@ fi
 cd $BASEDIR
 
 if [ -n "$1" ]; then
-	if [ -n "$2" ] && [ "$2" = "date" ]; then
-		DATE="$2"
-	else
-		BRANCH_NAME="$1"
-		SERV="$2"
-	fi
+	BRANCH_NAME="$1"
 else
-	echo -e "\e[0;36mTu peux choisir la version du $PLUGIN_NAME en ajoutant une date (ex './deploy.sh date \"2021-02-26 18:30:00\"') ou une branch (ex './deploy.sh dev').\e[0m"
+	echo -e "\e[0;36mTu dois choisir la version du $PLUGIN_NAME en ajoutant une branch (ex './deploy.sh $master')"
+	echo -e "un commit (ex './deploy.sh $(git rev-parse HEAD)').\e[0m"
+	exit 1
 fi
 git pull --all
 if [ "$?" -ne 0 ]; then
-	echo -e "\e[91mEchec du git pull pour $PLUGIN_NAME, tentative de git reset\e[0m"
-	git reset --hard HEAD
+	echo -e "\e[91mEchec du git pull pour $PLUGIN_NAME, tentative de git checkout\e[0m"
+	git checkout $BRANCH_NAME --force
 	if [ "$?" -ne 0 ]; then
-		echo -e "\e[91mEchec du git reset pour $PLUGIN_NAME ! Dernier build avec succès : $ACTUAL_COMMIT_ID\e[0m"; exit 1
+		echo -e "\e[91mEchec du git checkout pour $PLUGIN_NAME, tentative de git reset[0m"
+		git reset --hard HEAD
+		if [ "$?" -ne 0 ]; then
+			echo -e "\e[91mEchec du git reset pour $PLUGIN_NAME. Dernier build avec succès : $ACTUAL_COMMIT_ID\e[0m"; exit 1
+		fi
 	fi
 	git pull --all
 	if [ "$?" -ne 0 ]; then
-		echo -e "\e[91mEchec du git pull pour $PLUGIN_NAME ! Dernier build avec succès : $ACTUAL_COMMIT_ID\e[0m"; exit 1
+		echo -e "\e[91mEchec du git pull pour $PLUGIN_NAME. Dernier build avec succès : $ACTUAL_COMMIT_ID\e[0m"; exit 1
 	fi
-fi
-if [ -n "$BRANCH_NAME" ]; then
-	commit_id=`git rev-parse -q --verify $BRANCH_NAME`
-	if [ -n "$commit_id" ]; then
-		git checkout $commit_id --force
-	else
-		echo -e "\e[91mLa branch ou commit id $BRANCH_NAME n'existe pas pour $PLUGIN_NAME ! Dernier build avec succès : $ACTUAL_COMMIT_ID\e[0m"; exit 1
+else
+	git checkout $BRANCH_NAME --force
+	if [ "$?" -ne 0 ]; then
+		echo -e "\e[91mEchec du git checkout pour $PLUGIN_NAME. Dernier build avec succès : $ACTUAL_COMMIT_ID\e[0m"; exit 1
 	fi
-fi
-if [ -n "$DATE" ] && [ "$DATE" != "" ]; then
-	git checkout 'master@{$DATE}' --force
-elif [ -z "$BRANCH_NAME" ]; then
-	echo -e "\e[32mIl faut ajouter une branch en argument 1. Souvent dev ou master, marche aussi avec un commit.\e[0m"
-	exit 0
 fi
 if [ -n "$ACTUAL_COMMIT_ID" ] && [ -n "$ACTUAL_COMMIT_ID_API" ]; then
 	if [ "$ACTUAL_COMMIT_ID" = `git rev-parse HEAD` ]; then
@@ -77,7 +68,11 @@ if [ -n "$ACTUAL_COMMIT_ID" ] && [ -n "$ACTUAL_COMMIT_ID_API" ]; then
 		fi
 	fi
 fi
-gradle publishToMavenLocal
+if [[ "justGitPull" == *justGitPull ]]; then
+	echo -e "\e[32mLe $PLUGIN n'a pas été build, il a juste été git pull.\e[0m"; exit 0
+else
+	gradle publishToMavenLocal
+fi
 if [ "$?" -ne 0 ]; then
 	echo -e "\e[91mLe build du $PLUGIN_NAME a échoué ! Dernier build avec succès : $ACTUAL_COMMIT_ID\e[0m"; exit 1
 else
