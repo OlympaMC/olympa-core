@@ -77,7 +77,7 @@ if [ -n "$ACTUAL_COMMIT_ID" ] && [ -n "$ACTUAL_COMMIT_ID_API" ]; then
 		fi
 	fi
 fi
-mvn install
+gradle publishToMavenLocal
 if [ "$?" -ne 0 ]; then
 	echo -e "\e[91mLe build du $PLUGIN_NAME a échoué ! Dernier build avec succès : $ACTUAL_COMMIT_ID\e[0m"; exit 1
 else
