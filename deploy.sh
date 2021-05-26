@@ -24,7 +24,7 @@ ACTUAL_COMMIT_ID_API=`cat $BASEDIR/target/commitIdAPI`
 
 # DÉPENDANCES
 
-cd /home/repo/olympaapi/ && sh ./deploy.sh $1
+cd /home/repo/olympa-api/ && sh ./deploy.sh $1
 if [ "$?" -ne 0 ]; then
 	echo -e "\e[91mErreur > Arrêt du maven build du $PLUGIN_NAME\e[0m"; exit 1
 fi
