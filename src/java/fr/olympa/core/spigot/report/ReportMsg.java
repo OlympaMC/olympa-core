@@ -33,7 +33,7 @@ public class ReportMsg {
 		if (LinkSpigotBungee.Provider.link.isSpigot()) {
 			out = ReportUtils.getAlert(report, authorName, targetName, targetServer, OlympaCore.getInstance().getServerName());
 			Bukkit.getConsoleSender().spigot().sendMessage(out);
-			OlympaCorePermissions.REPORT_SEEREPORT.getPlayers(players -> players.forEach(p -> p.spigot().sendMessage(out)));
+			OlympaCorePermissions.REPORT_SEE_NOTIF.getPlayers(players -> players.forEach(p -> p.spigot().sendMessage(out)));
 		} else {
 			ProxyServer.getInstance().getConsole().sendMessage(ReportUtils.getAlert(report, authorName, targetName, targetServer, null));
 			OlympaCorePermissions.REPORT_SEEREPORT_OTHERSERV.getPlayersBungee(players -> {

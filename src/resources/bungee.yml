@@ -2,4 +2,4 @@ name: OlympaBungee
 main: fr.olympa.core.bungee.OlympaBungee
 author: Tristiisch, SkytAsul
 version: ${project.fullVersion}
-website: https://olympa.fr
+website: https://gitlab.com/olympa/olympacore

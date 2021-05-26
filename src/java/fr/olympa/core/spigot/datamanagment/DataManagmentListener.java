@@ -107,8 +107,8 @@ public class DataManagmentListener implements Listener {
 			return;
 		}
 		event.setJoinMessage(ColorUtils.color(String.format("&7[&a+&7] %s", olympaPlayer.getNameWithPrefix())));
-		OlympaCore instance = OlympaCore.getInstance();
-		instance.sendMessage("Version de §6%s§e : §6%s.", player.getName(), instance.getVersionHandler().getVersion(player).getName());
+		//OlympaCore instance = OlympaCore.getInstance();
+		//instance.sendMessage("Version de §6%s§e : §6%s.", player.getName(), instance.getVersionHandler().getVersion(player).getName());
 		//		 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, Reflection.getPlayerConnection(player)));
 
 	}
@@ -129,11 +129,11 @@ public class DataManagmentListener implements Listener {
 				if (player.isOnline()) {
 					if (AccountProvider.loadPlayerDatas(olympaPlayer))
 						Bukkit.broadcastMessage("§d§k##§6 Bienvenue au joueur " + olympaPlayer.getGroup().getColor() + "§l" + player.getName() + "§6 qui rejoint le serveur ! §d§k##");
-					
+
 					if (player.isOnline()) {
 						OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
 						Bukkit.getPluginManager().callEvent(loginevent);
-					}else
+					} else
 						OlympaCore.getInstance().sendMessage("§c⚠ Le joueur %s s'est déconnecté avant que son OlympaPlayer ne soit complètement chargé.", player.getName());
 				} else
 					OlympaCore.getInstance().sendMessage("§c⚠ Le joueur %s s'est déconnecté avant que son OlympaPlayer n'ait tenté de se charger.", player.getName());
