@@ -15,22 +15,21 @@
 # ./deploy.sh master
 # ./deploy.sh dev
 
+# PARAMETRES
+PLUGIN_NAME="core"
+USE_BRANCH="master dev"
 BASEDIR=$(dirname "$0")
+ACTUAL_COMMIT_ID=`cat $BASEDIR/target/commitId`
+ACTUAL_COMMIT_ID_API=`cat $BASEDIR/target/commitIdAPI`
 
 # DÉPENDANCES
 
 cd /home/repo/olympaapi/ && sh ./deploy.sh $1
 if [ "$?" -ne 0 ]; then
-	echo -e "\e[91mErreur > Arrêt de la création des JAR\e[0m"; exit 1
+	echo -e "\e[91mErreur > Arrêt du maven build du $PLUGIN_NAME\e[0m"; exit 1
 fi
 
 cd $BASEDIR
-
-# PARAMETRES
-PLUGIN_NAME="core"
-USE_BRANCH="master dev"
-ACTUAL_COMMIT_ID=`cat target/commitId`
-ACTUAL_COMMIT_ID_API=`cat target/commitIdAPI`
 
 if [ -n "$1" ]; then
 	if [ -n "$2" ] && [ "$2" = "date" ]; then
@@ -44,22 +43,22 @@ else
 fi
 git pull --all
 if [ "$?" -ne 0 ]; then
-	echo -e "\e[91mEchec du git pull, tentative de git reset\e[0m"
+	echo -e "\e[91mEchec du git pull pour $PLUGIN_NAME, tentative de git reset\e[0m"
 	git reset --hard HEAD
 	if [ "$?" -ne 0 ]; then
-		echo -e "\e[91mEchec du git reset !\e[0m" && rm target/commit*; exit 1
+		echo -e "\e[91mEchec du git reset pour $PLUGIN_NAME ! Dernier build avec succès : $ACTUAL_COMMIT_ID\e[0m"; exit 1
 	fi
 	git pull --all
 	if [ "$?" -ne 0 ]; then
-		echo -e "\e[91mEchec du git pull !\e[0m" && rm target/commit*; exit 1
+		echo -e "\e[91mEchec du git pull pour $PLUGIN_NAME ! Dernier build avec succès : $ACTUAL_COMMIT_ID\e[0m"; exit 1
 	fi
 fi
 if [ -n "$BRANCH_NAME" ]; then
-	exists=`git show-ref refs/heads/$BRANCH_NAME`
-	if [ -n "$exists" ]; then
-		git checkout $BRANCH_NAME --force
+	commit_id=`git rev-parse -q --verify $BRANCH_NAME`
+	if [ -n "$commit_id" ]; then
+		git checkout $commit_id --force
 	else
-		echo -e "\e[91mLa branch $BRANCH_NAME n'existe pas !\e[0m"; exit 1
+		echo -e "\e[91mLa branch ou commit id $BRANCH_NAME n'existe pas pour $PLUGIN_NAME ! Dernier build avec succès : $ACTUAL_COMMIT_ID\e[0m"; exit 1
 	fi
 fi
 if [ -n "$DATE" ] && [ "$DATE" != "" ]; then
@@ -80,7 +79,7 @@ if [ -n "$ACTUAL_COMMIT_ID" ] && [ -n "$ACTUAL_COMMIT_ID_API" ]; then
 fi
 mvn install
 if [ "$?" -ne 0 ]; then
-	echo -e "\e[91mLe build du $PLUGIN_NAME a échoué !\e[0m" && rm target/commit*; exit 1
+	echo -e "\e[91mLe build du $PLUGIN_NAME a échoué ! Dernier build avec succès : $ACTUAL_COMMIT_ID\e[0m"; exit 1
 else
 	echo `git rev-parse HEAD` > target/commitId
 	echo `cd ../olympaapi && git rev-parse HEAD` > target/commitIdAPI
