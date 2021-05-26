@@ -28,25 +28,29 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
+import com.mojang.authlib.GameProfile;
+
 import fr.olympa.api.vanish.IVanishApi;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.module.CoreModules;
 import io.netty.channel.ChannelDuplexHandler;
 import net.minecraft.server.v1_16_R3.EnumGamemode;
 import net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo.PlayerInfoData;
 
 public class VanishListener implements Listener {
 
 	private Field datasField;
 	private Field modeField;
+	private Field profileField;
 
 	public VanishListener() {
 		try {
 			datasField = PacketPlayOutPlayerInfo.class.getDeclaredField("b");
 			datasField.setAccessible(true);
-			modeField = PacketPlayOutPlayerInfo.PlayerInfoData.class.getDeclaredField("c");
+			modeField = Class.forName(PacketPlayOutPlayerInfo.class.getName() + "$PlayerInfoData").getDeclaredField("c");
 			modeField.setAccessible(true);
+			profileField = Class.forName(PacketPlayOutPlayerInfo.class.getName() + "$PlayerInfoData").getDeclaredField("a");
+			profileField.setAccessible(true);
 		}catch (ReflectiveOperationException ex) {
 			ex.printStackTrace();
 		}
@@ -65,10 +69,10 @@ public class VanishListener implements Listener {
 			public void write(io.netty.channel.ChannelHandlerContext ctx, Object msg, io.netty.channel.ChannelPromise promise) throws Exception {
 				if (msg instanceof PacketPlayOutPlayerInfo) {
 					PacketPlayOutPlayerInfo packet = (PacketPlayOutPlayerInfo) msg;
-					List<PlayerInfoData> infos = (List<PlayerInfoData>) datasField.get(packet);
-					for (PlayerInfoData data : infos) {
-						if (data.c() == EnumGamemode.SPECTATOR) {
-							if (data.a().getId().equals(player.getUniqueId())) continue;
+					List<Object> infos = (List<Object>) datasField.get(packet);
+					for (Object data : infos) {
+						if (modeField.get(data) == EnumGamemode.SPECTATOR) {
+							if (((GameProfile) profileField.get(data)).getId().equals(player.getUniqueId())) continue;
 							modeField.set(data, EnumGamemode.ADVENTURE);
 						}
 					}
