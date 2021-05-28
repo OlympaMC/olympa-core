@@ -110,6 +110,7 @@ jar {
 shadowJar{
 	archiveFileName = 'OlympaCore.jar'
 	destinationDirectory = file('build')
+    classifier = null
 }
 
 processResources {
