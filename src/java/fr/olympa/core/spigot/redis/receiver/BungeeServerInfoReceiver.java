@@ -32,7 +32,7 @@ public class BungeeServerInfoReceiver extends JedisPubSub {
 			newMonitorInfos.add(monitorInfo);
 		}
 		callbacksRegister.forEach(c -> c.accept(newMonitorInfos));
-		RedisSpigotSend.askServerInfo.forEach(c -> c.accept(newMonitorInfos));
+		RedisSpigotSend.askServerInfo.forEach(c -> c.accept(newMonitorInfos, false));
 		RedisSpigotSend.askServerInfo.clear();
 	}
 }

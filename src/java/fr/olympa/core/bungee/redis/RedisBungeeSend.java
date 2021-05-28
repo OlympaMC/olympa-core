@@ -77,7 +77,7 @@ public class RedisBungeeSend {
 	}
 
 	public static boolean sendServerInfos(Collection<MonitorInfoBungee> servs) {
-		if (MonitorServers.getServers().isEmpty())
+		if (servs.isEmpty())
 			return false;
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 			jedis.publish(RedisChannel.BUNGEE_SEND_SERVERSINFOS2.name(), servs.stream().map(t -> new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().toJson(t)).collect(Collectors.joining("\n")));

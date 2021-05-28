@@ -1,5 +1,7 @@
 package fr.olympa.core.bungee.vpn;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,7 +9,14 @@ import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 
+import fr.olympa.api.LinkSpigotBungee;
+import fr.olympa.api.utils.Utils;
+
 public class OlympaVpn {
+
+	// 3 month
+	private static long outdateTime = LinkSpigotBungee.upTime - 8035200;
+
 	public static OlympaVpn fromJson(String json) {
 		return new Gson().fromJson(json, OlympaVpn.class);
 	}
@@ -25,8 +34,10 @@ public class OlympaVpn {
 	boolean upWithDB = false;
 	List<String> users;
 	List<String> whitelistUsers;
+	long time;
+	long lastUpdate;
 
-	public OlympaVpn(long id, String query, Boolean proxy, Boolean mobile, Boolean hosting, String usersString, String country, String city, String org, String as, String whitelist) {
+	public OlympaVpn(long id, String query, Boolean proxy, Boolean mobile, Boolean hosting, String usersString, String country, String city, String org, String as, String whitelist, Timestamp timestamp, Date date) {
 		this.id = id;
 		this.query = query;
 		if (mobile)
@@ -43,6 +54,11 @@ public class OlympaVpn {
 			users = Arrays.stream(usersString.split(";")).collect(Collectors.toList());
 		if (whitelist != null && !whitelist.isEmpty())
 			whitelistUsers = Arrays.stream(whitelist.split(";")).collect(Collectors.toList());
+		lastUpdate = timestamp.getTime() / 1000L;
+		if (date != null)
+			time = date.getTime() / 1000L;
+		else
+			setTime();
 	}
 
 	public void addUser(String username) {
@@ -101,6 +117,14 @@ public class OlympaVpn {
 		return whitelistUsers;
 	}
 
+	public long getTime() {
+		return time;
+	}
+
+	public long getLastUpdate() {
+		return lastUpdate;
+	}
+
 	public boolean hasUser(String username) {
 		return users != null && users.contains(username);
 	}
@@ -141,4 +165,32 @@ public class OlympaVpn {
 		return upWithDB;
 	}
 
+	public void setTime() {
+		time = Utils.getCurrentTimeInSeconds();
+	}
+
+	public void setDefaultTimesIfNeeded() {
+		if (time != 0)
+			return;
+		setTime();
+		lastUpdate = time;
+	}
+
+	public boolean isOutDate() {
+		return time == 0 || time < outdateTime;
+	}
+
+	public void update(OlympaVpn createVpnInfo) {
+		query = createVpnInfo.getIp();
+		if (mobile)
+			mobile = createVpnInfo.isMobile();
+		if (proxy)
+			proxy = createVpnInfo.isProxy();
+		if (hosting)
+			hosting = createVpnInfo.isHosting();
+		country = createVpnInfo.getCountry();
+		city = createVpnInfo.getCity();
+		org = createVpnInfo.getOrg();
+		as = createVpnInfo.getAs();
+	}
 }

@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.vpn;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,8 +16,8 @@ public class VpnSql {
 
 	private static OlympaStatement insert = new OlympaStatement("INSERT INTO " + tableName + " (`ip`, `is_vpn`, `is_mobile`, `is_host`, `pseudo`, `country`, `city`, `org`, `as`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)").returnGeneratedKeys();
 	private static OlympaStatement get = new OlympaStatement("SELECT * FROM " + tableName + " WHERE ip = ?");
-	private static OlympaStatement update = new OlympaStatement(StatementType.UPDATE, tableName, "ip", new String[] { "is_vpn", "is_mobile", "is_host", "pseudo", "whitelist_user", "country", "city", "org", "as" });
-	
+	private static OlympaStatement update = new OlympaStatement(StatementType.UPDATE, tableName, "ip", new String[] { "is_vpn", "is_mobile", "is_host", "pseudo", "whitelist_user", "country", "city", "org", "as", "date" });
+
 	public static OlympaVpn addIp(OlympaVpn olympaVpn) throws SQLException {
 		try (PreparedStatement pstate = insert.createStatement()) {
 			int i = 1;
@@ -33,6 +34,7 @@ public class VpnSql {
 			pstate.setString(i++, olympaVpn.getCity());
 			pstate.setString(i++, olympaVpn.getOrg());
 			pstate.setString(i, olympaVpn.getAs());
+			pstate.setDate(i, new Date(olympaVpn.getTime() * 1000L));
 			insert.executeUpdate(pstate);
 			ResultSet rs = pstate.getGeneratedKeys();
 			rs.next();
@@ -66,7 +68,9 @@ public class VpnSql {
 				resultSet.getString(i++),
 				resultSet.getString(i++),
 				resultSet.getString(i++),
-				resultSet.getString(i));
+				resultSet.getString(i++),
+				resultSet.getTimestamp(i++),
+				resultSet.getDate(i));
 	}
 
 	public static OlympaVpn getIpInfo(String ip) throws SQLException {
@@ -102,6 +106,7 @@ public class VpnSql {
 			pstate.setString(i++, olympaVpn.getCity());
 			pstate.setString(i++, olympaVpn.getOrg());
 			pstate.setString(i++, olympaVpn.getAs());
+			pstate.setDate(i++, new Date(olympaVpn.getTime() * 1000L));
 
 			pstate.setString(i, olympaVpn.getIp());
 			update.executeUpdate(pstate);

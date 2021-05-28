@@ -79,80 +79,80 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void pingBeforeJoin(CommandContext cmd) {
-		boolean b = SecurityHandler.PING_BEFORE_JOIN;
+		boolean b = SecurityHandler.getInstance().pingBeforeJoin;
 		if (cmd.getArgumentsLength() == 0)
 			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.", "PING_BEFORE_JOIN", b ? "true" : "false");
 		else {
-			SecurityHandler.PING_BEFORE_JOIN = cmd.getArgument(0);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "PING_BEFORE_JOIN", b ? "true" : "false", SecurityHandler.PING_BEFORE_JOIN);
+			b = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "PING_BEFORE_JOIN", b ? "true" : "false", b);
 		}
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void allowCrack(CommandContext cmd) {
-		boolean b = SecurityHandler.ALLOW_CRACK;
+		boolean b = SecurityHandler.getInstance().allowCrack;
 		if (cmd.getArgumentsLength() == 0)
 			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.", "ALLOW_CRACK", b ? "true" : "false");
 		else {
-			SecurityHandler.ALLOW_CRACK = cmd.getArgument(0);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%&a du bungee est passé de &2%s&a à &2%s&a.", "ALLOW_CRACK", b ? "true" : "false", SecurityHandler.ALLOW_CRACK);
+			b = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%&a du bungee est passé de &2%s&a à &2%s&a.", "ALLOW_CRACK", b ? "true" : "false", b);
 		}
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void allowPremium(CommandContext cmd) {
-		boolean b = SecurityHandler.ALLOW_PREMIUM;
+		boolean b = SecurityHandler.getInstance().allowPremium;
 		if (cmd.getArgumentsLength() == 0)
 			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.", "ALLOW_PREMIUM", b ? "true" : "false");
 		else {
-			SecurityHandler.ALLOW_PREMIUM = cmd.getArgument(0);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "ALLOW_PREMIUM", b ? "true" : "false", SecurityHandler.ALLOW_PREMIUM);
+			b = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "ALLOW_PREMIUM", b ? "true" : "false", b);
 		}
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void checkCorrectIP(CommandContext cmd) {
-		boolean b = SecurityHandler.CHECK_CORRECT_ENTRED_IP;
+		boolean b = SecurityHandler.getInstance().checkCorrectEntredIp;
 		if (cmd.getArgumentsLength() == 0)
 			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire qu'un vérifie si l'ip est 'play.olympa.fr'.", "CHECK_CORRECT_ENTRED_IP",
 					b ? "true" : "false");
 		else {
-			SecurityHandler.CHECK_CORRECT_ENTRED_IP = cmd.getArgument(0);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_CORRECT_ENTRED_IP", b ? "true" : "false", SecurityHandler.CHECK_CORRECT_ENTRED_IP ? "true" : "false");
+			b = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_CORRECT_ENTRED_IP", b ? "true" : "false", b ? "true" : "false");
 		}
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void checkIPNumber(CommandContext cmd) {
-		boolean b = SecurityHandler.CHECK_CORRECT_ENTRED_IP_NUMBER;
+		boolean b = SecurityHandler.getInstance().checkCorrectEntredIpNumber;
 		if (cmd.getArgumentsLength() == 0)
 			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire qu'on autorise/interdit l'utilisation de l'ip en chiffre (cad 89.234.182.172).", "CHECK_CORRECT_ENTRED_IP_NUMBER",
 					b ? "true" : "false");
 		else {
-			SecurityHandler.CHECK_CORRECT_ENTRED_IP_NUMBER = cmd.getArgument(0);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_CORRECT_ENTRED_IP_NUMBER", b ? "true" : "false", SecurityHandler.CHECK_CORRECT_ENTRED_IP_NUMBER ? "true" : "false");
+			b = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_CORRECT_ENTRED_IP_NUMBER", b ? "true" : "false", b ? "true" : "false");
 		}
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void vpnCheck(CommandContext cmd) {
-		boolean b = SecurityHandler.CHECK_VPN;
+		boolean b = SecurityHandler.getInstance().checkVpn;
 		if (cmd.getArgumentsLength() == 0)
 			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire que lorsqu'un joueur se connecte, on vérifie son IP.", "CHECK_VPN", b ? "true" : "false");
 		else {
-			SecurityHandler.CHECK_VPN = cmd.getArgument(0);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_VPN", b ? "true" : "false", SecurityHandler.CHECK_VPN ? "true" : "false");
+			b = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_VPN", b ? "true" : "false", b ? "true" : "false");
 		}
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void vpnCheckOnMOTD(CommandContext cmd) {
-		boolean b = SecurityHandler.CHECK_VPN_ON_MOTD;
+		boolean b = SecurityHandler.getInstance().checkVpnOnMotd;
 		if (cmd.getArgumentsLength() == 0)
 			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire que lorsqu'un joueur demande le motd, on vérifie son IP.", "CHECK_VPN_ON_MOTD", b ? "true" : "false");
 		else {
-			SecurityHandler.CHECK_VPN_ON_MOTD = cmd.getArgument(0);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_VPN_ON_MOTD", b ? "true" : "false", SecurityHandler.CHECK_VPN_ON_MOTD ? "true" : "false");
+			b = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_VPN_ON_MOTD", b ? "true" : "false", b ? "true" : "false");
 		}
 	}
 
@@ -293,8 +293,8 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 			break;
 		}
 	}
-	
-	@Cmd (permissionName = "BUNGEE_COMMAND_RESOURCE_PACK", min = 1, args = { "toggle|get" })
+
+	@Cmd(permissionName = "BUNGEE_COMMAND_RESOURCE_PACK", min = 1, args = { "toggle|get" })
 	public void resourcePack(CommandContext cmd) {
 		switch (cmd.<String>getArgument(0)) {
 		case "toggle":
@@ -306,5 +306,5 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 			break;
 		}
 	}
-	
+
 }

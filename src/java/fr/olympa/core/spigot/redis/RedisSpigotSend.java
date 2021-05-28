@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.bukkit.entity.Player;
@@ -32,7 +33,7 @@ public class RedisSpigotSend {
 
 	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
 	public static Cache<UUID, Consumer<String>> askPlayerServer = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
-	public static List<Consumer<List<MonitorInfo>>> askServerInfo = new ArrayList<>();
+	public static List<BiConsumer<List<MonitorInfo>, Boolean>> askServerInfo = new ArrayList<>();
 	public static boolean errorsEnabled = false;
 
 	public static void askServerName() {
@@ -53,7 +54,7 @@ public class RedisSpigotSend {
 	/**
 	 * Déclanche {@link fr.olympa.api.customevents.MonitorServerInfoReceiveEvent#MonitorServerInfoReceiveEvent monitorServerInfoReceiveEvent}
 	 */
-	public static void askServerInfo(Consumer<List<MonitorInfo>> callback) {
+	public static void askServerInfo(BiConsumer<List<MonitorInfo>, Boolean> callback) {
 		if (callback != null)
 			askServerInfo.add(callback);
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
@@ -166,12 +167,12 @@ public class RedisSpigotSend {
 		RedisAccess.INSTANCE.disconnect();
 		return i != 0;
 	}
-	
+
 	public static void sendPlayerPack(Player p) {
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 			jedis.publish(RedisChannel.SPIGOT_PLAYER_RESOUREPACK.name(), p.getName() + ";" + OlympaCore.getInstance().getServerName());
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
-	
+
 }

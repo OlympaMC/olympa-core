@@ -8,6 +8,7 @@ import fr.olympa.api.command.essentials.AfkCommand;
 import fr.olympa.api.module.OlympaModule;
 import fr.olympa.api.module.SpigotModule;
 import fr.olympa.core.spigot.OlympaCore;
+import fr.olympa.core.spigot.commands.TpsCommand;
 import fr.olympa.core.spigot.scoreboards.NameTagCommand;
 import fr.olympa.core.spigot.scoreboards.ScoreboardTeamListener;
 import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
@@ -21,15 +22,22 @@ public class CoreModules {
 
 	public static final OlympaModule<NametagAPI, Listener, OlympaCore, OlympaCommand> NAME_TAG = new SpigotModule<>(pl, "nameTag", plugin -> new NametagAPI())
 			.cmd(NameTagCommand.class).listener(ScoreboardTeamListener.class);
+
 	public static final OlympaModule<VanishHandler, Listener, OlympaCore, OlympaCommand> VANISH = new SpigotModule<>(pl, "vanish", plugin -> new VanishHandler())
 			.cmd(VanishCommand.class).listener(VanishListener.class).softDepend(NAME_TAG);
+
 	public static final OlympaModule<AfkHandler, Listener, OlympaCore, OlympaCommand> AFK = new SpigotModule<>(pl, "afk", plugin -> new AfkHandler())
 			.cmd(AfkCommand.class).listener(AfkHandler.class).softDepend(NAME_TAG);
+
+	private static final TpsCommand tpsCommand = new TpsCommand(pl);
+	public static final OlympaModule<TpsCommand, Listener, OlympaCore, OlympaCommand> TPS = new SpigotModule<>(pl, "tps", plugin -> tpsCommand).commandPreProcess()
+			.cmd(tpsCommand.getClass()).listener(tpsCommand.getClass()).softDepend(NAME_TAG);
 
 	public CoreModules() {
 		NAME_TAG.registerModule();
 		VANISH.registerModule();
 		AFK.registerModule();
+		TPS.registerModule();
 	}
 
 }

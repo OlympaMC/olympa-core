@@ -1,13 +1,9 @@
 package fr.olympa.core.bungee.ban.commands;
 
-import java.util.UUID;
-
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.utils.Prefix;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class DelbanCommand extends BungeeCommand {
@@ -20,11 +16,11 @@ public class DelbanCommand extends BungeeCommand {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		UUID author;
-		if (sender instanceof ProxiedPlayer)
-			author = proxiedPlayer.getUniqueId();
-		else
-			author = OlympaConsole.getUniqueId();
+		//		UUID author;
+		//		if (sender instanceof ProxiedPlayer)
+		//			author = proxiedPlayer.getUniqueId();
+		//		else
+		//			author = OlympaConsole.getUniqueId();
 
 		sendMessage(Prefix.DEFAULT_BAD, "En dev.");
 		//		if (RegexMatcher.INT.is(args[0])) {

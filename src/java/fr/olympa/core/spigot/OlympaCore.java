@@ -5,15 +5,16 @@ import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
+import java.util.logging.LogManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.spigotmc.SpigotConfig;
 
@@ -29,7 +30,6 @@ import fr.olympa.api.command.essentials.ItemCommand;
 import fr.olympa.api.command.essentials.ListCommand;
 import fr.olympa.api.command.essentials.PingCommand;
 import fr.olympa.api.command.essentials.SayCommand;
-import fr.olympa.api.command.essentials.tp.TpCommand;
 import fr.olympa.api.config.CustomConfig;
 import fr.olympa.api.customevents.SpigotConfigReloadEvent;
 import fr.olympa.api.frame.ImageFrameManager;
@@ -66,7 +66,6 @@ import fr.olympa.core.spigot.commands.NewSpigotCommand;
 import fr.olympa.core.spigot.commands.PermissionCommand;
 import fr.olympa.core.spigot.commands.RestartCommand;
 import fr.olympa.core.spigot.commands.ToggleErrors;
-import fr.olympa.core.spigot.commands.TpsCommand;
 import fr.olympa.core.spigot.commands.UtilsCommand;
 import fr.olympa.core.spigot.datamanagment.DataManagmentListener;
 import fr.olympa.core.spigot.datamanagment.OnLoadListener;
@@ -78,7 +77,6 @@ import fr.olympa.core.spigot.protocolsupport.VersionHandler;
 import fr.olympa.core.spigot.protocolsupport.ViaVersionHook;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.redis.receiver.BungeeAskPlayerServerReceiver;
-import fr.olympa.core.spigot.redis.receiver.BungeeAskSomething;
 import fr.olympa.core.spigot.redis.receiver.BungeeSendOlympaPlayerReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeServerInfoReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeServerNameReceiver;
@@ -213,12 +211,15 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		errorOutputStream = new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20));
 		System.setErr(new PrintStream(errorOutputStream));
 		ErrorLoggerHandler errorHandler = new ErrorLoggerHandler(RedisSpigotSend::sendError);
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			plugin.getLogger().addHandler(errorHandler);
-			sendMessage("Hooked error stream handler into §6%s§e's logger!", plugin.getName());
+		LogManager manager = LogManager.getLogManager();
+		Enumeration<String> names = manager.getLoggerNames();
+		int i = 1;
+		while (names.hasMoreElements()) {
+			String name = names.nextElement();
+			manager.getLogger(name).addHandler(errorHandler);
+			i++;
 		}
-		Bukkit.getLogger().addHandler(errorHandler);
-		sendMessage("Hooked error stream handler into §6server§e logger!");
+		sendMessage("Hooked error stream handler into §6%s§e loggers!", i);
 		sendMessage("§6" + getDescription().getName() + "§e (" + getDescription().getVersion() + ") est chargé.");
 
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
@@ -264,7 +265,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new SetStatusCommand(this).register();
 		new PluginCommand(this).registerPreProcess();
 		new HelpCommand(this).register().registerPreProcess();
-		new TpsCommand(this).registerPreProcess();
 		new SayCommand(this).registerPreProcess();
 		new UtilsCommand(this).register();
 		new GenderCommand(this).register();
@@ -276,7 +276,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new PermissionCommand(this).register();
 		new PingCommand(this).register();
 		//		new HologramsCommand(hologramsManager).register();
-		new TpCommand(this).register();
 		new ColorCommand(this).register();
 		new ToggleErrors(this).register();
 		new StaffCommand(this).register();
@@ -348,7 +347,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			registerRedisSub(redisAccess.connect(), new SpigotCommandReceiver(), RedisChannel.SPIGOT_COMMAND.name());
 			registerRedisSub(redisAccess.connect(), new BungeeTeamspeakIdReceiver(), RedisChannel.BUNGEE_SEND_TEAMSPEAKID.name());
 			registerRedisSub(redisAccess.connect(), new BungeeServerInfoReceiver(), RedisChannel.BUNGEE_SEND_SERVERSINFOS2.name());
-			registerRedisSub(redisAccess.connect(), new BungeeAskSomething(), RedisChannel.BUNGEE_ASK_SOMETHING.name());
+			//			registerRedisSub(redisAccess.connect(), new BungeeAskSomething(), RedisChannel.BUNGEE_ASK_SOMETHING.name());
 			RedisSpigotSend.askServerName();
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
@@ -389,14 +388,14 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	}
 
 	@Override
-	public void retreiveMonitorInfos(Consumer<List<MonitorInfo>> callback, boolean freshDoubleCallBack) {
+	public void retreiveMonitorInfos(BiConsumer<List<MonitorInfo>, Boolean> callback, boolean freshDoubleCallBack) {
 		if (monitorInfos.isEmpty() || Utils.getCurrentTimeInSeconds() - lastInfo > 10)
 			if (freshDoubleCallBack)
 				RedisSpigotSend.askServerInfo(callback);
 			else
 				RedisSpigotSend.askServerInfo(null);
 		if (callback != null)
-			callback.accept(monitorInfos);
+			callback.accept(monitorInfos, true);
 	}
 
 	@Override
@@ -404,10 +403,10 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		this.status = status;
 		RedisSpigotSend.changeStatus(status);
 	}
-	
+
 	@Override
 	public void usesPack(Player p) {
 		RedisSpigotSend.sendPlayerPack(p);
 	}
-	
+
 }

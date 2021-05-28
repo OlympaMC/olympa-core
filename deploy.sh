@@ -15,8 +15,8 @@
 # ./deploy.sh dev
 
 # PARAMETRES
-PLUGIN_NAME="core"
-USE_BRANCH="master dev"
+SERVEUR_DIR="/home/serveurs"
+
 BASEDIR=$(dirname "$0")
 ACTUAL_COMMIT_ID=`cat $BASEDIR/target/commitId`
 ACTUAL_COMMIT_ID_API=`cat $BASEDIR/target/commitIdAPI`
@@ -30,22 +30,27 @@ fi
 
 cd $BASEDIR
 
-if [ -n "$1" ]; then
-	BRANCH_NAME="$1"
+if [ -n "$1" ] && [ -n "$2" ]; then
+	PLUGIN_NAME="$1"
+	BRANCH_NAME="$2"
+	if [ ! -d "$SERVEUR_DIR/*$PLUGIN" ]; then
+		echo -e "\e[91m$SERVEUR_DIR/*$PLUGIN n'existe pas."
+		exit 1
+	fi
 else
-	echo -e "\e[0;36mTu dois choisir la version du $PLUGIN_NAME en ajoutant une branch (ex './deploy.sh $master')"
-	echo -e "un commit (ex './deploy.sh $(git rev-parse HEAD)').\e[0m"
+	echo -e "\e[91mTu dois choisir la version du $PLUGIN_NAME en ajoutant une branch (ex './deploy.sh core $master')"
+	echo -e "un commit (ex './deploy.sh dev $(git rev-parse HEAD)').\e[0m"
 	exit 1
 fi
 git pull --all
 if [ "$?" -ne 0 ]; then
-	echo -e "\e[91mEchec du git pull pour $PLUGIN_NAME, tentative de git checkout\e[0m"
-	git checkout $BRANCH_NAME --force
+	echo -e "\e[91mEchec du git pull pour $PLUGIN_NAME, tentative de git reset\e[0m"
+	git reset --hard HEAD
 	if [ "$?" -ne 0 ]; then
-		echo -e "\e[91mEchec du git checkout pour $PLUGIN_NAME, tentative de git reset[0m"
-		git reset --hard HEAD
+		echo -e "\e[91mEchec du git reset  pour $PLUGIN_NAME, tentative de git checkout\e[0m"
+		git checkout $BRANCH_NAME --force
 		if [ "$?" -ne 0 ]; then
-			echo -e "\e[91mEchec du git reset pour $PLUGIN_NAME. Dernier build avec succès : $ACTUAL_COMMIT_ID\e[0m"; exit 1
+			echo -e "\e[91mEchec du git checkout pour $PLUGIN_NAME. Dernier build avec succès : $ACTUAL_COMMIT_ID[0m"; exit 1
 		fi
 	fi
 	git pull --all
@@ -68,8 +73,8 @@ if [ -n "$ACTUAL_COMMIT_ID" ] && [ -n "$ACTUAL_COMMIT_ID_API" ]; then
 		fi
 	fi
 fi
-if [[ "justGitPull" == *justGitPull ]]; then
-	echo -e "\e[32mLe $PLUGIN n'a pas été build, il a juste été git pull.\e[0m"; exit 0
+if [[ ${@:1} == *justGitPull ]]; then
+	echo -e "\e[0;36mLe $PLUGIN_NAME n'a pas été build comme demandé, il a juste été git pull.\e[0m"; exit 0
 else
 	gradle publishToMavenLocal
 fi

@@ -156,11 +156,12 @@ public class AuthListener implements Listener {
 			} else
 				connection.setOnlineMode(true);
 		}
-		if (!connection.isOnlineMode() && !SecurityHandler.ALLOW_CRACK) {
+		SecurityHandler securityHandler = SecurityHandler.getInstance();
+		if (!connection.isOnlineMode() && !securityHandler.isAllowCrack()) {
 			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Crack sont temporairement désactivées. Désolé du dérangement.\nMerci de réessayer plus tard..."));
 			event.setCancelled(true);
 			return;
-		} else if (connection.isOnlineMode() && !SecurityHandler.ALLOW_PREMIUM) {
+		} else if (connection.isOnlineMode() && !securityHandler.isAllowPremium()) {
 			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Premium sont temporairement désactivées. Désolé du dérangement.\nMerci de réessayer plus tard..."));
 			event.setCancelled(true);
 			return;

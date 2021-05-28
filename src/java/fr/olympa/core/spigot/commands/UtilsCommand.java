@@ -57,9 +57,10 @@ public class UtilsCommand extends ComplexCommand {
 	public UtilsCommand(Plugin plugin) {
 		super(plugin, "utils", "Commandes de développement diverses.", OlympaCorePermissions.UTILS_COMMAND);
 
-		super.addArgumentParser("FILE", sender -> Arrays.stream(OlympaCore.getInstance().getDataFolder().listFiles()).map(File::getName).collect(Collectors.toList()), x -> new File(OlympaCore.getInstance().getDataFolder(), x), null);
-		super.addArgumentParser("REGION", sender -> new ArrayList<>(OlympaCore.getInstance().getRegionManager().getTrackedRegions().keySet()), OlympaCore.getInstance().getRegionManager().getTrackedRegions()::get,
-				x -> "Cette région n'existe pas !");
+		super.addArgumentParser("FILE", (sender, arg) -> Arrays.stream(OlympaCore.getInstance().getDataFolder().listFiles()).map(File::getName).collect(Collectors.toList()),
+				x -> new File(OlympaCore.getInstance().getDataFolder(), x), null);
+		super.addArgumentParser("REGION", (sender, arg) -> new ArrayList<>(OlympaCore.getInstance().getRegionManager().getTrackedRegions().keySet()),
+				OlympaCore.getInstance().getRegionManager().getTrackedRegions()::get, x -> "Cette région n'existe pas !");
 	}
 
 	@Cmd(player = true)
@@ -161,7 +162,7 @@ public class UtilsCommand extends ComplexCommand {
 
 		Set<TrackedRegion> playerRegions = regionManager.getCachedPlayerRegions(getPlayer());
 		if (playerRegions == null)
-			playerRegions = Collections.EMPTY_SET;
+			playerRegions = Collections.emptySet();
 		sendInfo("Vous êtes actuellement dans les régions : §l%s", playerRegions.stream().map(x -> x.getID()).collect(Collectors.joining(", ", "[", "]")));
 
 		Set<TrackedRegion> applicable = trackedRegions.stream().filter(x -> x.getRegion().isIn(getPlayer())).collect(Collectors.toSet());
@@ -206,7 +207,8 @@ public class UtilsCommand extends ComplexCommand {
 		sendSuccess("%d points:", region.getLocations().size());
 		for (Location location : region.getLocations())
 			sendMessage(Prefix.DEFAULT, "- " + SpigotUtils.convertLocationToHumanString(location));
-		sendSuccess("%d flag(s): §e%s", trackedRegion.getFlags().size(), trackedRegion.getFlags().stream().map(flag -> flag.getClass().isAnonymousClass() ? flag.getClass().getName() : flag.getClass().getSimpleName()).collect(Collectors.joining(", ", "[", "]")));
+		sendSuccess("%d flag(s): §e%s", trackedRegion.getFlags().size(),
+				trackedRegion.getFlags().stream().map(flag -> flag.getClass().isAnonymousClass() ? flag.getClass().getName() : flag.getClass().getSimpleName()).collect(Collectors.joining(", ", "[", "]")));
 		sendSuccess("Priorité: §e%s", trackedRegion.getPriority().name());
 	}
 

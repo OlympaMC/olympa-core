@@ -23,7 +23,7 @@ public class VpnListener implements Listener {
 		PendingConnection connection = event.getConnection();
 		ServerPing ping = event.getResponse();
 
-		if (!SecurityHandler.CHECK_VPN_ON_MOTD)
+		if (!SecurityHandler.getInstance().isCheckVpnOnMotd())
 			return;
 		OlympaVpn olympaVpn;
 		try {
@@ -40,7 +40,7 @@ public class VpnListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onLoginEvent(LoginEvent event) {
 		PendingConnection connection = event.getConnection();
-		if (!SecurityHandler.CHECK_VPN)
+		if (!SecurityHandler.getInstance().isCheckVpn())
 			return;
 		OlympaVpn olympaVpn;
 		try {

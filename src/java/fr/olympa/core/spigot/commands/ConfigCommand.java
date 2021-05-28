@@ -32,7 +32,7 @@ public class ConfigCommand extends ComplexCommand {
 			try {
 				config.reload();
 				time = System.nanoTime() - time;
-				sendMessage(Prefix.DEFAULT_GOOD, "Config &2%s&a chargé en &2%s secondes", config.getName(), new DecimalFormat("0.#").format(time / 1000000000d));
+				sendMessage(Prefix.DEFAULT_GOOD, "Config &2%s&a chargé en &2%s ms", config.getName(), new DecimalFormat("0.#").format(time / 10000000d));
 			} catch (IOException | InvalidConfigurationException e) {
 				sendMessage(Prefix.ERROR, "Impossible de charger la config &4%s&c : &4%s&c.", config.getName(), e.getMessage());
 				e.printStackTrace();
@@ -43,7 +43,7 @@ public class ConfigCommand extends ComplexCommand {
 			try {
 				config.saveUnSafe();
 				time = System.nanoTime() - time;
-				sendMessage(Prefix.DEFAULT_GOOD, "Config &2%s&a sauvegarder en &2%s secondes", config.getName(), new DecimalFormat("0.#").format(time / 1000000000d));
+				sendMessage(Prefix.DEFAULT_GOOD, "Config &2%s&a sauvegarder en &2%s ms", config.getName(), new DecimalFormat("0.#").format(time / 10000000d));
 			} catch (IOException e) {
 				sendMessage(Prefix.ERROR, "Impossible de sauvegarder la config &4%s&c sur le disque : &4%s&c.", config.getName(), e.getMessage());
 				e.printStackTrace();
