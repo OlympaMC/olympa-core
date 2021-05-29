@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.chat.TxtComponentBuilder;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
@@ -34,7 +34,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 public class InfoCommand extends BungeeCommand implements TabExecutor {
 
 	public InfoCommand(Plugin plugin) {
-		super(plugin, "info", OlympaCorePermissions.INFO_COMMAND);
+		super(plugin, "info", OlympaCorePermissionsBungee.INFO_COMMAND);
 		minArg = 0;
 	}
 
@@ -112,7 +112,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 				TxtComponentBuilder.of(null, "&3UUID : &b" + target.getUniqueId(), ClickEvent.Action.COPY_TO_CLIPBOARD, target.getUniqueId().toString(), HoverEvent.Action.SHOW_TEXT,
 						new Text("§eClique pour copier l'UUID dans le presse-papier")));
 		out.addExtra("\n");
-		if (hasPermission(OlympaCorePermissions.INFO_COMMAND_EXTRA)) {
+		if (hasPermission(OlympaCorePermissionsBungee.INFO_COMMAND_EXTRA)) {
 			out2 = new TextComponent(TextComponent.fromLegacyText("§3IP : §b[Cachée]"));
 			StringJoiner sj = new StringJoiner("\n");
 			sj.add("§c" + target.getIp());
@@ -132,7 +132,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 					sj.add("§cIP déjà partager (IP dans l'historique) avec " + ColorUtils.joinRedEt(usersAllHistory));
 				if (!users.isEmpty())
 					sj.add("§cL'IP a déjà essayé utiliser les pseudo " + ColorUtils.joinRedEt(users));
-				if (hasPermission(OlympaCorePermissions.INFO_COMMAND_EXTRA_EXTRA))
+				if (hasPermission(OlympaCorePermissionsBungee.INFO_COMMAND_EXTRA_EXTRA))
 					sj.add("§e" + new Gson().toJson(ipInfo));
 			} catch (SQLException e) {
 				e.printStackTrace();

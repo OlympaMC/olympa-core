@@ -1,51 +1,9 @@
-package fr.olympa.api.permission;
+package fr.olympa.api.permission.list;
 
 import fr.olympa.api.bungee.permission.OlympaBungeePermission;
 import fr.olympa.api.groups.OlympaGroup;
 
-public class OlympaCorePermissions {
-
-	/* SPIGOT */
-	public static final OlympaSpigotPermission PERMISSION_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV }, true);
-	public static final OlympaSpigotPermission SETSTATUS_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH);
-	public static final OlympaSpigotPermission GROUP_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.RESP_STAFF });
-
-	public static final OlympaSpigotPermission CHAT_COMMAND = new OlympaSpigotPermission(OlympaGroup.ASSISTANT);
-	public static final OlympaSpigotPermission CHAT_SEEINSULTS = new OlympaSpigotPermission(OlympaGroup.ASSISTANT);
-	public static final OlympaSpigotPermission CHAT_BYPASS = new OlympaSpigotPermission(OlympaGroup.RESP_TECH);
-	public static final OlympaSpigotPermission CHAT_MUTEDBYPASS = new OlympaSpigotPermission(OlympaGroup.GRAPHISTE);
-
-	public static final OlympaSpigotPermission UTILS_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH);
-	public static final OlympaSpigotPermission GETUUID_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
-
-	public static final OlympaSpigotPermission CHAT_COLOR = new OlympaSpigotPermission(OlympaGroup.RESP_TECH);
-
-	public static final OlympaSpigotPermission REPORT_COMMAND = new OlympaSpigotPermission(OlympaGroup.PLAYER);
-	public static final OlympaSpigotPermission REPORT_SEE_NOTIF = new OlympaSpigotPermission(OlympaGroup.GRAPHISTE);
-	public static final OlympaSpigotPermission REPORT_SEE_COMMAND = new OlympaSpigotPermission(OlympaGroup.GRAPHISTE);
-	public static final OlympaSpigotPermission REPORT_CHANGE_COMMAND = new OlympaSpigotPermission(OlympaGroup.ASSISTANT);
-
-	public static final OlympaSpigotPermission STAFF = new OlympaSpigotPermission(OlympaGroup.GRAPHISTE);
-
-	public static final OlympaSpigotPermission SERVER_RESTART_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
-	// TODO change to OlympaGroup.GRAPHISTE, change to OlympaGroup.ASSISTANT later
-	//public static OlympaSpigotPermission SERVER_BYPASS_MAITENANCE_SPIGOT = new OlympaSpigotPermission(OlympaGroup.PLAYER);
-
-	public static final OlympaSpigotPermission GENDER_COMMAND = new OlympaSpigotPermission(OlympaGroup.PLAYER);
-
-	public static final OlympaSpigotPermission SPIGOT_LAG_COMMAND = new OlympaSpigotPermission(OlympaGroup.PLAYER);
-	public static final OlympaSpigotPermission SPIGOT_CONFIG_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
-
-	public static final OlympaSpigotPermission VERIFMOD_SEE_IN_TAB = new OlympaSpigotPermission(OlympaGroup.GRAPHISTE);
-	public static final OlympaSpigotPermission VANISH_SEE_IN_TAB = new OlympaSpigotPermission(OlympaGroup.MODP);
-
-	public static final OlympaSpigotPermission SPIGOT_COMMAND = new OlympaSpigotPermission(OlympaGroup.PLAYER);
-	public static final OlympaSpigotPermission SPIGOT_COMMAND_ANTIBOT = new OlympaSpigotPermission(OlympaGroup.RESP_BUILDER, new OlympaGroup[] { OlympaGroup.DEV });
-	public static final OlympaSpigotPermission SPIGOT_COMMAND_CACHE = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, OlympaGroup.ADMIN).lockPermission();
-
-	public static final OlympaSpigotPermission NAMETAG_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
-
-	public static final OlympaSpigotPermission BUNGEE_SECURITY_COMMAND = new OlympaSpigotPermission(OlympaGroup.ADMIN, OlympaGroup.RESP_TECH); // XXX what ?
+public class OlympaCorePermissionsBungee {
 
 	/* BUNGEECORD */
 	public static final OlympaBungeePermission DISCORD_COMMAND_MANAGE = new OlympaBungeePermission(OlympaGroup.RESP_TECH, true);
@@ -71,8 +29,8 @@ public class OlympaCorePermissions {
 	public static final OlympaBungeePermission BAN_SEEBANMSG_FULL = new OlympaBungeePermission(OlympaGroup.RESP_BUILDER);
 	public static final OlympaBungeePermission BAN_BYPASS_BAN = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaBungeePermission BAN_BANMENU_COMMAND = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
-	public static final OlympaBungeePermission REPORT_SEEREPORT_OTHERSERV = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
 	public static final OlympaBungeePermission PRIVATEMESSAGE_TOGGLE = new OlympaBungeePermission(OlympaGroup.MINI_YOUTUBER);
+	public static final OlympaBungeePermission REPORT_SEEREPORT_OTHERSERV = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
 	public static final OlympaBungeePermission VPN_BYPASS = new OlympaBungeePermission(OlympaGroup.FONDA);
 	public static final OlympaBungeePermission INFO_COMMAND = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaBungeePermission INFO_COMMAND_EXTRA = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
@@ -110,4 +68,6 @@ public class OlympaCorePermissions {
 
 	public static final OlympaBungeePermission IP_COMMAND = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaBungeePermission IP_COMMAND_SEE_IP = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
+	
+	public static final OlympaBungeePermission STAFF = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 }

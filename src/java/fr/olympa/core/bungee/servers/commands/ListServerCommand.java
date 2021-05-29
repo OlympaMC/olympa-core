@@ -4,7 +4,7 @@ import java.util.StringJoiner;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.chat.TxtComponentBuilder;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.spigot.TPSUtils;
 import fr.olympa.core.bungee.servers.MonitorServers;
@@ -14,7 +14,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class ListServerCommand extends BungeeCommand {
 
 	public ListServerCommand(Plugin plugin) {
-		super(plugin, "listserver", OlympaCorePermissions.SERVER_LIST_COMMAND);
+		super(plugin, "listserver", OlympaCorePermissionsBungee.SERVER_LIST_COMMAND);
 	}
 
 	@Override

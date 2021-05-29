@@ -16,7 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.server.OlympaServerSettings;
@@ -49,7 +49,7 @@ public class CancerListener implements Listener {
 
 		// Si le chat est mute, cancel message
 		if (serverSettings.isChatMute()) {
-			if (OlympaCorePermissions.CHAT_MUTEDBYPASS.hasPermission(olympaPlayer)) {
+			if (OlympaCorePermissionsSpigot.CHAT_MUTEDBYPASS.hasPermission(olympaPlayer)) {
 				Prefix.INFO.sendMessage(player, "Le chat est désactivé pour les autres joueurs.");
 				return;
 			}
@@ -58,7 +58,7 @@ public class CancerListener implements Listener {
 			return;
 		}
 
-		if (OlympaCorePermissions.CHAT_BYPASS.hasPermission(olympaPlayer))
+		if (OlympaCorePermissionsSpigot.CHAT_BYPASS.hasPermission(olympaPlayer))
 			return;
 
 		String message = event.getMessage();

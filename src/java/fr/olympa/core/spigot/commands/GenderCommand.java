@@ -8,7 +8,7 @@ import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.customevents.PlayerSexChangeEvent;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
@@ -18,7 +18,7 @@ import fr.olympa.core.spigot.OlympaCore;
 public class GenderCommand extends OlympaCommand {
 	
 	public GenderCommand(Plugin plugin) {
-		super(plugin, "genre", "Change ton genre. Accorde le grade et différents messages.", OlympaCorePermissions.GENDER_COMMAND, "sexe");
+		super(plugin, "genre", "Change ton genre. Accorde le grade et différents messages.", OlympaCorePermissionsSpigot.GENDER_COMMAND, "sexe");
 		addArgs(true, Gender.getNames());
 		allowConsole = false;
 		minArg = 1;

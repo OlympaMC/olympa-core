@@ -12,7 +12,7 @@ import fr.olympa.api.chat.TableGenerator.Receiver;
 import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.module.OlympaModule;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.antibot.AntiBotHandler;
@@ -30,7 +30,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class NewBungeeCommand extends BungeeComplexCommand {
 
 	public NewBungeeCommand(Plugin plugin) {
-		super(plugin, "bungee", "Diverses gestion du serveur bungee.", OlympaCorePermissions.BUNGEE_COMMAND, "bung");
+		super(plugin, "bungee", "Diverses gestion du serveur bungee.", OlympaCorePermissionsBungee.BUNGEE_COMMAND, "bung");
 		addArgumentParser("CACHE", (sender, arg) -> CacheStats.getCaches().keySet(), x -> CacheStats.getCache(x), x -> "&4%s&c doit être un id de cache qui existe.");
 		addArgumentParser("DEBUG_LIST", (sender, arg) -> CacheStats.getDebugLists().keySet(), x -> CacheStats.getDebugList(x), x -> "&4%s&c doit être un id de debugList qui existe.");
 		addArgumentParser("DEBUG_MAP", (sender, arg) -> CacheStats.getDebugMaps().keySet(), x -> CacheStats.getDebugMap(x), x -> "&4%s&c doit être un id de debugMap qui existe.");

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -17,7 +17,7 @@ import net.md_5.bungee.api.CommandSender;
 public class UnmuteCommand extends BungeeCommand {
 
 	public UnmuteCommand(OlympaBungee plugin) {
-		super(plugin, "unmute", OlympaCorePermissions.BAN_UNMUTE_COMMAND, "umute");
+		super(plugin, "unmute", OlympaCorePermissionsBungee.BAN_UNMUTE_COMMAND, "umute");
 		usageString = "<joueur|uuid|id|ip> <motif>";
 		minArg = 2;
 	}

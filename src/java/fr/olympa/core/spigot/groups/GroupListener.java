@@ -23,7 +23,7 @@ import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
@@ -82,7 +82,7 @@ public class GroupListener implements Listener {
 				OlympaCore.getInstance().sendMessage("Mise à jour des permissions Bukkit du joueur §6%s", player.getName());
 				break;
 			}
-		if (player.isOp() && !OlympaCorePermissions.STAFF.hasPermission(olympaPlayer)) {
+		if (player.isOp() && !OlympaCorePermissionsSpigot.STAFF.hasPermission(olympaPlayer)) {
 			player.setOp(false);
 			LinkSpigotBungee.Provider.link.sendMessage("&4%s&c &cétait encore OP, heuresement que je suis là pour lui enlever ...", olympaPlayer.getName());
 		}

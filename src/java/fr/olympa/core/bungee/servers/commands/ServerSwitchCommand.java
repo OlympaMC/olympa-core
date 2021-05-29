@@ -3,7 +3,7 @@ package fr.olympa.core.bungee.servers.commands;
 import fr.olympa.api.bungee.command.BungeeComplexCommand;
 import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -13,7 +13,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 public class ServerSwitchCommand extends BungeeComplexCommand {
 
 	public ServerSwitchCommand(OlympaBungee plugin) {
-		super(plugin, "serverswitch", "Change de serveurs.", OlympaCorePermissions.SERVER_SWITCH_COMMAND, "switch", "server");
+		super(plugin, "serverswitch", "Change de serveurs.", OlympaCorePermissionsBungee.SERVER_SWITCH_COMMAND, "switch", "server");
 		//		MonitorServers.getServers()
 
 	}

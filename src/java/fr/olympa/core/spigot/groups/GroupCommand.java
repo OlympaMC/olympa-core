@@ -23,7 +23,7 @@ import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
@@ -38,7 +38,7 @@ import fr.olympa.core.spigot.redis.RedisSpigotSend;
 public class GroupCommand extends OlympaCommand {
 
 	public GroupCommand(Plugin plugin) {
-		super(plugin, "group", "Permet de gérer les groupes d'un joueur Olympa.", OlympaCorePermissions.GROUP_COMMAND, "groupe", "rank");
+		super(plugin, "group", "Permet de gérer les groupes d'un joueur Olympa.", OlympaCorePermissionsSpigot.GROUP_COMMAND, "groupe", "rank");
 		addArgs(false, "JOUEUR");
 		addArgs(false, "group");
 		addArgs(false, "time");

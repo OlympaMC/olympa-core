@@ -12,8 +12,8 @@ import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.config.CustomConfig;
-import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaSpigotPermission;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.spigot.SpigotUtils;
@@ -22,7 +22,7 @@ import fr.olympa.core.spigot.OlympaCore;
 public class SetStatusCommand extends OlympaCommand {
 
 	public SetStatusCommand(Plugin plugin) {
-		super(plugin, "setstatus", "Permet de modifier le statut d'un serveur spigot.", OlympaCorePermissions.SETSTATUS_COMMAND, "setstatut");
+		super(plugin, "setstatus", "Permet de modifier le statut d'un serveur spigot.", OlympaCorePermissionsSpigot.SETSTATUS_COMMAND, "setstatut");
 		this.addArgs(false, ServerStatus.getNames());
 	}
 

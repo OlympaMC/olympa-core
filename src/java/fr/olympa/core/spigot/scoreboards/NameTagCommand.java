@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.command.complex.ComplexCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.scoreboard.tab.Nametag;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
@@ -24,7 +24,7 @@ public class NameTagCommand extends ComplexCommand {
 
 	public NameTagCommand(OlympaCore plugin, NametagAPI api) {
 		//		super(plugin, "nametag", "Gestion et test des nameTag", OlympaCorePermissions.NAMETAG_COMMAND, "nt");
-		super(plugin, "nametag", "Gestion et test des nameTag.", OlympaCorePermissions.SPIGOT_LAG_COMMAND, "nt");
+		super(plugin, "nametag", "Gestion et test des nameTag.", OlympaCorePermissionsSpigot.SPIGOT_LAG_COMMAND, "nt");
 		this.api = api;
 	}
 

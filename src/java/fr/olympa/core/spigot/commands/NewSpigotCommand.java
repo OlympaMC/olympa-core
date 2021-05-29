@@ -11,7 +11,7 @@ import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.command.complex.ComplexCommand;
 import fr.olympa.api.module.OlympaModule;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.spigot.login.PlayerLogin;
@@ -19,7 +19,7 @@ import fr.olympa.core.spigot.login.PlayerLogin;
 public class NewSpigotCommand extends ComplexCommand {
 
 	public NewSpigotCommand(Plugin plugin) {
-		super(plugin, "spigot", "Diverses gestion du serveur spigot.", OlympaCorePermissions.SPIGOT_COMMAND, "spig");
+		super(plugin, "spigot", "Diverses gestion du serveur spigot.", OlympaCorePermissionsSpigot.SPIGOT_COMMAND, "spig");
 		addArgumentParser("CACHE", (sender, msg) -> CacheStats.getCaches().keySet(), x -> CacheStats.getCache(x), x -> "&4%s&c doit être un id de cache qui existe.");
 		addArgumentParser("DEBUG_LIST", (sender, msg) -> CacheStats.getDebugLists().keySet(), x -> CacheStats.getDebugList(x), x -> "&4%s&c doit être un id de debugList qui existe.");
 		addArgumentParser("DEBUG_MAP", (sender, msg) -> CacheStats.getDebugMaps().keySet(), x -> CacheStats.getDebugMap(x), x -> "&4%s&c doit être un id de debugMap qui existe.");

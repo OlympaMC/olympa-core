@@ -7,7 +7,7 @@ import java.util.StringJoiner;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
@@ -115,7 +115,7 @@ public class SanctionManager {
 		TextComponent msgStaff = msg.duplicate();
 		msgStaff.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, sanction.toBaseComplement()));
 		msgStaff.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/hist " + sanction.getId()));
-		BungeeUtils.getPlayers(OlympaCorePermissions.BAN_SEEBANMSG, t -> t.forEach(p -> p.sendMessage(msgStaff)), t -> t.forEach(p -> p.sendMessage(msg)));
+		BungeeUtils.getPlayers(OlympaCorePermissionsBungee.BAN_SEEBANMSG, t -> t.forEach(p -> p.sendMessage(msgStaff)), t -> t.forEach(p -> p.sendMessage(msg)));
 		ProxyServer.getInstance().getConsole().sendMessage(msgStaff);
 		return true;
 	}

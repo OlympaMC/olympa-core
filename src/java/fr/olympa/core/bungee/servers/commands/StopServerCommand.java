@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.machine.OlympaRuntime;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.CommandSender;
@@ -17,7 +17,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 public class StopServerCommand extends BungeeCommand implements TabExecutor {
 
 	public StopServerCommand(Plugin plugin) {
-		super(plugin, "stopserver", OlympaCorePermissions.SERVER_START_COMMAND);
+		super(plugin, "stopserver", OlympaCorePermissionsBungee.SERVER_START_COMMAND);
 		minArg = 1;
 		usageString = "<" + plugin.getProxy().getServers().entrySet().stream().map(entry -> entry.getKey()).collect(Collectors.joining("|")) + ">";
 	}

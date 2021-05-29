@@ -8,7 +8,7 @@ import java.util.Map;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.chat.TxtComponentBuilder;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.core.bungee.servers.MonitorInfoBungee;
@@ -21,7 +21,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class ListPlayerCommand extends BungeeCommand {
 
 	public ListPlayerCommand(Plugin plugin) {
-		super(plugin, "listplayer", OlympaCorePermissions.PLAYER_LIST_COMMAND);
+		super(plugin, "listplayer", OlympaCorePermissionsBungee.PLAYER_LIST_COMMAND);
 	}
 
 	@Override

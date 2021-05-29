@@ -9,7 +9,7 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
@@ -115,8 +115,8 @@ public class SanctionExecuteTarget {
 							banExecute.sanctionType.getName(!banExecute.isPermanant()), Utils.timeToDuration((banExecute.sanctionType.isMuteType() ? SanctionHandler.maxTimeMute : SanctionHandler.maxTimeBan) * 60)));
 					return false;
 				}
-				if (banExecute.getAuthorId() != 0 && banExecute.sanctionType != OlympaSanctionType.BANIP && OlympaCorePermissions.STAFF.hasPermission(olympaPlayers.get(0))
-						&& !OlympaCorePermissions.BAN_BYPASS_SANCTION_STAFF.hasPermission(banExecute.getAuthor())) {
+				if (banExecute.getAuthorId() != 0 && banExecute.sanctionType != OlympaSanctionType.BANIP && OlympaCorePermissionsBungee.STAFF.hasPermission(olympaPlayers.get(0))
+						&& !OlympaCorePermissionsBungee.BAN_BYPASS_SANCTION_STAFF.hasPermission(banExecute.getAuthor())) {
 					banExecute.getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB(config.getString("ban.cantmutestaffmembers")));
 					return false;
 				}
@@ -196,7 +196,7 @@ public class SanctionExecuteTarget {
 		ProxyServer.getInstance().getConsole().sendMessage(msgStaff);
 		switch (newStatus) {
 		case ACTIVE:
-			BungeeUtils.getPlayers(OlympaCorePermissions.BAN_SEEBANMSG, t -> t.forEach(p -> p.sendMessage(msgStaff)),
+			BungeeUtils.getPlayers(OlympaCorePermissionsBungee.BAN_SEEBANMSG, t -> t.forEach(p -> p.sendMessage(msgStaff)),
 					t -> t.stream().filter(p -> onlineTargets.stream().anyMatch(p2 -> p2.getServer().getInfo().getName().equals(p.getServer().getInfo().getName()))).forEach(p -> p.sendMessage(msg)));
 			if (type == OlympaSanctionType.MUTE)
 				sanction.getOnlinePlayers().forEach(p -> p.sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Tu as été mute pour &4%s&c pendant &4%s&c.", reason, timeToExpire)));
@@ -205,7 +205,7 @@ public class SanctionExecuteTarget {
 		case DELETE:
 		case EXPIRE:
 		case END:
-			BungeeUtils.getPlayers(OlympaCorePermissions.BAN_SEEBANMSG, t -> t.forEach(p -> p.sendMessage(msgStaff)), null);
+			BungeeUtils.getPlayers(OlympaCorePermissionsBungee.BAN_SEEBANMSG, t -> t.forEach(p -> p.sendMessage(msgStaff)), null);
 			break;
 		}
 	}

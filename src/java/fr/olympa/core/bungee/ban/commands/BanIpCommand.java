@@ -3,8 +3,8 @@ package fr.olympa.core.bungee.ban.commands;
 import java.util.ArrayList;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -18,7 +18,7 @@ public class BanIpCommand extends BungeeCommand {
 	public static OlympaPermission permToBandef;
 
 	public BanIpCommand(OlympaBungee plugin) {
-		super(plugin, "banip", OlympaCorePermissions.BAN_BANIP_COMMAND, "tempbanip");
+		super(plugin, "banip", OlympaCorePermissionsBungee.BAN_BANIP_COMMAND, "tempbanip");
 		minArg = 2;
 		usageString = plugin.getConfig().getString("ban.usageban");
 	}

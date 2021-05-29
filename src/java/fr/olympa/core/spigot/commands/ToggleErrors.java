@@ -7,13 +7,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
-import fr.olympa.api.permission.OlympaAPIPermissions;
+import fr.olympa.api.permission.list.OlympaAPIPermissionsSpigot;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 
 public class ToggleErrors extends OlympaCommand {
 	
 	public ToggleErrors(Plugin plugin) {
-		super(plugin, "errors", "Permet de désactiver/réactiver l'envoi des erreurs sur Discord.", OlympaAPIPermissions.ERRORS_COMMAND, "discorderrors");
+		super(plugin, "errors", "Permet de désactiver/réactiver l'envoi des erreurs sur Discord.", OlympaAPIPermissionsSpigot.ERRORS_COMMAND, "discorderrors");
 	}
 	
 	@Override

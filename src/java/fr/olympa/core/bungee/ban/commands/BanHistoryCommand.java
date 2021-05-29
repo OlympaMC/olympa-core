@@ -5,7 +5,7 @@ import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
@@ -25,7 +25,7 @@ import net.md_5.bungee.config.Configuration;
 public class BanHistoryCommand extends BungeeCommand {
 
 	public BanHistoryCommand(OlympaBungee plugin) {
-		super(plugin, "banhistory", OlympaCorePermissions.BAN_HISTORY_COMMAND, "banhist", "mutehist", "kickhist", "hist", "histban");
+		super(plugin, "banhistory", OlympaCorePermissionsBungee.BAN_HISTORY_COMMAND, "banhist", "mutehist", "kickhist", "hist", "histban");
 		minArg = 1;
 		usageString = "<joueur|uuid|id|ip>";
 	}

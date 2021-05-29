@@ -16,7 +16,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.groups.OlympaGroup;
 import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
@@ -40,7 +40,7 @@ public class ChatListener implements Listener {
 
 		OlympaGroup group = olympaPlayer.getGroup();
 		if (group != null) {
-			if (OlympaCorePermissions.CHAT_COLOR.hasPermission(olympaPlayer))
+			if (OlympaCorePermissionsSpigot.CHAT_COLOR.hasPermission(olympaPlayer))
 				event.setMessage(ColorUtils.color(event.getMessage()));
 			event.setFormat(olympaPlayer.getGroupPrefix() + "%s " + group.getChatSuffix() + " %s");
 		} else

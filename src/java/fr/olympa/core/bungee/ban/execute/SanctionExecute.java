@@ -15,7 +15,7 @@ import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.chat.ColorUtils;
 import fr.olympa.api.chat.TxtComponentBuilder;
 import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.player.OlympaConsole;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
@@ -210,7 +210,7 @@ public class SanctionExecute {
 			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Le type de sanction n'est pas connu."));
 		else if (newStatus != OlympaSanctionStatus.ACTIVE && expire != 0)
 			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Impossible de mettre une durée dans un %s.", newStatus.getPrefix() + sanctionType.getName()));
-		else if (newStatus == OlympaSanctionStatus.ACTIVE && expire == 0 && OlympaCorePermissions.BAN_BANDEF_COMMAND.hasSenderPermissionBungee(getAuthorSender())) {
+		else if (newStatus == OlympaSanctionStatus.ACTIVE && expire == 0 && OlympaCorePermissionsBungee.BAN_BANDEF_COMMAND.hasSenderPermissionBungee(getAuthorSender())) {
 			String s = sanctionType.getName();
 			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Tu n'as pas la permission de &4%s&c définitivement. Rajoute une durée tel que &4/%s %s 7jours %s", s, s.toLowerCase(), String.join(",", targetsString), reason));
 		} else

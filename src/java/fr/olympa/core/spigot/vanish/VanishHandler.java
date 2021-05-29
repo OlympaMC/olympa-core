@@ -11,8 +11,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import fr.olympa.api.module.OlympaModule.ModuleApi;
-import fr.olympa.api.permission.OlympaAPIPermissions;
 import fr.olympa.api.permission.OlympaSpigotPermission;
+import fr.olympa.api.permission.list.OlympaAPIPermissionsSpigot;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.scoreboard.tab.INametagApi;
 import fr.olympa.api.scoreboard.tab.INametagApi.NametagHandler;
@@ -31,7 +31,7 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 		INametagApi nameTagApi = plugin.getNameTagApi();
 		if (nameTagApi != null) {
 			handler = (nametag, op, to) -> {
-				if (isVanished(op.getPlayer()) && OlympaAPIPermissions.VANISH_SEE.hasPermission(to))
+				if (isVanished(op.getPlayer()) && OlympaAPIPermissionsSpigot.VANISH_SEE.hasPermission(to))
 					nametag.appendSuffix("§d[§5VANISH§d]§r");
 			};
 			nameTagApi.addNametagHandler(EventPriority.HIGHEST, handler);

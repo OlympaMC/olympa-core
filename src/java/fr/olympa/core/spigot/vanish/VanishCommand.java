@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
-import fr.olympa.api.permission.OlympaAPIPermissions;
+import fr.olympa.api.permission.list.OlympaAPIPermissionsSpigot;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.vanish.IVanishApi;
 
@@ -16,7 +16,7 @@ public class VanishCommand extends OlympaCommand {
 	private IVanishApi vanishApi;
 
 	public VanishCommand(Plugin plugin, IVanishApi vanishApi) {
-		super(plugin, "vanish", "Permet de se mettre en Vanish.", OlympaAPIPermissions.VANISH_COMMAND, "v");
+		super(plugin, "vanish", "Permet de se mettre en Vanish.", OlympaAPIPermissionsSpigot.VANISH_COMMAND, "v");
 		allowConsole = false;
 		this.vanishApi = vanishApi;
 	}

@@ -9,14 +9,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.server.OlympaServerSettings;
 import fr.olympa.api.utils.Prefix;
 
 public class ChatCommand extends OlympaCommand {
 	
 	public ChatCommand(Plugin plugin) {
-		super(plugin, "chat", "Permet de gérer l'envoi des messages dans le chat.", OlympaCorePermissions.CHAT_COMMAND, "tchat");
+		super(plugin, "chat", "Permet de gérer l'envoi des messages dans le chat.", OlympaCorePermissionsSpigot.CHAT_COMMAND, "tchat");
 		this.addArgs(true, "slow", "clear", "mute");
 	}
 	

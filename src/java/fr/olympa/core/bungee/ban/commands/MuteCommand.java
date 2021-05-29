@@ -6,7 +6,7 @@ import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.SanctionUtils;
@@ -19,7 +19,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class MuteCommand extends BungeeCommand {
 
 	public MuteCommand(Plugin plugin) {
-		super(plugin, "mute", OlympaCorePermissions.BAN_MUTE_COMMAND, "tempmute");
+		super(plugin, "mute", OlympaCorePermissionsBungee.BAN_MUTE_COMMAND, "tempmute");
 		minArg = 2;
 		usageString = "<joueur|uuid|ip> [temps] <motif>";
 	}

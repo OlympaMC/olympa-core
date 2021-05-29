@@ -22,9 +22,9 @@ import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.command.complex.ComplexCommand;
 import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
 import fr.olympa.api.permission.OlympaSpigotPermission;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.player.Gender;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.OlympaPlayerObject;
@@ -37,7 +37,7 @@ import fr.olympa.core.spigot.OlympaCore;
 public class PermissionCommand extends ComplexCommand {
 
 	public PermissionCommand(Plugin plugin) {
-		super(plugin, "permission", "Voir et modifier les permissions jusqu'au redémarrage.", OlympaCorePermissions.PERMISSION_COMMAND, "perm", "p");
+		super(plugin, "permission", "Voir et modifier les permissions jusqu'au redémarrage.", OlympaCorePermissionsSpigot.PERMISSION_COMMAND, "perm", "p");
 		super.addArgumentParser("PERMISSION", (player, arg) -> OlympaPermission.permissions.entrySet().stream().map(Entry::getKey).collect(Collectors.toList()),
 				arg -> OlympaPermission.permissions.entrySet().stream().filter(e -> e.getKey().equalsIgnoreCase(arg)).findFirst().orElse(null),
 				x -> String.format("La permission &4%s&c n'existe pas", x));

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;
@@ -17,7 +17,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class UnbanCommand extends BungeeCommand {
 
 	public UnbanCommand(Plugin plugin) {
-		super(plugin, "unban", OlympaCorePermissions.BAN_UNBAN_COMMAND, "pardon", "unbann");
+		super(plugin, "unban", OlympaCorePermissionsBungee.BAN_UNBAN_COMMAND, "pardon", "unbann");
 		minArg = 2;
 		usageString = "<joueur|uuid|ip> <motif>";
 	}

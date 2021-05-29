@@ -39,7 +39,7 @@ import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.command.complex.ComplexCommand;
 import fr.olympa.api.editor.RegionEditor;
 import fr.olympa.api.item.ItemUtils;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.region.Region;
@@ -55,7 +55,7 @@ import net.minecraft.server.v1_16_R3.TileEntityTypes;
 public class UtilsCommand extends ComplexCommand {
 
 	public UtilsCommand(Plugin plugin) {
-		super(plugin, "utils", "Commandes de développement diverses.", OlympaCorePermissions.UTILS_COMMAND);
+		super(plugin, "utils", "Commandes de développement diverses.", OlympaCorePermissionsSpigot.UTILS_COMMAND);
 
 		super.addArgumentParser("FILE", (sender, arg) -> Arrays.stream(OlympaCore.getInstance().getDataFolder().listFiles()).map(File::getName).collect(Collectors.toList()),
 				x -> new File(OlympaCore.getInstance().getDataFolder(), x), null);

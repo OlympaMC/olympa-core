@@ -1,7 +1,7 @@
 package fr.olympa.core.bungee.ban.commands;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Prefix;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -9,7 +9,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class DelbanCommand extends BungeeCommand {
 
 	public DelbanCommand(Plugin plugin) {
-		super(plugin, "delban", OlympaCorePermissions.BAN_DELBAN_COMMAND, "bandel", "dban", "delmute", "mutedel", "delmute", "delkick", "kickdel", "dkick");
+		super(plugin, "delban", OlympaCorePermissionsBungee.BAN_DELBAN_COMMAND, "bandel", "dban", "delmute", "mutedel", "delmute", "delkick", "kickdel", "dkick");
 		minArg = 1;
 		usageString = "&cUsage &7» &c/delban [id]";
 	}

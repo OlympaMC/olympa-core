@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.machine.OlympaRuntime;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -12,7 +12,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class RestartBungeeCommand extends BungeeCommand {
 
 	public RestartBungeeCommand(Plugin plugin) {
-		super(plugin, "bungeerestart", OlympaCorePermissions.SERVER_RESTART_BUNGEE_COMMAND, "brestart");
+		super(plugin, "bungeerestart", OlympaCorePermissionsBungee.SERVER_RESTART_BUNGEE_COMMAND, "brestart");
 		allowConsole = true;
 	}
 

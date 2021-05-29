@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Prefix;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -16,7 +16,7 @@ public class PrivateMessageToggleCommand extends BungeeCommand {
 	public static List<UUID> players = new ArrayList<>();
 
 	public PrivateMessageToggleCommand(Plugin plugin) {
-		super(plugin, "msgtoggle", OlympaCorePermissions.PRIVATEMESSAGE_TOGGLE, "msgt");
+		super(plugin, "msgtoggle", OlympaCorePermissionsBungee.PRIVATEMESSAGE_TOGGLE, "msgt");
 		allowConsole = false;
 	}
 

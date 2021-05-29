@@ -10,12 +10,12 @@ import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.machine.OlympaRuntime;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 
 public class RestartCommand extends OlympaCommand {
 
 	public RestartCommand(Plugin plugin) {
-		super(plugin, "restart", "Redémarre le serveur.", OlympaCorePermissions.SERVER_RESTART_COMMAND);
+		super(plugin, "restart", "Redémarre le serveur.", OlympaCorePermissionsSpigot.SERVER_RESTART_COMMAND);
 		allowConsole = true;
 	}
 

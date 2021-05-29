@@ -2,7 +2,7 @@ package fr.olympa.core.bungee.ban.commands;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.CommandSender;
@@ -12,7 +12,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 public class ForceKickCommand extends BungeeCommand {
 
 	public ForceKickCommand(OlympaBungee plugin) {
-		super(plugin, "forcekick", OlympaCorePermissions.BAN_FORCEKICK_COMMAND, "forceeject");
+		super(plugin, "forcekick", OlympaCorePermissionsBungee.BAN_FORCEKICK_COMMAND, "forceeject");
 		minArg = 1;
 		usageString = plugin.getConfig().getString("ban.usagekick");
 	}

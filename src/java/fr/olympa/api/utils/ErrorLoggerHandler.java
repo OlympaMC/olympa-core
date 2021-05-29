@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import fr.olympa.api.LinkSpigotBungee;
 

@@ -1,7 +1,8 @@
 package fr.olympa.core.bungee.antibot;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 
 public class AntiBotHandler {
 
@@ -28,9 +29,9 @@ public class AntiBotHandler {
 		String msg = "&cANTIBOT > L'anti bot est maintenant &4%s&c par &4%s&c.";
 		Object[] arg = new String[] { ENABLE ? "activé" : "désactiver", source != null ? source : "automatisme" };
 		if (link.isSpigot())
-			OlympaCorePermissions.SPIGOT_COMMAND_ANTIBOT.sendMessage(msg, arg);
+			OlympaCorePermissionsSpigot.SPIGOT_COMMAND_ANTIBOT.sendMessage(msg, arg);
 		else
-			OlympaCorePermissions.BUNGEE_COMMAND_ANTIBOT.sendMessage(msg, arg);
+			OlympaCorePermissionsBungee.BUNGEE_COMMAND_ANTIBOT.sendMessage(msg, arg);
 		link.sendMessage(msg, arg);
 	}
 }

@@ -16,7 +16,7 @@ import fr.olympa.api.command.OlympaCommand;
 import fr.olympa.api.machine.MachineInfo;
 import fr.olympa.api.machine.MachineMessage;
 import fr.olympa.api.module.OlympaModule.ModuleApi;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.plugin.OlympaAPIPlugin;
 import fr.olympa.api.task.OlympaTask;
 import fr.olympa.api.utils.Prefix;
@@ -30,7 +30,7 @@ public class TpsCommand extends OlympaCommand implements Listener, ModuleApi<Oly
 	Integer taskId;
 
 	public TpsCommand(OlympaCore plugin) {
-		super(plugin, "tps", "Affiche des informations sur l'état du serveur.", OlympaCorePermissions.SPIGOT_LAG_COMMAND, "lag", "lagbar", "tpsbar");
+		super(plugin, "tps", "Affiche des informations sur l'état du serveur.", OlympaCorePermissionsSpigot.SPIGOT_LAG_COMMAND, "lag", "lagbar", "tpsbar");
 	}
 
 	@Override

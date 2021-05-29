@@ -6,7 +6,7 @@ import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.SanctionUtils;
@@ -20,7 +20,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 public class BanCommand extends BungeeCommand implements TabExecutor {
 
 	public BanCommand(Plugin plugin) {
-		super(plugin, "ban", OlympaCorePermissions.BAN_BAN_COMMAND, "tempban", "bann");
+		super(plugin, "ban", OlympaCorePermissionsBungee.BAN_BAN_COMMAND, "tempban", "bann");
 		minArg = 2;
 		usageString = "<joueur|uuid|id|ip> [temps] <motif>";
 	}

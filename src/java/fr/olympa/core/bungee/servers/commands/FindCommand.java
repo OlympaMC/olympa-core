@@ -3,7 +3,7 @@ package fr.olympa.core.bungee.servers.commands;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -12,7 +12,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class FindCommand extends BungeeCommand {
 	
 	public FindCommand(Plugin plugin) {
-		super(plugin, "find", "Trouve le serveur auquel un joueur est connecté.", OlympaCorePermissions.FIND_COMMAND);
+		super(plugin, "find", "Trouve le serveur auquel un joueur est connecté.", OlympaCorePermissionsBungee.FIND_COMMAND);
 		minArg = 1;
 		usageString = "<joueur>";
 	}

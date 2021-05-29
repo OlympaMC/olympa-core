@@ -38,9 +38,9 @@ import fr.olympa.api.gui.Inventories;
 import fr.olympa.api.holograms.HologramsManager;
 import fr.olympa.api.hook.IProtocolSupport;
 import fr.olympa.api.module.OlympaModule;
-import fr.olympa.api.permission.OlympaAPIPermissions;
-import fr.olympa.api.permission.OlympaCorePermissions;
 import fr.olympa.api.permission.OlympaPermission;
+import fr.olympa.api.permission.list.OlympaAPIPermissionsSpigot;
+import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.player.OlympaPlayer;
 import fr.olympa.api.plugin.OlympaSpigot;
 import fr.olympa.api.provider.AccountProvider;
@@ -191,8 +191,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		PluginManager pluginManager = getServer().getPluginManager();
 		pluginManager.registerEvents(new OnLoadListener(), this);
 
-		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
-		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
+		OlympaPermission.registerPermissions(OlympaAPIPermissionsSpigot.class);
+		OlympaPermission.registerPermissions(OlympaCorePermissionsSpigot.class);
 		new RestartCommand(this).registerPreProcess().register();
 		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
 		ReportReason.registerReason(ReportReason.class);

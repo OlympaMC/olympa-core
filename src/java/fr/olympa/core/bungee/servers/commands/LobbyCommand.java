@@ -1,7 +1,7 @@
 package fr.olympa.core.bungee.servers.commands;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
@@ -14,7 +14,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class LobbyCommand extends BungeeCommand {
 	
 	public LobbyCommand(Plugin plugin) {
-		super(plugin, "lobby", OlympaCorePermissions.LOBBY_COMMAND, "hub");
+		super(plugin, "lobby", OlympaCorePermissionsBungee.LOBBY_COMMAND, "hub");
 		description = "Te renvoie au serveur lobby.";
 		allowConsole = false;
 	}
