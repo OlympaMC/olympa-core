@@ -49,7 +49,7 @@ public class VanishListener implements Listener {
 			datasField.setAccessible(true);
 			modeField = Class.forName(PacketPlayOutPlayerInfo.class.getName() + "$PlayerInfoData").getDeclaredField("c");
 			modeField.setAccessible(true);
-			profileField = Class.forName(PacketPlayOutPlayerInfo.class.getName() + "$PlayerInfoData").getDeclaredField("a");
+			profileField = Class.forName(PacketPlayOutPlayerInfo.class.getName() + "$PlayerInfoData").getDeclaredField("d");
 			profileField.setAccessible(true);
 		}catch (ReflectiveOperationException ex) {
 			ex.printStackTrace();

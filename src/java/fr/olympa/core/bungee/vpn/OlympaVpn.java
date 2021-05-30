@@ -182,11 +182,11 @@ public class OlympaVpn {
 
 	public void update(OlympaVpn createVpnInfo) {
 		query = createVpnInfo.getIp();
-		if (mobile)
+		if (isMobile())
 			mobile = createVpnInfo.isMobile();
-		if (proxy)
+		if (isProxy())
 			proxy = createVpnInfo.isProxy();
-		if (hosting)
+		if (isHosting())
 			hosting = createVpnInfo.isHosting();
 		country = createVpnInfo.getCountry();
 		city = createVpnInfo.getCity();
