@@ -1,10 +1,12 @@
 package fr.olympa.core.bungee.servers.commands;
 
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.chat.TxtComponentBuilder;
 import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.server.ServerDebug;
 import fr.olympa.api.server.ServerStatus;
 import fr.olympa.api.utils.spigot.TPSUtils;
 import fr.olympa.core.bungee.servers.MonitorServers;
@@ -22,9 +24,7 @@ public class ListServerCommand extends BungeeCommand {
 		TxtComponentBuilder out = new TxtComponentBuilder("&6Liste des serveurs :").extraSpliterBN();
 		MonitorServers.getServersSorted().forEach(serverInfo -> {
 			ServerStatus status = serverInfo.getStatus();
-			TxtComponentBuilder out2 = new TxtComponentBuilder().extraSpliter(" ");
-
-			out2.extra("&7[%s&7]", status.getNameColored());
+			TxtComponentBuilder out2 = new TxtComponentBuilder("&7[%s&7]", status.getNameColored()).extraSpliter(" ");
 			out2.extra("%s%s&e:", status.getColor(), serverInfo.getName());
 			if (serverInfo.getOnlinePlayers() != null)
 				out2.extra("%s/%s", serverInfo.getOnlinePlayers(), serverInfo.getMaxPlayers());
@@ -36,12 +36,42 @@ public class ListServerCommand extends BungeeCommand {
 
 			StringJoiner sb = new StringJoiner(" ", "&e", "");
 			if (serverInfo.getRamUsage() != null)
-				sb.add(TPSUtils.getRamUsageColor(serverInfo.getRamUsage()) + "%%RAM");
+				sb.add(TPSUtils.getRamUsageColor(serverInfo.getRamUsage()) + "%%RAM&7");
 			if (serverInfo.getThreads() != null)
 				sb.add(serverInfo.getThreads() + "threads");
 			if (serverInfo.getPing() != null)
 				sb.add(serverInfo.getPing() + "ms");
 			if (serverInfo.getLastModifiedCore() != null && !serverInfo.getLastModifiedCore().isBlank())
+				sb.add("\n&6Last up core : " + serverInfo.getLastModifiedCore());
+
+			out2.onHoverText(sb.toString()).console(proxiedPlayer == null);
+			out.extra(out2);
+		});
+		MonitorServers.getServersSorted().forEach(serverInfo -> {
+			ServerStatus status = serverInfo.getStatus();
+			ServerDebug debugInfo = serverInfo.getServerDebugInfo();
+			TxtComponentBuilder out2 = new TxtComponentBuilder("&7[%s&7]", status.getNameColored()).extraSpliter(" ");
+			out2.extra("%s%s&e:", status.getColor(), serverInfo.getName());
+			if (serverInfo.getOnlinePlayers() != null)
+				out2.extra("%s/%s", serverInfo.getOnlinePlayers(), serverInfo.getMaxPlayers());
+			if (serverInfo.getTps() != null)
+				out2.extra("%stps", TPSUtils.getTpsColor(serverInfo.getTps()));
+			if (debugInfo != null && debugInfo.getCPUUsage() != null)
+				out2.extra("%scpu", debugInfo.getCPUUsage());
+			if (serverInfo.getError() != null && !serverInfo.getError().isBlank())
+				out2.extra("%dErreur : %s", status.getColor(), serverInfo.getError());
+			out2.extra(serverInfo.getRangeVersion());
+
+			StringJoiner sb = new StringJoiner(" ", "&e", "");
+			if (serverInfo.getRamUsage() != null)
+				sb.add(TPSUtils.getRamUsageColor(serverInfo.getRamUsage()) + "%%RAM&7");
+			if (serverInfo.getPing() != null)
+				sb.add(serverInfo.getPing() + "ms");
+			if (debugInfo != null && debugInfo.getPlugins() != null && !debugInfo.getPlugins().isEmpty())
+				sb.add("\n&6Plugins Maison : " + debugInfo.getPlugins().stream()
+						.filter(plugin -> plugin.getName().startsWith("Olympa") || plugin.getAuthors().contains("SkytAsul") || plugin.getAuthors().contains("Tristiisch"))
+						.map(plugin -> plugin.getName() + "(" + plugin.getVersion() + " " + plugin.getLastModifiedTime() + ")").collect(Collectors.joining(", ")));
+			else if (serverInfo.getLastModifiedCore() != null && !serverInfo.getLastModifiedCore().isBlank())
 				sb.add("\n&6Last up core : " + serverInfo.getLastModifiedCore());
 
 			out2.onHoverText(sb.toString()).console(proxiedPlayer == null);

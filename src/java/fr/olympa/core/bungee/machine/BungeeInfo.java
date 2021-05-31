@@ -26,7 +26,7 @@ public class BungeeInfo extends MachineMessage {
 					.map(ff -> {
 						PluginDescription desc = ff.getDescription();
 						String fileInfo = Utils.tsToShortDur(new File(ff.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()).lastModified() / 1000L);
-						return new TxtComponentBuilder("&6%s ", desc.getName().substring(6)).onHoverText("&eDernière MAJ %s (v%s)", fileInfo, desc.getVersion()).console(isConsole);
+						return new TxtComponentBuilder("&6%s ", desc.getName().substring(6)).onHoverText("&eDernière MAJ %s (%s)", fileInfo, desc.getVersion()).console(isConsole);
 					})
 					.collect(Collectors.toList()))
 				textBuilder.extra(txt);

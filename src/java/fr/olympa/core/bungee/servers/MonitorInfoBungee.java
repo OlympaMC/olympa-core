@@ -3,9 +3,9 @@ package fr.olympa.core.bungee.servers;
 import java.util.Arrays;
 import java.util.Map.Entry;
 
-import fr.olympa.api.LinkSpigotBungee;
+import javax.annotation.Nullable;
+
 import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.module.OlympaModule;
 import fr.olympa.api.server.MonitorInfo;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerDebug;
@@ -18,6 +18,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 public class MonitorInfoBungee extends MonitorInfo {
 
 	ServerInfo serverInfo;
+	@Nullable
 	ServerDebug serverDebugInfo;
 
 	public MonitorInfoBungee(ServerInfo serverInfo, long time, ServerPing serverPing, Throwable error) {
@@ -55,17 +56,12 @@ public class MonitorInfoBungee extends MonitorInfo {
 				lastVersion = motd[5];
 			if (motd.length >= 7)
 				lastModifiedCore = motd[6];
-
-			if (OlympaModule.DEBUG) {
+			try {
 				String json = String.join(" ", Arrays.copyOfRange(motd, 7, motd.length));
-				LinkSpigotBungee.Provider.link.sendMessage("JSON reçu %s", json);
-				try {
-					if (motd.length >= 8)
-						serverDebugInfo = ServerDebug.fromJson(json);
-					LinkSpigotBungee.Provider.link.sendMessage("&eDEBUG Génial, le ServerDebugInfo de %s a été reçu via le motd. Let's goooo !", serverName);
-				} catch (Error e) {
-					e.printStackTrace();
-				}
+				if (motd.length >= 8)
+					serverDebugInfo = ServerDebug.fromJson(json);
+			} catch (Error e) {
+				e.printStackTrace();
 			}
 		} else {
 			status = ServerStatus.CLOSE;
@@ -77,5 +73,9 @@ public class MonitorInfoBungee extends MonitorInfo {
 
 	public ServerInfo getServerInfo() {
 		return serverInfo;
+	}
+
+	public ServerDebug getServerDebugInfo() {
+		return serverDebugInfo;
 	}
 }
