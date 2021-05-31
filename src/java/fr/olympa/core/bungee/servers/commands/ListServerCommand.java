@@ -57,7 +57,7 @@ public class ListServerCommand extends BungeeCommand {
 			if (serverInfo.getTps() != null)
 				out2.extra("%stps", TPSUtils.getTpsColor(serverInfo.getTps()));
 			if (debugInfo != null && debugInfo.getCPUUsage() != null)
-				out2.extra("%scpu", debugInfo.getCPUUsage());
+				out2.extra("%scpu", debugInfo.getCPUUsage().replace("%", "%%"));
 			if (serverInfo.getError() != null && !serverInfo.getError().isBlank())
 				out2.extra("%dErreur : %s", status.getColor(), serverInfo.getError());
 			out2.extra(serverInfo.getRangeVersion());

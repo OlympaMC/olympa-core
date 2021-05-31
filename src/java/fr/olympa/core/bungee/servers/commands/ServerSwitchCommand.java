@@ -43,8 +43,8 @@ public class ServerSwitchCommand extends BungeeComplexCommand {
 		String serverName = monitorInfo.getHumanName();
 		if (!monitorInfo.getStatus().canConnect()) {
 			if (target == getProxiedPlayer() && !monitorInfo.canConnect(olympaPlayer) && OlympaCorePermissionsBungee.SERVER_START_COMMAND.hasPermission(olympaPlayer))
-				sendComponents(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Impossible d'aller vers le serveur §2%s§a, il est fermé. &7[&2DEMARRER&7]",
-						"/" + StartServerCommand.getCommandName() + " " + serverName, "&2Clique pour démarrer " + serverName, serverName));
+				sendComponents(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Impossible d'aller vers le serveur &4%s§a&c, il est fermé. &7[&2DEMARRER&7]",
+						"/" + StartServerCommand.getCommandName() + " " + server.getName(), "&2Clique pour démarrer " + serverName, serverName));
 			else
 				sendError("Impossible d'aller vers le serveur §2%s§a, il est fermé.", serverName);
 			return;
