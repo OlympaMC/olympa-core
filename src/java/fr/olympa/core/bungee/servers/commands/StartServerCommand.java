@@ -16,8 +16,15 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 @SuppressWarnings("deprecation")
 public class StartServerCommand extends BungeeCommand implements TabExecutor {
 
+	private static String commandName;
+
+	public static String getCommandName() {
+		return commandName;
+	}
+
 	public StartServerCommand(Plugin plugin) {
 		super(plugin, "startserver", OlympaCorePermissionsBungee.SERVER_START_COMMAND);
+		commandName = command;
 		minArg = 1;
 		usageString = "<" + plugin.getProxy().getServers().entrySet().stream().map(entry -> entry.getKey()).collect(Collectors.joining("|")) + ">";
 	}

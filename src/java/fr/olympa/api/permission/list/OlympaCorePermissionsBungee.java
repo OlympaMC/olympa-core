@@ -42,8 +42,8 @@ public class OlympaCorePermissionsBungee {
 	public static final OlympaBungeePermission PLAYER_LIST_COMMAND = new OlympaBungeePermission(OlympaGroup.BUILDER);
 	public static final OlympaBungeePermission SERVER_SWITCH_COMMAND = new OlympaBungeePermission(OlympaGroup.BUILDER);
 	public static final OlympaBungeePermission FIND_COMMAND = new OlympaBungeePermission(OlympaGroup.BUILDER);
-	public static final OlympaBungeePermission SERVER_START_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
-	public static final OlympaBungeePermission SERVER_RESTART_BUNGEE_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaBungeePermission SERVER_START_COMMAND = new OlympaBungeePermission(OlympaGroup.GAMEMASTER);
+	public static final OlympaBungeePermission SERVER_RESTART_BUNGEE_COMMAND = new OlympaBungeePermission(OlympaGroup.GAMEMASTER);
 	public static final OlympaBungeePermission LOBBY_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
 	public static final OlympaBungeePermission BPING_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
 
@@ -68,6 +68,6 @@ public class OlympaCorePermissionsBungee {
 
 	public static final OlympaBungeePermission IP_COMMAND = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaBungeePermission IP_COMMAND_SEE_IP = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
-	
+
 	public static final OlympaBungeePermission STAFF = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 }

@@ -1,14 +1,18 @@
 package fr.olympa.core.bungee.servers.commands;
 
 import fr.olympa.api.bungee.command.BungeeComplexCommand;
+import fr.olympa.api.chat.TxtComponentBuilder;
 import fr.olympa.api.command.complex.Cmd;
 import fr.olympa.api.command.complex.CommandContext;
 import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.servers.MonitorInfoBungee;
+import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.ServerConnectEvent.Reason;
 
 public class ServerSwitchCommand extends BungeeComplexCommand {
 
@@ -18,7 +22,7 @@ public class ServerSwitchCommand extends BungeeComplexCommand {
 
 	}
 
-	@Cmd (otherArg = true, args = { "SERVERS", "OLYMPA_PLAYERS" }, min = 1)
+	@Cmd(otherArg = true, args = { "SERVERS", "OLYMPA_PLAYERS" }, min = 1)
 	public void otherArg(CommandContext cmd) {
 		ProxiedPlayer target = null;
 		ServerInfo server = cmd.getArgument(0);
@@ -30,11 +34,39 @@ public class ServerSwitchCommand extends BungeeComplexCommand {
 			target = getProxiedPlayer();
 		} else
 			target = cmd.getArgument(1);
-		String serverName = Utils.capitalize(server.getName());
+		ProxiedPlayer finalTarget = target;
+		MonitorInfoBungee monitorInfo = MonitorServers.getMonitor(server);
+		if (monitorInfo == null) {
+			sendError("Impossible d'aller vers le serveur §2%s§a, son état est inconnu.", Utils.capitalize(server.getName()));
+			return;
+		}
+		String serverName = monitorInfo.getHumanName();
+		if (!monitorInfo.getStatus().canConnect()) {
+			if (target == getProxiedPlayer() && !monitorInfo.canConnect(olympaPlayer) && OlympaCorePermissionsBungee.SERVER_START_COMMAND.hasPermission(olympaPlayer))
+				sendComponents(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Impossible d'aller vers le serveur §2%s§a, il est fermé. &7[&2DEMARRER&7]",
+						"/" + StartServerCommand.getCommandName() + " " + serverName, "&2Clique pour démarrer " + serverName, serverName));
+			else
+				sendError("Impossible d'aller vers le serveur §2%s§a, il est fermé.", serverName);
+			return;
+		}
+		if (target == getProxiedPlayer() && !monitorInfo.canConnect(olympaPlayer)) {
+			sendError("Tu n'as pas la permission de rejoindre §2%s§a.", serverName);
+			return;
+		}
+		monitorInfo.getOlympaServer();
 		if (target != getProxiedPlayer())
 			sendSuccess("Envoi de %s vers le serveur §2%s§a.", target.getName(), serverName);
-		sendMessage(target, Prefix.DEFAULT_GOOD, "Téléportation sur le serveur §2%s§a.", serverName);
-		target.connect(server);
+		sendMessage(finalTarget, Prefix.DEFAULT_GOOD, "Téléportation sur le serveur §2%s§a.", serverName);
+		finalTarget.connect(server, (succes, error) -> {
+			if (succes) {
+				if (finalTarget != getProxiedPlayer())
+					sendSuccess("%s est désormais sur le serveur §2%s§a.", finalTarget.getName(), serverName);
+				sendMessage(finalTarget, Prefix.DEFAULT_GOOD, "Bienvenue au §2%s§a.", serverName);
+			} else if (finalTarget != getProxiedPlayer())
+				sendError("Impossible d'aller vers le serveur §2%s§a pour %s: %s", serverName, finalTarget.getName(), error.getMessage());
+			else
+				sendError("Impossible d'aller vers le serveur §2%s§a: %s", serverName, error.getMessage());
+		}, false, Reason.COMMAND, 10);
 	}
 	/*
 		@Override
