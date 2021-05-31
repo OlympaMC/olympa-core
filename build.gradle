@@ -77,7 +77,7 @@ def getCheckedOutGitCommitHash() {
 def getGitBranch = { ->
     def stdout = new ByteArrayOutputStream()
     exec {
-        commandLine 'git', 'branch', '--show-current'
+        commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
         standardOutput = stdout
     }
     return stdout.toString().trim()
