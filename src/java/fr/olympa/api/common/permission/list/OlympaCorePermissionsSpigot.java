@@ -1,4 +1,4 @@
-package fr.olympa.api.commun.permission.list;
+package fr.olympa.api.common.permission.list;
 
 import fr.olympa.api.common.groups.OlympaGroup;
 import fr.olympa.api.common.permission.OlympaSpigotPermission;

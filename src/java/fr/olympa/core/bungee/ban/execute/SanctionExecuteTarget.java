@@ -9,8 +9,8 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;

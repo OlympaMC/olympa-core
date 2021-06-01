@@ -1,4 +1,4 @@
-package fr.olympa.api.commun.provider;
+package fr.olympa.api.common.provider;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;

@@ -13,7 +13,7 @@ import fr.olympa.api.common.command.complex.Cmd;
 import fr.olympa.api.common.command.complex.CommandContext;
 import fr.olympa.api.common.machine.TpsMessageBungee;
 import fr.olympa.api.common.module.OlympaModule;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.antibot.AntiBotHandler;

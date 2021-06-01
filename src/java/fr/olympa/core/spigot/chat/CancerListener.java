@@ -16,10 +16,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.common.server.OlympaServerSettings;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
-import fr.olympa.api.commun.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;

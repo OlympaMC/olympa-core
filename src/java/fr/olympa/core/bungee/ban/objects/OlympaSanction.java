@@ -11,7 +11,7 @@ import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.match.RegexMatcher;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.player.OlympaPlayerInformations;
-import fr.olympa.api.commun.provider.AccountProvider;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;

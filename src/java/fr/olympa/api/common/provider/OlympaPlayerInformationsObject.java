@@ -1,4 +1,4 @@
-package fr.olympa.api.commun.provider;
+package fr.olympa.api.common.provider;
 
 import java.util.UUID;
 

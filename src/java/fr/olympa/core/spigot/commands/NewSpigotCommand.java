@@ -8,7 +8,7 @@ import fr.olympa.api.common.chat.TableGenerator.Alignment;
 import fr.olympa.api.common.command.complex.Cmd;
 import fr.olympa.api.common.command.complex.CommandContext;
 import fr.olympa.api.common.module.OlympaModule;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.spigot.captcha.MapCaptcha;
 import fr.olympa.api.spigot.command.ComplexCommand;
 import fr.olympa.api.spigot.command.OlympaCommand;

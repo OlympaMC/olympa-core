@@ -4,7 +4,7 @@ import fr.olympa.api.bungee.command.BungeeComplexCommand;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.command.complex.Cmd;
 import fr.olympa.api.common.command.complex.CommandContext;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;

@@ -2,9 +2,9 @@ package fr.olympa.core.bungee.staffchat;
 
 import java.util.UUID;
 
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
-import fr.olympa.api.commun.provider.AccountProvider;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

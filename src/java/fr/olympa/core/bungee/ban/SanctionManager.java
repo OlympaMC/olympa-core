@@ -7,9 +7,9 @@ import java.util.StringJoiner;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
-import fr.olympa.api.commun.provider.AccountProvider;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;

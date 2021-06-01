@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.commun.provider.AccountProvider;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;

@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 import fr.olympa.api.common.command.complex.Cmd;
 import fr.olympa.api.common.command.complex.CommandContext;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.spigot.command.ComplexCommand;
 import fr.olympa.api.spigot.scoreboard.tab.Nametag;
 import fr.olympa.core.spigot.OlympaCore;

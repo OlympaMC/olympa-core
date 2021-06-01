@@ -24,15 +24,15 @@ import fr.olympa.api.common.groups.OlympaGroup;
 import fr.olympa.api.common.module.OlympaModule;
 import fr.olympa.api.common.permission.OlympaPermission;
 import fr.olympa.api.common.permission.list.OlympaAPIPermissionsSpigot;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.plugin.OlympaSpigot;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.common.redis.RedisAccess;
 import fr.olympa.api.common.redis.RedisChannel;
 import fr.olympa.api.common.report.ReportReason;
 import fr.olympa.api.common.server.ServerInfoBasic;
 import fr.olympa.api.common.server.ServerStatus;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
-import fr.olympa.api.commun.provider.AccountProvider;
 import fr.olympa.api.spigot.command.CommandListener;
 import fr.olympa.api.spigot.command.essentials.ColorCommand;
 import fr.olympa.api.spigot.command.essentials.EcseeCommand;
@@ -179,7 +179,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		super.onLoad();
 		instance = this;
 		SpigotConfig.sendNamespaced = false;
-		
+
 		errorOutputStream = new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20));
 		System.setErr(new PrintStream(errorOutputStream));
 		ErrorLoggerHandler errorHandler = new ErrorLoggerHandler(RedisSpigotSend::sendError);

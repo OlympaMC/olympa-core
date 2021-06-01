@@ -8,8 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.common.server.OlympaServerSettings;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.spigot.command.OlympaCommand;
 import fr.olympa.api.utils.Prefix;
 

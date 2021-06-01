@@ -3,7 +3,7 @@ package fr.olympa.core.spigot.redis.receiver;
 import org.apache.commons.lang.Validate;
 
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.commun.provider.AccountProvider;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.JedisPubSub;

@@ -5,10 +5,10 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.common.sort.Sorting;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.spigot.utils.TPSUtils;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.CommandSender;

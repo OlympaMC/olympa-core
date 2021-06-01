@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.common.bash.OlympaRuntime;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.spigot.command.OlympaCommand;
 import fr.olympa.core.spigot.OlympaCore;
 

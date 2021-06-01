@@ -8,9 +8,9 @@ import java.util.Map;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
-import fr.olympa.api.commun.provider.AccountProvider;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.core.bungee.servers.MonitorInfoBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.CommandSender;

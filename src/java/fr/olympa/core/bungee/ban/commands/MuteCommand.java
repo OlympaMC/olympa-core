@@ -6,8 +6,8 @@ import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.provider.AccountProvider;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;

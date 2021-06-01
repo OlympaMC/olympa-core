@@ -36,9 +36,9 @@ import com.google.common.collect.Sets;
 
 import fr.olympa.api.common.command.complex.Cmd;
 import fr.olympa.api.common.command.complex.CommandContext;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.provider.AccountProvider;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.spigot.command.ComplexCommand;
 import fr.olympa.api.spigot.editor.RegionEditor;
 import fr.olympa.api.spigot.item.ItemUtils;

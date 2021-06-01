@@ -16,9 +16,9 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.groups.OlympaGroup;
 import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.provider.AccountProvider;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.spigot.module.CoreModules;
 

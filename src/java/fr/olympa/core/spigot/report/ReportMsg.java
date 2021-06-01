@@ -10,14 +10,14 @@ import org.bukkit.command.CommandSender;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.common.player.OlympaPlayerInformations;
 import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.common.report.OlympaReport;
 import fr.olympa.api.common.report.ReportStatus;
 import fr.olympa.api.common.report.ReportStatusInfo;
 import fr.olympa.api.common.report.ReportUtils;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
-import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;

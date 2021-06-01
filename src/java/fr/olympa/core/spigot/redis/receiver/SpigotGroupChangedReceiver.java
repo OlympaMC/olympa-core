@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 import fr.olympa.api.common.groups.OlympaGroup;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.commun.provider.AccountProvider;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
