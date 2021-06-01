@@ -56,7 +56,7 @@ public class MonitorInfoBungee extends MonitorInfo {
 			if (motd.length >= 6)
 				lastVersion = motd[5];
 			if (motd.length >= 7)
-				lastModifiedCore = motd[6];
+				lastModifiedCore = RegexMatcher.INT.parse(motd[6]);
 			try {
 				String json = String.join(" ", Arrays.copyOfRange(motd, 7, motd.length));
 				if (motd.length >= 8)

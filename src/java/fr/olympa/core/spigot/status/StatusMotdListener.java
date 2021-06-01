@@ -30,7 +30,7 @@ public class StatusMotdListener implements Listener {
 		sj.add(String.valueOf(machineInfo.getThreads() + "/" + machineInfo.getAllThreadsCreated()));
 		sj.add(core.getFirstVersion());
 		sj.add(core.getLastVersion());
-		sj.add(core.getLastModifiedTime());
+		sj.add(String.valueOf(core.getLastModifiedLong()));
 		sj.add(new ServerDebugInit(core).toString());
 		if (OlympaModule.DEBUG)
 			core.sendMessage("&rDEBUG Ping > %s ", new Gson().toJson(sj.toString()));
