@@ -66,6 +66,7 @@ public class RedisBungeeSend {
 		RedisAccess.INSTANCE.disconnect();
 	}
 
+	@Deprecated(forRemoval = true)
 	public static void sendServerInfos(OlympaServer olympaServer, int players, ServerStatus status) {
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 			jedis.publish(RedisChannel.BUNGEE_SEND_SERVERSINFOS.name(), olympaServer.name() + ":" + players + ":" + status.getId());

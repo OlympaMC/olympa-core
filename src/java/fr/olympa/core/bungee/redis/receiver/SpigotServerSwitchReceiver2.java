@@ -34,7 +34,9 @@ public class SpigotServerSwitchReceiver2 extends JedisPubSub {
 		Callback<Boolean> callback = (result, error) -> {
 			if (result)
 				player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_GOOD, "Connexion au serveur %s établie !", serverName));
-			else
+			//			else if (error == null)
+			//				player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Tu es déjà au %s !", serverName));
+			else if (error != null)
 				player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Echec de la connexion au serveur &4%s&c: &4%s&c. ", serverName, error.getMessage()));
 		};
 		System.out.println(String.format("[REDIS] Demande de serveur switch %s sur le serv %s.", player.getName(), serverName));

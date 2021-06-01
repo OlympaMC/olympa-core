@@ -65,10 +65,14 @@ public class MonitorInfoBungee extends MonitorInfo {
 				e.printStackTrace();
 			}
 		} else {
-			status = ServerStatus.UNKNOWN;
 			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "");
-			if (OlympaModule.DEBUG && !this.error.isEmpty())
-				OlympaBungee.getInstance().sendMessage("&cLe serveur &4%s&c renvoie une erreur lors du ping %s", serverInfo.getName(), this.error);
+			if (this.error.isEmpty())
+				status = ServerStatus.CLOSE;
+			else {
+				status = ServerStatus.UNKNOWN;
+				if (OlympaModule.DEBUG)
+					OlympaBungee.getInstance().sendMessage("&cLe serveur &4%s&c renvoie une erreur lors du ping %s", serverInfo.getName(), this.error);
+			}
 		}
 	}
 

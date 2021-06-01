@@ -23,36 +23,11 @@ public class ListServerCommand extends BungeeCommand {
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		TxtComponentBuilder out = new TxtComponentBuilder("&6Liste des serveurs :").extraSpliterBN();
-		//		MonitorServers.getServersSorted().forEach(serverInfo -> {
-		//			ServerStatus status = serverInfo.getStatus();
-		//			TxtComponentBuilder out2 = new TxtComponentBuilder("&7[%s&7]", status.getNameColored()).extraSpliter(" ");
-		//			out2.extra("%s%s&e:", status.getColor(), serverInfo.getName());
-		//			if (serverInfo.getOnlinePlayers() != null)
-		//				out2.extra("%s/%s", serverInfo.getOnlinePlayers(), serverInfo.getMaxPlayers());
-		//			if (serverInfo.getTps() != null)
-		//				out2.extra("%stps", TPSUtils.getTpsColor(serverInfo.getTps()));
-		//			if (serverInfo.getError() != null && !serverInfo.getError().isBlank())
-		//				out2.extra("%dErreur : %s", status.getColor(), serverInfo.getError());
-		//			out2.extra(serverInfo.getRangeVersion());
-		//
-		//			StringJoiner sb = new StringJoiner(" ", "&e", "");
-		//			if (serverInfo.getRamUsage() != null)
-		//				sb.add(TPSUtils.getRamUsageColor(serverInfo.getRamUsage()) + "%%RAM&7");
-		//			if (serverInfo.getThreads() != null)
-		//				sb.add(serverInfo.getThreads() + "threads");
-		//			if (serverInfo.getPing() != null)
-		//				sb.add(serverInfo.getPing() + "ms");
-		//			if (serverInfo.getLastModifiedCore() != null && !serverInfo.getLastModifiedCore().isBlank())
-		//				sb.add("\n&6Last up core : " + serverInfo.getLastModifiedCore());
-		//
-		//			out2.onHoverText(sb.toString()).console(proxiedPlayer == null);
-		//			out.extra(out2);
-		//		});
 		MonitorServers.getServersSorted().forEach(serverInfo -> {
 			ServerStatus status = serverInfo.getStatus();
 			ServerDebug debugInfo = serverInfo.getServerDebugInfo();
 			TxtComponentBuilder out2 = new TxtComponentBuilder("&7[%s&7]", status.getNameColored()).extraSpliter(" ");
-			out2.extra("%s%s&e ", status.getColor(), serverInfo.getName());
+			out2.extra("%s%s", status.getColor(), serverInfo.getName());
 			if (serverInfo.getOnlinePlayers() != null)
 				out2.extra("%s/%s", serverInfo.getOnlinePlayers(), serverInfo.getMaxPlayers());
 			if (serverInfo.getTps() != null)
@@ -61,14 +36,14 @@ public class ListServerCommand extends BungeeCommand {
 				out2.extra("%scpu", debugInfo.getCPUUsage());
 			if (serverInfo.getError() != null && !serverInfo.getError().isBlank())
 				out2.extra("%sErreur : %s", status.getColor(), serverInfo.getError());
-			if (!serverInfo.getRangeVersion().equals("unknown"))
-				out2.extra(serverInfo.getRangeVersion());
 
 			StringJoiner sb = new StringJoiner(" ", "&7", "");
-			if (serverInfo.getRamUsage() != null)
-				sb.add(TPSUtils.getRamUsageColor(serverInfo.getRamUsage()) + "% RAM");
 			if (serverInfo.getPing() != null)
 				sb.add(serverInfo.getPing() + "ms");
+			if (serverInfo.getRamUsage() != null)
+				sb.add(TPSUtils.getRamUsageColor(serverInfo.getRamUsage()) + "% RAM");
+			if (!serverInfo.getRangeVersion().equals("unknown"))
+				sb.add(serverInfo.getRangeVersion());
 			if (debugInfo != null && debugInfo.getPlugins() != null && !debugInfo.getPlugins().isEmpty())
 				sb.add("\nPlugins Maison : " + debugInfo.getPlugins().stream()
 						.filter(plugin -> plugin.getName().startsWith("Olympa") || plugin.getAuthors().contains("SkytAsul") || plugin.getAuthors().contains("Tristiisch"))

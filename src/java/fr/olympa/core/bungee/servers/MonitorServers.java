@@ -67,10 +67,9 @@ public class MonitorServers {
 			if (previousStatus != info.getStatus()) {
 				OlympaBungee.getInstance()
 						.sendMessage("§7Serveur §e" + info.getName() + "§7 : " + previousStatus.getNameColored() + " §7-> " + info.getStatus().getNameColored() + (info.getError() != null ? " (" + info.getError() + ")" : ""));
-				if (instantUpdate) {
-					updateOlympaServer(info.getOlympaServer());
+				if (instantUpdate)
+					//					updateOlympaServer(info.getOlympaServer());
 					RedisBungeeSend.sendServerInfos();
-				}
 			}
 			if (info.isOpen())
 				ServersConnection.waitToStart.remove(serverInfo);
@@ -81,17 +80,17 @@ public class MonitorServers {
 
 	public static void updateServer(ServerInfo serverInfo, OlympaServer olympaServer, MonitorInfoBungee info) {
 		bungeeServers.put(serverInfo, info);
-		updateOlympaServer(olympaServer);
+		//		updateOlympaServer(olympaServer);
 	}
 
-	private static void updateOlympaServer(OlympaServer olympaServer) {
-		Collection<MonitorInfoBungee> servers = olympaServers.get(olympaServer).values();
-		if (servers.isEmpty())
-			return;
-		MonitorInfoBungee upper = servers.stream().sorted((x, y) -> Integer.compare(x.getStatus().getId(), y.getStatus().getId())).findFirst().orElse(null);
-		int online = servers.stream().filter(x -> x.getStatus().canConnect()).mapToInt(x -> x.getOnlinePlayers()).sum();
-		RedisBungeeSend.sendServerInfos(olympaServer, online, upper == null ? ServerStatus.UNKNOWN : upper.getStatus());
-	}
+	//	private static void updateOlympaServer(OlympaServer olympaServer) {
+	//		Collection<MonitorInfoBungee> servers = olympaServers.get(olympaServer).values();
+	//		if (servers.isEmpty())
+	//			return;
+	//		MonitorInfoBungee upper = servers.stream().sorted((x, y) -> Integer.compare(x.getStatus().getId(), y.getStatus().getId())).findFirst().orElse(null);
+	//		int online = servers.stream().filter(x -> x.getStatus().canConnect()).mapToInt(x -> x.getOnlinePlayers()).sum();
+	//		RedisBungeeSend.sendServerInfos(olympaServer, online, upper == null ? ServerStatus.UNKNOWN : upper.getStatus());
+	//	}
 
 	public static void init(OlympaBungee plugin) {
 		new MonitorServers(plugin);
@@ -104,8 +103,8 @@ public class MonitorServers {
 				updateServer(serverInfo, false);
 			if (Utils.getCurrentTimeInSeconds() - SpigotAskMonitorInfoReceiver.lastTimeAsk > 30)
 				RedisBungeeSend.sendServerInfos(bungeeServers.values());
-			for (OlympaServer olympaServer : olympaServers.keySet())
-				updateOlympaServer(olympaServer);
+			//			for (OlympaServer olympaServer : olympaServers.keySet())
+			//				updateOlympaServer(olympaServer);
 		}, 1, 15, TimeUnit.SECONDS);
 	}
 }
