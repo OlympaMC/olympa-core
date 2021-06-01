@@ -52,7 +52,7 @@ public class RedisSpigotSend {
 	}
 
 	/**
-	 * Déclanche {@link fr.olympa.api.customevents.MonitorServerInfoReceiveEvent#MonitorServerInfoReceiveEvent monitorServerInfoReceiveEvent}
+	 * Déclanche {@link fr.olympa.api.spigot.customevents.MonitorServerInfoReceiveEvent#MonitorServerInfoReceiveEvent monitorServerInfoReceiveEvent}
 	 */
 	public static void askServerInfo(BiConsumer<List<ServerInfoBasic>, Boolean> callback) {
 		if (callback != null)
