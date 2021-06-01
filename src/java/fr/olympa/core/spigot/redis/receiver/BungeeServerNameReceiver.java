@@ -1,6 +1,6 @@
 package fr.olympa.core.spigot.redis.receiver;
 
-import fr.olympa.api.redis.RedisAccess;
+import fr.olympa.api.common.redis.RedisAccess;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.JedisPubSub;
 

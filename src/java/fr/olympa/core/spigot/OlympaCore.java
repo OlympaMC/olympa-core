@@ -20,36 +20,36 @@ import org.spigotmc.SpigotConfig;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
-import fr.olympa.api.command.CommandListener;
-import fr.olympa.api.command.essentials.ColorCommand;
-import fr.olympa.api.command.essentials.EcseeCommand;
-import fr.olympa.api.command.essentials.FlyCommand;
-import fr.olympa.api.command.essentials.GamemodeCommand;
-import fr.olympa.api.command.essentials.InvseeCommand;
-import fr.olympa.api.command.essentials.ItemCommand;
-import fr.olympa.api.command.essentials.ListCommand;
-import fr.olympa.api.command.essentials.PingCommand;
-import fr.olympa.api.command.essentials.SayCommand;
-import fr.olympa.api.config.CustomConfig;
-import fr.olympa.api.customevents.SpigotConfigReloadEvent;
-import fr.olympa.api.frame.ImageFrameManager;
-import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.gui.Inventories;
-import fr.olympa.api.holograms.HologramsManager;
-import fr.olympa.api.hook.IProtocolSupport;
-import fr.olympa.api.module.OlympaModule;
-import fr.olympa.api.permission.OlympaPermission;
-import fr.olympa.api.permission.list.OlympaAPIPermissionsSpigot;
-import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.plugin.OlympaSpigot;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.redis.RedisAccess;
-import fr.olympa.api.redis.RedisChannel;
-import fr.olympa.api.region.tracking.RegionManager;
-import fr.olympa.api.report.ReportReason;
-import fr.olympa.api.server.MonitorInfo;
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.common.groups.OlympaGroup;
+import fr.olympa.api.common.module.OlympaModule;
+import fr.olympa.api.common.permission.OlympaPermission;
+import fr.olympa.api.common.permission.list.OlympaAPIPermissionsSpigot;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.plugin.OlympaSpigot;
+import fr.olympa.api.common.redis.RedisAccess;
+import fr.olympa.api.common.redis.RedisChannel;
+import fr.olympa.api.common.report.ReportReason;
+import fr.olympa.api.common.server.ServerInfoBasic;
+import fr.olympa.api.common.server.ServerStatus;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.commun.provider.AccountProvider;
+import fr.olympa.api.spigot.command.CommandListener;
+import fr.olympa.api.spigot.command.essentials.ColorCommand;
+import fr.olympa.api.spigot.command.essentials.EcseeCommand;
+import fr.olympa.api.spigot.command.essentials.FlyCommand;
+import fr.olympa.api.spigot.command.essentials.GamemodeCommand;
+import fr.olympa.api.spigot.command.essentials.InvseeCommand;
+import fr.olympa.api.spigot.command.essentials.ItemCommand;
+import fr.olympa.api.spigot.command.essentials.ListCommand;
+import fr.olympa.api.spigot.command.essentials.PingCommand;
+import fr.olympa.api.spigot.command.essentials.SayCommand;
+import fr.olympa.api.spigot.config.CustomConfig;
+import fr.olympa.api.spigot.customevents.SpigotConfigReloadEvent;
+import fr.olympa.api.spigot.frame.ImageFrameManager;
+import fr.olympa.api.spigot.gui.Inventories;
+import fr.olympa.api.spigot.holograms.HologramsManager;
+import fr.olympa.api.spigot.hook.IProtocolSupport;
+import fr.olympa.api.spigot.region.tracking.RegionManager;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
@@ -263,7 +263,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		new ChatCommand(this).register();
 		new ReportCommand(this).register();
 		new SetStatusCommand(this).register();
-		new PluginCommand(this).registerPreProcess();
+		new PluginCommand(this).registerPreProcess().register();
 		new HelpCommand(this).register().registerPreProcess();
 		new SayCommand(this).registerPreProcess();
 		new UtilsCommand(this).register();
@@ -388,7 +388,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	}
 
 	@Override
-	public void retreiveMonitorInfos(BiConsumer<List<MonitorInfo>, Boolean> callback, boolean freshDoubleCallBack) {
+	public void retreiveMonitorInfos(BiConsumer<List<ServerInfoBasic>, Boolean> callback, boolean freshDoubleCallBack) {
 		if (monitorInfos.isEmpty() || Utils.getCurrentTimeInSeconds() - lastInfo > 10)
 			if (freshDoubleCallBack)
 				RedisSpigotSend.askServerInfo(callback);

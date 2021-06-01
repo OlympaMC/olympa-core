@@ -9,11 +9,11 @@ import org.bukkit.event.server.ServerListPingEvent;
 
 import com.google.gson.Gson;
 
-import fr.olympa.api.machine.MachineInfo;
-import fr.olympa.api.module.OlympaModule;
-import fr.olympa.api.server.ServerDebugInit;
-import fr.olympa.api.server.ServerStatus;
-import fr.olympa.api.utils.spigot.TPS;
+import fr.olympa.api.common.machine.JavaInstanceInfo;
+import fr.olympa.api.common.module.OlympaModule;
+import fr.olympa.api.common.server.DebugServerSpigot;
+import fr.olympa.api.common.server.ServerStatus;
+import fr.olympa.api.spigot.utils.TPS;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class StatusMotdListener implements Listener {
@@ -21,7 +21,7 @@ public class StatusMotdListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPing(ServerListPingEvent event) {
 		ServerStatus status = OlympaCore.getInstance().getStatus();
-		MachineInfo machineInfo = new MachineInfo();
+		JavaInstanceInfo machineInfo = new JavaInstanceInfo();
 		OlympaCore core = OlympaCore.getInstance();
 		StringJoiner sj = new StringJoiner(" ");
 		sj.add(status.getName());
@@ -31,7 +31,7 @@ public class StatusMotdListener implements Listener {
 		sj.add(core.getFirstVersion());
 		sj.add(core.getLastVersion());
 		sj.add(String.valueOf(core.getLastModifiedLong()));
-		sj.add(new ServerDebugInit(core).toString());
+		sj.add(new DebugServerSpigot(core).toString());
 		if (OlympaModule.DEBUG)
 			core.sendMessage("&rDEBUG Ping > %s ", new Gson().toJson(sj.toString()));
 		event.setMotd(sj.toString());

@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 
-import fr.olympa.api.chat.ColorUtils;
+import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class OnLoadListener implements Listener {

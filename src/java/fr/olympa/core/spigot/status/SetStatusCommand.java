@@ -10,13 +10,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import fr.olympa.api.command.OlympaCommand;
-import fr.olympa.api.config.CustomConfig;
-import fr.olympa.api.permission.OlympaSpigotPermission;
-import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.common.permission.OlympaSpigotPermission;
+import fr.olympa.api.common.server.ServerStatus;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.spigot.command.OlympaCommand;
+import fr.olympa.api.spigot.config.CustomConfig;
+import fr.olympa.api.spigot.utils.SpigotUtils;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class SetStatusCommand extends OlympaCommand {

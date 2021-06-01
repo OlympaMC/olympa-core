@@ -1,7 +1,7 @@
 package fr.olympa.core.bungee.connectionqueue;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.chat.ColorUtils;
+import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import net.md_5.bungee.api.CommandSender;

@@ -1,8 +1,8 @@
-package fr.olympa.api.provider;
+package fr.olympa.api.commun.provider;
 
 import java.util.UUID;
 
-import fr.olympa.api.player.OlympaPlayerInformations;
+import fr.olympa.api.common.player.OlympaPlayerInformations;
 
 public class OlympaPlayerInformationsObject implements OlympaPlayerInformations {
 
@@ -15,7 +15,7 @@ public class OlympaPlayerInformationsObject implements OlympaPlayerInformations 
 		this.pseudo = pseudo;
 		this.uuid = uuid;
 	}
-	
+
 	@Override
 	public long getId() {
 		return id;
@@ -39,5 +39,5 @@ public class OlympaPlayerInformationsObject implements OlympaPlayerInformations 
 			return id == ((OlympaPlayerInformationsObject) obj).id;
 		return false;
 	}
-	
+
 }

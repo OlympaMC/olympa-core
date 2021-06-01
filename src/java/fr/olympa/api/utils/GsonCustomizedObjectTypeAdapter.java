@@ -13,13 +13,14 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.OlympaPlayerObject.OlympaPlayerDeserializer;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.commun.provider.OlympaPlayerObject.OlympaPlayerDeserializer;
 
 public class GsonCustomizedObjectTypeAdapter extends TypeAdapter<Object> {
 
 	private static final GsonCustomizedObjectTypeAdapter adapter = new GsonCustomizedObjectTypeAdapter();
-	public static final GsonBuilder GSON_BUILDER = new GsonBuilder().registerTypeHierarchyAdapter(OlympaPlayer.class, new OlympaPlayerDeserializer()).registerTypeHierarchyAdapter(Map.class, adapter).registerTypeHierarchyAdapter(List.class, adapter).excludeFieldsWithoutExposeAnnotation();
+	public static final GsonBuilder GSON_BUILDER = new GsonBuilder().registerTypeHierarchyAdapter(OlympaPlayer.class, new OlympaPlayerDeserializer()).registerTypeHierarchyAdapter(Map.class, adapter)
+			.registerTypeHierarchyAdapter(List.class, adapter).excludeFieldsWithoutExposeAnnotation();
 	public static final Gson GSON = GSON_BUILDER.create();
 
 	private final TypeAdapter<Object> delegate = new Gson().getAdapter(Object.class);
@@ -34,22 +35,21 @@ public class GsonCustomizedObjectTypeAdapter extends TypeAdapter<Object> {
 		JsonToken token = in.peek();
 		switch (token) {
 		case BEGIN_ARRAY:
-			List<Object> list = new ArrayList<Object>();
+			List<Object> list = new ArrayList<>();
 			in.beginArray();
-			while (in.hasNext()) {
+			while (in.hasNext())
 				list.add(read(in));
-			}
 			in.endArray();
 			return list;
 
 		case BEGIN_OBJECT:
-			Map<Object, Object> map = new TreeMap<Object, Object>();
+			Map<Object, Object> map = new TreeMap<>();
 			in.beginObject();
 			while (in.hasNext()) {
 				Object name = in.nextName();
 				try {
 					name = Long.parseLong((String) name);
-				}catch (NumberFormatException e) {}
+				} catch (NumberFormatException e) {}
 				map.put(name, read(in));
 			}
 			in.endObject();
@@ -65,9 +65,8 @@ public class GsonCustomizedObjectTypeAdapter extends TypeAdapter<Object> {
 		case NUMBER:
 			//return in.nextDouble();
 			String n = in.nextString();
-			if (n.indexOf('.') != -1) {
+			if (n.indexOf('.') != -1)
 				return Double.parseDouble(n);
-			}
 			return Long.parseLong(n);
 
 		case BOOLEAN:

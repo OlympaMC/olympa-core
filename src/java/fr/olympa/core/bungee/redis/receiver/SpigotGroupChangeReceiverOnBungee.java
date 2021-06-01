@@ -1,9 +1,9 @@
 package fr.olympa.core.bungee.redis.receiver;
 
 import fr.olympa.api.bungee.customevent.BungeeOlympaGroupChangeEvent;
-import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
-import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.common.groups.OlympaGroup;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.servers.ServersConnection;

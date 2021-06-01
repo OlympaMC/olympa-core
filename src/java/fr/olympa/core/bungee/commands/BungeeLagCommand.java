@@ -1,8 +1,8 @@
 package fr.olympa.core.bungee.commands;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
-import fr.olympa.core.bungee.machine.BungeeInfo;
+import fr.olympa.api.common.machine.TpsMessageBungee;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -14,7 +14,7 @@ public class BungeeLagCommand extends BungeeCommand {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		sender.sendMessage(new BungeeInfo(proxiedPlayer == null).getInfoMessage().build());
+		sender.sendMessage(new TpsMessageBungee(proxiedPlayer == null).getInfoMessage().build());
 	}
 
 }

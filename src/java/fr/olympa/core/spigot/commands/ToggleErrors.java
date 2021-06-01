@@ -6,8 +6,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import fr.olympa.api.command.OlympaCommand;
-import fr.olympa.api.permission.list.OlympaAPIPermissionsSpigot;
+import fr.olympa.api.common.permission.list.OlympaAPIPermissionsSpigot;
+import fr.olympa.api.spigot.command.OlympaCommand;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 
 public class ToggleErrors extends OlympaCommand {

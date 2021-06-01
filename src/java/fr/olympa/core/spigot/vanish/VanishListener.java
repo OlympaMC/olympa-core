@@ -30,7 +30,7 @@ import org.bukkit.inventory.Inventory;
 
 import com.mojang.authlib.GameProfile;
 
-import fr.olympa.api.vanish.IVanishApi;
+import fr.olympa.api.spigot.vanish.IVanishApi;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.module.CoreModules;
 import io.netty.channel.ChannelDuplexHandler;

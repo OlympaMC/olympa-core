@@ -1,4 +1,4 @@
-package fr.olympa.api.provider;
+package fr.olympa.api.commun.provider;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -15,19 +15,18 @@ import java.util.UUID;
 import org.apache.commons.lang.Validate;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.player.OlympaAccount;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.player.OlympaPlayerInformations;
-import fr.olympa.api.player.OlympaPlayerProvider;
-import fr.olympa.api.redis.RedisAccess;
+import fr.olympa.api.common.groups.OlympaGroup;
+import fr.olympa.api.common.player.OlympaAccount;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.player.OlympaPlayerInformations;
+import fr.olympa.api.common.player.OlympaPlayerProvider;
+import fr.olympa.api.common.redis.RedisAccess;
+import fr.olympa.api.common.sql.SQLColumn;
+import fr.olympa.api.common.sql.SQLTable;
 import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.sql.SQLColumn;
-import fr.olympa.api.sql.SQLTable;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
 
 public class AccountProvider implements OlympaAccount {
@@ -208,7 +207,7 @@ public class AccountProvider implements OlympaAccount {
 			return false;
 		}
 		pluginPlayerTable.insert(player.getId());
-		OlympaCore.getInstance().sendMessage("Données créées pour le joueur §6" + player.getName());
+		LinkSpigotBungee.Provider.link.sendMessage("Données créées pour le joueur §6%s", player.getName());
 		player.loaded();
 		return true;
 	}

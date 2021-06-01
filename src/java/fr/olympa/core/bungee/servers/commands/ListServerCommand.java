@@ -4,12 +4,12 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.chat.TxtComponentBuilder;
-import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
-import fr.olympa.api.server.ServerDebug;
-import fr.olympa.api.server.ServerStatus;
-import fr.olympa.api.sort.Sorting;
-import fr.olympa.api.utils.spigot.TPSUtils;
+import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.server.ServerInfoAdvanced;
+import fr.olympa.api.common.server.ServerStatus;
+import fr.olympa.api.common.sort.Sorting;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.spigot.utils.TPSUtils;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -25,7 +25,7 @@ public class ListServerCommand extends BungeeCommand {
 		TxtComponentBuilder out = new TxtComponentBuilder("&6Liste des serveurs :").extraSpliterBN();
 		MonitorServers.getServersSorted().forEach(serverInfo -> {
 			ServerStatus status = serverInfo.getStatus();
-			ServerDebug debugInfo = serverInfo.getServerDebugInfo();
+			ServerInfoAdvanced debugInfo = serverInfo.getServerDebugInfo();
 			TxtComponentBuilder out2 = new TxtComponentBuilder("&7[%s&7]", status.getNameColored()).extraSpliter(" ");
 			out2.extra("%s%s", status.getColor(), serverInfo.getName());
 			if (serverInfo.getOnlinePlayers() != null)
@@ -37,17 +37,17 @@ public class ListServerCommand extends BungeeCommand {
 			if (serverInfo.getError() != null && !serverInfo.getError().isBlank())
 				out2.extra("%sErreur : %s", status.getColor(), serverInfo.getError());
 
-			StringJoiner sb = new StringJoiner(" ", "&7", "");
+			StringJoiner sb = new StringJoiner(" &7", "&7", "");
+			sb.add(serverInfo.getHumanName());
 			if (serverInfo.getPing() != null)
 				sb.add(serverInfo.getPing() + "ms");
 			if (serverInfo.getRamUsage() != null)
-				sb.add(TPSUtils.getRamUsageColor(serverInfo.getRamUsage()) + "% RAM");
+				sb.add(TPSUtils.getRamUsageColor(serverInfo.getRamUsage()) + "% RAM&7");
 			if (!serverInfo.getRangeVersion().equals("unknown"))
 				sb.add(serverInfo.getRangeVersion());
 			if (debugInfo != null && debugInfo.getPlugins() != null && !debugInfo.getPlugins().isEmpty())
-				sb.add("\nPlugins Maison : " + debugInfo.getPlugins().stream()
-						.filter(plugin -> plugin.getName().startsWith("Olympa") || plugin.getAuthors().contains("SkytAsul") || plugin.getAuthors().contains("Tristiisch"))
-						.sorted(new Sorting<>(dp -> dp.getName().startsWith("Olympa") ? 1l : 0l))
+				sb.add("\nPlugins : " + debugInfo.getPlugins().stream()
+						.sorted(new Sorting<>(dp -> dp.getName().startsWith("Olympa") ? 0l : 1l, dp -> dp.getAuthors().contains("SkytAsul") || dp.getAuthors().contains("Tristiisch") ? 0l : 1l))
 						.map(plugin -> (plugin.isEnabled() ? "&2" : "&4") + plugin.getName() + "&7 (" + plugin.getVersion() + " " + plugin.getLastModifiedTime() + ")")
 						.collect(Collectors.joining(", ")));
 			else if (serverInfo.getLastModifiedCore() != null && !serverInfo.getLastModifiedCore().isBlank())

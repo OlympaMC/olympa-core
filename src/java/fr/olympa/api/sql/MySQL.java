@@ -13,15 +13,15 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.player.Gender;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.player.OlympaPlayerInformations;
-import fr.olympa.api.player.PlayerSQL;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.provider.OlympaPlayerInformationsObject;
-import fr.olympa.api.sql.statement.OlympaStatement;
+import fr.olympa.api.common.groups.OlympaGroup;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.player.Gender;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.player.OlympaPlayerInformations;
+import fr.olympa.api.common.player.PlayerSQL;
+import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.api.common.provider.OlympaPlayerInformationsObject;
+import fr.olympa.api.common.sql.statement.OlympaStatement;
 import fr.olympa.api.utils.Utils;
 
 public class MySQL implements PlayerSQL {

@@ -9,9 +9,9 @@ import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
-import fr.olympa.api.chat.Chat;
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.common.chat.Chat;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.Favicon;

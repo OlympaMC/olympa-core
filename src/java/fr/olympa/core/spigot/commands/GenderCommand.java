@@ -6,12 +6,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import fr.olympa.api.command.OlympaCommand;
-import fr.olympa.api.customevents.PlayerSexChangeEvent;
-import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
-import fr.olympa.api.player.Gender;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.common.player.Gender;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.spigot.command.OlympaCommand;
+import fr.olympa.api.spigot.customevents.PlayerSexChangeEvent;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
 

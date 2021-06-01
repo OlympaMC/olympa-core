@@ -7,14 +7,14 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.player.OlympaConsole;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.player.OlympaPlayerInformations;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.report.OlympaReport;
-import fr.olympa.api.report.OlympaReportAddEvent;
-import fr.olympa.api.report.ReportReason;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.player.OlympaConsole;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.player.OlympaPlayerInformations;
+import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.api.common.report.OlympaReport;
+import fr.olympa.api.common.report.ReportReason;
+import fr.olympa.api.spigot.customevents.OlympaReportAddSpigotEvent;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
@@ -64,7 +64,7 @@ public class ReportHandler {
 			} else
 				consoleCommand.sendMessage(msg);
 		}
-		Bukkit.getPluginManager().callEvent(new OlympaReportAddEvent(author, target, report));
+		Bukkit.getPluginManager().callEvent(new OlympaReportAddSpigotEvent(author, target, report));
 		//		if (!RedisSpigotSend.sendReport(report))
 		RedisSpigotSend.sendReport(report);
 		ReportMsg.sendAlert(report, authorOlympaPlayer.getName(), targetOlympaPlayer.getName(), targetServer);

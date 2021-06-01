@@ -1,10 +1,10 @@
 package fr.olympa.core.bungee.servers.commands;
 
 import fr.olympa.api.bungee.command.BungeeComplexCommand;
-import fr.olympa.api.chat.TxtComponentBuilder;
-import fr.olympa.api.command.complex.Cmd;
-import fr.olympa.api.command.complex.CommandContext;
-import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.command.complex.Cmd;
+import fr.olympa.api.common.command.complex.CommandContext;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -18,7 +18,6 @@ public class ServerSwitchCommand extends BungeeComplexCommand {
 
 	public ServerSwitchCommand(OlympaBungee plugin) {
 		super(plugin, "serverswitch", "Change de serveurs.", OlympaCorePermissionsBungee.SERVER_SWITCH_COMMAND, "switch", "server");
-		//		MonitorServers.getServers()
 
 	}
 

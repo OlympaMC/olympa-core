@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.server.MonitorInfo;
-import fr.olympa.api.server.OlympaServer;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerInfoBasic;
+import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.api.utils.spigot.ProtocolAPI;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
 import fr.olympa.core.bungee.utils.BungeeUtils;
@@ -29,7 +29,7 @@ public class ServersListener implements Listener {
 	public void onServerKick(ServerKickEvent event) {
 		ServerInfo serverKicked = event.getKickedFrom();
 		ProxiedPlayer player = event.getPlayer();
-		Entry<OlympaServer, Integer> entryOlympaServer = MonitorInfo.getOlympaServer(serverKicked.getName());
+		Entry<OlympaServer, Integer> entryOlympaServer = ServerInfoBasic.getOlympaServer(serverKicked.getName());
 		OlympaServer olympaServer = entryOlympaServer != null ? entryOlympaServer.getKey() : null;
 		if (olympaServer == null || olympaServer == OlympaServer.AUTH) {
 			event.setCancelled(false);

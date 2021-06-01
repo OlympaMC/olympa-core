@@ -8,10 +8,10 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import fr.olympa.api.bungee.customevent.OlympaPlayerLoginEvent;
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.player.OlympaConsole;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.player.OlympaConsole;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.utils.BungeeUtils;

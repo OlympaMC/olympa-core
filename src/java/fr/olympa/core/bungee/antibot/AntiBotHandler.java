@@ -1,8 +1,8 @@
 package fr.olympa.core.bungee.antibot;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
-import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
 
 public class AntiBotHandler {
 

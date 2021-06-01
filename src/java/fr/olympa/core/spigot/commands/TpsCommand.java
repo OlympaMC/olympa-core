@@ -11,17 +11,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import fr.olympa.api.chat.TxtComponentBuilder;
-import fr.olympa.api.command.OlympaCommand;
-import fr.olympa.api.machine.MachineInfo;
-import fr.olympa.api.machine.MachineMessage;
-import fr.olympa.api.module.OlympaModule.ModuleApi;
-import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
-import fr.olympa.api.plugin.OlympaAPIPlugin;
-import fr.olympa.api.task.OlympaTask;
+import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.machine.JavaInstanceInfo;
+import fr.olympa.api.common.machine.TpsMessage;
+import fr.olympa.api.common.module.OlympaModule.ModuleApi;
+import fr.olympa.api.common.plugin.OlympaAPIPlugin;
+import fr.olympa.api.common.task.OlympaTask;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.spigot.command.OlympaCommand;
+import fr.olympa.api.spigot.utils.TPS;
+import fr.olympa.api.spigot.utils.TPSUtils;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.spigot.TPS;
-import fr.olympa.api.utils.spigot.TPSUtils;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class TpsCommand extends OlympaCommand implements Listener, ModuleApi<OlympaCore> {
@@ -41,7 +41,7 @@ public class TpsCommand extends OlympaCommand implements Listener, ModuleApi<Oly
 			else
 				sendMessage(Prefix.DEFAULT_BAD, "La TPS ActionBar a été désactivée.");
 		} else
-			sendComponents(new MachineMessage(player == null).getInfoMessage().build());
+			sendComponents(new TpsMessage(player == null).getInfoMessage().build());
 		return false;
 	}
 
@@ -94,7 +94,7 @@ public class TpsCommand extends OlympaCommand implements Listener, ModuleApi<Oly
 		taskId = task.scheduleSyncRepeatingTask(() -> {
 			double[] tps = TPS.getDoubleTPS();
 			TxtComponentBuilder textBuilder = new TxtComponentBuilder();
-			MachineInfo mi = new MachineInfo();
+			JavaInstanceInfo mi = new JavaInstanceInfo();
 			textBuilder.extra("&3RAM: &b%s&3", mi.getMemUsage().replace("%", "%%"));
 			textBuilder.extra(" ");
 			textBuilder.extra("&3CPU Serv: &b%s&3", mi.getCPUUsage().replace("%", "%%"));

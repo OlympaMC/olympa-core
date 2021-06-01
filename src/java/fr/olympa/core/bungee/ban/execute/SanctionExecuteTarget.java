@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
-import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;

@@ -6,18 +6,18 @@ import java.text.DecimalFormat;
 
 import fr.olympa.api.bungee.command.BungeeComplexCommand;
 import fr.olympa.api.bungee.config.BungeeCustomConfig;
-import fr.olympa.api.chat.TableGenerator;
-import fr.olympa.api.chat.TableGenerator.Alignment;
-import fr.olympa.api.chat.TableGenerator.Receiver;
-import fr.olympa.api.command.complex.Cmd;
-import fr.olympa.api.command.complex.CommandContext;
-import fr.olympa.api.module.OlympaModule;
-import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.chat.TableGenerator;
+import fr.olympa.api.common.chat.TableGenerator.Alignment;
+import fr.olympa.api.common.chat.TableGenerator.Receiver;
+import fr.olympa.api.common.command.complex.Cmd;
+import fr.olympa.api.common.command.complex.CommandContext;
+import fr.olympa.api.common.machine.TpsMessageBungee;
+import fr.olympa.api.common.module.OlympaModule;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.antibot.AntiBotHandler;
 import fr.olympa.core.bungee.connectionqueue.QueueHandler;
-import fr.olympa.core.bungee.machine.BungeeInfo;
 import fr.olympa.core.bungee.redis.receiver.SpigotPlayerPack;
 import fr.olympa.core.bungee.security.SecurityHandler;
 import fr.olympa.core.bungee.utils.BungeeUtils;
@@ -74,7 +74,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_TPS")
 	public void tps(CommandContext cmd) {
-		sender.sendMessage(new BungeeInfo(proxiedPlayer == null).getInfoMessage().build());
+		sender.sendMessage(new TpsMessageBungee(proxiedPlayer == null).getInfoMessage().build());
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")

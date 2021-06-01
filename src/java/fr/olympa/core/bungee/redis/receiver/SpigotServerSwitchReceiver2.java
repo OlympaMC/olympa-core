@@ -1,6 +1,6 @@
 package fr.olympa.core.bungee.redis.receiver;
 
-import fr.olympa.api.chat.TxtComponentBuilder;
+import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;

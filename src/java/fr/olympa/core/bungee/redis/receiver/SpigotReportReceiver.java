@@ -2,7 +2,7 @@ package fr.olympa.core.bungee.redis.receiver;
 
 import com.google.gson.Gson;
 
-import fr.olympa.api.report.OlympaReport;
+import fr.olympa.api.common.report.OlympaReport;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.spigot.report.ReportMsg;
 import net.md_5.bungee.api.ProxyServer;

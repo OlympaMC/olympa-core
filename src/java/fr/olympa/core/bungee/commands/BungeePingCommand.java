@@ -1,9 +1,9 @@
 package fr.olympa.core.bungee.commands;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.spigot.utils.TPSUtils;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.spigot.TPSUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

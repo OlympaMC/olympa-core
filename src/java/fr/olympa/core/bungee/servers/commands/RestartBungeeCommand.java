@@ -3,8 +3,8 @@ package fr.olympa.core.bungee.servers.commands;
 import java.util.function.Consumer;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.machine.OlympaRuntime;
-import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.bash.OlympaRuntime;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 

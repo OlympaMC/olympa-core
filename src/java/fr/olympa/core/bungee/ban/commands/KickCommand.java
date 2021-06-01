@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;

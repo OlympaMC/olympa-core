@@ -10,14 +10,14 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import fr.olympa.api.module.OlympaModule.ModuleApi;
-import fr.olympa.api.permission.OlympaSpigotPermission;
-import fr.olympa.api.permission.list.OlympaAPIPermissionsSpigot;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.scoreboard.tab.INametagApi;
-import fr.olympa.api.scoreboard.tab.INametagApi.NametagHandler;
+import fr.olympa.api.common.module.OlympaModule.ModuleApi;
+import fr.olympa.api.common.permission.OlympaSpigotPermission;
+import fr.olympa.api.common.permission.list.OlympaAPIPermissionsSpigot;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.spigot.scoreboard.tab.INametagApi;
+import fr.olympa.api.spigot.scoreboard.tab.INametagApi.NametagHandler;
+import fr.olympa.api.spigot.vanish.IVanishApi;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.vanish.IVanishApi;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {

@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.function.Supplier;
 
-import fr.olympa.api.utils.spigot.ProtocolAPI;
+import fr.olympa.api.spigot.utils.ProtocolAPI;
 import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.Protocol;
 

@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 
-import fr.olympa.api.utils.spigot.ProtocolAPI;
+import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.core.spigot.OlympaCore;
 import protocolsupport.api.ProtocolVersion;
 

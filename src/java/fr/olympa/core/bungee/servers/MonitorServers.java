@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableMap;
 
 import fr.olympa.api.bungee.task.BungeeTaskManager;
-import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;

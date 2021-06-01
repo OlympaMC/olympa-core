@@ -1,4 +1,4 @@
-package fr.olympa.api.provider;
+package fr.olympa.api.commun.provider;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -28,13 +28,13 @@ import com.google.gson.JsonParseException;
 import com.google.gson.annotations.Expose;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.permission.OlympaPermission;
-import fr.olympa.api.player.Gender;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.player.OlympaPlayerInformations;
-import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.sql.SQLColumn;
+import fr.olympa.api.common.groups.OlympaGroup;
+import fr.olympa.api.common.permission.OlympaPermission;
+import fr.olympa.api.common.player.Gender;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.player.OlympaPlayerInformations;
+import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.sql.SQLColumn;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.login.Passwords;
@@ -435,7 +435,7 @@ public class OlympaPlayerObject implements OlympaPlayer, Cloneable {
 
 	@Override
 	public void unloaded() {}
-	
+
 	@Override
 	public void removeGroup(OlympaGroup group) {
 		groups.remove(group);

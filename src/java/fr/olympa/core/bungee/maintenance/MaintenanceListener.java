@@ -1,6 +1,6 @@
 package fr.olympa.core.bungee.maintenance;
 
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.event.PreLoginEvent;

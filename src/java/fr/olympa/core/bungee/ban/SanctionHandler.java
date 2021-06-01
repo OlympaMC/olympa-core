@@ -8,7 +8,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionHistory;

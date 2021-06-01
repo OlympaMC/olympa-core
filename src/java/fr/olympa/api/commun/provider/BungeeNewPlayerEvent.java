@@ -1,6 +1,6 @@
-package fr.olympa.api.provider;
+package fr.olympa.api.commun.provider;
 
-import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.common.player.OlympaPlayer;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.plugin.Event;
 

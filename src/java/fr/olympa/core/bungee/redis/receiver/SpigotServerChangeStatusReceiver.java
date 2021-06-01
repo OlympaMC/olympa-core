@@ -1,6 +1,6 @@
 package fr.olympa.core.bungee.redis.receiver;
 
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.servers.MonitorInfoBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;

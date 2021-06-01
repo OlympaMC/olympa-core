@@ -18,14 +18,14 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.chat.Chat;
-import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
-import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
-import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
-import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.common.chat.Chat;
+import fr.olympa.api.common.groups.OlympaGroup;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.commun.provider.AccountProvider;
+import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent;
+import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
+import fr.olympa.api.spigot.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
 

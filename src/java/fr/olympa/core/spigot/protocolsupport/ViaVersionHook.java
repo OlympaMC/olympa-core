@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import fr.olympa.api.utils.spigot.ProtocolAPI;
+import fr.olympa.api.spigot.utils.ProtocolAPI;
 import us.myles.ViaVersion.ViaVersionPlugin;
 import us.myles.ViaVersion.api.Via;
 import us.myles.ViaVersion.api.ViaAPI;

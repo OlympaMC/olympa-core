@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 
-import fr.olympa.api.scoreboard.tab.FakeTeam;
-import fr.olympa.api.scoreboard.tab.Nametag;
+import fr.olympa.api.spigot.scoreboard.tab.FakeTeam;
+import fr.olympa.api.spigot.scoreboard.tab.Nametag;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
 

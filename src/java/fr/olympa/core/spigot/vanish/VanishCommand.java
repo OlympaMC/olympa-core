@@ -6,10 +6,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import fr.olympa.api.command.OlympaCommand;
-import fr.olympa.api.permission.list.OlympaAPIPermissionsSpigot;
+import fr.olympa.api.common.permission.list.OlympaAPIPermissionsSpigot;
+import fr.olympa.api.spigot.command.OlympaCommand;
+import fr.olympa.api.spigot.vanish.IVanishApi;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.vanish.IVanishApi;
 
 public class VanishCommand extends OlympaCommand {
 

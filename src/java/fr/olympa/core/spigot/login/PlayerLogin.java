@@ -12,10 +12,10 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import fr.olympa.api.captcha.MapCaptcha;
-import fr.olympa.api.captcha.PlayerContents;
-import fr.olympa.api.config.CustomConfig;
-import fr.olympa.api.task.OlympaTask;
+import fr.olympa.api.common.task.OlympaTask;
+import fr.olympa.api.spigot.captcha.MapCaptcha;
+import fr.olympa.api.spigot.captcha.PlayerContents;
+import fr.olympa.api.spigot.config.CustomConfig;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.spigot.OlympaCore;
 import io.netty.channel.Channel;

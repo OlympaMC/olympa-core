@@ -7,11 +7,11 @@ import java.util.stream.Collectors;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.Plugin;
 
-import fr.olympa.api.command.complex.Cmd;
-import fr.olympa.api.command.complex.CommandContext;
-import fr.olympa.api.command.complex.ComplexCommand;
-import fr.olympa.api.config.CustomConfig;
-import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.common.command.complex.Cmd;
+import fr.olympa.api.common.command.complex.CommandContext;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.spigot.command.ComplexCommand;
+import fr.olympa.api.spigot.config.CustomConfig;
 import fr.olympa.api.utils.Prefix;
 
 public class ConfigCommand extends ComplexCommand {

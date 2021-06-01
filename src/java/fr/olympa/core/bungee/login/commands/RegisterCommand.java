@@ -7,7 +7,7 @@ import java.util.Set;
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.bungee.customevent.OlympaPlayerLoginEvent;
 import fr.olympa.api.bungee.player.DataHandler;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.login.HandlerLogin;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;

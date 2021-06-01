@@ -12,7 +12,7 @@ import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitWorker;
 
-import fr.olympa.api.chat.TxtComponentBuilder;
+import fr.olympa.api.common.chat.TxtComponentBuilder;
 
 public class UsagePerPlugin {
 

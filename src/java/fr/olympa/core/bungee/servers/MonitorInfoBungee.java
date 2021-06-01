@@ -5,22 +5,22 @@ import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
 
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.module.OlympaModule;
-import fr.olympa.api.server.MonitorInfo;
-import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.server.ServerDebug;
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.module.OlympaModule;
+import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerInfoAdvanced;
+import fr.olympa.api.common.server.ServerInfoBasic;
+import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Players;
 import net.md_5.bungee.api.config.ServerInfo;
 
-public class MonitorInfoBungee extends MonitorInfo {
+public class MonitorInfoBungee extends ServerInfoBasic {
 
 	ServerInfo serverInfo;
 	@Nullable
-	ServerDebug serverDebugInfo;
+	ServerInfoAdvanced serverDebugInfo;
 
 	public MonitorInfoBungee(ServerInfo serverInfo, long time, ServerPing serverPing, Throwable error) {
 		this.serverInfo = serverInfo;
@@ -60,7 +60,7 @@ public class MonitorInfoBungee extends MonitorInfo {
 			try {
 				String json = String.join(" ", Arrays.copyOfRange(motd, 7, motd.length));
 				if (motd.length >= 8)
-					serverDebugInfo = ServerDebug.fromJson(json);
+					serverDebugInfo = ServerInfoAdvanced.fromJson(json);
 			} catch (Error e) {
 				e.printStackTrace();
 			}
@@ -80,7 +80,7 @@ public class MonitorInfoBungee extends MonitorInfo {
 		return serverInfo;
 	}
 
-	public ServerDebug getServerDebugInfo() {
+	public ServerInfoAdvanced getServerDebugInfo() {
 		return serverDebugInfo;
 	}
 }

@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.redis.RedisAccess;
-import fr.olympa.api.redis.RedisChannel;
-import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.redis.RedisAccess;
+import fr.olympa.api.common.redis.RedisChannel;
+import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.servers.MonitorInfoBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;

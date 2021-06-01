@@ -2,11 +2,11 @@ package fr.olympa.core.spigot.module;
 
 import org.bukkit.event.Listener;
 
-import fr.olympa.api.afk.AfkHandler;
-import fr.olympa.api.command.OlympaCommand;
-import fr.olympa.api.command.essentials.AfkCommand;
-import fr.olympa.api.module.OlympaModule;
-import fr.olympa.api.module.SpigotModule;
+import fr.olympa.api.common.module.OlympaModule;
+import fr.olympa.api.common.module.SpigotModule;
+import fr.olympa.api.spigot.afk.AfkHandler;
+import fr.olympa.api.spigot.command.OlympaCommand;
+import fr.olympa.api.spigot.command.essentials.AfkCommand;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.commands.TpsCommand;
 import fr.olympa.core.spigot.scoreboards.NameTagCommand;

@@ -12,8 +12,8 @@ import org.bukkit.entity.Player;
 import com.google.gson.Gson;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.scoreboard.tab.FakeTeam;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.spigot.scoreboard.tab.FakeTeam;
 import fr.olympa.core.spigot.module.CoreModules;
 import fr.olympa.core.spigot.scoreboards.NameTagManager;
 import fr.olympa.core.spigot.scoreboards.utils.UtilsScoreboard;

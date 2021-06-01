@@ -15,11 +15,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.permission.list.OlympaCorePermissionsSpigot;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.server.OlympaServerSettings;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.server.OlympaServerSettings;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.commun.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
@@ -168,7 +168,7 @@ public class CancerListener implements Listener {
 						String wordWithoutFlood = wordFlooded.replace(charsFlooded, charFlooded);
 						message = message.replace(wordFlooded, wordWithoutFlood);
 						if (++i > 50) {
-							OlympaCore.getInstance().sendMessage("&4ERROR &cBoucle infini dans la gestion de chat pour le flood.");
+							new IllegalAccessError("&4ERROR &cBoucle infini dans la gestion de chat pour le flood.").printStackTrace();
 							break;
 						}
 					}

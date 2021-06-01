@@ -1,7 +1,7 @@
 package fr.olympa.core.bungee.nick;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.commun.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Prefix;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
