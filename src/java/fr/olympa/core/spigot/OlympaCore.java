@@ -179,6 +179,19 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		super.onLoad();
 		instance = this;
 		SpigotConfig.sendNamespaced = false;
+		
+		errorOutputStream = new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20));
+		System.setErr(new PrintStream(errorOutputStream));
+		ErrorLoggerHandler errorHandler = new ErrorLoggerHandler(RedisSpigotSend::sendError);
+		LogManager manager = LogManager.getLogManager();
+		Enumeration<String> names = manager.getLoggerNames();
+		int i = 1;
+		while (names.hasMoreElements()) {
+			String name = names.nextElement();
+			manager.getLogger(name).addHandler(errorHandler);
+			i++;
+		}
+		sendMessage("Hooked error stream handler into §6%s§e loggers!", i);
 	}
 
 	@Override
@@ -208,18 +221,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		}
 
 		RedisSpigotSend.errorsEnabled = true;
-		errorOutputStream = new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20));
-		System.setErr(new PrintStream(errorOutputStream));
-		ErrorLoggerHandler errorHandler = new ErrorLoggerHandler(RedisSpigotSend::sendError);
-		LogManager manager = LogManager.getLogManager();
-		Enumeration<String> names = manager.getLoggerNames();
-		int i = 1;
-		while (names.hasMoreElements()) {
-			String name = names.nextElement();
-			manager.getLogger(name).addHandler(errorHandler);
-			i++;
-		}
-		sendMessage("Hooked error stream handler into §6%s§e loggers!", i);
 		sendMessage("§6" + getDescription().getName() + "§e (" + getDescription().getVersion() + ") est chargé.");
 
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));

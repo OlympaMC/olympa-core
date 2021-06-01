@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -22,7 +23,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 public class MonitorServers {
 
 	private static Map<OlympaServer, Map<Integer, MonitorInfoBungee>> olympaServers = Arrays.stream(OlympaServer.values()).collect(ImmutableMap.toImmutableMap(x -> x, x -> new HashMap<>()));
-	private static Map<ServerInfo, MonitorInfoBungee> bungeeServers = new HashMap<>();
+	private static Map<ServerInfo, MonitorInfoBungee> bungeeServers = new ConcurrentHashMap<>();
 
 	public static Map<Integer, MonitorInfoBungee> getServers(OlympaServer server) {
 		return olympaServers.get(server);
