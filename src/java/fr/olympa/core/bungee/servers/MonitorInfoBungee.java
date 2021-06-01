@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import javax.annotation.Nullable;
 
 import fr.olympa.api.match.RegexMatcher;
+import fr.olympa.api.module.OlympaModule;
 import fr.olympa.api.server.MonitorInfo;
 import fr.olympa.api.server.OlympaServer;
 import fr.olympa.api.server.ServerDebug;
@@ -31,10 +32,10 @@ public class MonitorInfoBungee extends MonitorInfo {
 
 		ping = Math.round((System.nanoTime() - time) / 1000000f);
 		if (error == null) {
+			String allMotd = serverPing.getDescriptionComponent().toPlainText();
 			Players players = serverPing.getPlayers();
 			onlinePlayers = players.getOnline();
 			maxPlayers = players.getMax();
-			String allMotd = serverPing.getDescriptionComponent().toPlainText();
 			if (allMotd.startsWith("§"))
 				allMotd = allMotd.substring(2);
 			String[] motd = allMotd.split(" ");
@@ -64,9 +65,9 @@ public class MonitorInfoBungee extends MonitorInfo {
 				e.printStackTrace();
 			}
 		} else {
-			status = ServerStatus.CLOSE;
+			status = ServerStatus.UNKNOWN;
 			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "");
-			if (!this.error.isEmpty())
+			if (OlympaModule.DEBUG && !this.error.isEmpty())
 				OlympaBungee.getInstance().sendMessage("&cLe serveur &4%s&c renvoie une erreur lors du ping %s", serverInfo.getName(), this.error);
 		}
 	}

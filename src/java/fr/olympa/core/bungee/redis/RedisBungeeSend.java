@@ -76,7 +76,7 @@ public class RedisBungeeSend {
 		return sendServerInfos(MonitorServers.getServers());
 	}
 
-	public static boolean sendServerInfos(Collection<MonitorInfoBungee> servs) {
+	public synchronized static boolean sendServerInfos(Collection<MonitorInfoBungee> servs) {
 		if (servs.isEmpty())
 			return false;
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {

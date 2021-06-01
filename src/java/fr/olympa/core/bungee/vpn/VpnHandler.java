@@ -101,6 +101,8 @@ public class VpnHandler {
 	protected static OlympaVpn checkIP(PendingConnection connection) throws SQLException, IOException, InterruptedException {
 		String username = connection.getName();
 		String ip = connection.getAddress().getAddress().getHostAddress();
+		if (ip.equalsIgnoreCase("127.0.0.1"))
+			return null;
 		OlympaVpn olympaVpn = null;
 		if (inCheck.contains(ip)) {
 			while (inCheck.contains(ip))
