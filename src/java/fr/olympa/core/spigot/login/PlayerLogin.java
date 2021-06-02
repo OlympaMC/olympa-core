@@ -17,6 +17,7 @@ import fr.olympa.api.spigot.captcha.MapCaptcha;
 import fr.olympa.api.spigot.captcha.PlayerContents;
 import fr.olympa.api.spigot.config.CustomConfig;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
@@ -86,6 +87,7 @@ public class PlayerLogin {
 	MapCaptcha map;
 	PlayerContents playerContents;
 	Location location;
+	long timestamp;
 
 	public void setMap(MapCaptcha map) {
 		this.map = map;
@@ -109,6 +111,8 @@ public class PlayerLogin {
 			});
 			return false;
 		}
+		long timeTaken = Utils.getCurrentTimeInSeconds() - playerLogin.timestamp;
+		Prefix.DEFAULT_GOOD.sendMessage(player, "La réponse était bien '%s'. Tu as réussi en %d secondes !", answer, timeTaken);
 		playerLogin.playerContents.clearInventory();
 		playerLogin.playerContents.returnHisInventory();
 		if (playerLogin.location != null)
@@ -136,6 +140,7 @@ public class PlayerLogin {
 			PlayerInventory playerInv = player.getInventory();
 			for (int i = 0; i <= 8; i++)
 				playerInv.setItem(i, item);
+			playerLogin.timestamp = Utils.getCurrentTimeInSeconds();
 		});
 	}
 }
