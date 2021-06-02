@@ -12,8 +12,8 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import fr.olympa.api.gui.OlympaGUI;
-import fr.olympa.api.item.OlympaItemBuild;
+import fr.olympa.api.spigot.gui.OlympaGUI;
+import fr.olympa.api.spigot.item.OlympaItemBuild;
 
 public class ReportGuiChoose extends OlympaGUI {
 

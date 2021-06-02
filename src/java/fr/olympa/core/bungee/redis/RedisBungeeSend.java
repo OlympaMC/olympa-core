@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.redis.RedisAccess;
-import fr.olympa.api.redis.RedisChannel;
-import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.redis.RedisAccess;
+import fr.olympa.api.common.redis.RedisChannel;
+import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.servers.MonitorInfoBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;
@@ -66,6 +66,7 @@ public class RedisBungeeSend {
 		RedisAccess.INSTANCE.disconnect();
 	}
 
+	@Deprecated(forRemoval = true)
 	public static void sendServerInfos(OlympaServer olympaServer, int players, ServerStatus status) {
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 			jedis.publish(RedisChannel.BUNGEE_SEND_SERVERSINFOS.name(), olympaServer.name() + ":" + players + ":" + status.getId());
@@ -77,7 +78,7 @@ public class RedisBungeeSend {
 	}
 
 	public static boolean sendServerInfos(Collection<MonitorInfoBungee> servs) {
-		if (MonitorServers.getServers().isEmpty())
+		if (servs.isEmpty())
 			return false;
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 			jedis.publish(RedisChannel.BUNGEE_SEND_SERVERSINFOS2.name(), servs.stream().map(t -> new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().toJson(t)).collect(Collectors.joining("\n")));

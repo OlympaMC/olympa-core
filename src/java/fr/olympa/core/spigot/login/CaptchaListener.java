@@ -11,7 +11,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -85,13 +84,13 @@ public class CaptchaListener implements Listener {
 			event.setTo(event.getFrom());
 		}
 	}
-
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPlayerMove(PlayerMoveEvent event) {
-		Player player = event.getPlayer();
-		if (PlayerLogin.isIn(player)) {
-			Prefix.DEFAULT_BAD.sendMessage(player, "Réponds au captcha dans le chat pour continuer.");
-			event.setTo(event.getFrom());
-		}
-	}
+	//
+	//	@EventHandler(priority = EventPriority.LOWEST)
+	//	public void onPlayerMove(PlayerMoveEvent event) {
+	//		Player player = event.getPlayer();
+	//		if (PlayerLogin.isIn(player)) {
+	//			Prefix.DEFAULT_BAD.sendMessage(player, "Réponds au captcha dans le chat pour continuer.");
+	//			event.setTo(event.getFrom());
+	//		}
+	//	}
 }

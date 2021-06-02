@@ -2,9 +2,9 @@ package fr.olympa.core.bungee.staffchat;
 
 import java.util.UUID;
 
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -36,7 +36,7 @@ public class StaffChatListener implements Listener {
 			return;
 		olympaPlayer = new AccountProvider(player.getUniqueId()).getFromRedis();
 
-		if (!OlympaCorePermissions.STAFF_CHAT.hasPermission(olympaPlayer)) {
+		if (!OlympaCorePermissionsBungee.STAFF_CHAT.hasPermission(olympaPlayer)) {
 			player.sendMessage(TextComponent.fromLegacyText(Prefix.ERROR.formatMessage("Tu n'as pas la permission d'écrire dans le chat du staff.")));
 			StaffChatHandler.getStaffchat().remove(uuid);
 			return;

@@ -7,11 +7,11 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
-import fr.olympa.api.command.complex.Cmd;
-import fr.olympa.api.command.complex.CommandContext;
-import fr.olympa.api.command.complex.ComplexCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.scoreboard.tab.Nametag;
+import fr.olympa.api.common.command.complex.Cmd;
+import fr.olympa.api.common.command.complex.CommandContext;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.spigot.command.ComplexCommand;
+import fr.olympa.api.spigot.scoreboard.tab.Nametag;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
@@ -24,7 +24,7 @@ public class NameTagCommand extends ComplexCommand {
 
 	public NameTagCommand(OlympaCore plugin, NametagAPI api) {
 		//		super(plugin, "nametag", "Gestion et test des nameTag", OlympaCorePermissions.NAMETAG_COMMAND, "nt");
-		super(plugin, "nametag", "Gestion et test des nameTag", OlympaCorePermissions.SPIGOT_LAG_COMMAND, "nt");
+		super(plugin, "nametag", "Gestion et test des nameTag.", OlympaCorePermissionsSpigot.SPIGOT_LAG_COMMAND, "nt");
 		this.api = api;
 	}
 

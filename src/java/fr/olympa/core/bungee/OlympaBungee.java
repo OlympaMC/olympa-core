@@ -8,22 +8,21 @@ import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.bungee.command.BungeeCommandListener;
 import fr.olympa.api.bungee.config.BungeeCustomConfig;
 import fr.olympa.api.bungee.task.BungeeTaskManager;
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.groups.SQLGroup;
-import fr.olympa.api.permission.OlympaAPIPermissions;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.permission.OlympaPermission;
-import fr.olympa.api.plugin.OlympaPluginInterface;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.redis.RedisAccess;
-import fr.olympa.api.redis.RedisChannel;
-import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.groups.SQLGroup;
+import fr.olympa.api.common.permission.OlympaPermission;
+import fr.olympa.api.common.permission.list.OlympaAPIPermissionsGlobal;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.plugin.OlympaPluginInterface;
+import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.api.common.redis.RedisAccess;
+import fr.olympa.api.common.redis.RedisChannel;
+import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.CacheStats;
-import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.commands.BanCommand;
 import fr.olympa.core.bungee.ban.commands.BanHistoryCommand;
 import fr.olympa.core.bungee.ban.commands.BanIpCommand;
@@ -37,6 +36,7 @@ import fr.olympa.core.bungee.ban.listeners.SanctionListener;
 import fr.olympa.core.bungee.commands.BungeeBroadcastCommand;
 import fr.olympa.core.bungee.commands.BungeeLagCommand;
 import fr.olympa.core.bungee.commands.BungeePingCommand;
+import fr.olympa.core.bungee.commands.CreditCommand;
 import fr.olympa.core.bungee.commands.InfoCommand;
 import fr.olympa.core.bungee.commands.IpCommand;
 import fr.olympa.core.bungee.commands.NewBungeeCommand;
@@ -58,6 +58,7 @@ import fr.olympa.core.bungee.maintenance.MaintenanceCommand;
 import fr.olympa.core.bungee.maintenance.MaintenanceListener;
 import fr.olympa.core.bungee.motd.MotdListener;
 import fr.olympa.core.bungee.nick.NickCommand;
+import fr.olympa.core.bungee.packets.BungeePackets;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageCommand;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageListener;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageToggleCommand;
@@ -68,6 +69,7 @@ import fr.olympa.core.bungee.redis.receiver.SpigotAskMonitorInfoReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotAskServerNameReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotGroupChangeReceiverOnBungee;
 import fr.olympa.core.bungee.redis.receiver.SpigotOlympaPlayerReceiver;
+import fr.olympa.core.bungee.redis.receiver.SpigotPlayerPack;
 import fr.olympa.core.bungee.redis.receiver.SpigotReportReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotServerChangeStatusReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotServerSwitchReceiver;
@@ -76,6 +78,7 @@ import fr.olympa.core.bungee.redis.receiver.site.SiteGroupChangeReceiver;
 import fr.olympa.core.bungee.security.BasicSecurityListener;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersListener;
+import fr.olympa.core.bungee.servers.commands.ListPlayerCommand;
 import fr.olympa.core.bungee.servers.commands.ListServerCommand;
 import fr.olympa.core.bungee.servers.commands.LobbyCommand;
 import fr.olympa.core.bungee.servers.commands.RestartBungeeCommand;
@@ -106,7 +109,6 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	}
 
 	protected DbConnection database = null;
-	protected long uptime = Utils.getCurrentTimeInSeconds();
 	protected BungeeCustomConfig defaultConfig;
 	protected BungeeCustomConfig maintConfig;
 	private BungeeTaskManager task;
@@ -136,8 +138,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		instance = this;
 
 		LinkSpigotBungee.Provider.link = this;
-		OlympaPermission.registerPermissions(OlympaAPIPermissions.class);
-		OlympaPermission.registerPermissions(OlympaCorePermissions.class);
+		OlympaPermission.registerPermissions(OlympaCorePermissionsBungee.class);
+		OlympaPermission.registerPermissions(OlympaAPIPermissionsGlobal.class);
 
 		new RestartBungeeCommand(this).register();
 		task = new BungeeTaskManager(this);
@@ -197,6 +199,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		new PrivateMessageCommand(this).register();
 		new PrivateMessageToggleCommand(this).register();
 		new ListServerCommand(this).register();
+		new ListPlayerCommand(this).register();
 		new MaintenanceCommand(this).register();
 		new LoginCommand(this).register().registerPreProcess();
 		new RegisterCommand(this).register().registerPreProcess();
@@ -219,6 +222,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		new BungeeBroadcastCommand(this).register();
 		new NickCommand(this).register();
 		new IpCommand(this).register();
+		new CreditCommand(this).register();
 
 		MonitorServers.init(this);
 		SQLGroup.init();
@@ -266,6 +270,12 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 
 		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
 		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
+
+		try {
+			BungeePackets.registerPackets();
+		} catch (ReflectiveOperationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -334,6 +344,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 			registerRedisSub(redisAccess.connect(), new BungeeCommandReceiver(), RedisChannel.BUNGEE_COMMAND.name());
 			registerRedisSub(redisAccess.connect(), new SpigotServerSwitchReceiver2(), RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER2.name());
 			registerRedisSub(redisAccess.connect(), new SpigotAskMonitorInfoReceiver(), RedisChannel.SPIGOT_ASK_SERVERINFO.name());
+			registerRedisSub(redisAccess.connect(), new SpigotPlayerPack(), RedisChannel.SPIGOT_PLAYER_RESOUREPACK.name());
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)
@@ -394,18 +405,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	}
 
 	@Override
-	public String getUptime() {
-		return Utils.timestampToDuration(uptime);
-	}
-
-	@Override
-	public long getUptimeLong() {
-		return uptime;
-	}
-
-	@Override
 	public void launchAsync(Runnable run) {
 		getTask().runTaskAsynchronously(run);
 	}
-
 }

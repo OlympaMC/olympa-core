@@ -11,7 +11,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import fr.olympa.api.sql.statement.OlympaStatement;
+import fr.olympa.api.common.sql.statement.OlympaStatement;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionHistory;

@@ -10,12 +10,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
-import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.gui.OlympaGUI;
-import fr.olympa.api.item.ItemUtils;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.sort.Sorting;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.common.groups.OlympaGroup;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.api.common.sort.Sorting;
+import fr.olympa.api.spigot.gui.OlympaGUI;
+import fr.olympa.api.spigot.item.ItemUtils;
 import fr.olympa.api.utils.Utils;
 
 public class StaffGui extends OlympaGUI {
@@ -33,7 +33,7 @@ public class StaffGui extends OlympaGUI {
 	public StaffGui() throws SQLException {
 		super("Staff", 5);
 		//		List<OlympaPlayer> staff = MySQL.getPlayersByGroupsIds(OlympaGroup.getStaffGroups()).stream().sorted((o1, o2) -> o2.getGroup().getPower() - o1.getGroup().getPower()).collect(Collectors.toList());
-		List<OlympaPlayer> staff = MySQL.getPlayersByGroupsIds(OlympaGroup.getStaffGroups()).stream().sorted(SORT_STAFF).collect(Collectors.toList());
+		List<OlympaPlayer> staff = AccountProvider.getSQL().getPlayersByGroupsIds(OlympaGroup.getStaffGroups()).stream().sorted(SORT_STAFF).collect(Collectors.toList());
 		int i = 0;
 		for (OlympaPlayer s : staff) {
 			int i2 = i;

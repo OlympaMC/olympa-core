@@ -1,9 +1,13 @@
 package fr.olympa.core.spigot.vanish;
 
+import java.lang.reflect.Field;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
@@ -24,12 +28,34 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
-import fr.olympa.api.vanish.IVanishApi;
+import com.mojang.authlib.GameProfile;
+
+import fr.olympa.api.spigot.vanish.IVanishApi;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.module.CoreModules;
+import io.netty.channel.ChannelDuplexHandler;
+import net.minecraft.server.v1_16_R3.EnumGamemode;
+import net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo;
 
 public class VanishListener implements Listener {
 
+	private Field datasField;
+	private Field modeField;
+	private Field profileField;
+
+	public VanishListener() {
+		try {
+			datasField = PacketPlayOutPlayerInfo.class.getDeclaredField("b");
+			datasField.setAccessible(true);
+			modeField = Class.forName(PacketPlayOutPlayerInfo.class.getName() + "$PlayerInfoData").getDeclaredField("c");
+			modeField.setAccessible(true);
+			profileField = Class.forName(PacketPlayOutPlayerInfo.class.getName() + "$PlayerInfoData").getDeclaredField("d");
+			profileField.setAccessible(true);
+		}catch (ReflectiveOperationException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
@@ -37,6 +63,23 @@ public class VanishListener implements Listener {
 		//		player.getActivePotionEffects().removeIf(p -> p.getType() == PotionEffectType.INVISIBILITY && p.getDuration() == 0);
 
 		CoreModules.VANISH.getApi().getVanished().forEach(vanishPlayer -> player.hidePlayer(plugin, vanishPlayer));
+		
+		if (datasField == null) return;
+		((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline().addBefore("packet_handler", "hide_spectators", new ChannelDuplexHandler() {
+			public void write(io.netty.channel.ChannelHandlerContext ctx, Object msg, io.netty.channel.ChannelPromise promise) throws Exception {
+				if (msg instanceof PacketPlayOutPlayerInfo) {
+					PacketPlayOutPlayerInfo packet = (PacketPlayOutPlayerInfo) msg;
+					List<Object> infos = (List<Object>) datasField.get(packet);
+					for (Object data : infos) {
+						if (modeField.get(data) == EnumGamemode.SPECTATOR) {
+							if (((GameProfile) profileField.get(data)).getId().equals(player.getUniqueId())) continue;
+							modeField.set(data, EnumGamemode.ADVENTURE);
+						}
+					}
+				}
+				super.write(ctx, msg, promise);
+			};
+		});
 	}
 
 	@EventHandler

@@ -1,6 +1,6 @@
 package fr.olympa.core.bungee.redis.receiver;
 
-import fr.olympa.api.chat.ColorUtils;
+import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import fr.olympa.core.bungee.servers.MonitorInfoBungee;

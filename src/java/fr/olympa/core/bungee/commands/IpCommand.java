@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import fr.olympa.api.bungee.command.BungeeComplexCommand;
-import fr.olympa.api.chat.TxtComponentBuilder;
-import fr.olympa.api.command.complex.Cmd;
-import fr.olympa.api.command.complex.CommandContext;
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.command.complex.Cmd;
+import fr.olympa.api.common.command.complex.CommandContext;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -19,7 +19,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class IpCommand extends BungeeComplexCommand {
 
 	public IpCommand(Plugin plugin) {
-		super(plugin, "ip", "Informations sur les IP utilisées", OlympaCorePermissions.IP_COMMAND);
+		super(plugin, "ip", "Informations sur les IP utilisées", OlympaCorePermissionsBungee.IP_COMMAND);
 		minArg = 0;
 	}
 
@@ -27,7 +27,7 @@ public class IpCommand extends BungeeComplexCommand {
 	public void other(CommandContext cmd) {
 		OlympaPlayer target = null;
 		String potentielIP;
-		boolean canSeeIP = OlympaCorePermissions.IP_COMMAND_SEE_IP.hasSenderPermissionBungee(sender);
+		boolean canSeeIP = OlympaCorePermissionsBungee.IP_COMMAND_SEE_IP.hasSenderPermissionBungee(sender);
 		if (cmd.getArgumentsLength() != 0) {
 
 			if (cmd.getArgument(0) instanceof OlympaPlayer) {
@@ -77,7 +77,7 @@ public class IpCommand extends BungeeComplexCommand {
 
 		Map<Boolean, List<OlympaPlayer>> all;
 		try {
-			all = MySQL.getPlayersByAllIp(potentielIP);
+			all = AccountProvider.getSQL().getPlayersByAllIp(potentielIP);
 		} catch (SQLException e) {
 			sendError(e);
 			e.printStackTrace();

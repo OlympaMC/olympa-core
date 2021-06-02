@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;
@@ -19,7 +19,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class MuteCommand extends BungeeCommand {
 
 	public MuteCommand(Plugin plugin) {
-		super(plugin, "mute", OlympaCorePermissions.BAN_MUTE_COMMAND, "tempmute");
+		super(plugin, "mute", OlympaCorePermissionsBungee.BAN_MUTE_COMMAND, "tempmute");
 		minArg = 2;
 		usageString = "<joueur|uuid|ip> [temps] <motif>";
 	}
@@ -65,7 +65,7 @@ public class MuteCommand extends BungeeCommand {
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		switch (args.length) {
 		case 1:
-			List<String> postentielNames = Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
+			List<String> postentielNames = Utils.startWords(args[0], AccountProvider.getSQL().getNamesBySimilarName(args[0]));
 			return postentielNames;
 		case 2:
 			List<String> units = new ArrayList<>();

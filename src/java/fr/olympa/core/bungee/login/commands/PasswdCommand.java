@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

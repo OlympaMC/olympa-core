@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import net.md_5.bungee.api.CommandSender;
@@ -16,7 +16,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 public class StaffChatCommand extends BungeeCommand implements TabExecutor {
 
 	public StaffChatCommand(Plugin plugin) {
-		super(plugin, "staffchat", OlympaCorePermissions.STAFF_CHAT, "sc");
+		super(plugin, "staffchat", OlympaCorePermissionsBungee.STAFF_CHAT, "sc");
 		usageString = "<on|off|message>";
 	}
 

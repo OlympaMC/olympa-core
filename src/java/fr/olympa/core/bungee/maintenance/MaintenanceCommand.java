@@ -7,9 +7,9 @@ import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.bungee.config.BungeeCustomConfig;
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.CommandSender;
@@ -29,7 +29,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 	static List<String> arg2 = new ArrayList<>();
 
 	public MaintenanceCommand(Plugin plugin) {
-		super(plugin, "maintenance", OlympaCorePermissions.MAINTENANCE_COMMAND, "maint");
+		super(plugin, "maintenance", OlympaCorePermissionsBungee.MAINTENANCE_COMMAND, "maint");
 		minArg = 1;
 		arg2.addAll(Arrays.asList("status", "add", "remove", "list"));
 		arg2.addAll(ServerStatus.getCommandsArgs());

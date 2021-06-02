@@ -4,8 +4,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.machine.OlympaRuntime;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.common.bash.OlympaRuntime;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.CommandSender;
@@ -16,7 +16,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 public class RestartServerCommand extends BungeeCommand implements TabExecutor {
 
 	public RestartServerCommand(Plugin plugin) {
-		super(plugin, "restartserv", OlympaCorePermissions.SERVER_START_COMMAND);
+		super(plugin, "restartserv", OlympaCorePermissionsBungee.SERVER_START_COMMAND);
 		minArg = 1;
 		usageString = "<" + plugin.getProxy().getServers().entrySet().stream().map(entry -> entry.getKey()).collect(Collectors.joining("|")) + ">";
 	}

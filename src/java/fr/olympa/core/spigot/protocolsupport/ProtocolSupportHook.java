@@ -10,10 +10,10 @@ import java.util.stream.Stream;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.hook.IProtocolSupport;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.spigot.hook.IProtocolSupport;
+import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.utils.VersionNameComparator;
-import fr.olympa.api.utils.spigot.ProtocolAPI;
 import fr.olympa.core.spigot.OlympaCore;
 import protocolsupport.ProtocolSupport;
 import protocolsupport.api.ProtocolSupportAPI;

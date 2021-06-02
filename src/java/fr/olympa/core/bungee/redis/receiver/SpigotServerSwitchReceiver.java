@@ -1,6 +1,6 @@
 package fr.olympa.core.bungee.redis.receiver;
 
-import fr.olympa.api.server.OlympaServer;
+import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

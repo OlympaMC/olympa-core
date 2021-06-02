@@ -1,8 +1,8 @@
 package fr.olympa.core.bungee.commands;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.redis.RedisAccess;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.redis.RedisAccess;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -13,7 +13,7 @@ public class RedisCommand extends BungeeCommand {
 	private JedisPubSub sub = null;
 
 	public RedisCommand(Plugin plugin) {
-		super(plugin, "redis", OlympaCorePermissions.BUNGEE_REDIS_COMMAND, "listenredis");
+		super(plugin, "redis", OlympaCorePermissionsBungee.BUNGEE_REDIS_COMMAND, "listenredis");
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -11,8 +12,8 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableMap;
 
 import fr.olympa.api.bungee.task.BungeeTaskManager;
-import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
@@ -22,7 +23,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 public class MonitorServers {
 
 	private static Map<OlympaServer, Map<Integer, MonitorInfoBungee>> olympaServers = Arrays.stream(OlympaServer.values()).collect(ImmutableMap.toImmutableMap(x -> x, x -> new HashMap<>()));
-	private static Map<ServerInfo, MonitorInfoBungee> bungeeServers = new HashMap<>();
+	private static Map<ServerInfo, MonitorInfoBungee> bungeeServers = new ConcurrentHashMap<>();
 
 	public static Map<Integer, MonitorInfoBungee> getServers(OlympaServer server) {
 		return olympaServers.get(server);
@@ -67,10 +68,9 @@ public class MonitorServers {
 			if (previousStatus != info.getStatus()) {
 				OlympaBungee.getInstance()
 						.sendMessage("§7Serveur §e" + info.getName() + "§7 : " + previousStatus.getNameColored() + " §7-> " + info.getStatus().getNameColored() + (info.getError() != null ? " (" + info.getError() + ")" : ""));
-				if (instantUpdate) {
-					updateOlympaServer(info.getOlympaServer());
+				if (instantUpdate)
+					//					updateOlympaServer(info.getOlympaServer());
 					RedisBungeeSend.sendServerInfos();
-				}
 			}
 			if (info.isOpen())
 				ServersConnection.waitToStart.remove(serverInfo);
@@ -81,17 +81,17 @@ public class MonitorServers {
 
 	public static void updateServer(ServerInfo serverInfo, OlympaServer olympaServer, MonitorInfoBungee info) {
 		bungeeServers.put(serverInfo, info);
-		updateOlympaServer(olympaServer);
+		//		updateOlympaServer(olympaServer);
 	}
 
-	private static void updateOlympaServer(OlympaServer olympaServer) {
-		Collection<MonitorInfoBungee> servers = olympaServers.get(olympaServer).values();
-		if (servers.isEmpty())
-			return;
-		MonitorInfoBungee upper = servers.stream().sorted((x, y) -> Integer.compare(x.getStatus().getId(), y.getStatus().getId())).findFirst().orElse(null);
-		int online = servers.stream().filter(x -> x.getStatus().canConnect()).mapToInt(x -> x.getOnlinePlayers()).sum();
-		RedisBungeeSend.sendServerInfos(olympaServer, online, upper == null ? ServerStatus.UNKNOWN : upper.getStatus());
-	}
+	//	private static void updateOlympaServer(OlympaServer olympaServer) {
+	//		Collection<MonitorInfoBungee> servers = olympaServers.get(olympaServer).values();
+	//		if (servers.isEmpty())
+	//			return;
+	//		MonitorInfoBungee upper = servers.stream().sorted((x, y) -> Integer.compare(x.getStatus().getId(), y.getStatus().getId())).findFirst().orElse(null);
+	//		int online = servers.stream().filter(x -> x.getStatus().canConnect()).mapToInt(x -> x.getOnlinePlayers()).sum();
+	//		RedisBungeeSend.sendServerInfos(olympaServer, online, upper == null ? ServerStatus.UNKNOWN : upper.getStatus());
+	//	}
 
 	public static void init(OlympaBungee plugin) {
 		new MonitorServers(plugin);
@@ -104,8 +104,8 @@ public class MonitorServers {
 				updateServer(serverInfo, false);
 			if (Utils.getCurrentTimeInSeconds() - SpigotAskMonitorInfoReceiver.lastTimeAsk > 30)
 				RedisBungeeSend.sendServerInfos(bungeeServers.values());
-			for (OlympaServer olympaServer : olympaServers.keySet())
-				updateOlympaServer(olympaServer);
+			//			for (OlympaServer olympaServer : olympaServers.keySet())
+			//				updateOlympaServer(olympaServer);
 		}, 1, 15, TimeUnit.SECONDS);
 	}
 }

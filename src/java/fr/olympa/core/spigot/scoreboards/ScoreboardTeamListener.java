@@ -11,13 +11,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
-import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
-import fr.olympa.api.customevents.PlayerSexChangeEvent;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.scoreboard.tab.FakeTeam;
-import fr.olympa.api.scoreboard.tab.INametagApi;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent;
+import fr.olympa.api.spigot.customevents.OlympaPlayerLoadEvent;
+import fr.olympa.api.spigot.customevents.PlayerSexChangeEvent;
+import fr.olympa.api.spigot.scoreboard.tab.FakeTeam;
+import fr.olympa.api.spigot.scoreboard.tab.INametagApi;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.module.CoreModules;
 import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
@@ -44,8 +44,8 @@ public class ScoreboardTeamListener implements Listener {
 			return;
 		
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
-		nameTagApi.callNametagUpdate(AccountProvider.get(player.getUniqueId()));
+		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
+		nameTagApi.callNametagUpdate(olympaPlayer);
 		List<OlympaPlayer> self = Arrays.asList(olympaPlayer);
 		for (OlympaPlayer other : AccountProvider.getAll())
 			if (other != olympaPlayer && other.getPlayer() != null && other.getPlayer().isOnline())

@@ -7,12 +7,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.player.OlympaPlayerInformations;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.player.OlympaPlayerInformations;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
@@ -182,7 +181,7 @@ public class OlympaSanction {
 				playersInformations = new HashSet<>();
 				playersInformations.add(AccountProvider.getPlayerInformations(getTargetId()));
 			} else
-				playersInformations = MySQL.getPlayersByIp(target).stream().map(op -> AccountProvider.getPlayerInformations(op)).collect(Collectors.toSet());
+				playersInformations = AccountProvider.getSQL().getPlayersByIp(target).stream().map(op -> AccountProvider.getPlayerInformations(op)).collect(Collectors.toSet());
 
 		return playersInformations;
 	}

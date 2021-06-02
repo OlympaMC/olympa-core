@@ -2,7 +2,7 @@ package fr.olympa.core.bungee.ban.objects;
 
 import com.google.gson.Gson;
 
-import fr.olympa.api.player.OlympaConsole;
+import fr.olympa.api.common.player.OlympaConsole;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 

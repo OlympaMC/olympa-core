@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import fr.olympa.api.chat.TxtComponentBuilder;
-import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.sort.Sorting;
+import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.sort.Sorting;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.servers.MonitorInfoBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;

@@ -34,19 +34,19 @@ import org.bukkit.util.io.BukkitObjectOutputStream;
 
 import com.google.common.collect.Sets;
 
-import fr.olympa.api.command.complex.Cmd;
-import fr.olympa.api.command.complex.CommandContext;
-import fr.olympa.api.command.complex.ComplexCommand;
-import fr.olympa.api.editor.RegionEditor;
-import fr.olympa.api.item.ItemUtils;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.region.Region;
-import fr.olympa.api.region.tracking.RegionManager;
-import fr.olympa.api.region.tracking.TrackedRegion;
+import fr.olympa.api.common.command.complex.Cmd;
+import fr.olympa.api.common.command.complex.CommandContext;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.api.spigot.command.ComplexCommand;
+import fr.olympa.api.spigot.editor.RegionEditor;
+import fr.olympa.api.spigot.item.ItemUtils;
+import fr.olympa.api.spigot.region.Region;
+import fr.olympa.api.spigot.region.tracking.RegionManager;
+import fr.olympa.api.spigot.region.tracking.TrackedRegion;
+import fr.olympa.api.spigot.utils.SpigotUtils;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.spigot.SpigotUtils;
 import fr.olympa.core.spigot.OlympaCore;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.TileEntity;
@@ -55,11 +55,12 @@ import net.minecraft.server.v1_16_R3.TileEntityTypes;
 public class UtilsCommand extends ComplexCommand {
 
 	public UtilsCommand(Plugin plugin) {
-		super(plugin, "utils", "Commandes diverses", OlympaCorePermissions.UTILS_COMMAND);
+		super(plugin, "utils", "Commandes de développement diverses.", OlympaCorePermissionsSpigot.UTILS_COMMAND);
 
-		super.addArgumentParser("FILE", sender -> Arrays.stream(OlympaCore.getInstance().getDataFolder().listFiles()).map(File::getName).collect(Collectors.toList()), x -> new File(OlympaCore.getInstance().getDataFolder(), x), null);
-		super.addArgumentParser("REGION", sender -> new ArrayList<>(OlympaCore.getInstance().getRegionManager().getTrackedRegions().keySet()), OlympaCore.getInstance().getRegionManager().getTrackedRegions()::get,
-				x -> "Cette région n'existe pas !");
+		super.addArgumentParser("FILE", (sender, arg) -> Arrays.stream(OlympaCore.getInstance().getDataFolder().listFiles()).map(File::getName).collect(Collectors.toList()),
+				x -> new File(OlympaCore.getInstance().getDataFolder(), x), null);
+		super.addArgumentParser("REGION", (sender, arg) -> new ArrayList<>(OlympaCore.getInstance().getRegionManager().getTrackedRegions().keySet()),
+				OlympaCore.getInstance().getRegionManager().getTrackedRegions()::get, x -> "Cette région n'existe pas !");
 	}
 
 	@Cmd(player = true)
@@ -161,7 +162,7 @@ public class UtilsCommand extends ComplexCommand {
 
 		Set<TrackedRegion> playerRegions = regionManager.getCachedPlayerRegions(getPlayer());
 		if (playerRegions == null)
-			playerRegions = Collections.EMPTY_SET;
+			playerRegions = Collections.emptySet();
 		sendInfo("Vous êtes actuellement dans les régions : §l%s", playerRegions.stream().map(x -> x.getID()).collect(Collectors.joining(", ", "[", "]")));
 
 		Set<TrackedRegion> applicable = trackedRegions.stream().filter(x -> x.getRegion().isIn(getPlayer())).collect(Collectors.toSet());
@@ -206,7 +207,8 @@ public class UtilsCommand extends ComplexCommand {
 		sendSuccess("%d points:", region.getLocations().size());
 		for (Location location : region.getLocations())
 			sendMessage(Prefix.DEFAULT, "- " + SpigotUtils.convertLocationToHumanString(location));
-		sendSuccess("%d flag(s): §e%s", trackedRegion.getFlags().size(), trackedRegion.getFlags().stream().map(flag -> flag.getClass().isAnonymousClass() ? flag.getClass().getName() : flag.getClass().getSimpleName()).collect(Collectors.joining(", ", "[", "]")));
+		sendSuccess("%d flag(s): §e%s", trackedRegion.getFlags().size(),
+				trackedRegion.getFlags().stream().map(flag -> flag.getClass().isAnonymousClass() ? flag.getClass().getName() : flag.getClass().getSimpleName()).collect(Collectors.joining(", ", "[", "]")));
 		sendSuccess("Priorité: §e%s", trackedRegion.getPriority().name());
 	}
 

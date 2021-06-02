@@ -9,9 +9,9 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import fr.olympa.api.gui.OlympaGUI;
-import fr.olympa.api.item.OlympaItemBuild;
-import fr.olympa.api.report.ReportReason;
+import fr.olympa.api.common.report.ReportReason;
+import fr.olympa.api.spigot.gui.OlympaGUI;
+import fr.olympa.api.spigot.item.OlympaItemBuild;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.spigot.report.ReportHandler;
 

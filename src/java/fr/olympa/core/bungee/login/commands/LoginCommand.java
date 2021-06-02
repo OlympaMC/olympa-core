@@ -3,14 +3,14 @@ package fr.olympa.core.bungee.login.commands;
 import java.sql.SQLException;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.player.OlympaConsole;
+import fr.olympa.api.bungee.customevent.OlympaPlayerLoginEvent;
+import fr.olympa.api.bungee.player.DataHandler;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.ban.SanctionManager;
+import fr.olympa.core.bungee.ban.execute.SanctionExecute;
+import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
-import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.HandlerLogin;
-import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -62,11 +62,19 @@ public class LoginCommand extends BungeeCommand {
 				HandlerLogin.timesFails.put(ip, 1);
 			else if (timeFails < 3)
 				HandlerLogin.timesFails.put(ip, ++timeFails);
-			else if (timeFails < 10)
+			else if (timeFails < 5)
 				proxiedPlayer.disconnect(BungeeUtils.connectScreen("Tu as fais trop de tentatives de mot de passe."));
+			else if (timeFails == 5)
+				proxiedPlayer.disconnect(BungeeUtils.connectScreen("Tu as fais trop de tentatives de mot de passe.\n&4&nAttention, au prochain mauvais mot de passe, tu sera ban temporairement."));
 			else
 				try {
-					SanctionManager.addAndApply(OlympaSanctionType.BANIP, OlympaConsole.getId(), ip, "Trop de tentatives de mot de passe.", Utils.getCurrentTimeInSeconds() + 60 * 60 * 60);
+					SanctionExecute banExecute = new SanctionExecute();
+					banExecute.addTarget(proxiedPlayer.getAddress().getAddress());
+					banExecute.setReason("Trop de tentatives de mot de passe sur le compte " + proxiedPlayer.getName() + ".");
+					banExecute.setExpire(Utils.getCurrentTimeInSeconds() + 60 * 10);
+					banExecute.setSanctionType(OlympaSanctionType.BAN);
+					banExecute.launchSanction(OlympaSanctionStatus.ACTIVE);
+					//SanctionManager.addAndApply(OlympaSanctionType.BANIP, OlympaConsole.getId(), ip, "Trop de tentatives de mot de passe.", Utils.getCurrentTimeInSeconds() + 60 * 60 * 60);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}

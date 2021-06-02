@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;
@@ -17,7 +17,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 public class KickCommand extends BungeeCommand {
 
 	public KickCommand(OlympaBungee plugin) {
-		super(plugin, "kick", OlympaCorePermissions.BAN_KICK_COMMAND, "eject");
+		super(plugin, "kick", OlympaCorePermissionsBungee.BAN_KICK_COMMAND, "eject");
 		usageString = plugin.getConfig().getString("ban.usagekick");
 		minArg = 1;
 	}

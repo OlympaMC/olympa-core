@@ -12,14 +12,13 @@ import java.util.regex.Matcher;
 import javax.annotation.Nullable;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.chat.TxtComponentBuilder;
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaConsole;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.player.OlympaConsole;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.BanMySQL;
@@ -28,11 +27,22 @@ import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 
 public class SanctionExecute {
 
 	public static SanctionExecute formatArgs(BungeeCommand bungeeCommand, String[] args) {
-		SanctionExecute me = new SanctionExecute(bungeeCommand);
+		SanctionExecute me;
+		if (bungeeCommand.getOlympaPlayer() != null)
+			me = new SanctionExecute(bungeeCommand);
+		else
+			try {
+				me = new SanctionExecute();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				bungeeCommand.sendError(e);
+				return null;
+			}
 		List<String> targetsString = Arrays.asList(args[0].split(","));
 		for (String target : targetsString)
 			if (RegexMatcher.IP.is(target))
@@ -67,7 +77,9 @@ public class SanctionExecute {
 		return me;
 	}
 
+	@Nullable
 	BungeeCommand cmd;
+
 	private List<String> targetsString;
 	private List<Object> targetsRaw = new ArrayList<>();
 	private List<String> unknownTargetType = new ArrayList<>();
@@ -76,6 +88,7 @@ public class SanctionExecute {
 	String reason;
 
 	OlympaPlayer author;
+	CommandSender authorSender;
 
 	private List<SanctionExecuteTarget> targets = new ArrayList<>();
 	OlympaSanctionType sanctionType;
@@ -85,24 +98,54 @@ public class SanctionExecute {
 		return targetsString;
 	}
 
-	public SanctionExecute(BungeeCommand cmd) {
+	public SanctionExecute(CommandSender authorSender, OlympaPlayer author) {
+		this.authorSender = authorSender;
+		this.author = author;
+	}
+
+	private SanctionExecute(BungeeCommand cmd) {
+		this(cmd.getSender(), cmd.getOlympaPlayer());
 		this.cmd = cmd;
-		author = cmd.getOlympaPlayer();
-		if (author == null)
-			try {
-				author = new AccountProvider(OlympaConsole.getUniqueId()).get();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				cmd.sendError(e);
-			}
+	}
+
+	public SanctionExecute() throws SQLException {
+		this(ProxyServer.getInstance().getConsole(), new AccountProvider(OlympaConsole.getUniqueId()).get());
 	}
 
 	public void setTargetsString(List<String> targetsString) {
 		this.targetsString = targetsString;
 	}
 
+	public List<String> getUnknownTargetType() {
+		return unknownTargetType;
+	}
+
+	public CommandSender getAuthorSender() {
+		return authorSender;
+	}
+
+	public OlympaPlayer getAuthor() {
+		return author;
+	}
+
+	public long getAuthorId() {
+		return author.getId();
+	}
+
 	public boolean isPermanant() {
 		return expire == 0;
+	}
+
+	/**
+	 * @param expire TimeStamp in seconds
+	 */
+	public void setExpire(long expire) {
+		this.expire = expire;
+	}
+
+	public void setReason(String reason) {
+		if (reason != null)
+			this.reason = Utils.capitalize(SanctionUtils.formatReason(reason));
 	}
 
 	public void setTargetsRaw(List<Object> targetsRaw) {
@@ -113,33 +156,23 @@ public class SanctionExecute {
 		this.unknownTargetType = unknownTargetType;
 	}
 
-	public List<String> getUnknownTargetType() {
-		return unknownTargetType;
-	}
-
-	public void setExpire(long expire) {
-		this.expire = expire;
-	}
-
-	public void setReason(String reason) {
-		if (reason != null)
-			this.reason = Utils.capitalize(SanctionUtils.formatReason(reason));
-	}
-
 	public void setSanctionType(OlympaSanctionType sanctionType) {
 		this.sanctionType = sanctionType;
 	}
 
-	public CommandSender getAuthorSender() {
-		return cmd.getSender();
+	public void sendError(Throwable e) {
+		if (cmd != null)
+			cmd.sendError(e);
 	}
 
-	public OlympaPlayer getAuthor() {
-		return author;
+	public void addTarget(InetAddress address) {
+		targetsRaw.add(address);
+		targetsString.add(address.getHostAddress());
 	}
 
-	public long getAuthorId() {
-		return author.getId();
+	public void addTarget(OlympaPlayer player) {
+		targetsRaw.add(player.getId());
+		targetsString.add(player.getName());
 	}
 
 	public void launchSanction(OlympaSanctionStatus newStatus) {
@@ -154,13 +187,12 @@ public class SanctionExecute {
 				target.annonce(this);
 			} catch (SQLException e) {
 				e.printStackTrace();
-				cmd.sendError(e);
+				sendError(e);
 			}
 	}
 
 	private boolean checkValidTarget() {
 		List<String> unknownTarget = new ArrayList<>();
-
 		if (targets.isEmpty())
 			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("&cCible &4%s&c introuvable.", ColorUtils.joinRed(targetsString)));
 		return false;
@@ -178,7 +210,7 @@ public class SanctionExecute {
 			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Le type de sanction n'est pas connu."));
 		else if (newStatus != OlympaSanctionStatus.ACTIVE && expire != 0)
 			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Impossible de mettre une durée dans un %s.", newStatus.getPrefix() + sanctionType.getName()));
-		else if (newStatus == OlympaSanctionStatus.ACTIVE && expire == 0 && OlympaCorePermissions.BAN_BANDEF_COMMAND.hasSenderPermissionBungee(getAuthorSender())) {
+		else if (newStatus == OlympaSanctionStatus.ACTIVE && expire == 0 && OlympaCorePermissionsBungee.BAN_BANDEF_COMMAND.hasSenderPermissionBungee(getAuthorSender())) {
 			String s = sanctionType.getName();
 			getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Tu n'as pas la permission de &4%s&c définitivement. Rajoute une durée tel que &4/%s %s 7jours %s", s, s.toLowerCase(), String.join(",", targetsString), reason));
 		} else
@@ -191,7 +223,7 @@ public class SanctionExecute {
 			List<OlympaPlayer> olympaPlayers = null;
 			try {
 				if (t instanceof InetAddress)
-					olympaPlayers = MySQL.getPlayersByIp(((InetAddress) t).getHostAddress());
+					olympaPlayers = AccountProvider.getSQL().getPlayersByIp(((InetAddress) t).getHostAddress());
 				else {
 					OlympaPlayer olympaPlayer = null;
 					if (t instanceof UUID)
@@ -207,7 +239,7 @@ public class SanctionExecute {
 					targets.add(new SanctionExecuteTarget(t, olympaPlayers));
 			} catch (SQLException e) {
 				e.printStackTrace();
-				cmd.sendError(e);
+				sendError(e);
 			}
 		}
 		// Never join data
@@ -233,7 +265,7 @@ public class SanctionExecute {
 					targets.add(new SanctionExecuteTarget(Arrays.asList(BanMySQL.getSanction((Long) t)), t));
 			} catch (SQLException e) {
 				e.printStackTrace();
-				cmd.sendError(e);
+				sendError(e);
 			}
 		return !targets.isEmpty();
 	}

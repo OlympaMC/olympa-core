@@ -1,7 +1,8 @@
 name: OlympaCore
-website: https://olympa.fr
+website: https://gitlab.com/olympa/olympacore
 main: fr.olympa.core.spigot.OlympaCore
-author: Tristiisch, SkytAsul
-version: ${project.fullVersion}
+authors: [Tristiisch, SkytAsul]
+contributors: [Bullobily]
+version: @plugin_version@
 softdepend: [ProtocolSupport, ViaVersion]
 api-version: 1.16

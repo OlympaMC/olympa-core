@@ -7,10 +7,9 @@ import java.util.StringJoiner;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
@@ -81,7 +80,7 @@ public class SanctionManager {
 				break;
 			case BANIP:
 				onlineTargets = ProxyServer.getInstance().getPlayers().stream().filter(t2 -> t2.getAddress().getAddress().getHostAddress().equals(target)).collect(Collectors.toList());
-				playersNames = MySQL.getPlayersByIp((String) target).stream().map(OlympaPlayer::getName).collect(Collectors.toList());
+				playersNames = AccountProvider.getSQL().getPlayersByIp((String) target).stream().map(OlympaPlayer::getName).collect(Collectors.toList());
 				break;
 			default:
 				return false;
@@ -116,7 +115,7 @@ public class SanctionManager {
 		TextComponent msgStaff = msg.duplicate();
 		msgStaff.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, sanction.toBaseComplement()));
 		msgStaff.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/hist " + sanction.getId()));
-		BungeeUtils.getPlayers(OlympaCorePermissions.BAN_SEEBANMSG, t -> t.forEach(p -> p.sendMessage(msgStaff)), t -> t.forEach(p -> p.sendMessage(msg)));
+		BungeeUtils.getPlayers(OlympaCorePermissionsBungee.BAN_SEEBANMSG, t -> t.forEach(p -> p.sendMessage(msgStaff)), t -> t.forEach(p -> p.sendMessage(msg)));
 		ProxyServer.getInstance().getConsole().sendMessage(msgStaff);
 		return true;
 	}

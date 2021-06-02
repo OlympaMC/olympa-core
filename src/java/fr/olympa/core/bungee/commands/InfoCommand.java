@@ -10,12 +10,11 @@ import java.util.StringJoiner;
 import com.google.gson.Gson;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.chat.TxtComponentBuilder;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.BanMySQL;
@@ -35,7 +34,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 public class InfoCommand extends BungeeCommand implements TabExecutor {
 
 	public InfoCommand(Plugin plugin) {
-		super(plugin, "info", OlympaCorePermissions.INFO_COMMAND);
+		super(plugin, "info", OlympaCorePermissionsBungee.INFO_COMMAND);
 		minArg = 0;
 	}
 
@@ -48,7 +47,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 			try {
 				target = AccountProvider.get(args[0]);
 				if (target == null) {
-					sendUnknownPlayer(args[0], MySQL.getNamesBySimilarChars(args[0]));
+					sendUnknownPlayer(args[0], AccountProvider.getSQL().getNamesBySimilarChars(args[0]));
 					return;
 				}
 				targetProxied = ProxyServer.getInstance().getPlayer(target.getUniqueId());
@@ -66,7 +65,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 		}
 
 		TextComponent out = new TextComponent();
-		TextComponent out2 = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_GOOD.formatMessage("§6Info ", target.getName())));
+		TextComponent out2 = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_GOOD.formatMessage("§6Info §e%s #%d", target.getName(), target.getId())));
 		out.addExtra(out2);
 		out.addExtra("\n");
 		out2 = new TextComponent(TextComponent.fromLegacyText("§3Première connexion : §b" + Utils.timestampToDuration(target.getFirstConnection())));
@@ -113,7 +112,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 				TxtComponentBuilder.of(null, "&3UUID : &b" + target.getUniqueId(), ClickEvent.Action.COPY_TO_CLIPBOARD, target.getUniqueId().toString(), HoverEvent.Action.SHOW_TEXT,
 						new Text("§eClique pour copier l'UUID dans le presse-papier")));
 		out.addExtra("\n");
-		if (hasPermission(OlympaCorePermissions.INFO_COMMAND_EXTRA)) {
+		if (hasPermission(OlympaCorePermissionsBungee.INFO_COMMAND_EXTRA)) {
 			out2 = new TextComponent(TextComponent.fromLegacyText("§3IP : §b[Cachée]"));
 			StringJoiner sj = new StringJoiner("\n");
 			sj.add("§c" + target.getIp());
@@ -122,7 +121,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 				OlympaVpn ipInfo = VpnHandler.get(ip);
 				List<String> users = ipInfo.getUsers();
 				users.remove(target.getName());
-				Map<Boolean, List<OlympaPlayer>> usersAll = MySQL.getPlayersByAllIp(ip);
+				Map<Boolean, List<OlympaPlayer>> usersAll = AccountProvider.getSQL().getPlayersByAllIp(ip);
 				List<OlympaPlayer> usersAllNow = usersAll.get(true);
 				usersAllNow.remove(target);
 				List<OlympaPlayer> usersAllHistory = usersAll.get(false);
@@ -133,7 +132,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 					sj.add("§cIP déjà partager (IP dans l'historique) avec " + ColorUtils.joinRedEt(usersAllHistory));
 				if (!users.isEmpty())
 					sj.add("§cL'IP a déjà essayé utiliser les pseudo " + ColorUtils.joinRedEt(users));
-				if (hasPermission(OlympaCorePermissions.INFO_COMMAND_EXTRA_EXTRA))
+				if (hasPermission(OlympaCorePermissionsBungee.INFO_COMMAND_EXTRA_EXTRA))
 					sj.add("§e" + new Gson().toJson(ipInfo));
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -153,7 +152,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		if (args.length == 1) {
 			List<String> postentielNames;
-			postentielNames = Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
+			postentielNames = Utils.startWords(args[0], AccountProvider.getSQL().getNamesBySimilarName(args[0]));
 			return postentielNames;
 		}
 		return new ArrayList<>();

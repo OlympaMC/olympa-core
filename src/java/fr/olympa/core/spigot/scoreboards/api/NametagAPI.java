@@ -11,10 +11,10 @@ import java.util.Map.Entry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 
-import fr.olympa.api.module.OlympaModule.ModuleApi;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.scoreboard.tab.INametagApi;
-import fr.olympa.api.scoreboard.tab.Nametag;
+import fr.olympa.api.common.module.OlympaModule.ModuleApi;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.spigot.scoreboard.tab.INametagApi;
+import fr.olympa.api.spigot.scoreboard.tab.Nametag;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.scoreboards.NameTagManager;
 import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;

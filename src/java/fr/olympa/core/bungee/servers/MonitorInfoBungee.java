@@ -3,22 +3,24 @@ package fr.olympa.core.bungee.servers;
 import java.util.Arrays;
 import java.util.Map.Entry;
 
-import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.module.OlympaModule;
-import fr.olympa.api.server.MonitorInfo;
-import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.server.ServerDebug;
-import fr.olympa.api.server.ServerStatus;
+import javax.annotation.Nullable;
+
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.module.OlympaModule;
+import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerInfoAdvanced;
+import fr.olympa.api.common.server.ServerInfoBasic;
+import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Players;
 import net.md_5.bungee.api.config.ServerInfo;
 
-public class MonitorInfoBungee extends MonitorInfo {
+public class MonitorInfoBungee extends ServerInfoBasic {
 
 	ServerInfo serverInfo;
-	ServerDebug serverDebugInfo;
+	@Nullable
+	ServerInfoAdvanced serverDebugInfo;
 
 	public MonitorInfoBungee(ServerInfo serverInfo, long time, ServerPing serverPing, Throwable error) {
 		this.serverInfo = serverInfo;
@@ -30,10 +32,10 @@ public class MonitorInfoBungee extends MonitorInfo {
 
 		ping = Math.round((System.nanoTime() - time) / 1000000f);
 		if (error == null) {
+			String allMotd = serverPing.getDescriptionComponent().toPlainText();
 			Players players = serverPing.getPlayers();
 			onlinePlayers = players.getOnline();
 			maxPlayers = players.getMax();
-			String allMotd = serverPing.getDescriptionComponent().toPlainText();
 			if (allMotd.startsWith("§"))
 				allMotd = allMotd.substring(2);
 			String[] motd = allMotd.split(" ");
@@ -54,28 +56,31 @@ public class MonitorInfoBungee extends MonitorInfo {
 			if (motd.length >= 6)
 				lastVersion = motd[5];
 			if (motd.length >= 7)
-				lastModifiedCore = motd[6];
-
-			if (OlympaModule.DEBUG) {
+				lastModifiedCore = RegexMatcher.INT.parse(motd[6]);
+			try {
 				String json = String.join(" ", Arrays.copyOfRange(motd, 7, motd.length));
-				LinkSpigotBungee.Provider.link.sendMessage("JSON reçu %s", json);
-				try {
-					if (motd.length >= 8)
-						serverDebugInfo = ServerDebug.fromJson(json);
-					LinkSpigotBungee.Provider.link.sendMessage("&eDEBUG Génial, le ServerDebugInfo de %s a été reçu via le motd. Let's goooo !", serverName);
-				} catch (Error e) {
-					e.printStackTrace();
-				}
+				if (motd.length >= 8)
+					serverDebugInfo = ServerInfoAdvanced.fromJson(json);
+			} catch (Error e) {
+				e.printStackTrace();
 			}
 		} else {
-			status = ServerStatus.CLOSE;
 			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "");
-			if (!this.error.isEmpty())
-				OlympaBungee.getInstance().sendMessage("&cLe serveur &4%s&c renvoie une erreur lors du ping %s", serverInfo.getName(), this.error);
+			if (this.error.isEmpty())
+				status = ServerStatus.CLOSE;
+			else {
+				status = ServerStatus.UNKNOWN;
+				if (OlympaModule.DEBUG)
+					OlympaBungee.getInstance().sendMessage("&cLe serveur &4%s&c renvoie une erreur lors du ping %s", serverInfo.getName(), this.error);
+			}
 		}
 	}
 
 	public ServerInfo getServerInfo() {
 		return serverInfo;
+	}
+
+	public ServerInfoAdvanced getServerDebugInfo() {
+		return serverDebugInfo;
 	}
 }

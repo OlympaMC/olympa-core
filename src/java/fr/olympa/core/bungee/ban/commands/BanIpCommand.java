@@ -3,9 +3,9 @@ package fr.olympa.core.bungee.ban.commands;
 import java.util.ArrayList;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.permission.OlympaPermission;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.common.permission.OlympaPermission;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;
@@ -18,7 +18,7 @@ public class BanIpCommand extends BungeeCommand {
 	public static OlympaPermission permToBandef;
 
 	public BanIpCommand(OlympaBungee plugin) {
-		super(plugin, "banip", OlympaCorePermissions.BAN_BANIP_COMMAND, "tempbanip");
+		super(plugin, "banip", OlympaCorePermissionsBungee.BAN_BANIP_COMMAND, "tempbanip");
 		minArg = 2;
 		usageString = plugin.getConfig().getString("ban.usageban");
 	}
@@ -34,7 +34,7 @@ public class BanIpCommand extends BungeeCommand {
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		switch (args.length) {
 		case 1:
-			return Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
+			return Utils.startWords(args[0], AccountProvider.getSQL().getNamesBySimilarName(args[0]));
 		default:
 			return new ArrayList<>();
 		}

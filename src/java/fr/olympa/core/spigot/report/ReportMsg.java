@@ -9,14 +9,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.chat.TxtComponentBuilder;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaPlayerInformations;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.report.OlympaReport;
-import fr.olympa.api.report.ReportStatus;
-import fr.olympa.api.report.ReportStatusInfo;
-import fr.olympa.api.report.ReportUtils;
+import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.common.player.OlympaPlayerInformations;
+import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.api.common.report.OlympaReport;
+import fr.olympa.api.common.report.ReportStatus;
+import fr.olympa.api.common.report.ReportStatusInfo;
+import fr.olympa.api.common.report.ReportUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
@@ -33,10 +34,10 @@ public class ReportMsg {
 		if (LinkSpigotBungee.Provider.link.isSpigot()) {
 			out = ReportUtils.getAlert(report, authorName, targetName, targetServer, OlympaCore.getInstance().getServerName());
 			Bukkit.getConsoleSender().spigot().sendMessage(out);
-			OlympaCorePermissions.REPORT_SEEREPORT.getPlayers(players -> players.forEach(p -> p.spigot().sendMessage(out)));
+			OlympaCorePermissionsSpigot.REPORT_SEE_NOTIF.getPlayers(players -> players.forEach(p -> p.spigot().sendMessage(out)));
 		} else {
 			ProxyServer.getInstance().getConsole().sendMessage(ReportUtils.getAlert(report, authorName, targetName, targetServer, null));
-			OlympaCorePermissions.REPORT_SEEREPORT_OTHERSERV.getPlayersBungee(players -> {
+			OlympaCorePermissionsBungee.REPORT_SEEREPORT_OTHERSERV.getPlayersBungee(players -> {
 				if (players != null)
 					players.forEach(p -> p.sendMessage(ReportUtils.getAlert(report, authorName, targetName, targetServer, p.getServer().getInfo().getName())));
 			});

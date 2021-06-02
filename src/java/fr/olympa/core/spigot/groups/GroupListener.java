@@ -18,14 +18,14 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.chat.Chat;
-import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
-import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
-import fr.olympa.api.customevents.OlympaPlayerLoadEvent;
-import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.common.chat.Chat;
+import fr.olympa.api.common.groups.OlympaGroup;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent;
+import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
+import fr.olympa.api.spigot.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
 
@@ -82,7 +82,7 @@ public class GroupListener implements Listener {
 				OlympaCore.getInstance().sendMessage("Mise à jour des permissions Bukkit du joueur §6%s", player.getName());
 				break;
 			}
-		if (player.isOp() && !OlympaCorePermissions.STAFF.hasPermission(olympaPlayer)) {
+		if (player.isOp() && !OlympaCorePermissionsSpigot.STAFF.hasPermission(olympaPlayer)) {
 			player.setOp(false);
 			LinkSpigotBungee.Provider.link.sendMessage("&4%s&c &cétait encore OP, heuresement que je suis là pour lui enlever ...", olympaPlayer.getName());
 		}

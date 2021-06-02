@@ -1,9 +1,9 @@
 package fr.olympa.core.bungee.commands;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.spigot.utils.TPSUtils;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.spigot.TPSUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -12,7 +12,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class BungeePingCommand extends BungeeCommand {
 
 	public BungeePingCommand(Plugin plugin) {
-		super(plugin, "bungeeping", OlympaCorePermissions.BPING_COMMAND, "bping");
+		super(plugin, "bungeeping", OlympaCorePermissionsBungee.BPING_COMMAND, "bping");
 		addArgs(false, "JOUEUR");
 		minArg = 0;
 	}

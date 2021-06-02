@@ -4,11 +4,11 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 import fr.olympa.api.bungee.customevent.BungeeOlympaGroupChangeEvent;
-import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
-import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.common.groups.OlympaGroup;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

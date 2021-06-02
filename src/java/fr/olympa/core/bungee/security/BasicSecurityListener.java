@@ -7,13 +7,13 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.player.OlympaConsole;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.bungee.customevent.OlympaPlayerLoginEvent;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.player.OlympaConsole;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.PendingConnection;
@@ -66,15 +66,16 @@ public class BasicSecurityListener implements Listener {
 		String connectDomain = Utils.getAfterFirst(connectIp, ".");
 		String subdomain = event.getConnection().getVirtualHost().getHostName().split("\\.")[0];
 
+		SecurityHandler securityHandler = SecurityHandler.getInstance();
 		// Vérifie si l'adresse est correct
-		if (RegexMatcher.IP.is(connectIp) && SecurityHandler.CHECK_CORRECT_ENTRED_IP_NUMBER
-				|| SecurityHandler.CHECK_CORRECT_ENTRED_IP && (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net")
+		if (RegexMatcher.IP.is(connectIp) && securityHandler.isCheckCorrectEntredIpNumber()
+				|| securityHandler.isCheckCorrectEntredIp() && (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net")
 						|| !subdomain.equalsIgnoreCase("play") && !subdomain.equalsIgnoreCase("buildeur"))) {
 			event.setCancelReason(BungeeUtils.connectScreen("&7[&cSécurité&7] &cTu dois te connecter avec l'adresse &nplay.olympa.fr&c."));
 			event.setCancelled(true);
 		}
 
-		if (SecurityHandler.PING_BEFORE_JOIN) {
+		if (securityHandler.isPingBeforeJoin()) {
 			String test = cache.asMap().get(ip);
 			if (test == null) {
 				event.setCancelReason(BungeeUtils.connectScreen("&7[&cSécurité&7] &2Actualise la liste des serveurs pour te connecter."));

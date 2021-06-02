@@ -6,8 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.login.HandlerLogin;

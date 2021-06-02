@@ -1,6 +1,6 @@
 package fr.olympa.core.bungee.staffchat;
 
-import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.common.player.OlympaPlayer;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Event;
 

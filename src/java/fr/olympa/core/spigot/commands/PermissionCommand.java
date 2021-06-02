@@ -18,17 +18,17 @@ import org.bukkit.plugin.Plugin;
 
 import com.google.common.collect.Sets;
 
-import fr.olympa.api.command.complex.Cmd;
-import fr.olympa.api.command.complex.CommandContext;
-import fr.olympa.api.command.complex.ComplexCommand;
-import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.permission.OlympaPermission;
-import fr.olympa.api.permission.OlympaSpigotPermission;
-import fr.olympa.api.player.Gender;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.OlympaPlayerObject;
-import fr.olympa.api.server.ServerType;
+import fr.olympa.api.common.command.complex.Cmd;
+import fr.olympa.api.common.command.complex.CommandContext;
+import fr.olympa.api.common.groups.OlympaGroup;
+import fr.olympa.api.common.permission.OlympaPermission;
+import fr.olympa.api.common.permission.OlympaSpigotPermission;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.common.player.Gender;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.OlympaPlayerObject;
+import fr.olympa.api.common.server.ServerFrameworkType;
+import fr.olympa.api.spigot.command.ComplexCommand;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
@@ -37,7 +37,7 @@ import fr.olympa.core.spigot.OlympaCore;
 public class PermissionCommand extends ComplexCommand {
 
 	public PermissionCommand(Plugin plugin) {
-		super(plugin, "permission", "Voir et modifier les permissions jusqu'au redémarrage", OlympaCorePermissions.PERMISSION_COMMAND, "perm", "p");
+		super(plugin, "permission", "Voir et modifier les permissions jusqu'au redémarrage.", OlympaCorePermissionsSpigot.PERMISSION_COMMAND, "perm", "p");
 		super.addArgumentParser("PERMISSION", (player, arg) -> OlympaPermission.permissions.entrySet().stream().map(Entry::getKey).collect(Collectors.toList()),
 				arg -> OlympaPermission.permissions.entrySet().stream().filter(e -> e.getKey().equalsIgnoreCase(arg)).findFirst().orElse(null),
 				x -> String.format("La permission &4%s&c n'existe pas", x));
@@ -135,7 +135,7 @@ public class PermissionCommand extends ComplexCommand {
 		OlympaGroup olympaGroup = null;
 		OlympaPlayer op = null;
 		Player target = null;
-		if (spigotPerm.getServerType() != ServerType.SPIGOT) {
+		if (spigotPerm.getServerType() != ServerFrameworkType.SPIGOT) {
 			sendError("La permission &4%s&c est une permission &4%s&c.", permName, Utils.capitalize(spigotPerm.getServerType().name()));
 			return;
 		}

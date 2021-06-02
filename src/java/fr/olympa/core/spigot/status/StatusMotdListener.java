@@ -7,11 +7,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
 
-import fr.olympa.api.machine.MachineInfo;
-import fr.olympa.api.module.OlympaModule;
-import fr.olympa.api.server.ServerDebugInit;
-import fr.olympa.api.server.ServerStatus;
-import fr.olympa.api.utils.spigot.TPS;
+import com.google.gson.Gson;
+
+import fr.olympa.api.common.machine.JavaInstanceInfo;
+import fr.olympa.api.common.module.OlympaModule;
+import fr.olympa.api.common.server.DebugServerSpigot;
+import fr.olympa.api.common.server.ServerStatus;
+import fr.olympa.api.spigot.utils.TPS;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class StatusMotdListener implements Listener {
@@ -19,7 +21,7 @@ public class StatusMotdListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPing(ServerListPingEvent event) {
 		ServerStatus status = OlympaCore.getInstance().getStatus();
-		MachineInfo machineInfo = new MachineInfo();
+		JavaInstanceInfo machineInfo = new JavaInstanceInfo();
 		OlympaCore core = OlympaCore.getInstance();
 		StringJoiner sj = new StringJoiner(" ");
 		sj.add(status.getName());
@@ -28,10 +30,10 @@ public class StatusMotdListener implements Listener {
 		sj.add(String.valueOf(machineInfo.getThreads() + "/" + machineInfo.getAllThreadsCreated()));
 		sj.add(core.getFirstVersion());
 		sj.add(core.getLastVersion());
-		sj.add(core.getLastModifiedTime());
-		sj.add(new ServerDebugInit(core).toString());
-		event.setMotd(sj.toString());
+		sj.add(String.valueOf(core.getLastModifiedLong()));
+		sj.add(new DebugServerSpigot(core).toString());
 		if (OlympaModule.DEBUG)
-			core.sendMessage("&rDEBUG ServerDebugInfo > %s ", new ServerDebugInit(core).toString());
+			core.sendMessage("&rDEBUG Ping > %s ", new Gson().toJson(sj.toString()));
+		event.setMotd(sj.toString());
 	}
 }

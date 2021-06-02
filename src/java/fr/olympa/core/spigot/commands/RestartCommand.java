@@ -8,14 +8,15 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import fr.olympa.api.command.OlympaCommand;
-import fr.olympa.api.machine.OlympaRuntime;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.common.bash.OlympaRuntime;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.spigot.command.OlympaCommand;
+import fr.olympa.core.spigot.OlympaCore;
 
 public class RestartCommand extends OlympaCommand {
 
 	public RestartCommand(Plugin plugin) {
-		super(plugin, "restart", "Redémarre le serveur", OlympaCorePermissions.SERVER_RESTART_COMMAND);
+		super(plugin, "restart", "Redémarre le serveur.", OlympaCorePermissionsSpigot.SERVER_RESTART_COMMAND);
 		allowConsole = true;
 	}
 
@@ -24,7 +25,7 @@ public class RestartCommand extends OlympaCommand {
 		Bukkit.getOnlinePlayers().forEach(p -> p.kickPlayer("Server is restarting"));
 		Consumer<String> function = player != null ? out -> sender.sendMessage(out) : null;
 		Runtime.getRuntime().addShutdownHook(OlympaRuntime.action("sh start.sh", function));
-		plugin.getServer().shutdown();
+		((OlympaCore) plugin).getTask().runTaskLater(() -> plugin.getServer().shutdown(), 40);
 		return false;
 	}
 

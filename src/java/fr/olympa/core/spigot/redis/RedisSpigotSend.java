@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.bukkit.entity.Player;
@@ -15,15 +16,15 @@ import com.google.common.cache.CacheBuilder;
 import com.google.gson.GsonBuilder;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
-import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.redis.RedisAccess;
-import fr.olympa.api.redis.RedisChannel;
-import fr.olympa.api.report.OlympaReport;
-import fr.olympa.api.server.MonitorInfo;
-import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.common.groups.OlympaGroup;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.redis.RedisAccess;
+import fr.olympa.api.common.redis.RedisChannel;
+import fr.olympa.api.common.report.OlympaReport;
+import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerInfoBasic;
+import fr.olympa.api.common.server.ServerStatus;
+import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
@@ -32,7 +33,7 @@ public class RedisSpigotSend {
 
 	public static Map<UUID, Consumer<? super Boolean>> modificationReceive = new HashMap<>();
 	public static Cache<UUID, Consumer<String>> askPlayerServer = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
-	public static List<Consumer<List<MonitorInfo>>> askServerInfo = new ArrayList<>();
+	public static List<BiConsumer<List<ServerInfoBasic>, Boolean>> askServerInfo = new ArrayList<>();
 	public static boolean errorsEnabled = false;
 
 	public static void askServerName() {
@@ -51,9 +52,9 @@ public class RedisSpigotSend {
 	}
 
 	/**
-	 * Déclanche {@link fr.olympa.api.customevents.MonitorServerInfoReceiveEvent#MonitorServerInfoReceiveEvent monitorServerInfoReceiveEvent}
+	 * Déclanche {@link fr.olympa.api.spigot.customevents.MonitorServerInfoReceiveEvent#MonitorServerInfoReceiveEvent monitorServerInfoReceiveEvent}
 	 */
-	public static void askServerInfo(Consumer<List<MonitorInfo>> callback) {
+	public static void askServerInfo(BiConsumer<List<ServerInfoBasic>, Boolean> callback) {
 		if (callback != null)
 			askServerInfo.add(callback);
 		LinkSpigotBungee.Provider.link.launchAsync(() -> {
@@ -166,4 +167,12 @@ public class RedisSpigotSend {
 		RedisAccess.INSTANCE.disconnect();
 		return i != 0;
 	}
+
+	public static void sendPlayerPack(Player p) {
+		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
+			jedis.publish(RedisChannel.SPIGOT_PLAYER_RESOUREPACK.name(), p.getName() + ";" + OlympaCore.getInstance().getServerName());
+		}
+		RedisAccess.INSTANCE.disconnect();
+	}
+
 }

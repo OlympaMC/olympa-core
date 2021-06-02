@@ -1,6 +1,7 @@
 package fr.olympa.core.spigot;
 
 import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,9 +12,7 @@ import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitWorker;
 
-import com.sun.management.ThreadMXBean;
-
-import fr.olympa.api.chat.TxtComponentBuilder;
+import fr.olympa.api.common.chat.TxtComponentBuilder;
 
 public class UsagePerPlugin {
 

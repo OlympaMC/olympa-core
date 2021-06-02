@@ -3,15 +3,15 @@ package fr.olympa.core.bungee.login.listener;
 import java.util.concurrent.TimeUnit;
 
 import fr.olympa.api.bungee.customevent.BungeeOlympaGroupChangeEvent;
-import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.server.OlympaServer;
+import fr.olympa.api.bungee.customevent.OlympaPlayerLoginEvent;
+import fr.olympa.api.bungee.player.CachePlayer;
+import fr.olympa.api.bungee.player.DataHandler;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.datamanagment.CachePlayer;
-import fr.olympa.core.bungee.datamanagment.DataHandler;
-import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
+import fr.olympa.core.bungee.redis.receiver.SpigotPlayerPack;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -33,9 +33,9 @@ public class OlympaLoginListener implements Listener {
 			return;
 		player.removeGroups(player.getGroups().toArray(new String[0]));
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
-		String[] groupsNames = olympaPlayer.getGroups().keySet().stream().map(OlympaGroup::name).toArray(String[]::new);
+		/*String[] groupsNames = olympaPlayer.getGroups().keySet().stream().map(OlympaGroup::name).toArray(String[]::new);
 		if (groupsNames.length > 0)
-			player.addGroups(groupsNames);
+			player.addGroups(groupsNames);*/
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -49,9 +49,9 @@ public class OlympaLoginListener implements Listener {
 			account.saveToRedis(olympaPlayer);
 			RedisBungeeSend.sendOlympaPlayer(player.getServer().getInfo(), olympaPlayer);
 		}
-		String[] groupsNames = olympaPlayer.getGroups().keySet().stream().map(OlympaGroup::name).toArray(String[]::new);
+		/*String[] groupsNames = olympaPlayer.getGroups().keySet().stream().map(OlympaGroup::name).toArray(String[]::new);
 		if (groupsNames.length > 0)
-			player.addGroups(groupsNames);
+			player.addGroups(groupsNames);*/
 		CachePlayer cache = DataHandler.get(player.getName());
 		OlympaBungee.getInstance().getTask().runTaskLater("connect_player_" + player.getUniqueId(), () -> {
 			if (cache != null) {
@@ -131,6 +131,7 @@ public class OlympaLoginListener implements Listener {
 	@EventHandler
 	public void onServerConnected(ServerConnectedEvent event) {
 		ProxiedPlayer player = event.getPlayer();
+		SpigotPlayerPack.serverConnected(player, event.getServer());
 		ServersConnection.removeTryToConnect(player, true);
 		CachePlayer cache = DataHandler.get(player.getName());
 		if (cache != null) {
