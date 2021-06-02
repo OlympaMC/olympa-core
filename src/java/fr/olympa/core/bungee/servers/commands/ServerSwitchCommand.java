@@ -52,7 +52,13 @@ public class ServerSwitchCommand extends BungeeComplexCommand {
 			sendError("Tu n'as pas la permission de rejoindre §2%s§a.", serverName);
 			return;
 		}
-		monitorInfo.getOlympaServer();
+		if (finalTarget.getServer() != null && finalTarget.getServer().getInfo().equals(server)) {
+			if (target != getProxiedPlayer())
+				sendError("%s est déjà sur §2%s§a.", target.getName(), serverName);
+			else
+				sendError("Tu es déjà sur §2%s§a.", serverName);
+			return;
+		}
 		if (target != getProxiedPlayer())
 			sendSuccess("Envoi de %s vers le serveur §2%s§a.", target.getName(), serverName);
 		sendMessage(finalTarget, Prefix.DEFAULT_GOOD, "Téléportation sur le serveur §2%s§a.", serverName);
@@ -63,7 +69,7 @@ public class ServerSwitchCommand extends BungeeComplexCommand {
 				sendMessage(finalTarget, Prefix.DEFAULT_GOOD, "Bienvenue au §2%s§a.", serverName);
 			} else if (finalTarget != getProxiedPlayer())
 				sendError("Impossible d'aller vers le serveur §2%s§a pour %s: %s", serverName, finalTarget.getName(), error.getMessage());
-			else
+			else if (error != null)
 				sendError("Impossible d'aller vers le serveur §2%s§a: %s", serverName, error.getMessage());
 		}, false, Reason.COMMAND, 10);
 	}

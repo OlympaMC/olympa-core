@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.groups.OlympaGroup;
@@ -32,9 +32,10 @@ import redis.clients.jedis.Jedis;
 public class AccountProvider implements OlympaAccount {
 
 	private static String REDIS_KEY = "player:";
-	private static int cachePlayer = 60;
+	private static int DELAY_FOR_CACHE_PLAYER = 60;
+
 	private static Map<UUID, OlympaPlayer> cache = new HashMap<>();
-	public static Map<Long, OlympaPlayerInformations> cachedInformations = new HashMap<>();
+	private static Map<Long, OlympaPlayerInformations> cachedInformations = new HashMap<>();
 
 	public static Class<? extends OlympaPlayer> playerClass = OlympaPlayerObject.class;
 	public static OlympaPlayerProvider pluginPlayerProvider = OlympaPlayerObject::new;
@@ -43,7 +44,7 @@ public class AccountProvider implements OlympaAccount {
 	private static SQLTable<OlympaPlayerObject> olympaPlayerTable;
 	private static MySQL playerSQL;
 
-	public static MySQL getSQL() {
+	/*	*/public static MySQL getSQL() {
 		return playerSQL;
 	}
 
@@ -85,9 +86,13 @@ public class AccountProvider implements OlympaAccount {
 		return cachedInformations.values();
 	}
 
-	static {
-		CacheStats.addDebugMap("PLAYERS", AccountProvider.cache);
-		CacheStats.addDebugMap("PLAYERS_INFO", AccountProvider.cachedInformations);
+	public static List<OlympaPlayerInformations> getAllConnectedPlayersInformations() {
+		List<OlympaPlayerInformations> list = new ArrayList<>();
+		cache.forEach((uuid, olympaPlayer) -> {
+			if (olympaPlayer.isConnected())
+				list.add(getPlayerInformations(olympaPlayer.getId()));
+		});
+		return list;
 	}
 
 	private static OlympaPlayer getFromCache(String name) {
@@ -212,6 +217,11 @@ public class AccountProvider implements OlympaAccount {
 		return true;
 	}
 
+	static {
+		CacheStats.addDebugMap("PLAYERS", AccountProvider.cache);
+		CacheStats.addDebugMap("PLAYERS_INFO", AccountProvider.cachedInformations);
+	}/**/
+
 	RedisAccess redisAccesss;
 
 	UUID uuid;
@@ -223,7 +233,7 @@ public class AccountProvider implements OlympaAccount {
 
 	public void accountExpire() {
 		try (Jedis jedis = redisAccesss.connect()) {
-			jedis.expire(getKey(), cachePlayer);
+			jedis.expire(getKey(), DELAY_FOR_CACHE_PLAYER);
 		}
 		redisAccesss.disconnect();
 	}
@@ -263,7 +273,7 @@ public class AccountProvider implements OlympaAccount {
 
 	@Override
 	public OlympaPlayer get() throws SQLException {
-		OlympaPlayer olympaPlayer = this.getFromCache();
+		OlympaPlayer olympaPlayer = getFromCache();
 		if (olympaPlayer == null) {
 			olympaPlayer = getFromRedis();
 			if (olympaPlayer == null)

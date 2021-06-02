@@ -73,7 +73,8 @@ public class DataManagmentListener implements Listener {
 			}
 			if (i == 5 || i == 8) {
 				olympaPlayer = olympaAccount.getFromRedis();
-				LinkSpigotBungee.Provider.link.sendMessage("&4OlympaPlayer de %s pas encore trouvé, tentative de le récupérer via redis n°%d. Résultat: %s", uuid, i + 1, olympaPlayer != null);
+				LinkSpigotBungee.Provider.link.sendMessage("&4OlympaPlayer de %s pas encore trouvé, tentative de le récupérer via redis n°%d après %s secondes d'attente. Résultat: %s",
+						uuid, i == 5 ? 1 : 2, i, olympaPlayer != null);
 			} else if (i == 9)
 				try {
 					olympaPlayer = olympaAccount.fromDb();

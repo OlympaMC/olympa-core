@@ -37,7 +37,7 @@ public class OlympaVpn {
 	long time;
 	long lastUpdate;
 
-	public OlympaVpn(long id, String query, Boolean proxy, Boolean mobile, Boolean hosting, String usersString, String country, String city, String org, String as, String whitelist, Timestamp timestamp, Date date) {
+	public OlympaVpn(long id, String query, Boolean proxy, Boolean mobile, Boolean hosting, String usersString, String country, String city, String org, String as, String whitelist, Timestamp lastUpdate, Date date) {
 		this.id = id;
 		this.query = query;
 		if (mobile)
@@ -54,11 +54,11 @@ public class OlympaVpn {
 			users = Arrays.stream(usersString.split(";")).collect(Collectors.toList());
 		if (whitelist != null && !whitelist.isEmpty())
 			whitelistUsers = Arrays.stream(whitelist.split(";")).collect(Collectors.toList());
-		lastUpdate = timestamp.getTime() / 1000L;
+		this.lastUpdate = lastUpdate.getTime() / 1000L;
 		if (date != null)
 			time = date.getTime() / 1000L;
 		else
-			setTime();
+			setCreatedDateTime();
 	}
 
 	public void addUser(String username) {
@@ -165,19 +165,19 @@ public class OlympaVpn {
 		return upWithDB;
 	}
 
-	public void setTime() {
+	private void setCreatedDateTime() {
 		time = Utils.getCurrentTimeInSeconds();
 	}
 
 	public void setDefaultTimesIfNeeded() {
 		if (time != 0)
 			return;
-		setTime();
+		setCreatedDateTime();
 		lastUpdate = time;
 	}
 
 	public boolean isOutDate() {
-		return time == 0 || time < outdateTime;
+		return lastUpdate == 0 || lastUpdate < outdateTime;
 	}
 
 	public void update(OlympaVpn createVpnInfo) {
@@ -192,5 +192,6 @@ public class OlympaVpn {
 		city = createVpnInfo.getCity();
 		org = createVpnInfo.getOrg();
 		as = createVpnInfo.getAs();
+		lastUpdate = Utils.getCurrentTimeInSeconds();
 	}
 }

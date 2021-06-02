@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import fr.olympa.api.bungee.player.DataHandler;
 import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import net.md_5.bungee.api.CommandSender;
@@ -40,7 +39,7 @@ public class StaffChatHandler {
 			senderName = "§e" + sender.getName();
 
 		BaseComponent[] messageComponent = TextComponent.fromLegacyText(Prefix.STAFFCHAT + senderName + " §7: " + message);
-		List<ProxiedPlayer> staff = ProxyServer.getInstance().getPlayers().stream().filter(p -> !DataHandler.isUnlogged(p) && OlympaCorePermissionsBungee.STAFF_CHAT.hasPermission(new AccountProvider(p.getUniqueId()).getFromRedis()))
+		List<ProxiedPlayer> staff = ProxyServer.getInstance().getPlayers().stream().filter(p -> !DataHandler.isUnlogged(p) && OlympaCorePermissionsBungee.STAFF_CHAT.hasPermission(p.getUniqueId()))
 				.collect(Collectors.toList());
 		staff.forEach(p -> p.sendMessage(messageComponent));
 		ProxyServer.getInstance().getConsole().sendMessage(messageComponent);

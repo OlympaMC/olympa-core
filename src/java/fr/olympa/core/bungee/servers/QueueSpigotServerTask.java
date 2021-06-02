@@ -12,12 +12,12 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectEvent.Reason;
 
-public class QueueSpigotTask implements Runnable {
+public class QueueSpigotServerTask implements Runnable {
 
 	ProxiedPlayer proxiedPlayer;
 	OlympaServer olympaServer;
 
-	public QueueSpigotTask(ProxiedPlayer proxiedPlayer, OlympaServer olympaServer) {
+	public QueueSpigotServerTask(ProxiedPlayer proxiedPlayer, OlympaServer olympaServer) {
 		this.proxiedPlayer = proxiedPlayer;
 		this.olympaServer = olympaServer;
 	}
@@ -73,5 +73,4 @@ public class QueueSpigotTask implements Runnable {
 			}
 		}, false, Reason.PLUGIN, 10000);
 	}
-
 }

@@ -77,7 +77,7 @@ public class BungeeUtils {
 		Set<ProxiedPlayer> playersWithNoPerm = new HashSet<>();
 		Set<ProxiedPlayer> playersWithPerm = new HashSet<>();
 		OlympaBungee.getInstance().getProxy().getPlayers().stream().forEach(p -> {
-			OlympaPlayer op = new AccountProvider(p.getUniqueId()).getFromRedis();
+			OlympaPlayer op = AccountProvider.get(p.getUniqueId());
 			if (op != null && !DataHandler.isUnlogged(p) && permission.hasPermission(op))
 				playersWithPerm.add(p);
 			else

@@ -8,6 +8,11 @@ import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.provider.AccountProvider;
 import redis.clients.jedis.JedisPubSub;
 
+/**
+ * need to be update
+ * @author Tristiisch
+ */
+@Deprecated
 public class BungeeTeamspeakIdReceiver extends JedisPubSub {
 
 	@Override
@@ -16,11 +21,10 @@ public class BungeeTeamspeakIdReceiver extends JedisPubSub {
 		Player player = Bukkit.getPlayer(RegexMatcher.UUID.parse(info[0]));
 		if (player == null || info.length < 2)
 			return;
-		AccountProvider account = new AccountProvider(player.getUniqueId());
-		OlympaPlayer olympaPlayer = account.getFromCache();
+		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
 		if (olympaPlayer == null)
 			return;
 		olympaPlayer.setTeamspeakId(RegexMatcher.INT.parse(info[1]));
-		account.saveToRedis(olympaPlayer);
+		//		account.saveToRedis(olympaPlayer);
 	}
 }

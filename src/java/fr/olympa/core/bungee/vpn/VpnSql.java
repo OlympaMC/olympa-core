@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 import fr.olympa.api.common.sql.statement.OlympaStatement;
@@ -14,9 +15,10 @@ public class VpnSql {
 	private static String tableName = "commun.vpn";
 	private static DbConnection dbConnection;
 
-	private static OlympaStatement insert = new OlympaStatement("INSERT INTO " + tableName + " (`ip`, `is_vpn`, `is_mobile`, `is_host`, `pseudo`, `country`, `city`, `org`, `as`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)").returnGeneratedKeys();
+	private static OlympaStatement insert = new OlympaStatement(
+			"INSERT INTO " + tableName + " (`ip`, `is_vpn`, `is_mobile`, `is_host`, `pseudo`, `country`, `city`, `org`, `as`, `last_update`, `date`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").returnGeneratedKeys();
 	private static OlympaStatement get = new OlympaStatement("SELECT * FROM " + tableName + " WHERE ip = ?");
-	private static OlympaStatement update = new OlympaStatement(StatementType.UPDATE, tableName, "ip", new String[] { "is_vpn", "is_mobile", "is_host", "pseudo", "whitelist_user", "country", "city", "org", "as", "date" });
+	private static OlympaStatement update = new OlympaStatement(StatementType.UPDATE, tableName, "ip", new String[] { "is_vpn", "is_mobile", "is_host", "pseudo", "whitelist_user", "country", "city", "org", "as", "date", "last_update" });
 
 	public static OlympaVpn addIp(OlympaVpn olympaVpn) throws SQLException {
 		try (PreparedStatement pstate = insert.createStatement()) {
@@ -33,7 +35,8 @@ public class VpnSql {
 			pstate.setString(i++, olympaVpn.getCountry());
 			pstate.setString(i++, olympaVpn.getCity());
 			pstate.setString(i++, olympaVpn.getOrg());
-			pstate.setString(i, olympaVpn.getAs());
+			pstate.setString(i++, olympaVpn.getAs());
+			pstate.setTimestamp(i++, new Timestamp(olympaVpn.getLastUpdate() * 1000L));
 			pstate.setDate(i, new Date(olympaVpn.getTime() * 1000L));
 			insert.executeUpdate(pstate);
 			ResultSet rs = pstate.getGeneratedKeys();
@@ -107,7 +110,7 @@ public class VpnSql {
 			pstate.setString(i++, olympaVpn.getOrg());
 			pstate.setString(i++, olympaVpn.getAs());
 			pstate.setDate(i++, new Date(olympaVpn.getTime() * 1000L));
-
+			pstate.setTimestamp(i++, new Timestamp(olympaVpn.getLastUpdate() * 1000L));
 			pstate.setString(i, olympaVpn.getIp());
 			update.executeUpdate(pstate);
 			olympaVpn.setUpWithDB(true);

@@ -126,7 +126,8 @@ public class VpnHandler {
 				}
 			} else if (olympaVpn.isOutDate())
 				try {
-					olympaVpn.update(VpnHandler.createVpnInfo(connection, ip, false));
+					OlympaVpn newVpn = VpnHandler.createVpnInfo(connection, ip, false);
+					olympaVpn.update(newVpn);
 					VpnSql.saveIp(olympaVpn);
 				} catch (Exception | NoClassDefFoundError e) {
 					inCheck.remove(ip);

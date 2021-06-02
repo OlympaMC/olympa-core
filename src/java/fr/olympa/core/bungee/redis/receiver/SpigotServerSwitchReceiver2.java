@@ -31,6 +31,11 @@ public class SpigotServerSwitchReceiver2 extends JedisPubSub {
 			else
 				serverName = monitorInfo.getHumanName();
 		}
+
+		if (player.getServer() != null && player.getServer().getInfo().equals(server)) {
+			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Tu es déjà au §2%s§a. ", serverName));
+			return;
+		}
 		Callback<Boolean> callback = (result, error) -> {
 			if (result)
 				player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_GOOD, "Connexion au serveur %s établie !", serverName));
