@@ -168,11 +168,4 @@ public class RedisSpigotSend {
 		return i != 0;
 	}
 
-	public static void sendPlayerPack(Player p) {
-		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			jedis.publish(RedisChannel.SPIGOT_PLAYER_RESOUREPACK.name(), p.getName() + ";" + OlympaCore.getInstance().getServerName());
-		}
-		RedisAccess.INSTANCE.disconnect();
-	}
-
 }

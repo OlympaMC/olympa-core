@@ -30,6 +30,7 @@ import fr.olympa.api.common.plugin.OlympaSpigot;
 import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.common.redis.RedisAccess;
 import fr.olympa.api.common.redis.RedisChannel;
+import fr.olympa.api.common.redis.ResourcePackHandler;
 import fr.olympa.api.common.report.ReportReason;
 import fr.olympa.api.common.server.ServerInfoBasic;
 import fr.olympa.api.common.server.ServerStatus;
@@ -400,14 +401,21 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	}
 
 	@Override
+	public void registerPackListener(ResourcePackHandler packHandler) {
+		registerRedisSub(RedisAccess.INSTANCE.connect(), new JedisPubSub() {
+			@Override
+			public void onMessage(String channel, String message) {
+				super.onMessage(channel, message);
+				String[] args = message.split(";");
+				packHandler.handle(args[0], args[1], Boolean.valueOf(args[2]));
+			}
+		}, RedisChannel.BUNGEE_PLAYER_RESOUREPACK.name());
+	}
+	
+	@Override
 	public void setStatus(ServerStatus status) {
 		this.status = status;
 		RedisSpigotSend.changeStatus(status);
-	}
-
-	@Override
-	public void usesPack(Player p) {
-		RedisSpigotSend.sendPlayerPack(p);
 	}
 
 }

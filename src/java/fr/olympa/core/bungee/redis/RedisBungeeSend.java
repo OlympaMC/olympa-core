@@ -17,6 +17,7 @@ import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.servers.MonitorInfoBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import redis.clients.jedis.Jedis;
 
 public class RedisBungeeSend {
@@ -92,4 +93,12 @@ public class RedisBungeeSend {
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
+	
+	public static void sendPlayerPack(ProxiedPlayer p, boolean set) {
+		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
+			jedis.publish(RedisChannel.BUNGEE_PLAYER_RESOUREPACK.name(), p.getName() + ";" + p.getServer().getInfo().getName() + ";" + Boolean.toString(set));
+		}
+		RedisAccess.INSTANCE.disconnect();
+	}
+	
 }

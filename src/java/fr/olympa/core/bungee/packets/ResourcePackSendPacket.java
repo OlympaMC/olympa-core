@@ -24,6 +24,7 @@ import java.util.Locale;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 
+import fr.olympa.core.bungee.utils.SpigotPlayerPack;
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.AbstractPacketHandler;
 import net.md_5.bungee.protocol.DefinedPacket;
@@ -32,10 +33,6 @@ import net.md_5.bungee.protocol.DefinedPacket;
  * Created by Phoenix616 on 24.03.2015.
  */
 public class ResourcePackSendPacket extends DefinedPacket {
-	
-	static {
-		
-	}
 	
 	private String url;
 	private String hash;
@@ -54,7 +51,7 @@ public class ResourcePackSendPacket extends DefinedPacket {
 	
 	@Override
 	public void handle(AbstractPacketHandler handler) throws Exception {
-		
+		SpigotPlayerPack.sendPacket(this);
 	}
 	
 	public void read(ByteBuf buf) {

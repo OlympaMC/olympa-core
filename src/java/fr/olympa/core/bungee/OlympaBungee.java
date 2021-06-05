@@ -69,7 +69,6 @@ import fr.olympa.core.bungee.redis.receiver.SpigotAskMonitorInfoReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotAskServerNameReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotGroupChangeReceiverOnBungee;
 import fr.olympa.core.bungee.redis.receiver.SpigotOlympaPlayerReceiver;
-import fr.olympa.core.bungee.redis.receiver.SpigotPlayerPack;
 import fr.olympa.core.bungee.redis.receiver.SpigotReportReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotServerChangeStatusReceiver;
 import fr.olympa.core.bungee.redis.receiver.SpigotServerSwitchReceiver;
@@ -344,7 +343,6 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 			registerRedisSub(redisAccess.connect(), new BungeeCommandReceiver(), RedisChannel.BUNGEE_COMMAND.name());
 			registerRedisSub(redisAccess.connect(), new SpigotServerSwitchReceiver2(), RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER2.name());
 			registerRedisSub(redisAccess.connect(), new SpigotAskMonitorInfoReceiver(), RedisChannel.SPIGOT_ASK_SERVERINFO.name());
-			registerRedisSub(redisAccess.connect(), new SpigotPlayerPack(), RedisChannel.SPIGOT_PLAYER_RESOUREPACK.name());
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)
