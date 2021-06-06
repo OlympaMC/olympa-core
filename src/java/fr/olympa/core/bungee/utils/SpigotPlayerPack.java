@@ -29,27 +29,28 @@ public class SpigotPlayerPack {
 	
 	public static void statusPacket(ResourcePackStatusPacket packet, ProxiedPlayer player) {
 		if (packet.getStatus() == ResourcePackStatus.SUCCESSFULLY_LOADED) {
-			OlympaBungee.getInstance().sendMessage("§6%s§e a chargé un pack de ressources", player.getName());
+			OlympaBungee.getInstance().sendMessage("§6%s§e a chargé un pack de ressources.", player.getName());
 			RedisBungeeSend.sendPlayerPack(player, true);
 			
-			//hasPack.put(player.getUniqueId(), server);
+			hasPack.put(player.getUniqueId(), player.getServer().getInfo());
+		}else if (packet.getStatus() == ResourcePackStatus.FAILED_DOWNLOAD) {
+			OlympaBungee.getInstance().sendMessage("§4%s§c a échoué le chargement d'un pack de ressources.", player.getName());
+			playerLeaves(player);
 		}
 	}
 	
 	public static void serverConnected(ProxiedPlayer player, Server server) {
+		if (!enabled) return;
 		if (!hasPack.containsKey(player.getUniqueId())) return;
 		if (!MonitorServers.getMonitor(server.getInfo()).getOlympaServer().hasPack() && !hasPack.get(player.getUniqueId()).equals(server.getInfo())) {
 			hasPack.remove(player.getUniqueId());
-			if (enabled) {
-				player.unsafe().sendPacket(EMPTY_RESOURCE_PACK_PACKET);
-				emptySent++;
-			}
+			player.unsafe().sendPacket(EMPTY_RESOURCE_PACK_PACKET);
+			emptySent++;
 		}
 	}
 	
 	public static void playerLeaves(ProxiedPlayer player) {
-		hasPack.remove(player.getUniqueId());
-		RedisBungeeSend.sendPlayerPack(player, false);
+		if (hasPack.remove(player.getUniqueId()) != null) RedisBungeeSend.sendPlayerPack(player, false);
 	}
 	
 }
