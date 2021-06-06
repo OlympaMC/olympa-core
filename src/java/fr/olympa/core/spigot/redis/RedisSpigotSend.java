@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.gson.GsonBuilder;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.groups.OlympaGroup;
@@ -162,7 +161,7 @@ public class RedisSpigotSend {
 	public static boolean sendReport(OlympaReport report) {
 		long i;
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			i = jedis.publish(RedisChannel.SPIGOT_REPORT_SEND.name(), new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().toJson(report));
+			i = jedis.publish(RedisChannel.SPIGOT_REPORT_SEND.name(), LinkSpigotBungee.getInstance().getGson().toJson(report));
 		}
 		RedisAccess.INSTANCE.disconnect();
 		return i != 0;

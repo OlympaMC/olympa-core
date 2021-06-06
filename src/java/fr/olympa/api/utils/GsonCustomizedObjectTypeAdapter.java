@@ -14,13 +14,19 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.player.OlympaPlayerInformations;
+import fr.olympa.api.common.provider.OlympaPlayerInformationsObject.OlympaPlayerInformationsDeserializer;
 import fr.olympa.api.common.provider.OlympaPlayerObject.OlympaPlayerDeserializer;
 
 public class GsonCustomizedObjectTypeAdapter extends TypeAdapter<Object> {
 
 	private static final GsonCustomizedObjectTypeAdapter adapter = new GsonCustomizedObjectTypeAdapter();
-	public static final GsonBuilder GSON_BUILDER = new GsonBuilder().registerTypeHierarchyAdapter(OlympaPlayer.class, new OlympaPlayerDeserializer()).registerTypeHierarchyAdapter(Map.class, adapter)
-			.registerTypeHierarchyAdapter(List.class, adapter).excludeFieldsWithoutExposeAnnotation();
+	public static final GsonBuilder GSON_BUILDER = new GsonBuilder()
+			.registerTypeHierarchyAdapter(OlympaPlayer.class, new OlympaPlayerDeserializer())
+			.registerTypeHierarchyAdapter(OlympaPlayerInformations.class, new OlympaPlayerInformationsDeserializer())
+			.registerTypeHierarchyAdapter(Map.class, adapter)
+			.registerTypeHierarchyAdapter(List.class, adapter)
+			.excludeFieldsWithoutExposeAnnotation();
 	public static final Gson GSON = GSON_BUILDER.create();
 
 	private final TypeAdapter<Object> delegate = new Gson().getAdapter(Object.class);

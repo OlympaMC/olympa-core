@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.logging.LogManager;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -17,6 +18,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.spigotmc.SpigotConfig;
+
+import com.google.gson.Gson;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
@@ -57,6 +60,7 @@ import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.ErrorLoggerHandler;
 import fr.olympa.api.utils.ErrorOutputStream;
+import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
@@ -416,6 +420,16 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	public void setStatus(ServerStatus status) {
 		this.status = status;
 		RedisSpigotSend.changeStatus(status);
+	}
+	
+	@Override
+	public Gson getGson() {
+		return GsonCustomizedObjectTypeAdapter.GSON;
+	}
+	
+	@Override
+	public List<String> getPlayersNames() {
+		return Bukkit.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
 	}
 
 }

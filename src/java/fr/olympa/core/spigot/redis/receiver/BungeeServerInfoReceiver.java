@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.google.gson.Gson;
-
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.server.ServerInfoBasic;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import redis.clients.jedis.JedisPubSub;
@@ -28,7 +27,7 @@ public class BungeeServerInfoReceiver extends JedisPubSub {
 		String[] serversInfoJson = message.split("\\n");
 		List<ServerInfoBasic> newMonitorInfos = new ArrayList<>();
 		for (String s : serversInfoJson) {
-			ServerInfoBasic monitorInfo = new Gson().fromJson(s, ServerInfoBasic.class);
+			ServerInfoBasic monitorInfo = LinkSpigotBungee.getInstance().getGson().fromJson(s, ServerInfoBasic.class);
 			newMonitorInfos.add(monitorInfo);
 		}
 		callbacksRegister.forEach(c -> c.accept(newMonitorInfos));

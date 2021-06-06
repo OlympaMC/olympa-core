@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.gson.annotations.Expose;
+
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.match.RegexMatcher;
 import fr.olympa.api.common.player.OlympaPlayer;
@@ -25,16 +27,27 @@ public class OlympaSanction {
 		return target;
 	}
 
+	@Expose
 	private long id;
+	@Expose
 	private OlympaSanctionType type;
+	@Expose
 	private OlympaSanctionTargetType targetType;
+	@Expose
 	private String target;
+	@Expose
 	private String reason;
+	@Expose
 	private long author;
+	@Expose
 	private long expires;
+	@Expose
 	private long created;
+	@Expose
 	private OlympaSanctionStatus status;
+	@Expose
 	private List<OlympaSanctionHistory> history;
+	@Expose
 	private Set<OlympaPlayerInformations> playersInformations;
 
 	/**

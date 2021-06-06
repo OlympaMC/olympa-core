@@ -2,7 +2,11 @@ package fr.olympa.core.bungee;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import com.google.gson.Gson;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.bungee.command.BungeeCommandListener;
@@ -23,6 +27,7 @@ import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.CacheStats;
+import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.bungee.ban.commands.BanCommand;
 import fr.olympa.core.bungee.ban.commands.BanHistoryCommand;
 import fr.olympa.core.bungee.ban.commands.BanIpCommand;
@@ -92,7 +97,9 @@ import fr.olympa.core.bungee.vpn.VpnHandler;
 import fr.olympa.core.bungee.vpn.VpnListener;
 import fr.olympa.core.bungee.vpn.VpnSql;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.config.Configuration;
@@ -405,5 +412,15 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	@Override
 	public void launchAsync(Runnable run) {
 		getTask().runTaskAsynchronously(run);
+	}
+	
+	@Override
+	public Gson getGson() {
+		return GsonCustomizedObjectTypeAdapter.GSON;
+	}
+	
+	@Override
+	public List<String> getPlayersNames() {
+		return ProxyServer.getInstance().getPlayers().stream().map(ProxiedPlayer::getDisplayName).collect(Collectors.toList());
 	}
 }
