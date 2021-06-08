@@ -57,7 +57,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 		}
 	}
 
-	@Cmd(permissionName = "BUNGEE_COMMAND_CACHE", args = { "CACHE", "clear|print" })
+	@Cmd(permissionName = "BUNGEE_COMMAND_CACHE", args = { "CACHE", "clear|print|stats" })
 	public void cache(CommandContext cmd) {
 		CacheStats.executeOnCache(this, cmd);
 	}
@@ -67,7 +67,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 		CacheStats.executeOnList(this, cmd);
 	}
 
-	@Cmd(permissionName = "BUNGEE_COMMAND_CACHE", args = { "DEBUG_MAP", "clear|print" })
+	@Cmd(permissionName = "BUNGEE_COMMAND_CACHE", args = { "DEBUG_MAP", "clear|print|remove" })
 	public void map(CommandContext cmd) {
 		CacheStats.executeOnMap(this, cmd);
 	}
@@ -180,13 +180,14 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 			if (vpnInfo == null)
 				vpnInfo = VpnHandler.createVpnInfo(cmd.getArgument(0));
 			TableGenerator table = new TableGenerator(Alignment.LEFT, Alignment.LEFT);
+			table.setReceiver(sender instanceof CommandSender ? Receiver.CONSOLE : Receiver.CLIENT);
 			table.addRow("&ePays &6" + vpnInfo.getCountry(), "&eVille &6" + vpnInfo.getCity());
 			table.addRow("&eOrganisation &6" + vpnInfo.getAs(), "&eNom court &6" + vpnInfo.getOrg());
 			if (vpnInfo != null)
 				table.addRow("&eUsers &6" + String.join(",", vpnInfo.getUsers()));
 			if (vpnInfo != null)
 				table.addRow("&eWhitelist &6" + String.join(",", vpnInfo.getWhitelistUsers()));
-			sendMessage(table.toString(sender instanceof CommandSender ? Receiver.CONSOLE : Receiver.CLIENT));
+			sendMessage(table.toString());
 		} catch (SQLException | IOException e) {
 			sendError(e);
 		}

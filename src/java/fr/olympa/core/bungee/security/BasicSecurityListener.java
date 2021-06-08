@@ -1,6 +1,7 @@
 package fr.olympa.core.bungee.security;
 
 import java.net.InetSocketAddress;
+import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -93,7 +94,13 @@ public class BasicSecurityListener implements Listener {
 				return;
 			}
 			String turne = "";
-			OlympaPlayer olympaPlayer = AccountProvider.get(target.getUniqueId());
+			OlympaPlayer olympaPlayer;
+			try {
+				olympaPlayer = new AccountProvider(target.getUniqueId()).get();
+			} catch (SQLException e) {
+				olympaPlayer = null;
+				e.printStackTrace();
+			}
 			if (olympaPlayer != null)
 				turne = olympaPlayer.getGender().getTurne();
 			target.disconnect(BungeeUtils.connectScreen("&cTu t'es connecté" + turne + " depuis une autre fenêtre sur ton réseau."));

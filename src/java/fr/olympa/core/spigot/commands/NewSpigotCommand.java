@@ -27,14 +27,19 @@ public class NewSpigotCommand extends ComplexCommand {
 		addArgumentParser("MODULES", (sender, msg) -> OlympaModule.getModulesNames(), x -> OlympaModule.getModule(x), x -> "&4%s&c n'est pas un module, essaye " + String.join(", ", OlympaModule.getModulesNames()) + " .");
 	}
 
-	@Cmd(permissionName = "SPIGOT_COMMAND_CACHE", args = { "CACHE", "clear|print" })
+	@Cmd(permissionName = "SPIGOT_COMMAND_CACHE", args = { "CACHE", "clear|print|stats" }, description = "Affiche tous les Caches qui ont été enregister")
 	public void cache(CommandContext cmd) {
 		CacheStats.executeOnCache(this, cmd);
 	}
 
-	@Cmd(permissionName = "SPIGOT_COMMAND_CACHE", args = { "DEBUG_LIST", "clear|print" })
+	@Cmd(permissionName = "SPIGOT_COMMAND_CACHE", args = { "DEBUG_LIST", "clear|print" }, description = "Affiche toutes les List<> qui ont été enregister")
 	public void list(CommandContext cmd) {
 		CacheStats.executeOnList(this, cmd);
+	}
+
+	@Cmd(permissionName = "SPIGOT_COMMAND_CACHE", args = { "DEBUG_MAP", "clear|print|remove" }, description = "Affiche tous les Map<K,V> qui ont été enregister")
+	public void map(CommandContext cmd) {
+		CacheStats.executeOnMap(this, cmd);
 	}
 
 	@Cmd(min = 1, args = "INTEGER|PLAYERS")
@@ -57,12 +62,7 @@ public class NewSpigotCommand extends ComplexCommand {
 	//		CacheStats.executeOnList(this, cmd);
 	//	}
 
-	@Cmd(permissionName = "SPIGOT_COMMAND_CACHE", args = { "DEBUG_MAP", "clear|print" })
-	public void map(CommandContext cmd) {
-		CacheStats.executeOnMap(this, cmd);
-	}
-
-	@Cmd(args = "on|off", min = 1)
+	@Cmd(args = "on|off", min = 1, description = "Active ou désactive le mode debug global sur les modules")
 	public void debugModule(CommandContext cmd) {
 		String arg0 = cmd.getArgument(0);
 		Boolean toOn;
@@ -83,7 +83,7 @@ public class NewSpigotCommand extends ComplexCommand {
 		}
 	}
 
-	@Cmd(args = { "MODULES", "on|off|debugon|debugoff" }, min = 1)
+	@Cmd(args = { "MODULES", "on|off|debugon|debugoff" }, min = 1, description = "Active ou désactive un module")
 	public void module(CommandContext cmd) {
 		OlympaModule<? extends Object, Listener, ? extends Plugin, OlympaCommand> module = cmd.getArgument(0);
 		if (cmd.getArgumentsLength() == 0) {

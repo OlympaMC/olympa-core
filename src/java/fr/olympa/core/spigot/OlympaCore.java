@@ -10,7 +10,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -193,7 +196,13 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		int i = 1;
 		while (names.hasMoreElements()) {
 			String name = names.nextElement();
-			manager.getLogger(name).addHandler(errorHandler);
+			@Nullable
+			Logger logger = manager.getLogger(name);
+			if (logger == null) {
+				sendMessage("&cUnable to hook into logger '§6%s§e', it is null", name);
+				continue;
+			}
+			logger.addHandler(errorHandler);
 			i++;
 		}
 		sendMessage("Hooked error stream handler into §6%s§e loggers!", i);
@@ -415,18 +424,18 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			}
 		}, RedisChannel.BUNGEE_PLAYER_RESOUREPACK.name());
 	}
-	
+
 	@Override
 	public void setStatus(ServerStatus status) {
 		this.status = status;
 		RedisSpigotSend.changeStatus(status);
 	}
-	
+
 	@Override
 	public Gson getGson() {
 		return GsonCustomizedObjectTypeAdapter.GSON;
 	}
-	
+
 	@Override
 	public List<String> getPlayersNames() {
 		return Bukkit.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
