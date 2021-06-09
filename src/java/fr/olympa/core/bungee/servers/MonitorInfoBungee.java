@@ -62,7 +62,10 @@ public class MonitorInfoBungee extends ServerInfoBasic {
 					String json = String.join(" ", Arrays.copyOfRange(motd, 7, motd.length));
 					serverDebugInfo = ServerInfoAdvanced.fromJson(json);
 				}
-			} catch (Error e) {
+				if (OlympaModule.DEBUG)
+					OlympaBungee.getInstance().sendMessage("&cRéponse du serveur %s : %s", serverInfo.getName(), allMotd);
+			} catch (Exception | Error e) {
+				OlympaBungee.getInstance().sendMessage("&cRéponse du serveur %s : %s", serverInfo.getName(), allMotd);
 				e.printStackTrace();
 			}
 		} else {

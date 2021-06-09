@@ -10,7 +10,7 @@ import org.bukkit.event.server.ServerListPingEvent;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.machine.JavaInstanceInfo;
 import fr.olympa.api.common.module.OlympaModule;
-import fr.olympa.api.common.server.DebugServerSpigot;
+import fr.olympa.api.common.server.ServerInfoAdvancedSpigot;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.spigot.utils.TPS;
 import fr.olympa.core.spigot.OlympaCore;
@@ -30,7 +30,7 @@ public class StatusMotdListener implements Listener {
 		sj.add(core.getFirstVersion());
 		sj.add(core.getLastVersion());
 		sj.add(String.valueOf(core.getLastModifiedLong()));
-		sj.add(new DebugServerSpigot(core).toString());
+		sj.add(new ServerInfoAdvancedSpigot(core).toString());
 		if (OlympaModule.DEBUG)
 			core.sendMessage("&rDEBUG Ping > %s ", LinkSpigotBungee.getInstance().getGson().toJson(sj.toString())); // XXX ???????
 		event.setMotd(sj.toString());
