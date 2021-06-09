@@ -67,7 +67,7 @@ public class QueueSpigotServerTask implements Runnable {
 		proxiedPlayer.connect(server, (succes, error) -> {
 			if (succes)
 				proxiedPlayer.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_GOOD, "Connexion au serveur %s établie !", serverName));
-			else {
+			else if (error != null) {
 				proxiedPlayer.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Echec de la connexion au serveur &4%s&c: &4%s&c. ", serverName, error.getMessage()));
 				ServersConnection.removeTryToConnect(proxiedPlayer);
 			}

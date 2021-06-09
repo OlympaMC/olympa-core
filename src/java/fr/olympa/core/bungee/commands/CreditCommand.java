@@ -16,7 +16,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class CreditCommand extends BungeeCommand {
 
 	public CreditCommand(Plugin plugin) {
-		super(plugin, "credit", "Affiche tous les devs ayant participer au serveur", (OlympaBungeePermission) null, "author", "auteur");
+		super(plugin, "credit", "Affiche tous les devs ayant participé au serveur", (OlympaBungeePermission) null, "author", "auteur");
 		minArg = 0;
 	}
 
