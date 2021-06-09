@@ -22,6 +22,8 @@ public class MonitorInfoBungee extends ServerInfoBasic {
 	@Nullable
 	ServerInfoAdvanced serverDebugInfo;
 
+	int maxErrorSend = 10;
+
 	public MonitorInfoBungee(ServerInfo serverInfo, long time, ServerPing serverPing, Throwable error) {
 		this.serverInfo = serverInfo;
 		serverName = serverInfo.getName();
@@ -65,8 +67,12 @@ public class MonitorInfoBungee extends ServerInfoBasic {
 				if (OlympaModule.DEBUG)
 					OlympaBungee.getInstance().sendMessage("&cRéponse du serveur %s : %s", serverInfo.getName(), allMotd);
 			} catch (Exception | Error e) {
-				OlympaBungee.getInstance().sendMessage("&cRéponse du serveur %s : %s", serverInfo.getName(), allMotd);
-				e.printStackTrace();
+				OlympaBungee.getInstance().sendMessage("&cUne erreur est survenu, réponse du serveur %s : %s", serverInfo.getName(), allMotd);
+				if (maxErrorSend-- >= 0)
+					e.printStackTrace();
+				else
+					OlympaBungee.getInstance().sendMessage("&c%s", e.getMessage());
+
 			}
 		} else {
 			this.error = error.getMessage() == null ? error.getClass().getName() : error.getMessage().replaceFirst("finishConnect\\(\\.\\.\\) failed: Connection refused: .+:\\d+", "");
