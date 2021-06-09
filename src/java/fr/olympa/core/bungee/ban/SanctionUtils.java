@@ -75,24 +75,23 @@ public class SanctionUtils {
 	}
 
 	public static TextComponent getDisconnectScreen(List<OlympaSanction> bans) {
-		OlympaSanction sanction = bans.stream().sorted((s1, s2) -> Boolean.compare(s2.isPermanent(), s1.isPermanent())).findFirst().orElse(null);
+		OlympaSanction sanction = bans.stream().sorted((s1, s2) -> Boolean.compare(s2.isPermanent(), s1.isPermanent())).findFirst().get();
 		StringJoiner sjDisconnect = new StringJoiner("\n");
 		String typeAction = sanction.getType().getNameForPlayer();
-		boolean permanant = false;
-		if (sanction.isPermanent()) {
-			permanant = true;
+		if (sanction.isPermanent())
 			typeAction += " &npermanent&c";
-		}
 		sjDisconnect.add(String.format("&cTu a été %s", typeAction));
 		sjDisconnect.add("");
-		sjDisconnect.add(String.format("&cRaison : &4%s", ColorUtils.joinRedEt(bans.stream().map(OlympaSanction::getReason).collect(Collectors.toList()))));
-		sjDisconnect.add("");
-		if (!permanant) {
+		List<String> banReason = bans.stream().map(OlympaSanction::getReason).collect(Collectors.toList());
+		if (!banReason.isEmpty()) {
+			sjDisconnect.add(String.format("&cRaison : &4%s", ColorUtils.joinRedEt(banReason)));
+			sjDisconnect.add("");
+		}
+		if (!sanction.isPermanent() && sanction.getExpires() != 0) {
 			sjDisconnect.add(String.format("&cDurée restante : &4%s&c", Utils.timestampToDuration(sanction.getExpires())));
 			sjDisconnect.add("");
 		}
-		sjDisconnect.add(String.format("&cID : &4%s&c", ColorUtils.joinRedEt(bans.stream().map(OlympaSanction::getId).map(String::valueOf).collect(Collectors.toList()))));
-		sjDisconnect.add("");
+		sjDisconnect.add(String.format("&cId : &4%s&c", ColorUtils.joinRedEt(bans.stream().map(OlympaSanction::getId).map(String::valueOf).collect(Collectors.toList()))));
 		return BungeeUtils.connectScreen(sjDisconnect.toString());
 	}
 }
