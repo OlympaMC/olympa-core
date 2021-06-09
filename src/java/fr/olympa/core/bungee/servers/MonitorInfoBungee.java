@@ -71,8 +71,10 @@ public class MonitorInfoBungee extends ServerInfoBasic {
 				status = ServerStatus.CLOSE;
 			else {
 				status = ServerStatus.UNKNOWN;
-				if (OlympaModule.DEBUG)
-					OlympaBungee.getInstance().sendMessage("&cLe serveur &4%s&c renvoie une erreur lors du ping %s", serverInfo.getName(), this.error);
+				if (OlympaModule.DEBUG) {
+					OlympaBungee.getInstance().sendMessage("&cLe serveur &4%s&c renvoie une erreur lors du ping", serverInfo.getName());
+					error.printStackTrace();
+				}
 			}
 		}
 	}
