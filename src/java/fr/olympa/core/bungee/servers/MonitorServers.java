@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableMap;
 
 import fr.olympa.api.bungee.task.BungeeTaskManager;
+import fr.olympa.api.common.module.OlympaModule;
 import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.utils.Utils;
@@ -57,17 +58,17 @@ public class MonitorServers {
 	}
 
 	public static void updateServer(ServerInfo serverInfo, boolean instantUpdate, Consumer<ServerInfo> sucess) {
-		//		if (OlympaModule.DEBUG)
-		//			OlympaBungee.getInstance().sendMessage("&eDebug §7Serveur §e" + serverInfo.getName() + " a été ping.");
 		long nano = System.nanoTime();
 		serverInfo.ping((result, error) -> {
+			if (OlympaModule.DEBUG)
+				OlympaBungee.getInstance().sendMessage("&eDebug §7Serveur §e" + serverInfo.getName() + " a été ping.");
 			MonitorInfoBungee info = new MonitorInfoBungee(serverInfo, nano, result, error);
 			bungeeServers.put(serverInfo, info);
 			MonitorInfoBungee previous = olympaServers.get(info.getOlympaServer()).put(info.getServerID(), info);
 			ServerStatus previousStatus = previous == null ? ServerStatus.UNKNOWN : previous.getStatus();
 			if (previousStatus != info.getStatus()) {
-				OlympaBungee.getInstance()
-						.sendMessage("§7Serveur §e" + info.getName() + "§7 : " + previousStatus.getNameColored() + " §7-> " + info.getStatus().getNameColored() + (info.getError() != null ? " (" + info.getError() + ")" : ""));
+				OlympaBungee.getInstance().sendMessage("§7Serveur §e" + info.getName() + "§7 : " + previousStatus.getNameColored()
+						+ " §7-> " + info.getStatus().getNameColored() + (info.getError() != null ? " (" + info.getError() + ")" : ""));
 				if (instantUpdate)
 					//					updateOlympaServer(info.getOlympaServer());
 					RedisBungeeSend.sendServerInfos();

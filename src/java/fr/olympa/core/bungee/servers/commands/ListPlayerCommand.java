@@ -10,7 +10,7 @@ import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.provider.AccountProviderGetter;
+import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.core.bungee.servers.MonitorInfoBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.CommandSender;
@@ -47,10 +47,11 @@ public class ListPlayerCommand extends BungeeCommand {
 			for (int i = 0; i < players.size(); i++) {
 				ProxiedPlayer player = players.get(i);
 				OlympaPlayer oplayer;
-				oplayer = AccountProviderGetter.getInstance().get(player.getUniqueId());
-				//				oplayer = account.getFromCache();
-				//				if (oplayer == null)
-				//					oplayer = account.getFromRedis();
+				AccountProvider account = new AccountProvider(player.getUniqueId());
+				//				oplayer = new AccountProvider(player.getUniqueId()).get();
+				oplayer = account.getFromCache();
+				if (oplayer == null)
+					oplayer = account.getFromRedis();
 
 				TxtComponentBuilder playerC;
 				if (oplayer == null)

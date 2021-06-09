@@ -58,9 +58,10 @@ public class MonitorInfoBungee extends ServerInfoBasic {
 			if (motd.length >= 7)
 				lastModifiedCore = RegexMatcher.INT.parse(motd[6]);
 			try {
-				String json = String.join(" ", Arrays.copyOfRange(motd, 7, motd.length));
-				if (motd.length >= 8)
+				if (motd.length >= 8) {
+					String json = String.join(" ", Arrays.copyOfRange(motd, 7, motd.length));
 					serverDebugInfo = ServerInfoAdvanced.fromJson(json);
+				}
 			} catch (Error e) {
 				e.printStackTrace();
 			}
