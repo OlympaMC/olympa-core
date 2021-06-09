@@ -43,7 +43,7 @@ public class VersionHandler {
 		else if (viaVersion != null)
 			protocol = viaVersion.getPlayerVersion(player);
 		else
-			protocol = ProtocolAPI.getDefaultProtocol();
+			protocol = ProtocolAPI.getDefaultSpigotProtocol();
 		return protocol;
 	}
 
@@ -55,11 +55,11 @@ public class VersionHandler {
 			first = proto.get(0);
 			last = proto.get(proto.size() - 1);
 		} else
-			first = ProtocolAPI.getVersion();
+			first = ProtocolAPI.getSpigotVersion();
 		if (viaVersion != null)
 			last = viaVersion.getHighVersion();
 		else
-			last = ProtocolAPI.getVersion();
+			last = ProtocolAPI.getSpigotVersion();
 		return new String[] { last, first };
 	}
 }

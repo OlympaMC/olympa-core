@@ -107,6 +107,6 @@ public class MonitorServers {
 				RedisBungeeSend.sendServerInfos(bungeeServers.values());
 			//			for (OlympaServer olympaServer : olympaServers.keySet())
 			//				updateOlympaServer(olympaServer);
-		}, 1, 15, TimeUnit.SECONDS);
+		}, 1, 20, TimeUnit.SECONDS);
 	}
 }

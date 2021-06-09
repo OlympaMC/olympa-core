@@ -17,8 +17,10 @@ public class ProtocolListener implements Listener {
 		PendingConnection connection = event.getConnection();
 		ProtocolAPI protocolApi = ProtocolAPI.get(connection.getVersion());
 		if (protocolApi == null || !protocolApi.isAllowed()) {
+			ProtocolAPI lastVersion = ProtocolAPI.getLastVersion();
 			event.setCancelReason(
-					BungeeUtils.connectScreen("&cLa version que tu utilise n'est pas compatible avec le serveur.\n&4Utilise la &lversion " + ProtocolAPI.getFirstVersion().getName() + " à " + ProtocolAPI.getLastVersion().getName() + "&4."));
+					BungeeUtils.connectScreen("&cLa version que tu utilise n'est pas compatible avec le serveur.\n&4Utilise une version entre &c&l%s&4 et &c&l%s&4."
+							+ "\n\n&4&nLa version recommandée est &c&n%s&4.", ProtocolAPI.getFirstVersion().getName(), lastVersion.getName(), lastVersion.getName()));
 			event.setCancelled(true);
 		}
 	}

@@ -119,6 +119,6 @@ public class ProtocolSupportHook implements IProtocolSupport {
 	public ProtocolAPI getPlayerVersion(Player p) {
 		if (protocolSupport != null)
 			return ProtocolAPI.get(ProtocolSupportAPI.getProtocolVersion(p).getId());
-		return ProtocolAPI.getDefaultProtocol();
+		return ProtocolAPI.getDefaultSpigotProtocol();
 	}
 }
