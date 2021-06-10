@@ -23,6 +23,7 @@ public class MonitorInfoBungee extends ServerInfoBasic {
 	ServerInfoAdvanced serverDebugInfo;
 
 	int maxErrorSend = 10;
+	int maxReadTimeException = 2;
 
 	public MonitorInfoBungee(ServerInfo serverInfo, long time, ServerPing serverPing, Throwable error) {
 		this.serverInfo = serverInfo;
@@ -94,5 +95,9 @@ public class MonitorInfoBungee extends ServerInfoBasic {
 
 	public ServerInfoAdvanced getServerDebugInfo() {
 		return serverDebugInfo;
+	}
+
+	public void setMaxReadTimeException(int maxReadTimeException) {
+		this.maxReadTimeException = maxReadTimeException;
 	}
 }

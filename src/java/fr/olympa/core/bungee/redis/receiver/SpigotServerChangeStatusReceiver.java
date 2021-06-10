@@ -18,21 +18,21 @@ public class SpigotServerChangeStatusReceiver extends JedisPubSub {
 		ServerInfo serverInfo = ServersConnection.getServerByNameOrIpPort(args[0]);
 		if (serverInfo != null) {
 			ServerStatus status = ServerStatus.get(Integer.parseInt(args[1]));
+			ServerStatus previous = ServerStatus.UNKNOWN;
 			MonitorInfoBungee info = MonitorServers.getMonitor(serverInfo);
 			String serverName;
 			if (info != null) {
 				info.setStatus(status);
 				serverName = info.getName();
 				MonitorServers.updateServer(serverInfo, info.getOlympaServer(), info);
+				Map<Integer, MonitorInfoBungee> previousInfoServers = MonitorServers.getServers(info.getOlympaServer());
+				if (previousInfoServers != null) {
+					MonitorInfoBungee previousInfo = previousInfoServers.get(info.getServerID());
+					if (previousInfo != null)
+						previous = previousInfo.getStatus();
+				}
 			} else
 				serverName = serverInfo.getName();
-			Map<Integer, MonitorInfoBungee> previousInfoServers = MonitorServers.getServers(info.getOlympaServer());
-			ServerStatus previous = ServerStatus.UNKNOWN;
-			if (previousInfoServers != null) {
-				MonitorInfoBungee previousInfo = MonitorServers.getServers(info.getOlympaServer()).get(info.getServerID());
-				if (previousInfo != null)
-					previous = previousInfo.getStatus();
-			}
 			OlympaBungee.getInstance().sendMessage("§7Serveur §e" + serverName + "§7 : " + previous.getNameColored() + " §7-> " + status.getNameColored() + " (via redis)");
 		}
 	}

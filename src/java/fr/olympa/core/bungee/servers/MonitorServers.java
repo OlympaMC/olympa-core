@@ -19,6 +19,7 @@ import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import fr.olympa.core.bungee.redis.receiver.SpigotAskMonitorInfoReceiver;
+import io.netty.handler.timeout.ReadTimeoutException;
 import net.md_5.bungee.api.config.ServerInfo;
 
 public class MonitorServers {
@@ -60,9 +61,14 @@ public class MonitorServers {
 	public static void updateServer(ServerInfo serverInfo, boolean instantUpdate, Consumer<ServerInfo> sucess) {
 		long nano = System.nanoTime();
 		serverInfo.ping((result, error) -> {
+			MonitorInfoBungee oldMonitor = getMonitor(serverInfo);
 			if (OlympaModule.DEBUG)
 				OlympaBungee.getInstance().sendMessage("&7Debug Serveur &e%s&7 a été ping.", serverInfo.getName());
+			if (oldMonitor != null && error instanceof ReadTimeoutException && oldMonitor.maxReadTimeException-- > 0)
+				return;
 			MonitorInfoBungee info = new MonitorInfoBungee(serverInfo, nano, result, error);
+			if (oldMonitor != null && error instanceof ReadTimeoutException)
+				info.setMaxReadTimeException(oldMonitor.maxReadTimeException);
 			bungeeServers.put(serverInfo, info);
 			MonitorInfoBungee previous = olympaServers.get(info.getOlympaServer()).put(info.getServerID(), info);
 			ServerStatus previousStatus = previous == null ? ServerStatus.UNKNOWN : previous.getStatus();
