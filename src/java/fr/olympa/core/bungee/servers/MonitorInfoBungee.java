@@ -65,9 +65,9 @@ public class MonitorInfoBungee extends ServerInfoBasic {
 					serverDebugInfo = ServerInfoAdvanced.fromJson(json);
 				}
 				if (OlympaModule.DEBUG)
-					OlympaBungee.getInstance().sendMessage("&cRéponse du serveur %s : %s", serverInfo.getName(), allMotd);
+					OlympaBungee.getInstance().sendMessage("&7Réponse du serveur &2%s&7 : &d%s", serverInfo.getName(), allMotd);
 			} catch (Exception | Error e) {
-				OlympaBungee.getInstance().sendMessage("&cUne erreur est survenu, réponse du serveur %s : %s", serverInfo.getName(), allMotd);
+				OlympaBungee.getInstance().sendMessage("&4Une erreur est survenu, réponse du serveur &c%s&7 : &d%s", serverInfo.getName(), allMotd);
 				if (maxErrorSend-- >= 0)
 					e.printStackTrace();
 				else

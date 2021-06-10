@@ -1,5 +1,7 @@
 package fr.olympa.core.bungee.redis.receiver;
 
+import java.util.Map;
+
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.servers.MonitorInfoBungee;
@@ -24,7 +26,13 @@ public class SpigotServerChangeStatusReceiver extends JedisPubSub {
 				MonitorServers.updateServer(serverInfo, info.getOlympaServer(), info);
 			} else
 				serverName = serverInfo.getName();
-			ServerStatus previous = info != null ? info.getStatus() : ServerStatus.UNKNOWN;
+			Map<Integer, MonitorInfoBungee> previousInfoServers = MonitorServers.getServers(info.getOlympaServer());
+			ServerStatus previous = ServerStatus.UNKNOWN;
+			if (previousInfoServers != null) {
+				MonitorInfoBungee previousInfo = MonitorServers.getServers(info.getOlympaServer()).get(info.getServerID());
+				if (previousInfo != null)
+					previous = previousInfo.getStatus();
+			}
 			OlympaBungee.getInstance().sendMessage("§7Serveur §e" + serverName + "§7 : " + previous.getNameColored() + " §7-> " + status.getNameColored() + " (via redis)");
 		}
 	}

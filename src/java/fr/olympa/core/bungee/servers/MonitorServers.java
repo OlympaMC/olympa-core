@@ -61,7 +61,7 @@ public class MonitorServers {
 		long nano = System.nanoTime();
 		serverInfo.ping((result, error) -> {
 			if (OlympaModule.DEBUG)
-				OlympaBungee.getInstance().sendMessage("&eDebug §7Serveur §e" + serverInfo.getName() + " a été ping.");
+				OlympaBungee.getInstance().sendMessage("&7Debug Serveur &e%s&7 a été ping.", serverInfo.getName());
 			MonitorInfoBungee info = new MonitorInfoBungee(serverInfo, nano, result, error);
 			bungeeServers.put(serverInfo, info);
 			MonitorInfoBungee previous = olympaServers.get(info.getOlympaServer()).put(info.getServerID(), info);
