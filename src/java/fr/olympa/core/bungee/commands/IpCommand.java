@@ -55,7 +55,7 @@ public class IpCommand extends BungeeComplexCommand {
 			//						return;
 			//					}
 			//				} else {
-			//					target = AccountProvider.get(potentielIP);
+			//					target = AccountProvider.getter().get(potentielIP);
 			//					if (target == null) {
 			//						sendUnknownPlayer(potentielIP, MySQL.getNamesBySimilarChars(potentielIP));
 			//						return;
@@ -77,7 +77,7 @@ public class IpCommand extends BungeeComplexCommand {
 
 		Map<Boolean, List<OlympaPlayer>> all;
 		try {
-			all = AccountProvider.getSQL().getPlayersByAllIp(potentielIP);
+			all = AccountProvider.getter().getSQL().getPlayersByAllIp(potentielIP);
 		} catch (SQLException e) {
 			sendError(e);
 			e.printStackTrace();

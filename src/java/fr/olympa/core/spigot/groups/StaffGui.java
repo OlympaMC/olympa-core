@@ -33,7 +33,7 @@ public class StaffGui extends OlympaGUI {
 	public StaffGui() throws SQLException {
 		super("Staff", 5);
 		//		List<OlympaPlayer> staff = MySQL.getPlayersByGroupsIds(OlympaGroup.getStaffGroups()).stream().sorted((o1, o2) -> o2.getGroup().getPower() - o1.getGroup().getPower()).collect(Collectors.toList());
-		List<OlympaPlayer> staff = AccountProvider.getSQL().getPlayersByGroupsIds(OlympaGroup.getStaffGroups()).stream().sorted(SORT_STAFF).collect(Collectors.toList());
+		List<OlympaPlayer> staff = AccountProvider.getter().getSQL().getPlayersByGroupsIds(OlympaGroup.getStaffGroups()).stream().sorted(SORT_STAFF).collect(Collectors.toList());
 		int i = 0;
 		for (OlympaPlayer s : staff) {
 			int i2 = i;

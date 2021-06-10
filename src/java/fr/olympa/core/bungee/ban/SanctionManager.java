@@ -70,7 +70,7 @@ public class SanctionManager {
 					if (target instanceof UUID)
 						op = new AccountProvider(UUID.fromString((String) target)).get();
 					else if (target instanceof String)
-						op = AccountProvider.get((String) target);
+						op = AccountProvider.getter().get((String) target);
 					if (op != null) {
 						targets.add(op);
 						playersNames.add(op.getName());
@@ -80,7 +80,7 @@ public class SanctionManager {
 				break;
 			case BANIP:
 				onlineTargets = ProxyServer.getInstance().getPlayers().stream().filter(t2 -> t2.getAddress().getAddress().getHostAddress().equals(target)).collect(Collectors.toList());
-				playersNames = AccountProvider.getSQL().getPlayersByIp((String) target).stream().map(OlympaPlayer::getName).collect(Collectors.toList());
+				playersNames = AccountProvider.getter().getSQL().getPlayersByIp((String) target).stream().map(OlympaPlayer::getName).collect(Collectors.toList());
 				break;
 			default:
 				return false;

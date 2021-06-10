@@ -138,10 +138,11 @@ public class ReportMySQL {
 	}
 
 	public static Stream<Entry<OlympaPlayerInformations, List<OlympaReport>>> getConnectedReports() throws SQLException {
-		Collection<OlympaPlayer> players = AccountProvider.getAll();
+		Collection<OlympaPlayer> players = AccountProvider.getter().getAll();
 		Map<OlympaPlayerInformations, List<OlympaReport>> data = new HashMap<>();
 		Set<String> orPlayers = new HashSet<>();
-		for (OlympaPlayer player : players)
+		for (@SuppressWarnings("unused")
+		OlympaPlayer player : players)
 			orPlayers.add("target_id");
 		OlympaStatement opStatement = new OlympaStatement(StatementType.SELECT, tableName, new String[] { "target_id" }, orPlayers.toArray(String[]::new), null, null, 0, 0, new String[] {});
 		List<OlympaReport> reports = new ArrayList<>();
@@ -158,7 +159,7 @@ public class ReportMySQL {
 			for (OlympaReport r : reports) {
 				if (!ReportStatus.OPEN.equals(r.getStatus())) // TODO remove open reports in OlympaStatement
 					continue;
-				op = AccountProvider.getPlayerInformations(r.getTargetId());
+				op = AccountProvider.getter().getPlayerInformations(r.getTargetId());
 				List<OlympaReport> listReports = data.get(op);
 				if (listReports == null) {
 					listReports = new ArrayList<>();

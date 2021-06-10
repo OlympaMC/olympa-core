@@ -60,7 +60,7 @@ public class AuthListener implements Listener {
 
 		OlympaPlayer olympaPlayer;
 		try {
-			olympaPlayer = AccountProvider.get(name);
+			olympaPlayer = AccountProvider.getter().get(name);
 		} catch (Exception | NoClassDefFoundError e) {
 			e.printStackTrace();
 			event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#SQLBungeeLost"));
@@ -106,7 +106,7 @@ public class AuthListener implements Listener {
 
 				// Vérifie si le joueur n'a pas changé de nom.
 				try {
-					olympaPlayer = AccountProvider.getSQL().getPlayerByPremiumUuid(uuidPremium);
+					olympaPlayer = AccountProvider.getter().getSQL().getPlayerByPremiumUuid(uuidPremium);
 				} catch (SQLException e) {
 					e.printStackTrace();
 					event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#SQLBungeePreLogin"));
@@ -208,11 +208,11 @@ public class AuthListener implements Listener {
 				UUID uuidCrack = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(StandardCharsets.UTF_8));
 
 				// Vérifie que l'uuid n'est pas déjà utiliser
-				OlympaPlayer uuidAlreadyExist = AccountProvider.getSQL().getPlayer(uuidCrack);
+				OlympaPlayer uuidAlreadyExist = AccountProvider.getter().getSQL().getPlayer(uuidCrack);
 				if (uuidAlreadyExist != null)
 					do {
 						uuidCrack = UUID.randomUUID();
-						uuidAlreadyExist = AccountProvider.getSQL().getPlayer(uuidCrack);
+						uuidAlreadyExist = AccountProvider.getter().getSQL().getPlayer(uuidCrack);
 					} while (uuidAlreadyExist != null);
 
 				olympaAccount = new AccountProvider(uuidCrack);

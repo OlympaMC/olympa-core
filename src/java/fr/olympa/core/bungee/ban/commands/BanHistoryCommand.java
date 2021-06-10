@@ -50,7 +50,7 @@ public class BanHistoryCommand extends BungeeCommand {
 	//				target = String.valueOf(op.getId());
 	//			} else if (RegexMatcher.USERNAME.is(identifier)) {
 	//				OlympaPlayer op;
-	//				op = AccountProvider.get(identifier);
+	//				op = AccountProvider.getter().get(identifier);
 	//				target = String.valueOf(op.getId());
 	//			} else {
 	//				Configuration config = OlympaBungee.getInstance().getConfig();
@@ -155,7 +155,7 @@ public class BanHistoryCommand extends BungeeCommand {
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		switch (args.length) {
 		case 1:
-			List<String> list = Utils.startWords(args[0], AccountProvider.getSQL().getNamesBySimilarName(args[0]));
+			List<String> list = Utils.startWords(args[0], AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));
 			return list;
 		default:
 			return new ArrayList<>();

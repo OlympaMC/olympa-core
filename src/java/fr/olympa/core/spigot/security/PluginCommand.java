@@ -29,7 +29,7 @@ public class PluginCommand extends OlympaCommand {
 		List<String> plugins = new ArrayList<>();
 		try {
 			List<PluginInfoAdvanced> plugins2 = ServerInfoAdvanced.getExternalPlugins();
-			TxtComponentBuilder out = new TxtComponentBuilder("&7Plugins externes (%d):", plugins2.size());
+			TxtComponentBuilder out = new TxtComponentBuilder("&7Plugins externes (%d): ", plugins2.size());
 			out.extra(ServerInfoAdvanced.getPluginsToString(ServerInfoAdvanced.getExternalPlugins(), !(sender instanceof Player)));
 			sender.sendMessage(out.build());
 			return false;
@@ -45,7 +45,7 @@ public class PluginCommand extends OlympaCommand {
 			}
 		}
 		//Prefix.NONE.sendMessage(sender, "&fPlugins (%s): &a%s", plugins.size(), String.join("&7, &a", plugins));
-		sendMessage(Prefix.DEFAULT, "Plugins externes (%d): §a%s", plugins.size(), String.join("§7, §a", plugins));
+		sendMessage(Prefix.DEFAULT, "Plugins externes (%d): &a%s", plugins.size(), String.join("&7, &a", plugins));
 		return false;
 	}
 

@@ -32,7 +32,7 @@ public class ChatListener implements Listener {
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
+		OlympaPlayer olympaPlayer = AccountProvider.getter().get(player.getUniqueId());
 		if (olympaPlayer == null) {
 			event.setFormat(ColorUtils.color("&cERREUR &7") + "%s : %s");
 			return;

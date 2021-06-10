@@ -104,7 +104,7 @@ public class ReportCommand extends ComplexCommand {
 				note = cmd.getFrom(2);
 			report.addStatusInfo(new ReportStatusInfo(note, idP, status));
 			ReportMySQL.updateReport(report);
-			String targetName = AccountProvider.get(report.getTargetId()).getName();
+			String targetName = AccountProvider.getter().get(report.getTargetId()).getName();
 			sender.sendMessage(Prefix.DEFAULT_GOOD.formatMessage("Le report &2n°%s&a envers &2%s&a est passé de %s&a à %s&a.", report.getId(), targetName, oldStatus.getNameColored(), report.getStatus().getNameColored()));
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -121,9 +121,9 @@ public class ReportCommand extends ComplexCommand {
 		try {
 			if (cmd.getArgument(0) instanceof Integer) {
 				targetId = cmd.<Integer>getArgument(0);
-				opi = AccountProvider.getPlayerInformations(targetId);
+				opi = AccountProvider.getter().getPlayerInformations(targetId);
 			} else if (cmd.getArgument(0) instanceof UUID) {
-				opi = AccountProvider.getPlayerInformations(cmd.<UUID>getArgument(0));
+				opi = AccountProvider.getter().getPlayerInformations(cmd.<UUID>getArgument(0));
 				if (opi != null)
 					targetId = opi.getId();
 			} else if (cmd.getArgument(0) instanceof OlympaPlayerInformations) {

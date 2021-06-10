@@ -152,7 +152,7 @@ public class PlayerLogin {
 		OlympaCorePermissionsSpigot.CAPCHAT_SEE_WAITING.getPlayers(success -> {}, withoutPermPlayers -> withoutPermPlayers.stream().filter(p -> !p.getUniqueId().equals(player.getUniqueId()))
 				.forEach(p -> p.hidePlayer(core, player)));
 		if (core.getNameTagApi() != null)
-			core.getNameTagApi().callNametagUpdate(AccountProvider.get(player.getUniqueId()));
+			core.getNameTagApi().callNametagUpdate(AccountProvider.getter().get(player.getUniqueId()));
 		setMapToPlayer(player);
 	}
 
@@ -171,7 +171,7 @@ public class PlayerLogin {
 			player.removePotionEffect(PotionEffectType.SLOW);
 			Bukkit.getOnlinePlayers().forEach(p -> p.showPlayer(player));
 		});
-		core.getNameTagApi().callNametagUpdate(AccountProvider.get(player.getUniqueId()));
+		core.getNameTagApi().callNametagUpdate(AccountProvider.getter().get(player.getUniqueId()));
 	}
 
 	public static void setHidingBlock(Player p) {

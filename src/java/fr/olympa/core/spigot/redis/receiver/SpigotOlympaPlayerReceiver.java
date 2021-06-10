@@ -17,7 +17,7 @@ public class SpigotOlympaPlayerReceiver extends JedisPubSub {
 		if (!OlympaCore.getInstance().isServerName(serverFrom))
 			return;
 		String serverTo = args[1];
-		OlympaPlayer olympaPlayer = AccountProvider.get(UUID.fromString(args[2]));
+		OlympaPlayer olympaPlayer = AccountProvider.getter().get(UUID.fromString(args[2]));
 		if (olympaPlayer != null)
 			RedisSpigotSend.sendOlympaPlayerToOtherSpigot(olympaPlayer, serverTo);
 	}

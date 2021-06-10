@@ -8,7 +8,6 @@ import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.common.server.ServerStatus;
-import fr.olympa.api.common.sort.Sorting;
 import fr.olympa.api.spigot.utils.TPSUtils;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.CommandSender;
@@ -47,7 +46,6 @@ public class ListServerCommand extends BungeeCommand {
 				sb.add(serverInfo.getRangeVersion());
 			if (debugInfo != null && debugInfo.getPlugins() != null && !debugInfo.getPlugins().isEmpty())
 				sb.add("\nPlugins : " + debugInfo.getPlugins().stream()
-						.sorted(new Sorting<>(dp -> dp.getName().startsWith("Olympa") ? 0l : 1l, dp -> dp.getAuthors().contains("SkytAsul") || dp.getAuthors().contains("Tristiisch") ? 0l : 1l))
 						.map(plugin -> (plugin.isEnabled() ? "&2" : "&4") + plugin.getName() + "&7 (" + plugin.getVersion() + " " + plugin.getLastModifiedTime() + ")")
 						.collect(Collectors.joining(", ")));
 			else if (serverInfo.getLastModifiedCore() != null && !serverInfo.getLastModifiedCore().isBlank())

@@ -27,9 +27,12 @@ import fr.olympa.api.common.module.OlympaModule;
 import fr.olympa.api.common.permission.OlympaPermission;
 import fr.olympa.api.common.permission.list.OlympaAPIPermissionsSpigot;
 import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.api.common.player.OlympaAccount;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.plugin.OlympaSpigot;
 import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.api.common.provider.AccountProviderAPI;
+import fr.olympa.api.common.provider.AccountProviderGetter;
 import fr.olympa.api.common.redis.RedisAccess;
 import fr.olympa.api.common.redis.RedisChannel;
 import fr.olympa.api.common.redis.ResourcePackHandler;
@@ -115,8 +118,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	private String lastVersion = "unknown";
 	private String firstVersion = "unknown";
 	private ErrorOutputStream errorOutputStream;
-
 	public GamemodeCommand gamemodeCommand = null;
+	private RedisAccess redisAcces;
 
 	public String getLastVersion() {
 		return lastVersion;
@@ -181,10 +184,9 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 	@Override
 	public void onLoad() {
-		super.onLoad();
 		instance = this;
+		LinkSpigotBungee.Provider.link = this;
 		SpigotConfig.sendNamespaced = false;
-
 		errorOutputStream = new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20));
 		System.setErr(new PrintStream(errorOutputStream));
 		LoggerUtils.hook(new ErrorLoggerHandler(RedisSpigotSend::sendError));
@@ -193,12 +195,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 	@Override
 	public void onEnable() {
-
-		//TODO supprimer cette classe quand le débug sera fini !
-		//getServer().getPluginManager().registerEvents(new DebugTheTwo(), this);
-
-		LinkSpigotBungee.Provider.link = this;
-
 		OlympaPermission.registerPermissions(OlympaAPIPermissionsSpigot.class);
 		OlympaPermission.registerPermissions(OlympaCorePermissionsSpigot.class);
 		new RestartCommand(this).registerPreProcess().register();
@@ -213,6 +209,10 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		});
 		super.onEnable();
 		if (config != null) {
+			config.addTask("redis_config", config -> {
+				redisAcces = RedisAccess.init(config);
+				AccountProviderAPI.setRedisConnection(redisAcces);
+			});
 			setupRedis();
 			setupDatabase();
 		}
@@ -220,7 +220,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 		imageFrameManager = new ImageFrameManager(this, "maps.yml", "images");
 		try {
-			AccountProvider.init(new MySQL(database));
+			MySQL sql = new MySQL(database);
+			AccountProviderAPI.init(sql, new AccountProviderGetter(sql));
 		} catch (SQLException ex) {
 			sendMessage("&cUne erreur est survenue lors du chargement du MySQL. Arrêt du plugin.");
 			ex.printStackTrace();
@@ -290,7 +291,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 			players.forEach(p -> {
-				AccountProvider account = new AccountProvider(p.getUniqueId());
+				OlympaAccount account = new AccountProvider(p.getUniqueId());
 				OlympaPlayer olympaPlayer = account.getFromCache();
 				if (olympaPlayer != null) {
 					//MySQL.savePlayerPluginDatas(olympaPlayer);
@@ -329,6 +330,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		if (is != null && is.length != 0)
 			i1 = is[0] + 1;
 		int i = i1;
+
 		RedisAccess redisAccess = RedisAccess.init(getConfig());
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {

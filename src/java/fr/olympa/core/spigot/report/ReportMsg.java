@@ -46,7 +46,7 @@ public class ReportMsg {
 
 	public static void sendAlert(OlympaReport report) {
 		OlympaPlayerInformations targetOlympaPlayer;
-		targetOlympaPlayer = AccountProvider.getPlayerInformations(report.getTargetId());
+		targetOlympaPlayer = AccountProvider.getter().getPlayerInformations(report.getTargetId());
 		report.resolveAuthorName();
 		RedisSpigotSend.askPlayerServer(targetOlympaPlayer.getUUID(), t -> sendAlert(report, report.getAuthorName(), targetOlympaPlayer.getName(), t));
 	}

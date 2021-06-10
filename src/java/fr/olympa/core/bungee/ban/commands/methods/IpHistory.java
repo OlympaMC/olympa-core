@@ -28,7 +28,7 @@ public class IpHistory {
 		List<OlympaSanction> bans = BanMySQL.getSanctions(ip);
 		List<OlympaPlayer> players = null;
 		try {
-			players = AccountProvider.getSQL().getPlayersByIp(ip);
+			players = AccountProvider.getter().getSQL().getPlayersByIp(ip);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return;

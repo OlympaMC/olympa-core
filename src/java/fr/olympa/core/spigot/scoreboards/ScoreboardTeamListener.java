@@ -32,9 +32,9 @@ public class ScoreboardTeamListener implements Listener {
 		INametagApi nameTagApi = CoreModules.NAME_TAG.getApi();
 		if (nameTagApi == null)
 			return;
-		
+
 		Player player = event.getPlayer();
-		nameTagApi.callNametagUpdate(AccountProvider.get(player.getUniqueId()), false);
+		nameTagApi.callNametagUpdate(AccountProvider.getter().get(player.getUniqueId()), false);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -42,12 +42,10 @@ public class ScoreboardTeamListener implements Listener {
 		INametagApi nameTagApi = CoreModules.NAME_TAG.getApi();
 		if (nameTagApi == null)
 			return;
-		
-		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
 		nameTagApi.callNametagUpdate(olympaPlayer);
 		List<OlympaPlayer> self = Arrays.asList(olympaPlayer);
-		for (OlympaPlayer other : AccountProvider.getAll())
+		for (OlympaPlayer other : AccountProvider.getter().getAll())
 			if (other != olympaPlayer && other.getPlayer() != null && other.getPlayer().isOnline())
 				nameTagApi.callNametagUpdate(other, self, true);
 	}
@@ -63,7 +61,7 @@ public class ScoreboardTeamListener implements Listener {
 	@EventHandler
 	public void on2PlayerSexChange(PlayerSexChangeEvent event) {
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
+		OlympaPlayer olympaPlayer = AccountProvider.getter().get(player.getUniqueId());
 		INametagApi nameTagApi = OlympaCore.getInstance().getNameTagApi();
 		if (nameTagApi != null)
 			nameTagApi.callNametagUpdate(olympaPlayer);
@@ -86,7 +84,7 @@ public class ScoreboardTeamListener implements Listener {
 	/*@EventHandler(priority = EventPriority.LOWEST)
 	public void on3PlayerNameTagEdit(PlayerNameTagEditEvent event) {
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
+		OlympaPlayer olympaPlayer = AccountProvider.getter().get(player.getUniqueId());
 		Nametag nameTag = event.getNameTag();
 		nameTag.appendPrefix(olympaPlayer.getGroupPrefix());
 	}

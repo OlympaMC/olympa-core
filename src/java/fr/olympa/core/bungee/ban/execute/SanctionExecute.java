@@ -223,15 +223,15 @@ public class SanctionExecute {
 			List<OlympaPlayer> olympaPlayers = null;
 			try {
 				if (t instanceof InetAddress)
-					olympaPlayers = AccountProvider.getSQL().getPlayersByIp(((InetAddress) t).getHostAddress());
+					olympaPlayers = AccountProvider.getter().getSQL().getPlayersByIp(((InetAddress) t).getHostAddress());
 				else {
 					OlympaPlayer olympaPlayer = null;
 					if (t instanceof UUID)
 						olympaPlayer = new AccountProvider((UUID) t).get();
 					else if (t instanceof String)
-						olympaPlayer = AccountProvider.get((String) t);
+						olympaPlayer = AccountProvider.getter().get((String) t);
 					else if (t instanceof Long)
-						olympaPlayer = AccountProvider.get((Long) t);
+						olympaPlayer = AccountProvider.getter().get((Long) t);
 					if (olympaPlayer != null)
 						olympaPlayers = Arrays.asList(olympaPlayer);
 				}
@@ -258,7 +258,7 @@ public class SanctionExecute {
 					if (op != null)
 						targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(op.getId()), t));
 				} else if (t instanceof String) {
-					OlympaPlayer op = AccountProvider.get((String) t);
+					OlympaPlayer op = AccountProvider.getter().get((String) t);
 					if (op != null)
 						targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(op.getId()), t));
 				} else if (t instanceof Long)

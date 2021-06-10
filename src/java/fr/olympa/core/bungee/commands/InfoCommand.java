@@ -45,9 +45,9 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 		ProxiedPlayer targetProxied = null;
 		if (args.length != 0)
 			try {
-				target = AccountProvider.get(args[0]);
+				target = AccountProvider.getter().get(args[0]);
 				if (target == null) {
-					sendUnknownPlayer(args[0], AccountProvider.getSQL().getNamesBySimilarChars(args[0]));
+					sendUnknownPlayer(args[0], AccountProvider.getter().getSQL().getNamesBySimilarChars(args[0]));
 					return;
 				}
 				targetProxied = ProxyServer.getInstance().getPlayer(target.getUniqueId());
@@ -121,7 +121,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 				OlympaVpn ipInfo = VpnHandler.get(ip);
 				List<String> users = ipInfo.getUsers();
 				users.remove(target.getName());
-				Map<Boolean, List<OlympaPlayer>> usersAll = AccountProvider.getSQL().getPlayersByAllIp(ip);
+				Map<Boolean, List<OlympaPlayer>> usersAll = AccountProvider.getter().getSQL().getPlayersByAllIp(ip);
 				List<OlympaPlayer> usersAllNow = usersAll.get(true);
 				usersAllNow.remove(target);
 				List<OlympaPlayer> usersAllHistory = usersAll.get(false);
@@ -152,7 +152,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		if (args.length == 1) {
 			List<String> postentielNames;
-			postentielNames = Utils.startWords(args[0], AccountProvider.getSQL().getNamesBySimilarName(args[0]));
+			postentielNames = Utils.startWords(args[0], AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));
 			return postentielNames;
 		}
 		return new ArrayList<>();

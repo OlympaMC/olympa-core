@@ -40,11 +40,11 @@ public class PlayerHistory {
 		Configuration config = OlympaBungee.getInstance().getConfig();
 		try {
 			if (target != null)
-				olympaTarget = AccountProvider.get(target.getUniqueId());
+				olympaTarget = AccountProvider.getter().get(target.getUniqueId());
 			else if (uuid != null)
-				olympaTarget = AccountProvider.getFromDatabase(uuid);
+				olympaTarget = AccountProvider.getter().getFromDatabase(uuid);
 			else if (name != null)
-				olympaTarget = AccountProvider.getFromDatabase(name);
+				olympaTarget = AccountProvider.getter().getFromDatabase(name);
 		} catch (SQLException e) {
 			sender.sendMessage(config.getString("ban.messages.errordb"));
 			e.printStackTrace();

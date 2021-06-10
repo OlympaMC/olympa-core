@@ -63,7 +63,7 @@ public class BungeeUtils {
 	}
 
 	public static String getName(long playerId) {
-		OlympaPlayerInformations olympaPlayer = AccountProvider.getPlayerInformations(playerId);
+		OlympaPlayerInformations olympaPlayer = AccountProvider.getter().getPlayerInformations(playerId);
 		if (olympaPlayer != null)
 			return olympaPlayer.getName();
 		return "";

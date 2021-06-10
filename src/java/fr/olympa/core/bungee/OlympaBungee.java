@@ -20,7 +20,8 @@ import fr.olympa.api.common.permission.list.OlympaAPIPermissionsGlobal;
 import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.plugin.OlympaBungeeInterface;
 import fr.olympa.api.common.plugin.OlympaPluginInterface;
-import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.api.common.provider.AccountProviderAPI;
+import fr.olympa.api.common.provider.AccountProviderGetter;
 import fr.olympa.api.common.redis.RedisAccess;
 import fr.olympa.api.common.redis.RedisChannel;
 import fr.olympa.api.common.server.OlympaServer;
@@ -122,6 +123,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	protected BungeeCustomConfig maintConfig;
 	private BungeeTaskManager task;
 	private ServerStatus status;
+	private RedisAccess redisAcces;
 
 	@Override
 	public Configuration getConfig() {
@@ -144,10 +146,13 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	}
 
 	@Override
-	public void onEnable() {
+	public void onLoad() {
 		instance = this;
-
 		LinkSpigotBungee.Provider.link = this;
+	}
+
+	@Override
+	public void onEnable() {
 		OlympaPermission.registerPermissions(OlympaCorePermissionsBungee.class);
 		OlympaPermission.registerPermissions(OlympaAPIPermissionsGlobal.class);
 		OlympaPermission.registerPermissions(OlympaAPIPermissionsBungee.class);
@@ -156,13 +161,17 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		task = new BungeeTaskManager(this);
 		defaultConfig = new BungeeCustomConfig(this, "config");
 		defaultConfig.loadSafe();
-
+		defaultConfig.addTask("redis_config", config -> {
+			redisAcces = RedisAccess.init(config.getConfig());
+			AccountProviderAPI.setRedisConnection(redisAcces);
+		});
 		maintConfig = new BungeeCustomConfig(this, "maintenance");
 		maintConfig.loadSafe();
 		status = ServerStatus.get(maintConfig.getConfig().getString("settings.status"));
 		setupDatabase();
 		try {
-			AccountProvider.init(new MySQL(database));
+			MySQL sql = new MySQL(database);
+			AccountProviderAPI.init(sql, new AccountProviderGetter(sql));
 		} catch (SQLException ex) {
 			sendMessage("§cUne erreur est survenue lors du chargement du MySQL.");
 			ex.printStackTrace();

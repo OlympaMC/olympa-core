@@ -26,9 +26,9 @@ public class ReportHandler {
 		OlympaPlayerInformations authorOlympaPlayer;
 		ConsoleCommandSender consoleCommand = null;
 		if (author != null)
-			authorOlympaPlayer = AccountProvider.getPlayerInformations(author.getUniqueId());
+			authorOlympaPlayer = AccountProvider.getter().getPlayerInformations(author.getUniqueId());
 		else {
-			authorOlympaPlayer = AccountProvider.getPlayerInformations(OlympaConsole.getId());
+			authorOlympaPlayer = AccountProvider.getter().getPlayerInformations(OlympaConsole.getId());
 			consoleCommand = Bukkit.getConsoleSender();
 		}
 		OlympaPlayer targetOlympaPlayer;

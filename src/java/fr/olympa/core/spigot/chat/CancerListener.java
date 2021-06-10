@@ -43,7 +43,7 @@ public class CancerListener implements Listener {
 		Player player = event.getPlayer();
 		OlympaServerSettings serverSettings = OlympaServerSettings.getInstance();
 
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
+		OlympaPlayer olympaPlayer = AccountProvider.getter().get(player.getUniqueId());
 
 		OlympaChat olympaTchat = Chat.getPlayer(player.getUniqueId());
 

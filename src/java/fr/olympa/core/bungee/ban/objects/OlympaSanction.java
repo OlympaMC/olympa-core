@@ -180,7 +180,7 @@ public class OlympaSanction {
 	public Set<ProxiedPlayer> getOnlinePlayers() {
 		Set<ProxiedPlayer> onlinePlayers = new HashSet<>();
 		if (getTargetType() == OlympaSanctionTargetType.OLYMPA_ID) {
-			ProxiedPlayer player = ProxyServer.getInstance().getPlayer(AccountProvider.getPlayerInformations(getTargetId()).getUUID());
+			ProxiedPlayer player = ProxyServer.getInstance().getPlayer(AccountProvider.getter().getPlayerInformations(getTargetId()).getUUID());
 			if (player != null)
 				onlinePlayers.add(player);
 		} else
@@ -192,9 +192,9 @@ public class OlympaSanction {
 		if (playersInformations == null)
 			if (getTargetType() == OlympaSanctionTargetType.OLYMPA_ID) {
 				playersInformations = new HashSet<>();
-				playersInformations.add(AccountProvider.getPlayerInformations(getTargetId()));
+				playersInformations.add(AccountProvider.getter().getPlayerInformations(getTargetId()));
 			} else
-				playersInformations = AccountProvider.getSQL().getPlayersByIp(target).stream().map(op -> AccountProvider.getPlayerInformations(op)).collect(Collectors.toSet());
+				playersInformations = AccountProvider.getter().getSQL().getPlayersByIp(target).stream().map(op -> AccountProvider.getter().getPlayerInformations(op)).collect(Collectors.toSet());
 
 		return playersInformations;
 	}

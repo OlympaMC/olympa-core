@@ -63,9 +63,9 @@ public class GroupCommand extends OlympaCommand {
 			target = Bukkit.getPlayer(args[0]);
 			if (target == null)
 				try {
-					olympaTarget = AccountProvider.get(args[0]);
+					olympaTarget = AccountProvider.getter().get(args[0]);
 					if (olympaTarget == null) {
-						this.sendUnknownPlayer(args[0], AccountProvider.getSQL().getNamesBySimilarName(args[0]));
+						this.sendUnknownPlayer(args[0], AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));
 						return true;
 					} else
 						olympaAccount = new AccountProvider(olympaTarget.getUniqueId());
@@ -204,7 +204,7 @@ public class GroupCommand extends OlympaCommand {
 			List<String> potentialArgs = new ArrayList<>();
 			potentialArgs.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
 			if (args[0].length() > 2)
-				potentialArgs.addAll(AccountProvider.getSQL().getNamesBySimilarName(args[0]));
+				potentialArgs.addAll(AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));
 			return Utils.startWords(args[0], potentialArgs);
 		} else if (args.length == 2)
 			return Utils.startWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toList()));

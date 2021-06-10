@@ -137,7 +137,7 @@ public class UtilsCommand extends ComplexCommand {
 			return;
 		}
 		try {
-			OlympaPlayer op = AccountProvider.get(arg1);
+			OlympaPlayer op = AccountProvider.getter().get(arg1);
 			if (op == null) {
 				sendMessage(Prefix.DEFAULT_GOOD, "UUID Crack théorique (générer à partir du pseudo actuel %s) : %s\nCe joueur n'a pas de données en bdd.", playerName, uuidCrack);
 				return;

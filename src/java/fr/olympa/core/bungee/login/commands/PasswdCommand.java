@@ -61,7 +61,7 @@ public class PasswdCommand extends BungeeCommand {
 			}
 		} else {
 			try {
-				olympaPlayer = AccountProvider.get(args[0]);
+				olympaPlayer = AccountProvider.getter().get(args[0]);
 			} catch (SQLException e) {
 				this.sendError(e.getMessage());
 				e.printStackTrace();

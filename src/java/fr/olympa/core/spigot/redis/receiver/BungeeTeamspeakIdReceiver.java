@@ -21,7 +21,7 @@ public class BungeeTeamspeakIdReceiver extends JedisPubSub {
 		Player player = Bukkit.getPlayer(RegexMatcher.UUID.parse(info[0]));
 		if (player == null || info.length < 2)
 			return;
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
+		OlympaPlayer olympaPlayer = AccountProvider.getter().get(player.getUniqueId());
 		if (olympaPlayer == null)
 			return;
 		olympaPlayer.setTeamspeakId(RegexMatcher.INT.parse(info[1]));

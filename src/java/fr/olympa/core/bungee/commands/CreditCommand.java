@@ -41,9 +41,12 @@ public class CreditCommand extends BungeeCommand {
 					&& mib.getServerDebugInfo().getPlugins() != null && !mib.getServerDebugInfo().getPlugins().isEmpty()
 					&& name.equals(mib.getOlympaServer().getNameCaps()))
 					.collect(Collectors.toList());
-			List<PluginInfoAdvanced> allPlugins = servers.stream().map(mib -> mib.getServerDebugInfo().getPlugins()).flatMap(list -> list.stream()).distinct().collect(Collectors.toList());
-			String authorPluginOlympa = allPlugins.stream().filter(pl -> pl.getName().startsWith("Olympa") && pl.getAuthors() != null).map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
-			String otherAuthors = allPlugins.stream().filter(pl -> !pl.getName().startsWith("Olympa") && pl.getAuthors() != null).map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
+			List<PluginInfoAdvanced> allPlugins = servers.stream().map(mib -> mib.getServerDebugInfo().getPlugins())
+					.flatMap(list -> list.stream()).distinct().filter(pl -> !pl.getAuthors().isEmpty()).collect(Collectors.toList());
+			String authorPluginOlympa = allPlugins.stream().filter(pl -> pl.getName().startsWith("Olympa"))
+					.map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
+			String otherAuthors = allPlugins.stream().filter(pl -> !pl.getName().startsWith("Olympa"))
+					.map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
 			out.extra(new TxtComponentBuilder("&6" + name + "\n&2Devs Olympa &a" + authorPluginOlympa + "\n&7Devs Plugin Public " + otherAuthors));
 		});
 		sendMessage(out.build());

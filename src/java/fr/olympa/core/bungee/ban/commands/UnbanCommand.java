@@ -67,7 +67,7 @@ public class UnbanCommand extends BungeeCommand {
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
 		switch (args.length) {
 		case 1:
-			return Utils.startWords(args[0], AccountProvider.getSQL().getNamesBySimilarName(args[0]));
+			return Utils.startWords(args[0], AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));
 		case 2:
 			List<String> reasons = Arrays.asList("Demande de démute acceptée", "Erreur", "Tromper de Joueur", "Augmentation de peine", "Réduction de peine");
 			return Utils.startWords(args[1], reasons);

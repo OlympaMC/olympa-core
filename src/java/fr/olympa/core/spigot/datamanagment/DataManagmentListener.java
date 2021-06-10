@@ -33,7 +33,7 @@ public class DataManagmentListener implements Listener {
 				OlympaPlayer olympaPlayer;
 				try {
 					olympaPlayer = olympaAccountObject.get();
-					AccountProvider.loadPlayerDatas(olympaPlayer);
+					AccountProvider.getter().loadPlayerDatas(olympaPlayer);
 				} catch (SQLException e) {
 					player.kickPlayer("§cUne erreur est survenue. Merci de réessayer\n\n§e§lSi le problème persiste, signale-le au staff.\n§eCode d'erreur: §l#SQLSpigotReload");
 					e.printStackTrace();
@@ -100,7 +100,7 @@ public class DataManagmentListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void on2PlayerLogin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
+		OlympaPlayer olympaPlayer = AccountProvider.getter().get(player.getUniqueId());
 
 		if (olympaPlayer == null) {
 			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur ne peut normalement pas se produire, contacte vite le staff. \n§eCode d'erreur: §l#NucléaireHigh"));
@@ -117,7 +117,7 @@ public class DataManagmentListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on3PlayerLogin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		OlympaPlayer olympaPlayer = AccountProvider.get(player.getUniqueId());
+		OlympaPlayer olympaPlayer = AccountProvider.getter().get(player.getUniqueId());
 
 		if (olympaPlayer == null) {
 			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur ne peut normalement pas se produire, contacte vite le staff. \n§eCode d'erreur: §l#NucléaireHighest"));
@@ -128,9 +128,8 @@ public class DataManagmentListener implements Listener {
 		OlympaCore.getInstance().launchAsync(() -> {
 			try {
 				if (player.isOnline()) {
-					if (AccountProvider.loadPlayerDatas(olympaPlayer)) {
+					if (AccountProvider.getter().loadPlayerDatas(olympaPlayer))
 						SpigotUtils.broadcastMessage("§d§k##§6 Bienvenue au joueur " + olympaPlayer.getGroup().getColor() + "§l" + player.getName() + "§6 qui rejoint le serveur ! §d§k##");
-					}
 
 					if (player.isOnline()) {
 						OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);

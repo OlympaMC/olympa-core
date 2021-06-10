@@ -7,7 +7,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-public class RedisAccess {
+public class RedisAccess implements RedisConnection {
 
 	public static RedisAccess INSTANCE;
 
@@ -38,30 +38,35 @@ public class RedisAccess {
 		this.redisCredentials = redisCredentials;
 	}
 
+	@Override
 	public Jedis connect() {
 		jedis = newConnection();
 		//		allJedis.add(jedis);
 		return jedis;
 	}
 
+	@Override
 	public void disconnect() {
 		//		allJedis.remove(jedis);
 		if (isPoolOpen())
 			pool.close();
 	}
 
+	@Override
 	public Jedis getConnection() {
 		if (!isConnected())
 			newConnection();
 		return jedis;
 	}
 
+	@Override
 	public JedisPool getJedisPool() {
 		if (!isPoolOpen())
 			initJedis();
 		return pool;
 	}
 
+	@Override
 	public void initJedis() {
 		ClassLoader previous = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(Jedis.class.getClassLoader());
@@ -72,14 +77,17 @@ public class RedisAccess {
 		Thread.currentThread().setContextClassLoader(previous);
 	}
 
+	@Override
 	public boolean isConnected() {
 		return jedis != null && jedis.isConnected();
 	}
 
+	@Override
 	public boolean isPoolOpen() {
 		return pool != null && !pool.isClosed();
 	}
 
+	@Override
 	public void updateClientName(String clientName) {
 		redisCredentials.setClientName(clientName);
 		//		allJedis.removeIf(j -> !j.isConnected());
