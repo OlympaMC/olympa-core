@@ -24,7 +24,7 @@ public class NewSpigotCommand extends ComplexCommand {
 		addArgumentParser("DEBUG_LIST", (sender, msg) -> CacheStats.getDebugLists().keySet(), x -> CacheStats.getDebugList(x), x -> "&4%s&c doit être un id de debugList qui existe.");
 		addArgumentParser("DEBUG_MAP", (sender, msg) -> CacheStats.getDebugMaps().keySet(), x -> CacheStats.getDebugMap(x), x -> "&4%s&c doit être un id de debugMap qui existe.");
 		addArgumentParser("ALIGNMENT", Alignment.class);
-		addArgumentParser("MODULES", (sender, msg) -> OlympaModule.getModulesNames(), x -> OlympaModule.getModule(x), x -> "&4%s&c n'est pas un module, essaye " + String.join(", ", OlympaModule.getModulesNames()) + " .");
+		addArgumentParser("MODULES", (sender, msg) -> OlympaModule.getModulesNames(), x -> OlympaModule.getModule(x), x -> "&4%s&c n'est pas un module, essaye &4" + String.join(", ", OlympaModule.getModulesNames()) + "&c.");
 	}
 
 	@Cmd(permissionName = "SPIGOT_COMMAND_CACHE", args = { "CACHE", "clear|print|stats" }, description = "Affiche tous les Caches qui ont été enregister")
@@ -63,7 +63,7 @@ public class NewSpigotCommand extends ComplexCommand {
 	//	}
 
 	@Cmd(args = "on|off", min = 1, description = "Active ou désactive le mode debug global sur les modules")
-	public void debugModule(CommandContext cmd) {
+	public void debug(CommandContext cmd) {
 		String arg0 = cmd.getArgument(0);
 		Boolean toOn;
 		if (arg0.equalsIgnoreCase("on"))

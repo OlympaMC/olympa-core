@@ -50,7 +50,7 @@ public class VpnListener implements Listener {
 			return;
 		}
 		if (olympaVpn == null) {
-			event.setCancelReason(BungeeUtils.connectScreen("&4AntiBot Activé &c> Impossible de se connecter au serveur avec ton ip. Contacte un Développeur ou Admin."));
+			event.setCancelReason(BungeeUtils.connectScreen("&4AntiBot Activé &c> Impossible de se connecter au serveur avec ton IP. Contacte un Développeur ou Admin."));
 			event.setCancelled(true);
 			return;
 		}

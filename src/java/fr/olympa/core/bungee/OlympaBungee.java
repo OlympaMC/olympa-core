@@ -15,6 +15,7 @@ import fr.olympa.api.bungee.task.BungeeTaskManager;
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.groups.SQLGroup;
 import fr.olympa.api.common.permission.OlympaPermission;
+import fr.olympa.api.common.permission.list.OlympaAPIPermissionsBungee;
 import fr.olympa.api.common.permission.list.OlympaAPIPermissionsGlobal;
 import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.plugin.OlympaPluginInterface;
@@ -64,6 +65,7 @@ import fr.olympa.core.bungee.maintenance.MaintenanceListener;
 import fr.olympa.core.bungee.motd.MotdListener;
 import fr.olympa.core.bungee.nick.NickCommand;
 import fr.olympa.core.bungee.packets.BungeePackets;
+import fr.olympa.core.bungee.permission.PermissionCheckListener;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageCommand;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageListener;
 import fr.olympa.core.bungee.privatemessage.PrivateMessageToggleCommand;
@@ -146,6 +148,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		LinkSpigotBungee.Provider.link = this;
 		OlympaPermission.registerPermissions(OlympaCorePermissionsBungee.class);
 		OlympaPermission.registerPermissions(OlympaAPIPermissionsGlobal.class);
+		OlympaPermission.registerPermissions(OlympaAPIPermissionsBungee.class);
 
 		new RestartBungeeCommand(this).register();
 		task = new BungeeTaskManager(this);
@@ -190,6 +193,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		pluginManager.registerListener(this, new BungeeCommandListener());
 		pluginManager.registerListener(this, new ConnectionQueueListener());
 		pluginManager.registerListener(this, new PlayerSwitchListener());
+		pluginManager.registerListener(this, new PermissionCheckListener());
 
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();
@@ -413,12 +417,12 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	public void launchAsync(Runnable run) {
 		getTask().runTaskAsynchronously(run);
 	}
-	
+
 	@Override
 	public Gson getGson() {
 		return GsonCustomizedObjectTypeAdapter.GSON;
 	}
-	
+
 	@Override
 	public List<String> getPlayersNames() {
 		return ProxyServer.getInstance().getPlayers().stream().map(ProxiedPlayer::getDisplayName).collect(Collectors.toList());
