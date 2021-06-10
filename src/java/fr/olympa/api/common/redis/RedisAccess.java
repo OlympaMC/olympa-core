@@ -2,6 +2,8 @@ package fr.olympa.api.common.redis;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
+import fr.olympa.core.bungee.redis.RedisBungeeSend;
+import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import net.md_5.bungee.config.Configuration;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -14,6 +16,17 @@ public class RedisAccess implements RedisConnection {
 	public static void close() {
 		if (INSTANCE != null)
 			INSTANCE.disconnect();
+	}
+
+	public static RedisSpigotSend spigotSend;
+	public static RedisBungeeSend bungeeSend;
+
+	public static RedisSpigotSend getSpigotSend() {
+		return spigotSend;
+	}
+
+	public static RedisBungeeSend getBungeeSend() {
+		return bungeeSend;
 	}
 
 	public static RedisAccess init(String clientName) {
@@ -97,8 +110,7 @@ public class RedisAccess implements RedisConnection {
 
 	private Jedis newConnection() {
 		Jedis jedis = getJedisPool().getResource();
-		jedis.auth(redisCredentials.getPassword());
-		jedis.clientSetname(redisCredentials.getClientName());
+		jedis = redisCredentials.auth(jedis);
 		jedis.select(1);
 		return jedis;
 	}

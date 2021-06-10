@@ -91,12 +91,12 @@ public class RedisBungeeSend {
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
-	
+
 	public static void sendPlayerPack(ProxiedPlayer p, boolean set) {
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 			jedis.publish(RedisChannel.BUNGEE_PLAYER_RESOUREPACK.name(), p.getName() + ";" + p.getServer().getInfo().getName() + ";" + Boolean.toString(set));
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
-	
+
 }

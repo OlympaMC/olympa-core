@@ -119,7 +119,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	private String firstVersion = "unknown";
 	private ErrorOutputStream errorOutputStream;
 	public GamemodeCommand gamemodeCommand = null;
-	private RedisAccess redisAcces;
+	private RedisAccess redisAccess;
 
 	public String getLastVersion() {
 		return lastVersion;
@@ -210,8 +210,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		super.onEnable();
 		if (config != null) {
 			config.addTask("redis_config", config -> {
-				redisAcces = RedisAccess.init(config);
-				AccountProviderAPI.setRedisConnection(redisAcces);
+				redisAccess = RedisAccess.init(config);
+				AccountProviderAPI.setRedisConnection(redisAccess);
 			});
 			setupRedis();
 			setupDatabase();
@@ -330,20 +330,18 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		if (is != null && is.length != 0)
 			i1 = is[0] + 1;
 		int i = i1;
-
-		RedisAccess redisAccess = RedisAccess.init(getConfig());
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
 			registerRedisSub(redisAccess.getConnection(), new BungeeServerNameReceiver(), RedisChannel.BUNGEE_ASK_SEND_SERVERNAME.name());
-			registerRedisSub(redisAccess.connect(), new SpigotOlympaPlayerReceiver(), RedisChannel.BUNGEE_ASK_SEND_OLYMPAPLAYER.name());
-			registerRedisSub(redisAccess.connect(), new SpigotReceiveOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name());
-			registerRedisSub(redisAccess.connect(), new BungeeSendOlympaPlayerReceiver(), RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name());
-			registerRedisSub(redisAccess.connect(), new SpigotGroupChangedReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP.name());
-			registerRedisSub(redisAccess.connect(), new SpigotGroupChangedReceiveReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP_RECEIVE.name());
-			registerRedisSub(redisAccess.connect(), new BungeeAskPlayerServerReceiver(), RedisChannel.BUNGEE_SEND_PLAYERSERVER.name());
-			registerRedisSub(redisAccess.connect(), new SpigotCommandReceiver(), RedisChannel.SPIGOT_COMMAND.name());
-			registerRedisSub(redisAccess.connect(), new BungeeTeamspeakIdReceiver(), RedisChannel.BUNGEE_SEND_TEAMSPEAKID.name());
-			registerRedisSub(redisAccess.connect(), new BungeeServerInfoReceiver(), RedisChannel.BUNGEE_SEND_SERVERSINFOS2.name());
+			registerRedisSub(new SpigotOlympaPlayerReceiver(), RedisChannel.BUNGEE_ASK_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(new SpigotReceiveOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(new BungeeSendOlympaPlayerReceiver(), RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name());
+			registerRedisSub(new SpigotGroupChangedReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP.name());
+			registerRedisSub(new SpigotGroupChangedReceiveReceiver(), RedisChannel.SPIGOT_CHANGE_GROUP_RECEIVE.name());
+			registerRedisSub(new BungeeAskPlayerServerReceiver(), RedisChannel.BUNGEE_SEND_PLAYERSERVER.name());
+			registerRedisSub(new SpigotCommandReceiver(), RedisChannel.SPIGOT_COMMAND.name());
+			registerRedisSub(new BungeeTeamspeakIdReceiver(), RedisChannel.BUNGEE_SEND_TEAMSPEAKID.name());
+			registerRedisSub(new BungeeServerInfoReceiver(), RedisChannel.BUNGEE_SEND_SERVERSINFOS2.name());
 			//			registerRedisSub(redisAccess.connect(), new BungeeAskSomething(), RedisChannel.BUNGEE_ASK_SOMETHING.name());
 			RedisSpigotSend.askServerName();
 			sendMessage("&aConnexion à &2Redis&a établie.");
@@ -370,6 +368,12 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		}
 	}
 
+	@Override
+	public void registerRedisSub(JedisPubSub sub, String channel) {
+		registerRedisSub(redisAccess.connect(), sub, channel);
+	}
+
+	@Override
 	public void registerRedisSub(Jedis jedis, JedisPubSub sub, String channel) {
 		Thread t = new Thread(() -> {
 			jedis.subscribe(sub, channel);
@@ -377,8 +381,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		}, "Redis sub " + channel);
 		Thread.UncaughtExceptionHandler h = (th, ex) -> {
 			ex.printStackTrace();
-			if (RedisAccess.INSTANCE != null)
-				registerRedisSub(RedisAccess.INSTANCE.connect(), sub, channel);
+			if (redisAccess != null)
+				registerRedisSub(redisAccess.connect(), sub, channel);
 		};
 		t.setUncaughtExceptionHandler(h);
 		t.start();
@@ -421,6 +425,11 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	@Override
 	public List<String> getPlayersNames() {
 		return Bukkit.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+	}
+
+	@Override
+	public RedisAccess getRedisAccess() {
+		return redisAccess;
 	}
 
 }

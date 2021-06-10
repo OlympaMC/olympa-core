@@ -4,6 +4,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import net.md_5.bungee.config.Configuration;
+import redis.clients.jedis.Jedis;
 
 public class RedisCredentials {
 
@@ -48,6 +49,12 @@ public class RedisCredentials {
 			port = configInt;
 	}
 
+	public Jedis auth(Jedis jedis) {
+		jedis.auth(password);
+		jedis.clientSetname(clientName);
+		return jedis;
+	}
+
 	public String getClientName() {
 		return clientName;
 	}
@@ -58,10 +65,6 @@ public class RedisCredentials {
 
 	public String getIp() {
 		return ip;
-	}
-
-	public String getPassword() {
-		return password;
 	}
 
 	public int getPort() {
