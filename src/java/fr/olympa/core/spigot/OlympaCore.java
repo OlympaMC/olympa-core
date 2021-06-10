@@ -5,15 +5,10 @@ import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -27,6 +22,7 @@ import com.google.gson.Gson;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.SwearHandler;
 import fr.olympa.api.common.groups.OlympaGroup;
+import fr.olympa.api.common.logger.LoggerUtils;
 import fr.olympa.api.common.module.OlympaModule;
 import fr.olympa.api.common.permission.OlympaPermission;
 import fr.olympa.api.common.permission.list.OlympaAPIPermissionsSpigot;
@@ -179,7 +175,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		OlympaModule.disableAll();
 		if (database != null)
 			database.close();
-		sendMessage("§4" + getDescription().getName() + "§c (" + getDescription().getVersion() + ") est désactivé.");
+		LoggerUtils.unHookAll();
+		sendMessage("&4%s&c (%s) est désactivé.", getDescription().getName(), getDescription().getVersion());
 	}
 
 	@Override
@@ -190,22 +187,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 		errorOutputStream = new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20));
 		System.setErr(new PrintStream(errorOutputStream));
-		ErrorLoggerHandler errorHandler = new ErrorLoggerHandler(RedisSpigotSend::sendError);
-		LogManager manager = LogManager.getLogManager();
-		Enumeration<String> names = manager.getLoggerNames();
-		int i = 1;
-		while (names.hasMoreElements()) {
-			String name = names.nextElement();
-			@Nullable
-			Logger logger = manager.getLogger(name);
-			if (logger == null) {
-				sendMessage("&cUnable to hook into logger '§6%s§e', it is null", name);
-				continue;
-			}
-			logger.addHandler(errorHandler);
-			i++;
-		}
-		sendMessage("Hooked error stream handler into §6%s§e loggers!", i);
+		LoggerUtils.hook(new ErrorLoggerHandler(RedisSpigotSend::sendError));
+		sendMessage("&6%s&e (%s) est chargé.", getDescription().getName(), getDescription().getVersion());
 	}
 
 	@Override
@@ -233,10 +216,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			setupRedis();
 			setupDatabase();
 		}
-
 		RedisSpigotSend.errorsEnabled = true;
-		sendMessage("§6" + getDescription().getName() + "§e (" + getDescription().getVersion() + ") est chargé.");
-
 		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 		imageFrameManager = new ImageFrameManager(this, "maps.yml", "images");
 		try {
@@ -307,7 +287,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		defaultGroup.setRuntimePermission("bukkit.command.version", false);
 		defaultGroup.setRuntimePermission("bukkit.command.plugins", false);
 		defaultGroup.setRuntimePermission("bukkit.command.help", false);
-		sendMessage("§2" + getDescription().getName() + "§a (" + getDescription().getVersion() + ") est activé.");
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 			players.forEach(p -> {
@@ -321,6 +300,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 				System.out.println("Succes save " + p.getName());
 			});
 		}));
+		sendMessage("&2%s&a (%s) est activé.", getDescription().getName(), getDescription().getVersion());
 	}
 
 	@EventHandler

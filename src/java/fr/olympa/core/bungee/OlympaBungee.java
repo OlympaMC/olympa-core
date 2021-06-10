@@ -18,6 +18,7 @@ import fr.olympa.api.common.permission.OlympaPermission;
 import fr.olympa.api.common.permission.list.OlympaAPIPermissionsBungee;
 import fr.olympa.api.common.permission.list.OlympaAPIPermissionsGlobal;
 import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.plugin.OlympaBungeeInterface;
 import fr.olympa.api.common.plugin.OlympaPluginInterface;
 import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.common.redis.RedisAccess;
@@ -108,7 +109,7 @@ import net.md_5.bungee.config.Configuration;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
-public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPluginInterface {
+public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPluginInterface, OlympaBungeeInterface {
 
 	private static OlympaBungee instance;
 
@@ -122,6 +123,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	private BungeeTaskManager task;
 	private ServerStatus status;
 
+	@Override
 	public Configuration getConfig() {
 		return defaultConfig.getConfig();
 	}
@@ -322,6 +324,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		}
 	}
 
+	@Override
 	public void registerRedisSub(Jedis jedis, JedisPubSub sub, String channel) {
 		Thread t = new Thread(() -> {
 			jedis.subscribe(sub, channel);
@@ -381,6 +384,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		return database.getConnection();
 	}
 
+	@Override
 	public BungeeCustomConfig getDefaultConfig() {
 		return defaultConfig;
 	}

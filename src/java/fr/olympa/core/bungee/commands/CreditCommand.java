@@ -30,8 +30,10 @@ public class CreditCommand extends BungeeCommand {
 		ServerInfoAdvancedBungee bungeeServerInfo = new ServerInfoAdvancedBungee(OlympaBungee.getInstance());
 
 		if (bungeeServerInfo.getPlugins() != null && !bungeeServerInfo.getPlugins().isEmpty()) {
-			String authorPluginOlympa = bungeeServerInfo.getPlugins().stream().filter(pl -> pl.getName().startsWith("Olympa")).map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
-			String otherAuthors = bungeeServerInfo.getPlugins().stream().filter(pl -> !pl.getName().startsWith("Olympa")).map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
+			String authorPluginOlympa = bungeeServerInfo.getPlugins().stream().filter(pl -> pl.getName().startsWith("Olympa") && pl.getAuthors() != null).map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct()
+					.collect(Collectors.joining(", "));
+			String otherAuthors = bungeeServerInfo.getPlugins().stream().filter(pl -> !pl.getName().startsWith("Olympa") && pl.getAuthors() != null).map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct()
+					.collect(Collectors.joining(", "));
 			out.extra(new TxtComponentBuilder("&6%s\n&2Devs Olympa &a%s\n&7Devs Plugin Public %s", bungeeServerInfo.getHumainName(), authorPluginOlympa, otherAuthors));
 		}
 		serversNames.forEach(name -> {
@@ -40,8 +42,8 @@ public class CreditCommand extends BungeeCommand {
 					&& name.equals(mib.getOlympaServer().getNameCaps()))
 					.collect(Collectors.toList());
 			List<PluginInfoAdvanced> allPlugins = servers.stream().map(mib -> mib.getServerDebugInfo().getPlugins()).flatMap(list -> list.stream()).distinct().collect(Collectors.toList());
-			String authorPluginOlympa = allPlugins.stream().filter(pl -> pl.getName().startsWith("Olympa")).map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
-			String otherAuthors = allPlugins.stream().filter(pl -> !pl.getName().startsWith("Olympa")).map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
+			String authorPluginOlympa = allPlugins.stream().filter(pl -> pl.getName().startsWith("Olympa") && pl.getAuthors() != null).map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
+			String otherAuthors = allPlugins.stream().filter(pl -> !pl.getName().startsWith("Olympa") && pl.getAuthors() != null).map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
 			out.extra(new TxtComponentBuilder("&6" + name + "\n&2Devs Olympa &a" + authorPluginOlympa + "\n&7Devs Plugin Public " + otherAuthors));
 		});
 		sendMessage(out.build());

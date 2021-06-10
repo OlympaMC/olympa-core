@@ -13,12 +13,16 @@ import fr.olympa.api.common.module.OlympaModule;
 import fr.olympa.api.common.server.ServerInfoAdvancedSpigot;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.spigot.utils.TPS;
+import fr.olympa.api.utils.TimeEvaluator;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class StatusMotdListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPing(ServerListPingEvent event) {
+		TimeEvaluator time = null;
+		if (OlympaModule.DEBUG)
+			time = new TimeEvaluator("Spigot Custom Ping");
 		ServerStatus status = OlympaCore.getInstance().getStatus();
 		JavaInstanceInfo machineInfo = new JavaInstanceInfo();
 		OlympaCore core = OlympaCore.getInstance();
@@ -31,8 +35,10 @@ public class StatusMotdListener implements Listener {
 		sj.add(core.getLastVersion());
 		sj.add(String.valueOf(core.getLastModifiedLong()));
 		sj.add(new ServerInfoAdvancedSpigot(core).toString());
-		if (OlympaModule.DEBUG)
+		if (OlympaModule.DEBUG) {
+			time.stop();
 			core.sendMessage("&rDEBUG Ping > %s ", LinkSpigotBungee.getInstance().getGson().toJson(sj.toString())); // XXX ???????
+		}
 		event.setMotd(sj.toString());
 	}
 }
