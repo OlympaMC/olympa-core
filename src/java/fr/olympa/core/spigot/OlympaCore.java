@@ -195,113 +195,118 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 	@Override
 	public void onEnable() {
-		OlympaPermission.registerPermissions(OlympaAPIPermissionsSpigot.class);
-		OlympaPermission.registerPermissions(OlympaCorePermissionsSpigot.class);
-		new RestartCommand(this).registerPreProcess().register();
-		PluginManager pluginManager = getServer().getPluginManager();
-		pluginManager.registerEvents(new OnLoadListener(), this);
-		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
-		ReportReason.registerReason(ReportReason.class);
-		BungeeServerInfoReceiver.registerCallback(mi -> {
-			lastInfo = Utils.getCurrentTimeInSeconds();
-			monitorInfos.clear();
-			monitorInfos.addAll(mi);
-		});
-		super.onEnable();
-		if (config != null) {
-			config.addTask("redis_config", config -> {
-				redisAccess = RedisAccess.init(config);
-				AccountProviderAPI.setRedisConnection(redisAccess);
+		try {
+			OlympaPermission.registerPermissions(OlympaAPIPermissionsSpigot.class);
+			OlympaPermission.registerPermissions(OlympaCorePermissionsSpigot.class);
+			new RestartCommand(this).registerPreProcess().register();
+			PluginManager pluginManager = getServer().getPluginManager();
+			pluginManager.registerEvents(new OnLoadListener(), this);
+			CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
+			ReportReason.registerReason(ReportReason.class);
+			BungeeServerInfoReceiver.registerCallback(mi -> {
+				lastInfo = Utils.getCurrentTimeInSeconds();
+				monitorInfos.clear();
+				monitorInfos.addAll(mi);
 			});
-			setupRedis();
-			setupDatabase();
-		}
-		RedisSpigotSend.errorsEnabled = true;
-		swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
-		imageFrameManager = new ImageFrameManager(this, "maps.yml", "images");
-		try {
-			MySQL sql = new MySQL(database);
-			AccountProviderAPI.init(sql, new AccountProviderGetter(sql));
-		} catch (SQLException ex) {
-			sendMessage("&cUne erreur est survenue lors du chargement du MySQL. Arrêt du plugin.");
-			ex.printStackTrace();
-			setEnabled(false);
-			return;
-		}
-		new ReportMySQL(database);
+			super.onEnable();
+			if (config != null) {
+				config.addTask("redis_config", config -> {
+					redisAccess = RedisAccess.init(config);
+					AccountProviderAPI.setRedisConnection(redisAccess);
+				});
+				setupRedis();
+				setupDatabase();
+			}
+			RedisSpigotSend.errorsEnabled = true;
+			swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
+			imageFrameManager = new ImageFrameManager(this, "maps.yml", "images");
+			try {
+				MySQL sql = new MySQL(database);
+				AccountProviderAPI.init(sql, new AccountProviderGetter(sql));
+			} catch (SQLException ex) {
+				sendMessage("&cUne erreur est survenue lors du chargement du MySQL. Arrêt du plugin.");
+				ex.printStackTrace();
+				setEnabled(false);
+				return;
+			}
+			new ReportMySQL(database);
 
-		try {
-			new CoreModules();
-			OlympaModule.enableAll();
-			((NametagAPI) nameTagApi).testCompat();
-		} catch (Exception | NoSuchMethodError e) {
-			sendMessage("&cUne erreur est survenue lors du chargement des modules.");
+			try {
+				new CoreModules();
+				OlympaModule.enableAll();
+				((NametagAPI) nameTagApi).testCompat();
+			} catch (Exception | NoSuchMethodError e) {
+				sendMessage("&cUne erreur est survenue lors du chargement des modules.");
+				e.printStackTrace();
+			}
+			try {
+				new HologramsManager(this, new File(getDataFolder(), "holograms.yml"));
+			} catch (NullPointerException | ReflectiveOperationException e) {
+				getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
+				e.printStackTrace();
+			}
+
+			pluginManager.registerEvents(this, this);
+			pluginManager.registerEvents(new DataManagmentListener(), this);
+			pluginManager.registerEvents(new GroupListener(), this);
+			pluginManager.registerEvents(new CancerListener(), this);
+			pluginManager.registerEvents(new Inventories(), this);
+			pluginManager.registerEvents(new StatusMotdListener(), this);
+			pluginManager.registerEvents(new ChatListener(), this);
+			pluginManager.registerEvents(new CommandListener(), this);
+			pluginManager.registerEvents(regionManager = new RegionManager(), this);
+
+			new GroupCommand(this).register();
+			new ChatCommand(this).register();
+			new ReportCommand(this).register();
+			new SetStatusCommand(this).register();
+			new PluginCommand(this).registerPreProcess().register();
+			new HelpCommand(this).register().registerPreProcess();
+			new SayCommand(this).registerPreProcess();
+			new UtilsCommand(this).register();
+			new GenderCommand(this).register();
+			gamemodeCommand = (GamemodeCommand) new GamemodeCommand(this).register().registerPreProcess();
+			new InvseeCommand(this).register();
+			new EcseeCommand(this).register();
+			new FlyCommand(this).register();
+			new ConfigCommand(this).register();
+			new PermissionCommand(this).register();
+			new PingCommand(this).register();
+			//		new HologramsCommand(hologramsManager).register();
+			new ColorCommand(this).register();
+			new ToggleErrors(this).register();
+			new StaffCommand(this).register();
+			new ItemCommand(this).register();
+			new NewSpigotCommand(this).register().registerPreProcess();
+			new ListCommand(this).register().registerPreProcess();
+
+			new AntiWD(this);
+			getTask().runTask(() -> versionHandler = new VersionHandler(this));
+			OlympaGroup defaultGroup = OlympaGroup.PLAYER;
+			defaultGroup.setRuntimePermission("minecraft.command.help", false);
+			defaultGroup.setRuntimePermission("minecraft.command.me", false);
+			defaultGroup.setRuntimePermission("minecraft.command.msg", false);
+			defaultGroup.setRuntimePermission("bukkit.command.version", false);
+			defaultGroup.setRuntimePermission("bukkit.command.plugins", false);
+			defaultGroup.setRuntimePermission("bukkit.command.help", false);
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+				players.forEach(p -> {
+					OlympaAccount account = new AccountProvider(p.getUniqueId());
+					OlympaPlayer olympaPlayer = account.getFromCache();
+					if (olympaPlayer != null) {
+						//MySQL.savePlayerPluginDatas(olympaPlayer);
+						account.saveToRedis(olympaPlayer);
+						account.removeFromCache();
+					}
+					System.out.println("Succes save " + p.getName());
+				});
+			}));
+			sendMessage("&2%s&a (%s) est activé.", getDescription().getName(), getDescription().getVersion());
+		} catch (Error | Exception e) {
+			setStatus(ServerStatus.MAINTENANCE);
 			e.printStackTrace();
 		}
-		try {
-			new HologramsManager(this, new File(getDataFolder(), "holograms.yml"));
-		} catch (NullPointerException | ReflectiveOperationException e) {
-			getLogger().severe("Une erreur est survenue lors du chargement des hologrammes.");
-			e.printStackTrace();
-		}
-
-		pluginManager.registerEvents(this, this);
-		pluginManager.registerEvents(new DataManagmentListener(), this);
-		pluginManager.registerEvents(new GroupListener(), this);
-		pluginManager.registerEvents(new CancerListener(), this);
-		pluginManager.registerEvents(new Inventories(), this);
-		pluginManager.registerEvents(new StatusMotdListener(), this);
-		pluginManager.registerEvents(new ChatListener(), this);
-		pluginManager.registerEvents(new CommandListener(), this);
-		pluginManager.registerEvents(regionManager = new RegionManager(), this);
-
-		new GroupCommand(this).register();
-		new ChatCommand(this).register();
-		new ReportCommand(this).register();
-		new SetStatusCommand(this).register();
-		new PluginCommand(this).registerPreProcess().register();
-		new HelpCommand(this).register().registerPreProcess();
-		new SayCommand(this).registerPreProcess();
-		new UtilsCommand(this).register();
-		new GenderCommand(this).register();
-		gamemodeCommand = (GamemodeCommand) new GamemodeCommand(this).register().registerPreProcess();
-		new InvseeCommand(this).register();
-		new EcseeCommand(this).register();
-		new FlyCommand(this).register();
-		new ConfigCommand(this).register();
-		new PermissionCommand(this).register();
-		new PingCommand(this).register();
-		//		new HologramsCommand(hologramsManager).register();
-		new ColorCommand(this).register();
-		new ToggleErrors(this).register();
-		new StaffCommand(this).register();
-		new ItemCommand(this).register();
-		new NewSpigotCommand(this).register().registerPreProcess();
-		new ListCommand(this).register().registerPreProcess();
-
-		new AntiWD(this);
-		getTask().runTask(() -> versionHandler = new VersionHandler(this));
-		OlympaGroup defaultGroup = OlympaGroup.PLAYER;
-		defaultGroup.setRuntimePermission("minecraft.command.help", false);
-		defaultGroup.setRuntimePermission("minecraft.command.me", false);
-		defaultGroup.setRuntimePermission("minecraft.command.msg", false);
-		defaultGroup.setRuntimePermission("bukkit.command.version", false);
-		defaultGroup.setRuntimePermission("bukkit.command.plugins", false);
-		defaultGroup.setRuntimePermission("bukkit.command.help", false);
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-			players.forEach(p -> {
-				OlympaAccount account = new AccountProvider(p.getUniqueId());
-				OlympaPlayer olympaPlayer = account.getFromCache();
-				if (olympaPlayer != null) {
-					//MySQL.savePlayerPluginDatas(olympaPlayer);
-					account.saveToRedis(olympaPlayer);
-					account.removeFromCache();
-				}
-				System.out.println("Succes save " + p.getName());
-			});
-		}));
-		sendMessage("&2%s&a (%s) est activé.", getDescription().getName(), getDescription().getVersion());
 	}
 
 	@EventHandler

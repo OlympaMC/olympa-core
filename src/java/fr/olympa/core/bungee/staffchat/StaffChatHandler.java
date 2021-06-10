@@ -43,7 +43,7 @@ public class StaffChatHandler {
 		BaseComponent[] messageComponent = TextComponent.fromLegacyText(Prefix.STAFFCHAT + senderName + " §7: " + message);
 		List<ProxiedPlayer> staff = ProxyServer.getInstance().getPlayers().stream().filter(p -> {
 			try {
-				return !DataHandler.isUnlogged(p) && OlympaCorePermissionsBungee.STAFF_CHAT.hasPermission(new AccountProvider(p.getUniqueId()).get());
+				return !DataHandler.isUnlogged(p) && OlympaCorePermissionsBungee.STAFF_CHAT.hasPermission((OlympaPlayer) new AccountProvider(p.getUniqueId()).get());
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return false;

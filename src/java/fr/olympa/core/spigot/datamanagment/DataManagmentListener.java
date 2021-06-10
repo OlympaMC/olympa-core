@@ -65,7 +65,7 @@ public class DataManagmentListener implements Listener {
 			return;
 		}
 		int i = 0;
-		while (olympaPlayer == null && i < 10) {
+		while (olympaPlayer == null) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -74,7 +74,7 @@ public class DataManagmentListener implements Listener {
 			if (i == 5 || i == 8) {
 				olympaPlayer = olympaAccount.getFromRedis();
 				LinkSpigotBungee.Provider.link.sendMessage("&4OlympaPlayer de %s pas encore trouvé, tentative de le récupérer via redis n°%d après %s secondes d'attente. Résultat: %s",
-						uuid, i == 5 ? 1 : 2, i, olympaPlayer != null);
+						uuid, i == 5 ? 1 : 2, i, olympaPlayer != null ? "Réussi" : "Non trouvé");
 			} else if (i == 9)
 				try {
 					olympaPlayer = olympaAccount.fromDb();
@@ -101,7 +101,6 @@ public class DataManagmentListener implements Listener {
 	public void on2PlayerLogin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = AccountProvider.getter().get(player.getUniqueId());
-
 		if (olympaPlayer == null) {
 			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur ne peut normalement pas se produire, contacte vite le staff. \n§eCode d'erreur: §l#NucléaireHigh"));
 			event.setJoinMessage(null);

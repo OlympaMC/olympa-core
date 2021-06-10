@@ -16,8 +16,6 @@ public class AccountProvider extends AccountProviderAPI {
 		return (AccountProviderGetter) getter;
 	}
 
-	UUID uuid;
-
 	public AccountProvider(UUID uuid) {
 		super(uuid);
 	}
