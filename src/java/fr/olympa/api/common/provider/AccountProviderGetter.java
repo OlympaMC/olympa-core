@@ -224,8 +224,10 @@ public class AccountProviderGetter implements AccountProviderGetterInterface {
 			newColumns.addAll(columns);
 			pluginPlayerTable = new SQLTable<>(pluginName.toLowerCase() + "_players", newColumns).createOrAlter();
 			//MySQL.setDatasTable(providerTableName, columns);
+			Class<? extends OlympaPlayer> oldPlayerClass = this.playerClass;
 			this.playerClass = playerClass;
 			pluginPlayerProvider = provider;
+			LinkSpigotBungee.Provider.link.sendMessage("&aSuccès hook &2%s&a into &2%s&a.", playerClass.getSimpleName(), oldPlayerClass.getSimpleName());
 		} catch (SQLException e) {
 			e.printStackTrace();
 			pluginPlayerTable = null;
