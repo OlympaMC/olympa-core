@@ -30,7 +30,7 @@ import redis.clients.jedis.Jedis;
 public class AccountProviderGetter implements AccountProviderGetterInterface {
 
 	private static Map<Long, OlympaPlayerInformations> cachedInformations = new HashMap<>();
-	public static OlympaPlayerProvider pluginPlayerProvider = OlympaPlayerObject::new;
+	private static OlympaPlayerProvider pluginPlayerProvider = OlympaPlayerObject::new;
 
 	private Class<? extends OlympaPlayer> playerClass = OlympaPlayerObject.class;
 	private SQLTable<? extends OlympaPlayer> pluginPlayerTable = null;
@@ -227,7 +227,7 @@ public class AccountProviderGetter implements AccountProviderGetterInterface {
 			Class<? extends OlympaPlayer> oldPlayerClass = this.playerClass;
 			this.playerClass = playerClass;
 			pluginPlayerProvider = provider;
-			LinkSpigotBungee.Provider.link.sendMessage("&aSuccès hook &2%s&a into &2%s&a.", playerClass.getSimpleName(), oldPlayerClass.getSimpleName());
+			LinkSpigotBungee.Provider.link.sendMessage("§aUtilisation de §2§l%s§a à la place de §2%s§a.", playerClass.getSimpleName(), oldPlayerClass.getSimpleName());
 		} catch (SQLException e) {
 			e.printStackTrace();
 			pluginPlayerTable = null;
@@ -253,5 +253,10 @@ public class AccountProviderGetter implements AccountProviderGetterInterface {
 	@Override
 	public Map<Long, OlympaPlayerInformations> getCachedInformations() {
 		return cachedInformations;
+	}
+	
+	@Override
+	public OlympaPlayerProvider getOlympaPlayerProvider() {
+		return pluginPlayerProvider;
 	}
 }

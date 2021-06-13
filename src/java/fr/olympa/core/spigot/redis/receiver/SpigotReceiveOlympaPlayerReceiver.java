@@ -20,6 +20,6 @@ public class SpigotReceiveOlympaPlayerReceiver extends JedisPubSub {
 		OlympaPlayer olympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(args[2], OlympaPlayer.class);
 		Validate.notNull(olympaPlayer);
 		new AccountProvider(olympaPlayer.getUniqueId()).saveToCache(olympaPlayer);
-		OlympaCore.getInstance().sendMessage("&a[Redis] PLAYER receive for " + olympaPlayer.getName() + " from server " + serverFrom);
+		OlympaCore.getInstance().sendMessage("§7[Redis] §eDonnées de §a" + olympaPlayer.getName() + " §ereçues de §a" + serverFrom);
 	}
 }

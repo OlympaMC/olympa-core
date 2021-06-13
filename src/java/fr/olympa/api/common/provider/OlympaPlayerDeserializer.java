@@ -20,7 +20,7 @@ public class OlympaPlayerDeserializer implements JsonDeserializer<OlympaPlayer> 
 	@Override
 	public OlympaPlayerObject deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 		JsonObject object = json.getAsJsonObject();
-		OlympaPlayerObject player = (OlympaPlayerObject) AccountProvider.pluginPlayerProvider.create(context.deserialize(object.get("uuid"), UUID.class), object.get("name").getAsString(), object.get("ip").getAsString());
+		OlympaPlayerObject player = (OlympaPlayerObject) AccountProviderAPI.getter().getOlympaPlayerProvider().create(context.deserialize(object.get("uuid"), UUID.class), object.get("name").getAsString(), object.get("ip").getAsString());
 		if (object.has("email"))
 			player.email = object.get("email").getAsString();
 		if (object.has("firstConnection"))

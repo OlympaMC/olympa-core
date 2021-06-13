@@ -19,7 +19,7 @@ import fr.olympa.api.common.player.Gender;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.player.OlympaPlayerInformations;
 import fr.olympa.api.common.player.PlayerSQL;
-import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.api.common.provider.AccountProviderAPI;
 import fr.olympa.api.common.provider.OlympaPlayerInformationsObject;
 import fr.olympa.api.common.sql.statement.OlympaStatement;
 import fr.olympa.api.utils.Utils;
@@ -413,7 +413,7 @@ public class MySQL implements PlayerSQL {
 		UUID uuidPremium = null;
 		if (uuidPremiumString != null)
 			uuidPremium = RegexMatcher.UUID.parse(uuidPremiumString);
-		OlympaPlayer player = AccountProvider.pluginPlayerProvider.create(RegexMatcher.UUID.parse(resultSet.getString("uuid_server")), resultSet.getString("pseudo"), resultSet.getString("ip"));
+		OlympaPlayer player = AccountProviderAPI.getter().getOlympaPlayerProvider().create(RegexMatcher.UUID.parse(resultSet.getString("uuid_server")), resultSet.getString("pseudo"), resultSet.getString("ip"));
 		player.loadSavedDatas(
 				resultSet.getLong("id"),
 				uuidPremium,

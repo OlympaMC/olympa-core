@@ -18,14 +18,14 @@ public class BungeeServerNameReceiver extends JedisPubSub {
 		int serverPort = core.getServer().getPort();
 		if (ip.equals(serverIp) && port == serverPort) {
 			if (core.getServerName().equals(serverName)) {
-				OlympaCore.getInstance().sendMessage("&4Nom du serveur déjà reçu : &c" + serverName + "&4.");
+				OlympaCore.getInstance().sendMessage("§7[Redis] §4Nom du serveur déjà reçu : &c" + serverName + "&4.");
 				return;
 			}
 			core.setServerName(serverName);
 			RedisAccess.INSTANCE.updateClientName(serverName);
-			OlympaCore.getInstance().sendMessage("&2Nom du serveur reçu : &a" + serverName + "&2.");
+			OlympaCore.getInstance().sendMessage("§7[Redis] §2Nom du serveur reçu : &a" + serverName + "&2.");
 			this.unsubscribe();
 		} else
-			OlympaCore.getInstance().sendMessage("&4Mauvais nom du serveur reçu : &c" + serverName + "&4.");
+			OlympaCore.getInstance().sendMessage("§7[Redis] §4Mauvais nom du serveur reçu : &c" + serverName + "&4.");
 	}
 }
