@@ -24,6 +24,8 @@ import fr.olympa.api.common.provider.AccountProviderAPI;
 import fr.olympa.api.common.provider.AccountProviderGetter;
 import fr.olympa.api.common.redis.RedisAccess;
 import fr.olympa.api.common.redis.RedisChannel;
+import fr.olympa.api.common.redis.RedisClass;
+import fr.olympa.api.common.redis.RedisConnection;
 import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
@@ -123,7 +125,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	protected BungeeCustomConfig maintConfig;
 	private BungeeTaskManager task;
 	private ServerStatus status;
-	private RedisAccess redisAcces;
+	private String serverName = "bungee1";
+	private RedisAccess redisAccess;
 
 	@Override
 	public Configuration getConfig() {
@@ -162,8 +165,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		defaultConfig = new BungeeCustomConfig(this, "config");
 		defaultConfig.loadSafe();
 		defaultConfig.addTask("redis_config", config -> {
-			redisAcces = RedisAccess.init(config.getConfig());
-			AccountProviderAPI.setRedisConnection(redisAcces);
+			redisAccess = RedisAccess.init(config.getConfig());
+			AccountProviderAPI.setRedisConnection(redisAccess);
 		});
 		maintConfig = new BungeeCustomConfig(this, "maintenance");
 		maintConfig.loadSafe();
@@ -334,6 +337,16 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	}
 
 	@Override
+	public void registerRedisSub(JedisPubSub sub, String channel) {
+		registerRedisSub(redisAccess.connect(), sub, channel);
+	}
+
+	@Override
+	public RedisConnection getRedisAccess() {
+		return redisAccess;
+	}
+
+	@Override
 	public void registerRedisSub(Jedis jedis, JedisPubSub sub, String channel) {
 		Thread t = new Thread(() -> {
 			jedis.subscribe(sub, channel);
@@ -353,7 +366,6 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		if (is != null && is.length != 0)
 			i1 = is[0] + 1;
 		int i = i1;
-		RedisAccess redisAccess = RedisAccess.init(defaultConfig.getConfig());
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
 			registerRedisSub(redisAccess.getConnection(), new SpigotGroupChangeReceiverOnBungee(), RedisChannel.SPIGOT_CHANGE_GROUP.name());
@@ -366,6 +378,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 			registerRedisSub(redisAccess.connect(), new BungeeCommandReceiver(), RedisChannel.BUNGEE_COMMAND.name());
 			registerRedisSub(redisAccess.connect(), new SpigotServerSwitchReceiver2(), RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER2.name());
 			registerRedisSub(redisAccess.connect(), new SpigotAskMonitorInfoReceiver(), RedisChannel.SPIGOT_ASK_SERVERINFO.name());
+			RedisClass.registerBungeeSubChannels(this);
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
 			if (i % 100 == 0)
@@ -379,8 +392,9 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		return status;
 	}
 
-	public ServerStatus setStatus(ServerStatus status) {
-		return this.status = status;
+	@Override
+	public void setStatus(ServerStatus status) {
+		this.status = status;
 	}
 
 	@Override
@@ -416,11 +430,6 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		return "bungee";
 	}
 
-	//	@Override
-	//	public OlympaTask getTask() {
-	//		return task;
-	//	}
-
 	@Override
 	public BungeeTaskManager getTask() {
 		return task;
@@ -440,4 +449,15 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	public List<String> getPlayersNames() {
 		return ProxyServer.getInstance().getPlayers().stream().map(ProxiedPlayer::getDisplayName).collect(Collectors.toList());
 	}
+
+	@Override
+	public boolean isServerName(String serverName) {
+		return this.serverName.equals(serverName);
+	}
+
+	@Override
+	public void setServerName(String serverName) {
+		this.serverName = serverName;
+	}
+
 }

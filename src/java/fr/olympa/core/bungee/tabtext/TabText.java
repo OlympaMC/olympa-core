@@ -38,10 +38,7 @@ public class TabText {
 		sj.add("&e&lOlympa &eΩ");
 		ProtocolAPI firstVersion = ProtocolAPI.getFirstVersion();
 		ProtocolAPI lastVersion = ProtocolAPI.getLastVersion();
-		sj.add("&6Versions ");
-		sj.add(firstVersion.getName());
-		sj.add(" à ");
-		sj.add(lastVersion.getName());
+		sj.add("&6Versions " + firstVersion.getName() + " à " + lastVersion.getName());
 		return ColorUtils.color(sj.toString());
 
 	}

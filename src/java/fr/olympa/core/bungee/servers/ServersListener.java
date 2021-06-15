@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ServerInfoBasic;
 import fr.olympa.api.spigot.utils.ProtocolAPI;
@@ -42,10 +43,10 @@ public class ServersListener implements Listener {
 
 		OlympaBungee.getInstance().sendMessage("§6" + player.getName() + "§7 a été kick pour \"§e" + kickReason + "§7\" (état : " + event.getState() + ")");
 		if (kickReason.contains("whitelist")) {
-			event.setKickReasonComponent(TextComponent.fromLegacyText(Prefix.BAD + "Tu n'as pas accès au serveur &4" + serverKicked.getName() + "&c."));
+			TxtComponentBuilder.of(Prefix.NONE, "Tu n'as pas accès au serveur &4%s&c.", serverKicked.getName());
 			return;
 		}
-		if (kickReason.contains("restarting") || kickReason.contains("closed")) {
+		if (kickReason.contains("restarting") || kickReason.contains("closed") || kickReason.equals("The server you were previously on went down, you have been connected to a fallback server")) {
 			ServerInfo serverFallback = null;
 			if (olympaServer.hasMultiServers()) {
 				serverFallback = ServersConnection.getBestServer(olympaServer, serverKicked);
@@ -62,7 +63,7 @@ public class ServersListener implements Listener {
 			if (serverFallback == null)
 				serverFallback = ServersConnection.getBestServer(OlympaServer.AUTH, serverKicked);
 			if (serverFallback == null) {
-				TextComponent msg = BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e redémarre, merci de te reconnecter dans quelques secondes...");
+				TextComponent msg = BungeeUtils.connectScreen("&eLe &6%s&e redémarre, merci de te reconnecter dans quelques secondes...", Utils.capitalize(serverKicked.getName()));
 				player.sendMessage(msg);
 				event.setKickReasonComponent(new ComponentBuilder(msg).create());
 				return;
@@ -90,7 +91,7 @@ public class ServersListener implements Listener {
 			//				return;
 			//			}
 			ServerInfo serverInfolobby = ServersConnection.getBestServer(OlympaServer.LOBBY, serverKicked);
-			if (serverInfolobby == null)
+			if (serverInfolobby == null || !serverInfolobby.canAccess(player))
 				return;
 			event.setCancelled(true);
 			event.setCancelServer(serverInfolobby);

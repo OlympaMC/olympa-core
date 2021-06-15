@@ -37,6 +37,7 @@ import fr.olympa.api.common.provider.AccountProviderAPI;
 import fr.olympa.api.common.provider.AccountProviderGetter;
 import fr.olympa.api.common.redis.RedisAccess;
 import fr.olympa.api.common.redis.RedisChannel;
+import fr.olympa.api.common.redis.RedisClass;
 import fr.olympa.api.common.redis.ResourcePackHandler;
 import fr.olympa.api.common.report.ReportReason;
 import fr.olympa.api.common.server.ServerInfoBasic;
@@ -87,7 +88,6 @@ import fr.olympa.core.spigot.protocolsupport.ViaVersionHook;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.redis.receiver.BungeeAskPlayerServerReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeSendOlympaPlayerReceiver;
-import fr.olympa.core.spigot.redis.receiver.BungeeServerInfoReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeServerNameReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeTeamspeakIdReceiver;
 import fr.olympa.core.spigot.redis.receiver.SpigotCommandReceiver;
@@ -209,11 +209,6 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			pluginManager.registerEvents(new OnLoadListener(), this);
 			CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
 			ReportReason.registerReason(ReportReason.class);
-			BungeeServerInfoReceiver.registerCallback(mi -> {
-				lastInfo = Utils.getCurrentTimeInSeconds();
-				monitorInfos.clear();
-				monitorInfos.addAll(mi);
-			});
 			super.onEnable();
 			if (config != null) {
 				config.addTask("redis_config", config -> {
@@ -223,6 +218,11 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 				setupRedis();
 				setupDatabase();
 			}
+			RedisClass.SERVER_INFO.registerCallback(mi -> {
+				lastInfo = Utils.getCurrentTimeInSeconds();
+				monitorInfos.clear();
+				monitorInfos.addAll(mi);
+			});
 			RedisSpigotSend.errorsEnabled = true;
 			swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
 			imageFrameManager = new ImageFrameManager(this, "maps.yml", "images");
@@ -358,8 +358,9 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			registerRedisSub(new BungeeAskPlayerServerReceiver(), RedisChannel.BUNGEE_SEND_PLAYERSERVER.name());
 			registerRedisSub(new SpigotCommandReceiver(), RedisChannel.SPIGOT_COMMAND.name());
 			registerRedisSub(new BungeeTeamspeakIdReceiver(), RedisChannel.BUNGEE_SEND_TEAMSPEAKID.name());
-			registerRedisSub(new BungeeServerInfoReceiver(), RedisChannel.BUNGEE_SEND_SERVERSINFOS2.name());
+			//			registerRedisSub(new BungeeServerInfoReceiver(this), RedisChannel.BUNGEE_SEND_SERVERSINFOS2.name());
 			//			registerRedisSub(redisAccess.connect(), new BungeeAskSomething(), RedisChannel.BUNGEE_ASK_SOMETHING.name());
+			RedisClass.registerSpigotSubChannels(this);
 			RedisSpigotSend.askServerName();
 			sendMessage("&aConnexion à &2Redis&a établie.");
 		} else {
@@ -409,9 +410,9 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	public void retreiveMonitorInfos(BiConsumer<List<ServerInfoBasic>, Boolean> callback, boolean freshDoubleCallBack) {
 		if (monitorInfos.isEmpty() || Utils.getCurrentTimeInSeconds() - lastInfo > 10)
 			if (freshDoubleCallBack)
-				RedisSpigotSend.askServerInfo(callback);
+				RedisClass.SERVER_INFO.askServerInfo(callback);
 			else
-				RedisSpigotSend.askServerInfo(null);
+				RedisClass.SERVER_INFO.askServerInfo(null);
 		if (callback != null)
 			callback.accept(monitorInfos, true);
 	}

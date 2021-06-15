@@ -22,15 +22,15 @@ public class SpigotServerChangeStatusReceiver extends JedisPubSub {
 			MonitorInfoBungee info = MonitorServers.getMonitor(serverInfo);
 			String serverName;
 			if (info != null) {
-				info.setStatus(status);
-				serverName = info.getName();
-				MonitorServers.updateServer(serverInfo, info.getOlympaServer(), info);
 				Map<Integer, MonitorInfoBungee> previousInfoServers = MonitorServers.getServers(info.getOlympaServer());
 				if (previousInfoServers != null) {
 					MonitorInfoBungee previousInfo = previousInfoServers.get(info.getServerID());
 					if (previousInfo != null)
 						previous = previousInfo.getStatus();
 				}
+				info.setStatus(status);
+				serverName = info.getName();
+				MonitorServers.updateServer(serverInfo, info.getOlympaServer(), info);
 			} else
 				serverName = serverInfo.getName();
 			OlympaBungee.getInstance().sendMessage("§7Serveur §e" + serverName + "§7 : " + previous.getNameColored() + " §7-> " + status.getNameColored() + " (via redis)");
