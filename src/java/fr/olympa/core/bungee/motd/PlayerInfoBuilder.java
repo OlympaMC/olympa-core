@@ -10,8 +10,8 @@ import net.md_5.bungee.api.ServerPing.PlayerInfo;
 
 public class PlayerInfoBuilder {
 
-	String prefix = "&e-------------&6 Olympa &e-------------";
-	String suffix = "&e---------------------------------";
+	String prefix = "&e--------------&6 Olympa &e--------------";
+	String suffix = "&e-----------------------------------";
 
 	List<String> stringBuilder;
 
