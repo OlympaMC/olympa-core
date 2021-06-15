@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -114,7 +116,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 
 	protected DbConnection database = null;
 	private SwearHandler swearHandler;
-	private VersionHandler versionHandler;
+	private @Nullable VersionHandler versionHandler;
 	private String lastVersion = "unknown";
 	private String firstVersion = "unknown";
 	private ErrorOutputStream errorOutputStream;
@@ -147,18 +149,22 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		return versionHandler;
 	}
 
-	public ViaVersionHook getViaVersionHook() {
+	public @Nullable ViaVersionHook getViaVersionHook() {
+		if (versionHandler == null)
+			return null;
 		return versionHandler.getViaVersion();
+	}
+
+	@Override
+	public @Nullable IProtocolSupport getProtocolSupport() {
+		if (versionHandler == null)
+			return null;
+		return versionHandler.getProtocolSupport();
 	}
 
 	@Override
 	public Connection getDatabase() throws SQLException {
 		return database.getConnection();
-	}
-
-	@Override
-	public IProtocolSupport getProtocolSupport() {
-		return versionHandler.getProtocolSupport();
 	}
 
 	public SwearHandler getSwearHandler() {
@@ -281,7 +287,12 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			new ListCommand(this).register().registerPreProcess();
 
 			new AntiWD(this);
-			getTask().runTask(() -> versionHandler = new VersionHandler(this));
+			try {
+				getTask().runTask(() -> versionHandler = new VersionHandler(this));
+			} catch (NullPointerException | NoClassDefFoundError e) {
+				getLogger().severe("Une erreur est survenue lors du hook du core dans ViaVersion ou ProtocolSupport.");
+				e.printStackTrace();
+			}
 			OlympaGroup defaultGroup = OlympaGroup.PLAYER;
 			defaultGroup.setRuntimePermission("minecraft.command.help", false);
 			defaultGroup.setRuntimePermission("minecraft.command.me", false);

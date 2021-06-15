@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import fr.olympa.api.common.chat.Chat;
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.server.ServerStatus;
+import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.Favicon;
@@ -25,14 +26,14 @@ import net.md_5.bungee.event.EventHandler;
 public class MotdListener implements Listener {
 
 	String prefix = "§e-------------§6 Olympa §e-------------";
-	public static String MOTD_BASE = Chat.centerMotD("§3⬣ §e§lOlympa §61.9 à 1.16+§3 ⬣") + "\n";
+	public static String MOTD_BASE = Chat.centerMotD("§3⬣ §e§lOlympa §6" + ProtocolAPI.getFirstVersion().getName() + " à " + ProtocolAPI.getLastVersion().getName() + "§3 ⬣") + "\n";
 	// §6Fun \u2606 Tryhard \u2606 Ranked
 	String teamspeak = "§6Teamspeak: §e§nts.olympa.fr";
 	String site = "§6Site: §e§nwww.olympa.fr";
 	String twitter = "§6Twitter: §e@Olympa_fr";
 	String discord = "§6Discord: §e§ndiscord.olympa.fr";
 	String games = "§bPvPFaction§c ¤§3 ZTA §c¤ §b§mCréatif";
-	String version = "§cUtilise 1.9 à 1.16+§l✖";
+	String version = "§cUtilise la " + ProtocolAPI.getLastVersion().getName() + "§l✖";
 	String reason = "§6Raison de la maintenance :";
 	String separator = " §7| ";
 	String suffix = "§e---------------------------------";

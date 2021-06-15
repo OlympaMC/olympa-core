@@ -1,7 +1,6 @@
 package fr.olympa.core.bungee.servers.commands;
 
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
@@ -45,9 +44,21 @@ public class ListServerCommand extends BungeeCommand {
 			if (!serverInfo.getRangeVersion().equals("unknown"))
 				sb.add(serverInfo.getRangeVersion());
 			if (debugInfo != null && debugInfo.getPlugins() != null && !debugInfo.getPlugins().isEmpty())
-				sb.add("\nPlugins : " + debugInfo.getPlugins().stream()
-						.map(plugin -> (plugin.isEnabled() ? "&2" : "&4") + plugin.getName() + "&7 (" + plugin.getVersion() + " " + plugin.getLastModifiedTime() + ")")
-						.collect(Collectors.joining(", ")));
+				try {
+					StringJoiner sb2 = new StringJoiner(", ");
+					debugInfo.getPlugins().forEach(plugin -> {
+						sb2.add(plugin.getNameColored() + "&7 (" + plugin.getVersion() + " " + plugin.getLastModifiedTime() + ")");
+					});
+					//					sb.add("\nPlugins : " + debugInfo.getPlugins().stream()
+					//							.map(plugin -> (plugin.isEnabled() ? "&2" : "&4") + plugin.getName() + "&7 (" + plugin.getVersion() + " " + plugin.getLastModifiedTime() + ")")
+					//							.collect(Collectors.joining(", ")));
+					sb.add("\nPlugins : " + sb2.toString());
+				} catch (ClassCastException e) {
+					e.printStackTrace();
+					// java.lang.ClassCastException: class java.util.TreeMap cannot be cast to class fr.olympa.api.common.plugin.PluginInfoAdvanced
+					// (java.util.TreeMap is in module java.base of loader 'bootstrap'; fr.olympa.api.common.plugin.PluginInfoAdvanced is in unnamed
+					// module of loader net.md_5.bungee.api.plugin.PluginClassloader @742d4e15)
+				}
 			else if (serverInfo.getLastModifiedCore() != null && !serverInfo.getLastModifiedCore().isBlank())
 				sb.add("\nLast up core : " + serverInfo.getLastModifiedCore());
 

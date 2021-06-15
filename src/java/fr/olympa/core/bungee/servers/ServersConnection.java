@@ -9,9 +9,13 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.bungee.task.BungeeTaskManager;
 import fr.olympa.api.common.bash.OlympaRuntime;
+import fr.olympa.api.common.match.MatcherPattern;
+import fr.olympa.api.common.match.RegexMatcher;
 import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ServerStatus;
 import net.md_5.bungee.api.ProxyServer;
@@ -102,6 +106,7 @@ public class ServersConnection {
 	}
 
 	@SuppressWarnings("deprecation")
+	@Nullable
 	public static ServerInfo getServerByNameOrIpPort(String nameOrIpPort) {
 		Map<String, ServerInfo> servers = ProxyServer.getInstance().getServers();
 		ServerInfo server = servers.get(nameOrIpPort);
@@ -109,8 +114,12 @@ public class ServersConnection {
 			String[] ipPort = nameOrIpPort.split(":");
 			if (ipPort.length >= 2) {
 				String ip = ipPort[0].replace("localhost", "127.0.0.1");
+				MatcherPattern<Integer> regexInt = RegexMatcher.INT;
+				if (!regexInt.startWith(ipPort[1]))
+					throw new IllegalAccessError(String.format("%s need to be a INT (a port like 25565) but it is not.", ipPort[1]));
+				Integer port = regexInt.extractAndParse(ipPort[1]);
 				server = servers.values().stream().filter(sr -> {
-					return sr.getAddress().getAddress().getHostAddress().equals(ip) && sr.getAddress().getPort() == Integer.parseInt(ipPort[1]);
+					return sr.getAddress().getAddress().getHostAddress().equals(ip) && sr.getAddress().getPort() == port;
 				}).findFirst().orElse(null);
 			}
 		}

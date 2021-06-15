@@ -73,11 +73,11 @@ public class ServersListener implements Listener {
 					"Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter environ 30 secondes avant d'être reconnecté automatiquement.")));
 			ServersConnection.tryConnect(player, olympaServer, true);
 			return;
-		} else if (kickReason.contains("Outdated client! Please use")) {
+		} else if (kickReason.startsWith("Outdated client! Please use")) {
 			String serverVersion = kickReason.replaceFirst("Outdated client! Please use ", "");
 			List<ProtocolAPI> playerVersion = ProtocolAPI.getAll(player.getPendingConnection().getVersion());
 			event.setKickReasonComponent(TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du Serveur %s > Ta version (%s)", serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
-		} else if (kickReason.contains("Outdated server! I'm still on")) {
+		} else if (kickReason.startsWith("Outdated server! I'm still on")) {
 			String serverVersion = kickReason.replaceFirst("Outdated server! I'm still on ", "");
 			List<ProtocolAPI> playerVersion = ProtocolAPI.getAll(player.getPendingConnection().getVersion());
 			event.setKickReasonComponent(TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du Serveur %s < Ta version (%s)", serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
