@@ -17,10 +17,20 @@ public class VersionHandler {
 	// TODO rendre l'api des version dans ProtocolSupportHook indépendant de ProtocolSupport pour l'utiliser avec ViaVersion sans ProtocolSupport
 
 	public VersionHandler(OlympaCore plugin) {
-		if (plugin.getServer().getPluginManager().isPluginEnabled("ProtocolSupport"))
-			protocolSupport = new ProtocolSupportHook(plugin);
-		if (plugin.getServer().getPluginManager().isPluginEnabled("ViaVersion"))
-			viaVersion = new ViaVersionHook(plugin);
+		try {
+			if (plugin.getServer().getPluginManager().isPluginEnabled("ProtocolSupport"))
+				protocolSupport = new ProtocolSupportHook(plugin);
+		} catch (NoClassDefFoundError e) {
+			plugin.getLogger().severe("Impossible de récupérer la class principal de ProtocolSupport. Vérifie sa version, et si le package n'a pas été modifié.");
+			e.printStackTrace();
+		}
+		try {
+			if (plugin.getServer().getPluginManager().isPluginEnabled("ViaVersion"))
+				viaVersion = new ViaVersionHook(plugin);
+		} catch (NoClassDefFoundError e) {
+			plugin.getLogger().severe("Impossible de récupérer la class principal de ViaVersion. Vérifie sa version, et si le package n'a pas été modifié.");
+			e.printStackTrace();
+		}
 		String[] versions = getRangeVersionArray();
 		if (versions != null) {
 			plugin.setFirstVersion(versions[versions.length - 1]);

@@ -24,7 +24,7 @@ public class ProtocolSupportHook implements IProtocolSupport {
 
 	private ProtocolSupport protocolSupport;
 
-	public ProtocolSupportHook(Plugin plugin) {
+	public ProtocolSupportHook(Plugin plugin) throws NoClassDefFoundError {
 		protocolSupport = (ProtocolSupport) plugin.getServer().getPluginManager().getPlugin("ProtocolSupport");
 		disable1_7();
 	}

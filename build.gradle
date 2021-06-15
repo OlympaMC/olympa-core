@@ -52,7 +52,7 @@ dependencies {
 	api 'redis.clients:jedis:3.6.0'
     api 'net.ricecode:string-similarity:1.0.0'
     implementation 'org.mariadb.jdbc:mariadb-java-client:2.6.2'
-    compileOnly 'us.myles:viaversion:3.2.1'
+    compileOnly 'com.viaversion:viaversion:4.0.0'
     compileOnly 'com.github.ProtocolSupport:ProtocolSupport:66b494a8dd'
 }
 

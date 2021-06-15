@@ -289,8 +289,8 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			new AntiWD(this);
 			try {
 				getTask().runTask(() -> versionHandler = new VersionHandler(this));
-			} catch (NullPointerException | NoClassDefFoundError e) {
-				getLogger().severe("Une erreur est survenue lors du hook du core dans ViaVersion ou ProtocolSupport.");
+			} catch (Exception e) {
+				getLogger().severe("Une erreur est survenue lors de la detection des versions avec ViaVersion ou ProtocolSupport.");
 				e.printStackTrace();
 			}
 			OlympaGroup defaultGroup = OlympaGroup.PLAYER;
@@ -316,6 +316,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			sendMessage("&2%s&a (%s) est activé.", getDescription().getName(), getDescription().getVersion());
 		} catch (Error | Exception e) {
 			setStatus(ServerStatus.MAINTENANCE);
+			getLogger().severe(String.format("Une erreur est survenu lors du chargement de %s. Le serveur est désormais en maintenance.", this.getClass().getSimpleName()));
 			e.printStackTrace();
 		}
 	}

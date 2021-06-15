@@ -9,16 +9,17 @@ import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import com.viaversion.viaversion.ViaVersionPlugin;
+import com.viaversion.viaversion.api.Via;
+import com.viaversion.viaversion.api.ViaAPI;
+
 import fr.olympa.api.spigot.utils.ProtocolAPI;
-import us.myles.ViaVersion.ViaVersionPlugin;
-import us.myles.ViaVersion.api.Via;
-import us.myles.ViaVersion.api.ViaAPI;
 
 public class ViaVersionHook {
 
 	private ViaVersionPlugin viaVersion;
 
-	public ViaVersionHook(Plugin plugin) {
+	public ViaVersionHook(Plugin plugin) throws NoClassDefFoundError {
 		viaVersion = (ViaVersionPlugin) plugin.getServer().getPluginManager().getPlugin("ViaVersion");
 	}
 
