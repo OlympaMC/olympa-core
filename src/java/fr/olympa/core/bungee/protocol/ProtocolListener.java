@@ -19,8 +19,8 @@ public class ProtocolListener implements Listener {
 		if (event.isCancelled())
 			return;
 		PendingConnection connection = event.getConnection();
-		ProtocolAPI protocolApi = ProtocolAPI.get(connection.getVersion());
-		if (protocolApi == null || !protocolApi.isAllowed()) {
+		ProtocolAPI playerVersion = ProtocolAPI.get(connection.getVersion());
+		if (playerVersion == null || !playerVersion.isAllowed()) {
 			ProtocolAPI lastVersion = ProtocolAPI.getLastVersion();
 			event.setCancelReason(
 					BungeeUtils.connectScreen("&cLa version que tu utilise n'est pas compatible avec le serveur.\n&4Utilise une version entre &c&l%s&4 et &c&l%s&4."
@@ -35,11 +35,11 @@ public class ProtocolListener implements Listener {
 			return;
 		ProxiedPlayer player = event.getPlayer();
 		ProtocolAPI recommandedVersion = ProtocolAPI.getLastVersion();
-		ProtocolAPI protocolApi = ProtocolAPI.get(player.getPendingConnection().getVersion());
-		if (protocolApi == null)
-			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Pour une meilleur expérience, il est préférable d'utiliser la version &2&n&l%s&c"));
-		else if (!recommandedVersion.equals(protocolApi))
+		ProtocolAPI playerVersion = ProtocolAPI.get(player.getPendingConnection().getVersion());
+		if (playerVersion == null)
+			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Pour une meilleur expérience, il est préférable d'utiliser la version &2&n&l%s&c", recommandedVersion));
+		else if (!recommandedVersion.equals(playerVersion))
 			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Pour une meilleur expérience, il est préférable d'utiliser la version &2&n&l%s&c. "
-					+ "Tu utilise actuellement la version &4%s&c.", protocolApi.getName()));
+					+ "Tu utilise actuellement la version &4%s&c.", recommandedVersion, playerVersion.getName()));
 	}
 }
