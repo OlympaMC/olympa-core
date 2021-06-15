@@ -1,7 +1,9 @@
 package fr.olympa.core.spigot.redis.receiver;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.entity.Player;
 
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
@@ -19,7 +21,12 @@ public class SpigotReceiveOlympaPlayerReceiver extends JedisPubSub {
 			return;
 		OlympaPlayer olympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(args[2], OlympaPlayer.class);
 		Validate.notNull(olympaPlayer);
-		new AccountProvider(olympaPlayer.getUniqueId()).saveToCache(olympaPlayer);
-		OlympaCore.getInstance().sendMessage("§7[Redis] §eDonnées de §a" + olympaPlayer.getName() + " §ereçues de §a" + serverFrom);
+		Player player = olympaPlayer.getPlayer();
+		if (player == null || !player.isOnline())
+			LinkSpigotBungee.Provider.link.sendMessage("§7[Redis] §eDonnées de §a%s §ereçues de §a%s, mais il n'est pas connecté", olympaPlayer.getName(), serverFrom);
+		else {
+			new AccountProvider(olympaPlayer.getUniqueId()).saveToCache(olympaPlayer);
+			LinkSpigotBungee.Provider.link.sendMessage("§7[Redis] §eDonnées de §a%s §ereçues de §a%s", olympaPlayer.getName(), serverFrom);
+		}
 	}
 }

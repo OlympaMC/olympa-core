@@ -14,7 +14,6 @@ import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
 import fr.olympa.core.bungee.utils.BungeeUtils;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -36,7 +35,7 @@ public class ServersListener implements Listener {
 			event.setCancelled(false);
 			return;
 		}
-		String kickReason = ChatColor.stripColor(BaseComponent.toLegacyText(event.getKickReasonComponent()));
+		String kickReason = ColorUtils.stripColor(BaseComponent.toLegacyText(event.getKickReasonComponent()));
 
 		if (AuthListener.wait.contains(player.getName()))
 			return; // il est en cours de suppression = il a quitté le serveur de lui-même

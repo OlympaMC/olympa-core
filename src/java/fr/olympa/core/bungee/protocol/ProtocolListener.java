@@ -40,6 +40,6 @@ public class ProtocolListener implements Listener {
 			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Pour une meilleur expérience, il est préférable d'utiliser la version &2&n&l%s&c", recommandedVersion));
 		else if (!recommandedVersion.equals(playerVersion))
 			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Pour une meilleur expérience, il est préférable d'utiliser la version &2&n&l%s&c. "
-					+ "Tu utilise actuellement la version &4%s&c.", recommandedVersion, playerVersion.getName()));
+					+ "Tu utilise actuellement la version &4%s&c.", recommandedVersion.getName(), playerVersion.getName()));
 	}
 }
