@@ -410,9 +410,9 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	public void retreiveMonitorInfos(BiConsumer<List<ServerInfoBasic>, Boolean> callback, boolean freshDoubleCallBack) {
 		if (monitorInfos.isEmpty() || Utils.getCurrentTimeInSeconds() - lastInfo > 10)
 			if (freshDoubleCallBack)
-				RedisClass.SERVER_INFO.askServerInfo(callback);
+				RedisClass.ASK_SERVER_INFO.askServerInfo(callback);
 			else
-				RedisClass.SERVER_INFO.askServerInfo(null);
+				RedisClass.ASK_SERVER_INFO.askServerInfo(null);
 		if (callback != null)
 			callback.accept(monitorInfos, true);
 	}

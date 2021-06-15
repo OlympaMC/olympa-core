@@ -115,6 +115,10 @@ public class RedisSpigotSend {
 		RedisAccess.INSTANCE.disconnect();
 	}
 
+	/**
+	 * @see fr.olympa.api.common.redis.bungeesub.SpigotServerSwitch
+	 */
+	@Deprecated
 	public static void sendServerSwitch(Player p, OlympaServer server) {
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 			jedis.publish(RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER.name(), p.getName() + ":" + server.name());
@@ -122,6 +126,10 @@ public class RedisSpigotSend {
 		RedisAccess.INSTANCE.disconnect();
 	}
 
+	/**
+	 * @see fr.olympa.api.common.redis.bungeesub.SpigotServerSwitch
+	 */
+	@Deprecated
 	public static void sendServerSwitch(Player p, String serverName) {
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 			jedis.publish(RedisChannel.SPIGOT_PLAYER_SWITCH_SERVER2.name(), p.getName() + ":" + serverName);

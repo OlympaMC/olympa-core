@@ -2,6 +2,7 @@ package fr.olympa.core.bungee;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -27,6 +28,7 @@ import fr.olympa.api.common.redis.RedisChannel;
 import fr.olympa.api.common.redis.RedisClass;
 import fr.olympa.api.common.redis.RedisConnection;
 import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerInfoBasic;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
@@ -460,4 +462,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		this.serverName = serverName;
 	}
 
+	@Override
+	public Collection<ServerInfoBasic> getMonitorServers() {
+		return MonitorServers.getServers().stream().map(monitorInfoBungee -> (ServerInfoBasic) monitorInfoBungee).collect(Collectors.toList());
+	}
 }

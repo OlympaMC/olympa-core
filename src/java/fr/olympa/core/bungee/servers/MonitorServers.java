@@ -7,13 +7,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
 
 import fr.olympa.api.bungee.task.BungeeTaskManager;
 import fr.olympa.api.common.module.OlympaModule;
+import fr.olympa.api.common.redis.RedisClass;
 import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerInfoBasic;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -76,7 +79,6 @@ public class MonitorServers {
 				OlympaBungee.getInstance().sendMessage("§7Serveur §e" + info.getName() + "§7 : " + previousStatus.getNameColored()
 						+ " §7-> " + info.getStatus().getNameColored() + (info.getError() != null ? " (" + info.getError() + ")" : ""));
 				if (instantUpdate)
-					//					updateOlympaServer(info.getOlympaServer());
 					RedisBungeeSend.sendServerInfos();
 			}
 			if (info.isOpen())
@@ -88,17 +90,7 @@ public class MonitorServers {
 
 	public static void updateServer(ServerInfo serverInfo, OlympaServer olympaServer, MonitorInfoBungee info) {
 		bungeeServers.put(serverInfo, info);
-		//		updateOlympaServer(olympaServer);
 	}
-
-	//	private static void updateOlympaServer(OlympaServer olympaServer) {
-	//		Collection<MonitorInfoBungee> servers = olympaServers.get(olympaServer).values();
-	//		if (servers.isEmpty())
-	//			return;
-	//		MonitorInfoBungee upper = servers.stream().sorted((x, y) -> Integer.compare(x.getStatus().getId(), y.getStatus().getId())).findFirst().orElse(null);
-	//		int online = servers.stream().filter(x -> x.getStatus().canConnect()).mapToInt(x -> x.getOnlinePlayers()).sum();
-	//		RedisBungeeSend.sendServerInfos(olympaServer, online, upper == null ? ServerStatus.UNKNOWN : upper.getStatus());
-	//	}
 
 	public static void init(OlympaBungee plugin) {
 		new MonitorServers(plugin);
@@ -110,9 +102,8 @@ public class MonitorServers {
 			for (ServerInfo serverInfo : plugin.getProxy().getServersCopy().values())
 				updateServer(serverInfo, false);
 			if (Utils.getCurrentTimeInSeconds() - SpigotAskMonitorInfoReceiver.lastTimeAsk > 30)
-				RedisBungeeSend.sendServerInfos(bungeeServers.values());
-			//			for (OlympaServer olympaServer : olympaServers.keySet())
-			//				updateOlympaServer(olympaServer);
+				RedisClass.SERVER_INFO.sendServerInfos(bungeeServers.values().stream().map(mib -> (ServerInfoBasic) mib).collect(Collectors.toList()));
+			//	RedisBungeeSend.sendServerInfos(bungeeServers.values());
 		}, 1, 20, TimeUnit.SECONDS);
 	}
 }

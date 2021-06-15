@@ -1,7 +1,6 @@
 package fr.olympa.core.bungee.redis;
 
 import java.net.InetSocketAddress;
-import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -9,10 +8,9 @@ import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.redis.RedisAccess;
 import fr.olympa.api.common.redis.RedisChannel;
-import fr.olympa.api.common.server.OlympaServer;
-import fr.olympa.api.common.server.ServerStatus;
+import fr.olympa.api.common.redis.RedisClass;
+import fr.olympa.api.common.server.ServerInfoBasic;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
-import fr.olympa.core.bungee.servers.MonitorInfoBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -65,24 +63,12 @@ public class RedisBungeeSend {
 		RedisAccess.INSTANCE.disconnect();
 	}
 
-	@Deprecated(forRemoval = true)
-	public static void sendServerInfos(OlympaServer olympaServer, int players, ServerStatus status) {
-		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			jedis.publish(RedisChannel.BUNGEE_SEND_SERVERSINFOS.name(), olympaServer.name() + ":" + players + ":" + status.getId());
-		}
-	}
-
+	/**
+	 * @see fr.olympa.api.common.redis.spigotsub.BungeeServerInfo
+	 */
+	@Deprecated
 	public static boolean sendServerInfos() {
-		return sendServerInfos(MonitorServers.getServers());
-	}
-
-	public static boolean sendServerInfos(Collection<MonitorInfoBungee> servs) {
-		if (servs.isEmpty())
-			return false;
-		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			jedis.publish(RedisChannel.BUNGEE_SEND_SERVERSINFOS2.name(), servs.stream().map(LinkSpigotBungee.getInstance().getGson()::toJson).collect(Collectors.joining("\n")));
-		}
-		return true;
+		return RedisClass.SERVER_INFO.sendServerInfos(MonitorServers.getServers().stream().map(mib -> (ServerInfoBasic) mib).collect(Collectors.toList()));
 	}
 
 	public static void sendPlayerServer(String serverName, String playerUUID, String playerServer) {
