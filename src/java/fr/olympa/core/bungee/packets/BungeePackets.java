@@ -50,7 +50,8 @@ public class BungeePackets {
 				new ProtocolMapping(ProtocolAPI.V1_14, 0x39),
 				new ProtocolMapping(ProtocolAPI.V1_15, 0x3A),
 				new ProtocolMapping(ProtocolAPI.V1_16, 0x39),
-				new ProtocolMapping(ProtocolAPI.V1_16_2, 0x38));
+				new ProtocolMapping(ProtocolAPI.V1_16_2, 0x38),
+				new ProtocolMapping(ProtocolAPI.V1_17, 0x3C));
 		
 		regPacket(TO_SERVER, ResourcePackStatusPacket.class, ResourcePackStatusPacket::new,
 				new ProtocolMapping(ProtocolAPI.V1_8, 0x19),
