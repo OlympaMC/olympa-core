@@ -22,11 +22,12 @@ public class SpigotReceiveOlympaPlayerReceiver extends JedisPubSub {
 		OlympaPlayer olympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(args[2], OlympaPlayer.class);
 		Validate.notNull(olympaPlayer);
 		Player player = olympaPlayer.getPlayer();
-		if (player == null || !player.isOnline())
-			LinkSpigotBungee.Provider.link.sendMessage("§7[Redis] §eDonnées de §a%s §ereçues de §a%s, mais il n'est pas connecté", olympaPlayer.getName(), serverFrom);
-		else {
-			new AccountProvider(olympaPlayer.getUniqueId()).saveToCache(olympaPlayer);
+		if (player == null || !player.isOnline()) {
+			LinkSpigotBungee.Provider.link.sendMessage("§7[Redis] §eDonnées de §a%s §ereçues de §a%s§e, mais il n'est pas connecté", olympaPlayer.getName(), serverFrom);
+			// TODO remove data from cach if player is not connected in the futur
+		} else {
 			LinkSpigotBungee.Provider.link.sendMessage("§7[Redis] §eDonnées de §a%s §ereçues de §a%s", olympaPlayer.getName(), serverFrom);
 		}
+		new AccountProvider(olympaPlayer.getUniqueId()).saveToCache(olympaPlayer);
 	}
 }
