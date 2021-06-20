@@ -14,7 +14,7 @@ import net.md_5.bungee.event.EventPriority;
 
 public class ProtocolListener implements Listener {
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPreLogin(PreLoginEvent event) {
 		if (event.isCancelled())
 			return;
@@ -40,6 +40,6 @@ public class ProtocolListener implements Listener {
 			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Pour une meilleur expérience, il est préférable d'utiliser la version &2&n&l%s&c", recommandedVersion));
 		else if (!recommandedVersion.equals(playerVersion))
 			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Pour une meilleur expérience, il est préférable d'utiliser la version &2&n&l%s&c. "
-					+ "Tu utilise actuellement la version &4%s&c.", recommandedVersion.getName(), playerVersion.getName()));
+					+ "Tu utilise actuellement la version &4%s&c.", (Object) recommandedVersion.getName(), (Object) playerVersion.getName()));
 	}
 }

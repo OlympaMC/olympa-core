@@ -1,7 +1,10 @@
 package fr.olympa.core.spigot.protocolsupport;
 
+import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -10,51 +13,39 @@ import java.util.stream.Stream;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import fr.olympa.api.common.chat.ColorUtils;
-import fr.olympa.api.spigot.hook.IProtocolSupport;
+import fr.olympa.api.LinkSpigotBungee;
+import fr.olympa.api.spigot.hook.VersionByPluginApi;
 import fr.olympa.api.spigot.utils.ProtocolAPI;
-import fr.olympa.api.utils.VersionNameComparator;
 import fr.olympa.core.spigot.OlympaCore;
 import protocolsupport.ProtocolSupport;
 import protocolsupport.api.ProtocolSupportAPI;
-import protocolsupport.api.ProtocolType;
 import protocolsupport.api.ProtocolVersion;
 
-public class ProtocolSupportHook implements IProtocolSupport {
+public class ProtocolSupportHook implements VersionByPluginApi {
 
 	private ProtocolSupport protocolSupport;
 
-	public ProtocolSupportHook(Plugin plugin) throws NoClassDefFoundError {
+	protected ProtocolSupportHook(Plugin plugin) throws NoClassDefFoundError {
 		protocolSupport = (ProtocolSupport) plugin.getServer().getPluginManager().getPlugin("ProtocolSupport");
 		disable1_7();
 	}
 
-	public void disable(ProtocolVersion minProtocol) {
-		for (ProtocolVersion protocol : ProtocolVersion.getAllBeforeI(minProtocol))
-			if (protocol.isSupported())
-				ProtocolSupportAPI.disableProtocolVersion(protocol);
-	}
-
-	@Override
+	@Deprecated(forRemoval = true, since = "20/05/2020")
 	public void disable1_6() {
-		if (protocolSupport != null)
-			disable(ProtocolVersion.MINECRAFT_1_6_4);
+		disableAllUnderI(ProtocolAPI.V1_16_4);
 	}
 
-	@Override
+	@Deprecated(forRemoval = true, since = "20/05/2020")
 	public void disable1_7() {
-		if (protocolSupport != null)
-			disable(ProtocolVersion.MINECRAFT_1_7_10);
+		disableAllUnderI(ProtocolAPI.V1_7_10);
 	}
 
-	@Override
+	@Deprecated(forRemoval = true, since = "20/05/2020")
 	public void disable1_8() {
-		if (protocolSupport != null)
-			disable(ProtocolVersion.MINECRAFT_1_8);
+		disableAllUnderI(ProtocolAPI.V1_8_9);
 	}
 
-	@Override
-	public String getBigVersion(String version) {
+	private String getBigVersion(String version) {
 		Matcher matcher = Pattern.compile("\\d+.\\d+").matcher(version);
 		if (matcher.find())
 			return matcher.group();
@@ -81,7 +72,7 @@ public class ProtocolSupportHook implements IProtocolSupport {
 	}
 
 	@Override
-	public String[] getRangeVersionArray() {
+	public Entry<String, String> getRangeVersionArray() {
 		List<String> proto = getStreamProtocolSupported().map(ProtocolVersion::getName).collect(Collectors.toList());
 		String first = proto.get(0);
 		String last;
@@ -89,36 +80,91 @@ public class ProtocolSupportHook implements IProtocolSupport {
 			last = proto.get(proto.size() - 1);
 		else
 			last = OlympaCore.getInstance().getViaVersionHook().getHighVersion();
-		return new String[] { first, last };
+
+		return new AbstractMap.SimpleEntry<>(first, last);
 	}
 
 	@Override
-	public String getVersionUnSupportedInRange() {
-		List<ProtocolVersion> proto = getProtocolSupported();
-		ProtocolVersion last = proto.get(0);
-		ProtocolVersion first = proto.get(proto.size() - 1);
-		List<String> protoAll = proto.stream().filter(pv -> pv.getId() > first.getId() && pv.getId() < last.getId() && !proto.contains(pv)).map(ProtocolVersion::getName).collect(Collectors.toList());
-		return ColorUtils.join(protoAll);
-
+	public List<Integer> getAllVersionsSupported() {
+		return getStreamProtocolSupported().map(ProtocolVersion::getId).collect(Collectors.toList());
 	}
 
 	@Override
-	public String getVersionSupported() {
-		List<ProtocolVersion> proto = getProtocolSupported();
-		ProtocolVersion last = ProtocolVersion.getLatest(ProtocolType.PC);
-		String lastMajorVersion = getBigVersion(last.getName());
-		return proto.stream().map(p -> {
-			String name = getBigVersion(p.getName());
-			if (lastMajorVersion.startsWith(name))
-				return p.getName();
-			return name;
-		}).distinct().sorted(new VersionNameComparator()).collect(Collectors.joining(", "));
+	public List<Integer> getAllVersionsUnSupported() {
+		return getStreamProtocolSupported().filter(protocol -> !ProtocolSupportAPI.isProtocolVersionEnabled(protocol)).map(ProtocolVersion::getId).collect(Collectors.toList());
 	}
+
+	//	@Override
+	//	public String getVersionsSupported() {
+	//		List<ProtocolVersion> proto = getProtocolSupported();
+	//		ProtocolVersion lastProtocol = proto.get(0);
+	//		if (proto.size() == 1)
+	//			return lastProtocol.getName();
+	//		ProtocolVersion firstProtocol = proto.get(proto.size() - 1);
+	//		return firstProtocol.getName() + "-" + lastProtocol.getName();
+	//	}
 
 	@Override
 	public ProtocolAPI getPlayerVersion(Player p) {
 		if (protocolSupport != null)
 			return ProtocolAPI.get(ProtocolSupportAPI.getProtocolVersion(p).getId());
 		return ProtocolAPI.getDefaultSpigotProtocol();
+	}
+
+	//	@Override
+	//	public String getVersionsUnSupported() {
+	//		// TODO Auto-generated method stub
+	//		return null;
+	//	}
+
+	@Override
+	public boolean disable(ProtocolAPI... versions) {
+		boolean someDisabling = false;
+		for (ProtocolAPI ver : versions)
+			if (disable(ver))
+				someDisabling = true;
+		return someDisabling;
+	}
+
+	@Override
+	public boolean disableAllUnderI(ProtocolAPI version) {
+		boolean someDisabling = false;
+		for (ProtocolVersion protocol : ProtocolVersion.getAllBeforeI(getProtocolVersion(version)))
+			if (disable(protocol))
+				someDisabling = true;
+		return someDisabling;
+	}
+
+	@Override
+	public boolean disableAllUpperI(ProtocolAPI version) {
+		boolean someDisabling = false;
+		for (ProtocolVersion protocol : ProtocolVersion.getAllAfterI(getProtocolVersion(version)))
+			if (disable(protocol))
+				someDisabling = true;
+		return someDisabling;
+	}
+
+	@Override
+	public boolean disable(ProtocolAPI version) {
+		ProtocolVersion protocol = getProtocolVersion(version);
+		if (protocol != null && protocol.isSupported() && ProtocolSupportAPI.isProtocolVersionEnabled(protocol)) {
+			ProtocolSupportAPI.disableProtocolVersion(protocol);
+			LinkSpigotBungee.Provider.link.sendMessage("Disabling %s support by ViaVersion.", version.getName());
+			return true;
+		}
+		return false;
+	}
+
+	public boolean disable(ProtocolVersion protocol) {
+		if (protocol != null && protocol.isSupported() && ProtocolSupportAPI.isProtocolVersionEnabled(protocol)) {
+			ProtocolSupportAPI.disableProtocolVersion(protocol);
+			LinkSpigotBungee.Provider.link.sendMessage("Disabling %s support by ViaVersion.", protocol.getName());
+			return true;
+		}
+		return false;
+	}
+
+	public ProtocolVersion getProtocolVersion(ProtocolAPI version) {
+		return Arrays.stream(ProtocolVersion.values()).filter(pVersion -> pVersion.getId() == version.getProtocolNumber()).findFirst().orElse(null);
 	}
 }

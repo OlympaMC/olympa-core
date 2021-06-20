@@ -24,7 +24,7 @@ import net.md_5.bungee.event.EventHandler;
 
 public class MotdListener implements Listener {
 
-	public static String MOTD_BASE = Chat.centerMotD("§3⬣ §e§lOlympa §6" + ProtocolAPI.getFirstVersion().getName() + " à " + ProtocolAPI.getLastVersion().getName() + "§3 ⬣") + "\n";
+	public static final String MOTD_BASE = Chat.centerMotD("§3⬣ §e§lOlympa §6" + ProtocolAPI.getFirstVersion().getName() + " à " + ProtocolAPI.getLastVersion().getName() + "§3 ⬣") + "\n";
 	String teamspeak = "§6Teamspeak: §e§nts.olympa.fr§r";
 	String site = "§6Site: §e§nwww.olympa.fr§r";
 	String twitter = "§6Twitter: §e@Olympa_fr";
@@ -37,7 +37,6 @@ public class MotdListener implements Listener {
 
 	@EventHandler
 	public void onPing(ProxyPingEvent event) {
-		//		String ip = event.getConnection().getAddress().getAddress().getHostAddress();
 		InetSocketAddress virtualHost = event.getConnection().getVirtualHost();
 		ServerPing ping = event.getResponse();
 		ServerPing.Protocol ver = ping.getVersion();
@@ -56,25 +55,28 @@ public class MotdListener implements Listener {
 		ServerStatus status = ServerStatus.get(statusString);
 		if (status == null)
 			status = ServerStatus.DEV;
+		String connectIp = null;
+		String connectDomain = null;
 		if (virtualHost != null) {
-			String connectIp = virtualHost.getHostName();
-			if (!connectIp.equals("localhost")) {
-				String connectDomain = Utils.getAfterFirst(connectIp, ".");
-				// Vérifie si l'adresse est correct
-				if (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net")) {
-					ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§4§l⚠ §cUtilise la bonne IP: §4§nplay.olympa.fr")));
-					return;
-				}
-				String connectSubDomain = connectIp.split("\\.")[0];
-				if (connectSubDomain.equalsIgnoreCase("buildeur")) {
-					ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§aServeur §2Buildeur")));
-					return;
-				} else if (connectSubDomain.equalsIgnoreCase("dev")) {
-					ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§aServeur §2Développeur")));
-					return;
-				}
+			connectIp = virtualHost.getHostName();
+			connectDomain = Utils.getAfterFirst(connectIp, ".");
+		}
+		if (connectIp == null || !connectIp.equals("localhost")) {
+			// Vérifie si l'adresse est correct
+			if (connectIp == null || !connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net")) {
+				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§4§l⚠ §cUtilise la bonne IP: §4§nplay.olympa.fr")));
+				return;
+			}
+			String connectSubDomain = connectIp.split("\\.")[0];
+			if (connectSubDomain.equalsIgnoreCase("buildeur")) {
+				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§aServeur §2Buildeur")));
+				return;
+			} else if (connectSubDomain.equalsIgnoreCase("dev")) {
+				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§aServeur §2Développeur")));
+				return;
 			}
 		}
+
 		switch (status) {
 		case OPEN:
 			players.setSample(new PlayerInfoBuilder().append("").append(games).append(pvp).append("").append(discord).append(teamspeak).append(twitter).append(site).append("").build());

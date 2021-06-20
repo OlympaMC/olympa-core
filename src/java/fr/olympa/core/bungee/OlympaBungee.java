@@ -69,6 +69,8 @@ import fr.olympa.core.bungee.login.listener.PlayerSwitchListener;
 import fr.olympa.core.bungee.maintenance.MaintenanceCommand;
 import fr.olympa.core.bungee.maintenance.MaintenanceListener;
 import fr.olympa.core.bungee.motd.MotdListener;
+import fr.olympa.core.bungee.motd.ShowPingMotdCommand;
+import fr.olympa.core.bungee.motd.ShowPingMotdListener;
 import fr.olympa.core.bungee.nick.NickCommand;
 import fr.olympa.core.bungee.packets.BungeePackets;
 import fr.olympa.core.bungee.permission.PermissionCheckListener;
@@ -210,6 +212,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		pluginManager.registerListener(this, new ConnectionQueueListener());
 		pluginManager.registerListener(this, new PlayerSwitchListener());
 		pluginManager.registerListener(this, new PermissionCheckListener());
+		pluginManager.registerListener(this, new ShowPingMotdListener());
 
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();
@@ -249,6 +252,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		new NickCommand(this).register();
 		new IpCommand(this).register();
 		new CreditCommand(this).register();
+		new ShowPingMotdCommand(this).register();
 
 		MonitorServers.init(this);
 		SQLGroup.init();

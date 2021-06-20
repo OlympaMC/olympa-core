@@ -51,7 +51,7 @@ public class DbConnection {
 	}
 
 	public Connection getConnection() throws SQLException {
-		if (connection != null && connection.isValid(0))
+		if (connection != null && connection.isValid(0) && connection.isClosed())
 			return connection;
 		connect();
 		return connection;

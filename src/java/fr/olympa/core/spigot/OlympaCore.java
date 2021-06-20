@@ -57,7 +57,7 @@ import fr.olympa.api.spigot.customevents.SpigotConfigReloadEvent;
 import fr.olympa.api.spigot.frame.ImageFrameManager;
 import fr.olympa.api.spigot.gui.Inventories;
 import fr.olympa.api.spigot.holograms.HologramsManager;
-import fr.olympa.api.spigot.hook.IProtocolSupport;
+import fr.olympa.api.spigot.hook.VersionByPluginApi;
 import fr.olympa.api.spigot.region.tracking.RegionManager;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
@@ -156,7 +156,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	}
 
 	@Override
-	public @Nullable IProtocolSupport getProtocolSupport() {
+	public @Nullable VersionByPluginApi getProtocolSupport() {
 		if (versionHandler == null)
 			return null;
 		return versionHandler.getProtocolSupport();

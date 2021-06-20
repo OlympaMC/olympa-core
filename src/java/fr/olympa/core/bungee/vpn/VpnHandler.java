@@ -82,10 +82,11 @@ public class VpnHandler {
 			connection = url.openConnection();
 		connection.setUseCaches(false);
 		String result = CharStreams.toString(new InputStreamReader(connection.getURL().openStream(), StandardCharsets.UTF_8));
-		time.print();
+		time.stop();
 		olympaVpn = OlympaVpn.fromJson(result);
 		if (!olympaVpn.isOk(ip))
 			throw new IllegalAccessError("OlympaVpn incomplete : " + new Gson().toJson(olympaVpn));
+		time.print(olympaVpn.getInfos());
 		if (addToDb) {
 			olympaVpn.setDefaultTimesIfNeeded();
 			add(olympaVpn);

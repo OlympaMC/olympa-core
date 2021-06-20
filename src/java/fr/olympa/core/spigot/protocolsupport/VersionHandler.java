@@ -1,11 +1,14 @@
 package fr.olympa.core.spigot.protocolsupport;
 
+import java.util.AbstractMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 
 import fr.olympa.api.spigot.utils.ProtocolAPI;
+import fr.olympa.api.spigot.utils.SpigotInfoFork;
 import fr.olympa.core.spigot.OlympaCore;
 import protocolsupport.api.ProtocolVersion;
 
@@ -31,10 +34,10 @@ public class VersionHandler {
 			plugin.getLogger().severe("Impossible de récupérer la class principal de ViaVersion. Vérifie sa version, et si le package n'a pas été modifié.");
 			e.printStackTrace();
 		}
-		String[] versions = getRangeVersionArray();
+		Entry<String, String> versions = getRangeVersionArray();
 		if (versions != null) {
-			plugin.setFirstVersion(versions[versions.length - 1]);
-			plugin.setLastVersion(versions[0]);
+			plugin.setFirstVersion(versions.getKey());
+			plugin.setLastVersion(versions.getValue());
 		}
 	}
 
@@ -48,16 +51,18 @@ public class VersionHandler {
 
 	public ProtocolAPI getVersion(Player player) {
 		ProtocolAPI protocol;
-		if (protocolSupport != null)
-			protocol = protocolSupport.getPlayerVersion(player);
+		if (SpigotInfoFork.isPaper())
+			protocol = ProtocolAPI.get(player.getProtocolVersion());
 		else if (viaVersion != null)
 			protocol = viaVersion.getPlayerVersion(player);
+		else if (protocolSupport != null)
+			protocol = protocolSupport.getPlayerVersion(player);
 		else
 			protocol = ProtocolAPI.getDefaultSpigotProtocol();
 		return protocol;
 	}
 
-	public String[] getRangeVersionArray() {
+	public Entry<String, String> getRangeVersionArray() {
 		String first = "unknown";
 		String last = "unknown";
 		if (protocolSupport != null) {
@@ -65,11 +70,11 @@ public class VersionHandler {
 			first = proto.get(0);
 			last = proto.get(proto.size() - 1);
 		} else
-			first = ProtocolAPI.getSpigotVersion();
+			first = ProtocolAPI.getNativeSpigotVersion();
 		if (viaVersion != null)
 			last = viaVersion.getHighVersion();
 		else
-			last = ProtocolAPI.getSpigotVersion();
-		return new String[] { last, first };
+			last = ProtocolAPI.getNativeSpigotVersion();
+		return new AbstractMap.SimpleEntry<>(first, last);
 	}
 }

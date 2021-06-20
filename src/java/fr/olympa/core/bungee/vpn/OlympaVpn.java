@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
@@ -193,5 +194,14 @@ public class OlympaVpn {
 		org = createVpnInfo.getOrg();
 		as = createVpnInfo.getAs();
 		lastUpdate = Utils.getCurrentTimeInSeconds();
+	}
+
+	public String getInfos() {
+		StringJoiner sj = new StringJoiner(", ");
+		sj.add("Pays " + country);
+		sj.add("isVPN " + proxy);
+		sj.add("isMobile " + mobile);
+		sj.add("isHost " + hosting);
+		return sj.toString();
 	}
 }
