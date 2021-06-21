@@ -5,6 +5,7 @@ import org.bukkit.event.Listener;
 import fr.olympa.api.common.module.OlympaModule;
 import fr.olympa.api.common.module.SpigotModule;
 import fr.olympa.api.spigot.afk.AfkHandler;
+import fr.olympa.api.spigot.chat.ChatCatcher;
 import fr.olympa.api.spigot.command.OlympaCommand;
 import fr.olympa.api.spigot.command.essentials.AfkCommand;
 import fr.olympa.core.spigot.OlympaCore;
@@ -32,12 +33,16 @@ public class CoreModules {
 	private static final TpsCommand tpsCommand = new TpsCommand(pl);
 	public static final OlympaModule<TpsCommand, Listener, OlympaCore, OlympaCommand> TPS = new SpigotModule<>(pl, "tps", plugin -> tpsCommand).commandPreProcess()
 			.cmd(tpsCommand.getClass()).listener(tpsCommand.getClass()).softDepend(NAME_TAG);
+	private static final ChatCatcher chatCatcher = new ChatCatcher(pl);
+	public static final OlympaModule<ChatCatcher, Listener, OlympaCore, OlympaCommand> CHAT_CATCHER = new SpigotModule<>(pl, "chatcatcher", plugin -> chatCatcher)
+			.cmd(chatCatcher.getClass()).listener(chatCatcher.getClass());
 
 	public CoreModules() {
 		NAME_TAG.registerModule();
 		VANISH.registerModule();
 		AFK.registerModule();
 		TPS.registerModule();
+		CHAT_CATCHER.registerModule();
 	}
 
 }

@@ -96,6 +96,7 @@ public class MonitorInfoBungee extends ServerInfoBasic {
 		return serverInfo;
 	}
 
+	@Nullable
 	public ServerInfoAdvanced getServerDebugInfo() {
 		return serverDebugInfo;
 	}

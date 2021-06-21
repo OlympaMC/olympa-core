@@ -46,6 +46,7 @@ import fr.olympa.core.bungee.ban.commands.MuteCommand;
 import fr.olympa.core.bungee.ban.commands.UnbanCommand;
 import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
+import fr.olympa.core.bungee.commands.AllPluginsCommand;
 import fr.olympa.core.bungee.commands.BungeeBroadcastCommand;
 import fr.olympa.core.bungee.commands.BungeeLagCommand;
 import fr.olympa.core.bungee.commands.BungeePingCommand;
@@ -256,6 +257,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		new IpCommand(this).register();
 		new CreditCommand(this).register();
 		new ShowPingMotdCommand(this).register();
+		new AllPluginsCommand(this).register();
 
 		MonitorServers.init(this);
 		SQLGroup.init();

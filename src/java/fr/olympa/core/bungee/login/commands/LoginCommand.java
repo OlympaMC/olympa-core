@@ -54,8 +54,8 @@ public class LoginCommand extends BungeeCommand {
 			sendUsage();
 			return;
 		}
-		if (!olympaPlayer.isSamePassword(args[0])) {
-			this.sendMessage(Prefix.DEFAULT_BAD, "Mot de passe incorrect, rééssaye.");
+		String testPassword = args[0];
+		if (!olympaPlayer.isSamePassword(testPassword)) {
 			String ip = proxiedPlayer.getAddress().getAddress().getHostAddress();
 			Integer timeFails = HandlerLogin.timesFails.getIfPresent(ip);
 			if (timeFails == null)
@@ -78,6 +78,7 @@ public class LoginCommand extends BungeeCommand {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
+			this.sendMessage(Prefix.DEFAULT_BAD, "Mot de passe incorrect, rééssaye.");
 			return;
 		}
 		OlympaPlayerLoginEvent olympaPlayerLoginEvent = ProxyServer.getInstance().getPluginManager().callEvent(new OlympaPlayerLoginEvent(olympaPlayer, proxiedPlayer));

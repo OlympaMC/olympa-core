@@ -75,7 +75,7 @@ public class PlayerLogin {
 		ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
 			@Override
 			public void channelRead(ChannelHandlerContext channelHandlerContext, Object handledPacket) throws Exception {
-				if (w8forCaptcha.containsKey(p) && !allowedPackets.stream().anyMatch(clazz -> handledPacket.getClass().isAssignableFrom(clazz))) {
+				if (w8forCaptcha.containsKey(p) && allowedPackets.stream().noneMatch(clazz -> handledPacket.getClass().isAssignableFrom(clazz))) {
 					System.out.println("packet IN " + handledPacket.getClass().getSimpleName() + " of " + p.getName() + " was cancel.");
 					return;
 				}

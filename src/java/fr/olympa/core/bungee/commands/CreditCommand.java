@@ -1,7 +1,9 @@
 package fr.olympa.core.bungee.commands;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
@@ -30,23 +32,29 @@ public class CreditCommand extends BungeeCommand {
 		ServerInfoAdvancedBungee bungeeServerInfo = new ServerInfoAdvancedBungee(OlympaBungee.getInstance());
 
 		if (bungeeServerInfo.getPlugins() != null && !bungeeServerInfo.getPlugins().isEmpty()) {
-			String authorPluginOlympa = bungeeServerInfo.getPlugins().stream().filter(pl -> pl.getName().startsWith("Olympa") && pl.getAuthors() != null).map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct()
-					.collect(Collectors.joining(", "));
-			String otherAuthors = bungeeServerInfo.getPlugins().stream().filter(pl -> !pl.getName().startsWith("Olympa") && pl.getAuthors() != null).map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct()
-					.collect(Collectors.joining(", "));
-			out.extra(new TxtComponentBuilder("&6%s\n&2Devs Olympa &a%s\n&7Devs Plugin Public %s", bungeeServerInfo.getHumainName(), authorPluginOlympa, otherAuthors));
+			Map<Boolean, List<PluginInfoAdvanced>> pluginsOlympaOrOther = bungeeServerInfo.getPlugins().stream().collect(Collectors.partitioningBy(pl -> pl.getName().startsWith("Olympa")));
+			String authorPluginOlympa = pluginsOlympaOrOther.get(true).stream().map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
+			String otherAuthors = pluginsOlympaOrOther.get(false).stream().map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
+			out.extra(new TxtComponentBuilder("&6%s\n&2Devs Olympa &a%s\n&7Devs Plugin Public %s", bungeeServerInfo.getHumanName(), authorPluginOlympa, otherAuthors));
 		}
 		serversNames.forEach(name -> {
 			List<MonitorInfoBungee> servers = allServers.stream().filter(mib -> mib.getServerDebugInfo() != null
 					&& mib.getServerDebugInfo().getPlugins() != null && !mib.getServerDebugInfo().getPlugins().isEmpty()
 					&& name.equals(mib.getOlympaServer().getNameCaps()))
 					.collect(Collectors.toList());
-			List<PluginInfoAdvanced> allPlugins = servers.stream().map(mib -> mib.getServerDebugInfo().getPlugins())
-					.flatMap(list -> list.stream()).distinct().filter(pl -> !pl.getAuthors().isEmpty()).collect(Collectors.toList());
-			String authorPluginOlympa = allPlugins.stream().filter(pl -> pl.getName().startsWith("Olympa"))
-					.map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
-			String otherAuthors = allPlugins.stream().filter(pl -> !pl.getName().startsWith("Olympa"))
-					.map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
+			List<PluginInfoAdvanced> allPlugins = new ArrayList<>();
+			servers.forEach(serv -> {
+				if (serv.getServerDebugInfo() != null && !serv.getServerDebugInfo().getPlugins().isEmpty())
+					serv.getServerDebugInfo().getPlugins().forEach(pl -> {
+						if (!pl.getAuthors().isEmpty())
+							allPlugins.add(pl);
+					});
+			});
+			//			List<PluginInfoAdvanced> allPlugins = servers.stream().map(mib -> mib.getServerDebugInfo().getPlugins())
+			//					.flatMap(list -> list.stream()).distinct().filter(pl -> !pl.getAuthors().isEmpty()).collect(Collectors.toList());
+			Map<Boolean, List<PluginInfoAdvanced>> pluginsOlympaOrOther = allPlugins.stream().collect(Collectors.partitioningBy(pl -> pl.getName().startsWith("Olympa")));
+			String authorPluginOlympa = pluginsOlympaOrOther.get(true).stream().map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
+			String otherAuthors = pluginsOlympaOrOther.get(false).stream().map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
 			out.extra(new TxtComponentBuilder("&6" + name + "\n&2Devs Olympa &a" + authorPluginOlympa + "\n&7Devs Plugin Public " + otherAuthors));
 		});
 		sendMessage(out.build());
