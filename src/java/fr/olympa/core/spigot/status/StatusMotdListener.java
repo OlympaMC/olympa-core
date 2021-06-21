@@ -36,7 +36,7 @@ public class StatusMotdListener implements Listener {
 		sj.add(String.valueOf(core.getLastModifiedLong()));
 		sj.add(new ServerInfoAdvancedSpigot(core).toString());
 		if (OlympaModule.DEBUG) {
-			time.stop();
+			time.print();
 			core.sendMessage("&rDEBUG Ping > %s ", LinkSpigotBungee.getInstance().getGson().toJson(sj.toString())); // XXX ???????
 		}
 		event.setMotd(sj.toString());

@@ -1,4 +1,4 @@
-package fr.olympa.core.spigot.protocolsupport;
+package fr.olympa.core.spigot.versionhook;
 
 import java.util.AbstractMap;
 import java.util.List;

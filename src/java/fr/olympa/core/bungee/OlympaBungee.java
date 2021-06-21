@@ -30,6 +30,7 @@ import fr.olympa.api.common.redis.RedisConnection;
 import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ServerInfoBasic;
 import fr.olympa.api.common.server.ServerStatus;
+import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
 import fr.olympa.api.sql.MySQL;
@@ -131,6 +132,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	private ServerStatus status;
 	private String serverName = "bungee1";
 	private RedisAccess redisAccess;
+	private boolean redisConnected = false;
+	private boolean dbConnected = false;
 
 	@Override
 	public Configuration getConfig() {
@@ -333,12 +336,14 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		int i = i1;
 		DbCredentials dbcredentials = new DbCredentials(defaultConfig.getConfig());
 		database = new DbConnection(dbcredentials);
-		if (database.connect())
+		if (database.connect()) {
+			dbConnected = true;
 			sendMessage("&aConnexion à la base de donnée &2" + dbcredentials.getDatabase() + "&a établie.");
-		else {
+		} else {
 			if (i % 100 == 0)
 				sendMessage("&cConnexion à la base de donnée &4" + dbcredentials.getDatabase() + "&c impossible.");
 			getTask().runTaskLater("db_setup", () -> setupDatabase(i), 10, TimeUnit.SECONDS);
+			dbConnected = false;
 		}
 	}
 
@@ -374,6 +379,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		int i = i1;
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
+			redisConnected = true;
 			registerRedisSub(redisAccess.getConnection(), new SpigotGroupChangeReceiverOnBungee(), RedisChannel.SPIGOT_CHANGE_GROUP.name());
 			registerRedisSub(redisAccess.connect(), new SpigotAskServerNameReceiver(), RedisChannel.SPIGOT_ASK_SERVERNAME.name());
 			registerRedisSub(redisAccess.connect(), new SpigotServerChangeStatusReceiver(), RedisChannel.SPIGOT_SERVER_CHANGE_STATUS.name());
@@ -390,6 +396,7 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 			if (i % 100 == 0)
 				sendMessage("&cConnexion à &4Redis&c impossible.");
 			getTask().runTaskLater("redis_setup", () -> setupRedis(i), 10, TimeUnit.SECONDS);
+			redisConnected = false;
 		}
 	}
 
@@ -469,5 +476,25 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	@Override
 	public Collection<ServerInfoBasic> getMonitorServers() {
 		return MonitorServers.getServers().stream().map(monitorInfoBungee -> (ServerInfoBasic) monitorInfoBungee).collect(Collectors.toList());
+	}
+
+	@Override
+	public boolean isRedisConnected() {
+		return redisConnected;
+	}
+
+	@Override
+	public boolean isDatabaseConnected() {
+		return dbConnected;
+	}
+
+	@Override
+	public String getFirstVersion() {
+		return ProtocolAPI.getVersionsRangeBungee().getKey();
+	}
+
+	@Override
+	public String getLastVersion() {
+		return ProtocolAPI.getVersionsRangeBungee().getValue();
 	}
 }

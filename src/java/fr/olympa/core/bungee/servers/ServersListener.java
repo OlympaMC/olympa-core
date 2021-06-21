@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.server.OlympaServer;
-import fr.olympa.api.common.server.ServerInfoBasic;
 import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
@@ -29,7 +28,7 @@ public class ServersListener implements Listener {
 	public void onServerKick(ServerKickEvent event) {
 		ServerInfo serverKicked = event.getKickedFrom();
 		ProxiedPlayer player = event.getPlayer();
-		Entry<OlympaServer, Integer> entryOlympaServer = ServerInfoBasic.getOlympaServer(serverKicked.getName());
+		Entry<OlympaServer, Integer> entryOlympaServer = OlympaServer.getOlympaServerWithId(serverKicked.getName());
 		OlympaServer olympaServer = entryOlympaServer != null ? entryOlympaServer.getKey() : null;
 		if (olympaServer == null || olympaServer == OlympaServer.AUTH) {
 			event.setCancelled(false);

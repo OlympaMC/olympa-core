@@ -83,8 +83,6 @@ import fr.olympa.core.spigot.groups.GroupCommand;
 import fr.olympa.core.spigot.groups.GroupListener;
 import fr.olympa.core.spigot.groups.StaffCommand;
 import fr.olympa.core.spigot.module.CoreModules;
-import fr.olympa.core.spigot.protocolsupport.VersionHandler;
-import fr.olympa.core.spigot.protocolsupport.ViaVersionHook;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.redis.receiver.BungeeAskPlayerServerReceiver;
 import fr.olympa.core.spigot.redis.receiver.BungeeSendOlympaPlayerReceiver;
@@ -103,10 +101,12 @@ import fr.olympa.core.spigot.security.HelpCommand;
 import fr.olympa.core.spigot.security.PluginCommand;
 import fr.olympa.core.spigot.status.SetStatusCommand;
 import fr.olympa.core.spigot.status.StatusMotdListener;
+import fr.olympa.core.spigot.versionhook.VersionHandler;
+import fr.olympa.core.spigot.versionhook.ViaVersionHook;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
-public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listener {
+public class OlympaCore extends OlympaSpigot implements Listener {
 
 	private static OlympaCore instance = null;
 
@@ -122,7 +122,10 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 	private ErrorOutputStream errorOutputStream;
 	public GamemodeCommand gamemodeCommand = null;
 	private RedisAccess redisAccess;
+	private boolean redisConnected = false;
+	private boolean dbConnected = false;
 
+	@Override
 	public String getLastVersion() {
 		return lastVersion;
 	}
@@ -131,6 +134,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		this.lastVersion = lastVersion;
 	}
 
+	@Override
 	public String getFirstVersion() {
 		return firstVersion;
 	}
@@ -349,6 +353,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		int i = i1;
 		redisAccess.connect();
 		if (redisAccess.isConnected()) {
+			redisConnected = true;
 			registerRedisSub(redisAccess.getConnection(), new BungeeServerNameReceiver(), RedisChannel.BUNGEE_ASK_SEND_SERVERNAME.name());
 			registerRedisSub(new SpigotOlympaPlayerReceiver(), RedisChannel.BUNGEE_ASK_SEND_OLYMPAPLAYER.name());
 			registerRedisSub(new SpigotReceiveOlympaPlayerReceiver(), RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name());
@@ -367,6 +372,7 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 			if (i % 100 == 0)
 				sendMessage("&cConnexion à &4Redis&c impossible.");
 			getTask().runTaskLater(() -> setupRedis(i), 10, TimeUnit.SECONDS);
+			redisConnected = false;
 		}
 	}
 
@@ -377,12 +383,14 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		int i = i1;
 		DbCredentials dbcredentials = new DbCredentials(getConfig());
 		database = new DbConnection(dbcredentials);
-		if (database.connect())
+		if (database.connect()) {
+			dbConnected = true;
 			sendMessage("&aConnexion à la base de donnée &2" + dbcredentials.getDatabase() + "&a établie.");
-		else {
+		} else {
 			if (i % 100 == 0)
 				sendMessage("&cConnexion à la base de donnée &4" + dbcredentials.getDatabase() + "&c impossible.");
 			getTask().runTaskLater(() -> setupDatabase(i), 10, TimeUnit.SECONDS);
+			dbConnected = false;
 		}
 	}
 
@@ -450,4 +458,13 @@ public class OlympaCore extends OlympaSpigot implements LinkSpigotBungee, Listen
 		return redisAccess;
 	}
 
+	@Override
+	public boolean isRedisConnected() {
+		return redisConnected;
+	}
+
+	@Override
+	public boolean isDatabaseConnected() {
+		return dbConnected;
+	}
 }

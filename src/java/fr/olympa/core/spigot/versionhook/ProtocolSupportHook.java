@@ -1,6 +1,7 @@
-package fr.olympa.core.spigot.protocolsupport;
+package fr.olympa.core.spigot.versionhook;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -119,49 +120,52 @@ public class ProtocolSupportHook implements VersionByPluginApi {
 
 	@Override
 	public boolean disable(ProtocolAPI... versions) {
-		boolean someDisabling = false;
+		List<ProtocolAPI> disabledProtocols = new ArrayList<>();
 		for (ProtocolAPI ver : versions)
 			if (disable(ver))
-				someDisabling = true;
-		return someDisabling;
+				disabledProtocols.add(ver);
+		LinkSpigotBungee.Provider.link.sendMessage("Disabling %s support by ProtocolSupport.", disabledProtocols.stream().map(ProtocolAPI::getCompleteName).distinct().collect(Collectors.joining(", ")));
+		return !disabledProtocols.isEmpty();
 	}
 
 	@Override
 	public boolean disableAllUnderI(ProtocolAPI version) {
-		boolean someDisabling = false;
-		for (ProtocolVersion protocol : ProtocolVersion.getAllBeforeI(getProtocolVersion(version)))
-			if (disable(protocol))
-				someDisabling = true;
-		return someDisabling;
+		return disable(ProtocolVersion.getAllBeforeI(getProtocolVersion(version)));
 	}
 
 	@Override
 	public boolean disableAllUpperI(ProtocolAPI version) {
-		boolean someDisabling = false;
-		for (ProtocolVersion protocol : ProtocolVersion.getAllAfterI(getProtocolVersion(version)))
-			if (disable(protocol))
-				someDisabling = true;
-		return someDisabling;
+		return disable(ProtocolVersion.getAllAfterI(getProtocolVersion(version)));
 	}
 
 	@Override
 	public boolean disable(ProtocolAPI version) {
 		ProtocolVersion protocol = getProtocolVersion(version);
-		if (protocol != null && protocol.isSupported() && ProtocolSupportAPI.isProtocolVersionEnabled(protocol)) {
-			ProtocolSupportAPI.disableProtocolVersion(protocol);
-			LinkSpigotBungee.Provider.link.sendMessage("Disabling %s support by ViaVersion.", version.getName());
-			return true;
-		}
-		return false;
+		boolean isSomeDisble = disable(protocol);
+		if (isSomeDisble)
+			LinkSpigotBungee.Provider.link.sendMessage("Disabling %s support by ProtocolSupport.", protocol.getName());
+		return isSomeDisble;
 	}
 
 	public boolean disable(ProtocolVersion protocol) {
 		if (protocol != null && protocol.isSupported() && ProtocolSupportAPI.isProtocolVersionEnabled(protocol)) {
 			ProtocolSupportAPI.disableProtocolVersion(protocol);
-			LinkSpigotBungee.Provider.link.sendMessage("Disabling %s support by ViaVersion.", protocol.getName());
 			return true;
 		}
 		return false;
+	}
+
+	public boolean disable(ProtocolVersion... protocols) {
+		return disable(Arrays.asList(protocols));
+	}
+
+	public boolean disable(Iterable<ProtocolVersion> protocols) {
+		List<ProtocolVersion> disabledProtocols = new ArrayList<>();
+		for (ProtocolVersion protocol : protocols)
+			if (disable(protocol))
+				disabledProtocols.add(protocol);
+		LinkSpigotBungee.Provider.link.sendMessage("Disabling %s support by ProtocolSupport.", disabledProtocols.stream().map(ProtocolVersion::getName).collect(Collectors.joining(", ")));
+		return !disabledProtocols.isEmpty();
 	}
 
 	public ProtocolVersion getProtocolVersion(ProtocolAPI version) {

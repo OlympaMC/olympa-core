@@ -1,4 +1,4 @@
-package fr.olympa.core.spigot.protocolsupport;
+package fr.olympa.core.spigot.versionhook;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import com.viaversion.viaversion.ViaManagerImpl;
 import com.viaversion.viaversion.ViaVersionPlugin;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.bukkit.platform.BukkitViaAPI;
-import com.viaversion.viaversion.protocol.ProtocolManagerImpl;
 
 import fr.olympa.api.spigot.hook.VersionByPluginApi;
 import fr.olympa.api.spigot.utils.ProtocolAPI;
@@ -23,12 +23,12 @@ public class ViaVersionHook implements VersionByPluginApi {
 
 	private ViaVersionPlugin viaVersionPlugin;
 	private BukkitViaAPI api;
-	private ProtocolManagerImpl versionHandler;
+	private ViaManagerImpl versionHandler;
 
 	public ViaVersionHook(Plugin plugin) throws NoClassDefFoundError {
 		viaVersionPlugin = (ViaVersionPlugin) plugin.getServer().getPluginManager().getPlugin("ViaVersion");
 		api = (BukkitViaAPI) viaVersionPlugin.getApi();
-		versionHandler = (ProtocolManagerImpl) Via.getManager();
+		versionHandler = (ViaManagerImpl) Via.getManager();
 	}
 
 	public ViaVersionPlugin getViaVersion() {
@@ -116,7 +116,7 @@ public class ViaVersionHook implements VersionByPluginApi {
 		throw new UnsupportedOperationException("Can't disable versions on ViaVersion yet. Maybe contribute to find a solution ?");
 		/*
 		List<ProtocolAPI> toDisable = ProtocolAPI.getAllUnderI(version.getProtocolNumber());
-		
+
 		ServerProtocolVersion lastProtocolVersion = versionHandler.getServerProtocolVersion();
 		Set<Integer> newSupportedVersion = lastProtocolVersion.supportedVersions().stream().filter(protocolId -> !toDisable.stream().anyMatch(protocol -> protocol.getProtocolNumber() != protocolId)).collect(Collectors.toSet());
 		ServerProtocolVersion serverProtocolVersion;

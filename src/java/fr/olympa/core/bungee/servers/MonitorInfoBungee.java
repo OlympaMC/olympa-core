@@ -9,6 +9,7 @@ import fr.olympa.api.common.match.RegexMatcher;
 import fr.olympa.api.common.module.OlympaModule;
 import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ServerInfoAdvanced;
+import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.common.server.ServerInfoBasic;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -20,7 +21,7 @@ public class MonitorInfoBungee extends ServerInfoBasic {
 
 	ServerInfo serverInfo;
 	@Nullable
-	ServerInfoAdvanced serverDebugInfo;
+	ServerInfoAdvancedBungee serverDebugInfo;
 
 	int maxErrorSend = 10;
 	int maxReadTimeException = 2;
@@ -29,7 +30,7 @@ public class MonitorInfoBungee extends ServerInfoBasic {
 		this.serverInfo = serverInfo;
 		serverName = serverInfo.getName();
 
-		Entry<OlympaServer, Integer> serverInfos = getOlympaServer(serverName);
+		Entry<OlympaServer, Integer> serverInfos = OlympaServer.getOlympaServerWithId(serverName);
 		olympaServer = serverInfos.getKey();
 		serverID = serverInfos.getValue();
 
@@ -63,7 +64,9 @@ public class MonitorInfoBungee extends ServerInfoBasic {
 			try {
 				if (motd.length >= 8) {
 					String json = String.join(" ", Arrays.copyOfRange(motd, 7, motd.length));
-					serverDebugInfo = ServerInfoAdvanced.fromJson(json);
+					serverDebugInfo = ServerInfoAdvancedBungee.fromJson(json);
+					serverDebugInfo.setPing(ping);
+					//					serverDebugInfo.setError(this.error);
 				}
 				if (OlympaModule.DEBUG)
 					OlympaBungee.getInstance().sendMessage("&7Réponse du serveur &2%s&7 : &d%s", serverInfo.getName(), allMotd);

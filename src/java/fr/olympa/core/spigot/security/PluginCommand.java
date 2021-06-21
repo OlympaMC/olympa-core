@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.common.plugin.PluginInfoAdvanced;
 import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.spigot.command.OlympaCommand;
@@ -24,13 +25,14 @@ public class PluginCommand extends OlympaCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		sendMessage(Prefix.DEFAULT, "Les plugins de notre serveur sont développés par nos soins. Pour les voir, fait &n/tps&7.");
+		sendMessage(Prefix.DEFAULT, "Les plugins de notre serveur sont développés par nos soins. Pour les voir, fait &l/tps&7.");
 		List<String> pluginsOlympa = new ArrayList<>();
 		List<String> plugins = new ArrayList<>();
 		try {
 			List<PluginInfoAdvanced> plugins2 = ServerInfoAdvanced.getExternalPlugins();
 			TxtComponentBuilder out = new TxtComponentBuilder("&7Plugins externes (%d): ", plugins2.size());
-			out.extra(ServerInfoAdvanced.getPluginsToString(ServerInfoAdvanced.getExternalPlugins(), !(sender instanceof Player)));
+			out.extra(ServerInfoAdvanced.getPluginsToString(ServerInfoAdvanced.getExternalPlugins(), !(sender instanceof Player),
+					OlympaCorePermissionsSpigot.PLUGIN_SEE_VERSION.hasSenderPermission(sender)));
 			sender.sendMessage(out.build());
 			return false;
 		} catch (Exception e) {
@@ -38,7 +40,6 @@ public class PluginCommand extends OlympaCommand {
 			for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
 				String name = p.getName();
 				if (name.contains("Olympa") || p.getDescription().getAuthors().stream().anyMatch(x -> x.contains("SkytAsul") || x.contains("Tristiisch")))
-					//plugins.add("§o*redacted*");
 					pluginsOlympa.add(name);
 				else
 					plugins.add(name);
