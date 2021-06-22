@@ -37,13 +37,13 @@ public class CreditCommand extends BungeeCommand {
 			String otherAuthors = pluginsOlympaOrOther.get(false).stream().map(pl -> pl.getAuthors()).flatMap(list -> list.stream()).distinct().collect(Collectors.joining(", "));
 			out.extra(new TxtComponentBuilder("&6%s\n&2Devs Olympa &a%s\n&7Devs Plugin Public %s", bungeeServerInfo.getHumanName(), authorPluginOlympa, otherAuthors));
 		}
-		serversNames.forEach(name -> {
+		serversNames.stream().forEach(name -> {
 			List<MonitorInfoBungee> servers = allServers.stream().filter(mib -> mib.getServerDebugInfo() != null
 					&& mib.getServerDebugInfo().getPlugins() != null && !mib.getServerDebugInfo().getPlugins().isEmpty()
 					&& name.equals(mib.getOlympaServer().getNameCaps()))
 					.collect(Collectors.toList());
 			List<PluginInfoAdvanced> allPlugins = new ArrayList<>();
-			servers.forEach(serv -> {
+			servers.stream().forEach(serv -> {
 				if (serv.getServerDebugInfo() != null && !serv.getServerDebugInfo().getPlugins().isEmpty())
 					serv.getServerDebugInfo().getPlugins().forEach(pl -> {
 						if (!pl.getAuthors().isEmpty())

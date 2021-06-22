@@ -27,7 +27,7 @@ import net.md_5.bungee.api.connection.PendingConnection;
 public class VpnHandler {
 
 	private static List<String> inCheck = new ArrayList<>();
-	public static Cache<String, OlympaVpn> cache = CacheBuilder.newBuilder().recordStats().expireAfterWrite(10, TimeUnit.SECONDS).removalListener(notification -> {
+	public static Cache<String, OlympaVpn> cache = CacheBuilder.newBuilder().recordStats().expireAfterWrite(1, TimeUnit.MINUTES).removalListener(notification -> {
 		OlympaVpn olympaVpn = (OlympaVpn) notification.getValue();
 		//		OlympaBungee.getInstance().sendMessage("&6DEBUG VPN > notification %s id %d ip %s", notification.getCause(), olympaVpn.getId(), notification.getKey());
 
@@ -104,13 +104,13 @@ public class VpnHandler {
 		String ip = connection.getAddress().getAddress().getHostAddress();
 		if (ip.equalsIgnoreCase("127.0.0.1"))
 			return null;
-		OlympaVpn olympaVpn = null;
-		if (inCheck.contains(ip)) {
+		OlympaVpn olympaVpn = cache.getIfPresent(ip);
+		if (olympaVpn == null && inCheck.contains(ip)) {
 			while (inCheck.contains(ip))
 				Thread.sleep(500L);
 			olympaVpn = cache.getIfPresent(ip);
 		}
-		if (olympaVpn == null) {
+		if (olympaVpn == null || !olympaVpn.isOk(ip)) {
 			inCheck.add(ip);
 			olympaVpn = VpnHandler.get(ip);
 			if (olympaVpn == null) {
@@ -129,6 +129,7 @@ public class VpnHandler {
 				try {
 					OlympaVpn newVpn = VpnHandler.createVpnInfo(connection, ip, false);
 					olympaVpn.update(newVpn);
+					olympaVpn.addUser(username);
 					VpnSql.saveIp(olympaVpn);
 				} catch (Exception | NoClassDefFoundError e) {
 					inCheck.remove(ip);

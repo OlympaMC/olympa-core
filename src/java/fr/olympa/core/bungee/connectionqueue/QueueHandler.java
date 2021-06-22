@@ -3,7 +3,7 @@ package fr.olympa.core.bungee.connectionqueue;
 import java.util.LinkedList;
 
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.antibot.AntiBotHandler;
+import fr.olympa.core.bungee.security.SecurityHandler;
 
 public class QueueHandler {
 
@@ -19,12 +19,12 @@ public class QueueHandler {
 		System.out.println("§bTaille de la flle d'attente: " + queue.size());
 		QueueTask.start();
 		if (hasTooManyInQueue()) {
-			AntiBotHandler.setEnable(true, null);
+			SecurityHandler.getInstance().getAntibot().getCase().queueTooBig(true);
 			return -2;
 		} else if (isNeededToEnableAntiBot())
-			AntiBotHandler.setEnable(true, null);
+			SecurityHandler.getInstance().getAntibot().getCase().queueTooBig(true);
 		else
-			AntiBotHandler.setEnable(false, null);
+			SecurityHandler.getInstance().getAntibot().getCase().queueTooBig(false);
 		return getTimeToW8(queue.size());
 	}
 

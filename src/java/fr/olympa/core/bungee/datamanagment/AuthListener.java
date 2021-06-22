@@ -20,7 +20,6 @@ import fr.olympa.api.common.provider.BungeeNewPlayerEvent;
 import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.antibot.AntiBotHandler;
 import fr.olympa.core.bungee.security.SecurityHandler;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import fr.olympa.core.bungee.utils.SpigotPlayerPack;
@@ -70,15 +69,8 @@ public class AuthListener implements Listener {
 
 		// Si le joueur ne s'est jamais connecté
 		if (olympaPlayer == null) {
-			if (AntiBotHandler.isEnable()) {
-				event.setCancelReason(BungeeUtils.connectScreen("&eBienvenue %s sur Olympa\n" +
-						"&6On dirait que tu nous rejoins au mauvais moment, nous subissons une attaque de bot :(\n" +
-						"&ePour vérifier que tu n'es pas un robot, tu dois t'inscrire sur le site : &e&nwww.olympa.fr\n" +
-						"&6Tu pourra ensuite te connecter ici.\n\n" +
-						"&eTu peux aussi attendre, le temps que l'attaque de bots s'arrête.", name));
-				event.setCancelled(true);
+			if (!SecurityHandler.getInstance().getAntibot().getCase().canfirstConnectionCrack(event))
 				return;
-			}
 
 			UuidResponse response;
 			try {

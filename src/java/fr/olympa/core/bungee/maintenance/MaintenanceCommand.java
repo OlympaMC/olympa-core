@@ -140,6 +140,8 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 
 	@SuppressWarnings("deprecation")
 	private void setServerStatus(ServerStatus status, String message, CommandSender player) {
+		OlympaBungee core = OlympaBungee.getInstance();
+		core.setStatus(status);
 		BungeeCustomConfig customConfig = OlympaBungee.getInstance().getMaintCustomConfig();
 		Configuration config = customConfig.getConfig();
 		config.set("settings.status", status.getName());

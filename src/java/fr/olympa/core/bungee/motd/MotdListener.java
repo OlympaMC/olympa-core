@@ -24,14 +24,14 @@ import net.md_5.bungee.event.EventHandler;
 
 public class MotdListener implements Listener {
 
-	public static final String MOTD_BASE = Chat.centerMotD("§3⬣ §e§lOlympa §6" + ProtocolAPI.getFirstVersion().getName() + " à " + ProtocolAPI.getLastVersion().getName() + "§3 ⬣") + "\n";
+	public static final String MOTD_BASE = Chat.centerMotD("§3⬣ §e§lOlympa §6" + ProtocolAPI.getFirstVersion().getName() + " à " + ProtocolAPI.getLastVersion().getName() + "§3 ⬣") + "§r\n";
 	String teamspeak = "§6Teamspeak: §e§nts.olympa.fr§r";
 	String site = "§6Site: §e§nwww.olympa.fr§r";
 	String twitter = "§6Twitter: §e@Olympa_fr";
 	String discord = "§6Discord: §e§ndiscord.olympa.fr§r";
-	String games = "§bPvP-Kits §c¤§3 ZTA §c¤ §bCréatif §c¤ §b§mPvP-Factions";
+	String games = "§bPvP-Kits §c¤§3 ZTA §c¤ §bCréatif §c¤ §b§mPvP-Factions§r";
 	String pvp = "§7Le PvP est inspiré de la 1.8";
-	String version = "§cUtilise la " + ProtocolAPI.getLastVersion().getName() + "§l✖";
+	String version = "§cUtilise la " + ProtocolAPI.getLastVersion().getName() + "§l✖§r";
 	String reason = "§6Raison de la maintenance :";
 	String separator = " §7| ";
 
@@ -64,15 +64,15 @@ public class MotdListener implements Listener {
 		if (connectIp == null || !connectIp.equals("localhost")) {
 			// Vérifie si l'adresse est correct
 			if (connectIp == null || !connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net")) {
-				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§4§l⚠ §cUtilise la bonne IP: §4§nplay.olympa.fr")));
+				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§4§l⚠ §cUtilise la bonne IP: §4§nplay.olympa.fr§r")));
 				return;
 			}
 			String connectSubDomain = connectIp.split("\\.")[0];
 			if (connectSubDomain.equalsIgnoreCase("buildeur")) {
-				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§aServeur §2Buildeur")));
+				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§aServeur §2Buildeur§r")));
 				return;
 			} else if (connectSubDomain.equalsIgnoreCase("dev")) {
-				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§aServeur §2Développeur")));
+				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§aServeur §2Développeur§r")));
 				return;
 			}
 		}

@@ -39,9 +39,14 @@ public class BungeeUtils {
 		return connection.getAddress().getAddress().getHostAddress();
 	}
 
-	public static TextComponent connectScreen(String s, Object... args) {
+	public static String connectScreen(String s, Object... args) {
 		Configuration config = OlympaBungee.getInstance().getConfig();
-		return stringToTextConponent(config.getString("default.connectscreenprefix") + String.format(s, args) + config.getString("default.connectscreensuffix"));
+		return ColorUtils.color(config.getString("default.connectscreenprefix") + String.format(s, args) + config.getString("default.connectscreensuffix")) + "§r";
+	}
+
+	public static TextComponent connectScreenComponent(String s, Object... args) {
+		Configuration config = OlympaBungee.getInstance().getConfig();
+		return stringToTextConponent(config.getString("default.connectscreenprefix") + String.format(s, args) + config.getString("default.connectscreensuffix") + "§r");
 	}
 
 	public static TextComponent stringToTextConponent(String s) {

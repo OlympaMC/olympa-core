@@ -3,6 +3,7 @@ package fr.olympa.core.bungee.security;
 import java.util.concurrent.TimeUnit;
 
 import fr.olympa.api.LinkSpigotBungee;
+import fr.olympa.core.bungee.antibot.AntiBotHandler;
 
 public class SecurityHandler implements Cloneable {
 
@@ -23,6 +24,7 @@ public class SecurityHandler implements Cloneable {
 	public boolean checkVpnOnMotd;
 	public boolean allowCrack;
 	public boolean allowPremium;
+	public AntiBotHandler antibot = new AntiBotHandler();
 
 	// Need to implement
 	public boolean disableMotdForVpn;
@@ -111,5 +113,33 @@ public class SecurityHandler implements Cloneable {
 
 	public void setAllowPremium(boolean allowPremium) {
 		this.allowPremium = allowPremium;
+	}
+
+	public boolean isDisableMotdForVpn() {
+		return disableMotdForVpn;
+	}
+
+	public boolean isAntiBotEnable() {
+		return antiBotEnable;
+	}
+
+	public boolean isRejectVpn() {
+		return rejectVpn;
+	}
+
+	public boolean isRejectNewPlayerCrackOnly() {
+		return rejectNewPlayerCrackOnly;
+	}
+
+	public boolean isRejectNewPlayerCrackPremium() {
+		return rejectNewPlayerCrackPremium;
+	}
+
+	public boolean isRejectAllCrack() {
+		return rejectAllCrack;
+	}
+
+	public AntiBotHandler getAntibot() {
+		return antibot;
 	}
 }

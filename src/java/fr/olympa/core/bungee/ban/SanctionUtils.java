@@ -14,7 +14,6 @@ import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.utils.BungeeUtils;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.config.Configuration;
 
 public class SanctionUtils {
@@ -70,11 +69,11 @@ public class SanctionUtils {
 		return Utils.capitalize(reason.replaceAll(" {2,}", " "));
 	}
 
-	public static TextComponent getDisconnectScreen(OlympaSanction sanction) {
+	public static String getDisconnectScreen(OlympaSanction sanction) {
 		return getDisconnectScreen(Arrays.asList(sanction));
 	}
 
-	public static TextComponent getDisconnectScreen(List<OlympaSanction> bans) {
+	public static String getDisconnectScreen(List<OlympaSanction> bans) {
 		OlympaSanction sanction = bans.stream().sorted((s1, s2) -> Boolean.compare(s2.isPermanent(), s1.isPermanent())).findFirst().get();
 		StringJoiner sjDisconnect = new StringJoiner("\n");
 		String typeAction = sanction.getType().getNameForPlayer();

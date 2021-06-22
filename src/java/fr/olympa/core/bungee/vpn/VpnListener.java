@@ -33,7 +33,7 @@ public class VpnListener implements Listener {
 			return;
 		}
 		if (olympaVpn != null && olympaVpn.isProxy() && !olympaVpn.hasWhitelistUsers())
-			ping.setDescriptionComponent(new TextComponent(MotdListener.MOTD_BASE + Chat.centerMotD("§4&l⚠ §cLes VPN sont interdit.")));
+			ping.setDescriptionComponent(new TextComponent(MotdListener.MOTD_BASE + Chat.centerMotD("§4&l⚠ §cLes VPN sont interdit.&r")));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -50,15 +50,10 @@ public class VpnListener implements Listener {
 			return;
 		}
 		if (olympaVpn == null) {
-			event.setCancelReason(BungeeUtils.connectScreen("&4AntiBot Activé &c> Impossible de se connecter au serveur avec ton IP. Contacte un Développeur ou Admin."));
+			event.setCancelReason(BungeeUtils.connectScreen("&cImpossible de se connecter au serveur avec ton IP. Contacte un Développeur ou Admin."));
 			event.setCancelled(true);
 			return;
 		}
-		if ((olympaVpn.isProxy() || olympaVpn.isHosting()) && (olympaVpn.getWhitelistUsers() == null || !olympaVpn.getWhitelistUsers().contains(connection.getName()))) {
-			System.out.println("§cVPN DETECTED > " + connection.getName() + " " + connection.getAddress().getAddress().getHostAddress());
-			event.setCancelReason(BungeeUtils.connectScreen("&cImpossible d'utiliser un VPN.\n\n&e&lSi tu penses qu'il y a une erreur, contacte un membre du staff."));
-			event.setCancelled(true);
-			return;
-		}
+		SecurityHandler.getInstance().getAntibot().getCase().checkVpn(event, connection, olympaVpn);
 	}
 }

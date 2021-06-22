@@ -21,7 +21,7 @@ public class PlayerInfoBuilder {
 	}
 
 	public PlayerInfoBuilder append(String s) {
-		stringBuilder.add(ColorUtils.color(s));
+		stringBuilder.add(ColorUtils.color(s) + "§r");
 		return this;
 	}
 

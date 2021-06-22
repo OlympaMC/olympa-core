@@ -197,9 +197,9 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 	public void antibotStarter(CommandContext cmd) {
 		int i = QueueHandler.NUMBER_BEFORE_START_ANTIBOT;
 		if (cmd.getArgumentsLength() == 0)
-			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%d&7.\n" +
-					"C'est à dire qu'il faut &4%d&c connections dans la file d'attente pour lancer l'antibot.\n" +
-					"Et donc &4%s&7 de file d'attente.", "NUMBER_BEFORE_START_ANTIBOT", i, i, QueueHandler.getStartBotTimeString());
+			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%d&7.\n&c" +
+					"C'est à dire qu'il faut &4%d& connections dans la file d'attente pour lancer l'antibot.\n" +
+					"Et donc &4%s&c de file d'attente.", "NUMBER_BEFORE_START_ANTIBOT", i, i, QueueHandler.getStartBotTimeString());
 		else {
 			QueueHandler.NUMBER_BEFORE_START_ANTIBOT = (Integer) cmd.getArgument(0);
 			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%d&a à &2%d&a.", "NUMBER_BEFORE_START_ANTIBOT", i, QueueHandler.NUMBER_BEFORE_START_ANTIBOT);
@@ -210,9 +210,9 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 	public void antibotCancelConnection(CommandContext cmd) {
 		int i = QueueHandler.NUMBER_BEFORE_CANCEL;
 		if (cmd.getArgumentsLength() == 0)
-			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%d&7.\n" +
+			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%d&7.\n&c" +
 					"C'est à dire qu'il peut y avoir &4%d&c connexions dans la file d'attente MAXIMUM. Les autres connexions seront cancel.\n" +
-					"Et donc que le temps d'attente maximum est de &4%s&7.", "NUMBER_BEFORE_CANCEL", i, i, QueueHandler.getMaxQueueTimeString());
+					"Et donc que le temps d'attente maximum est de &4%s&c.", "NUMBER_BEFORE_CANCEL", i, i, QueueHandler.getMaxQueueTimeString());
 		else {
 			QueueHandler.NUMBER_BEFORE_CANCEL = (Integer) cmd.getArgument(0);
 			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%d&a à &2%d&a.", "NUMBER_BEFORE_CANCEL", i, QueueHandler.NUMBER_BEFORE_CANCEL);
@@ -223,9 +223,9 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 	public void timeBetween2connections(CommandContext cmd) {
 		int i = QueueHandler.TIME_BETWEEN_2;
 		if (cmd.getArgumentsLength() == 0)
-			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%d&7.\n" +
+			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%d&7.\n&c" +
 					"C'est à dire qu'il a y 1 connexion acceptée toutes les &4%d&7 milisecondes (%1$,.2f secondes).\n" +
-					"Et donc qu'il y a &4%d&7 connexion/secondes.", "TIME_BETWEEN_2", i, i, i / 1000, 1000d / QueueHandler.TIME_BETWEEN_2);
+					"Et donc qu'il y a &4%d&c connexion/secondes.", "TIME_BETWEEN_2", i, i, i / 1000, 1000d / QueueHandler.TIME_BETWEEN_2);
 		else {
 			QueueHandler.TIME_BETWEEN_2 = (Integer) cmd.getArgument(0);
 			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%d&a à &2%d&a.", "TIME_BETWEEN_2", i, QueueHandler.TIME_BETWEEN_2);
@@ -247,15 +247,13 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_ANTIBOT", args = "BOOLEAN|toggle")
 	public void antibot(CommandContext cmd) {
+		AntiBotHandler antibot = SecurityHandler.getInstance().getAntibot();
 		if (cmd.getArgumentsLength() == 0)
-			sendMessage(Prefix.DEFAULT, "L'antibot est actuellement %s&7.", AntiBotHandler.isEnable() ? "&cActivé" : "&2Désactiver");
-		else {
-			if (cmd.getArgument(0) instanceof Boolean)
-				AntiBotHandler.setEnable(cmd.getArgument(0), sender.getName());
-			else
-				AntiBotHandler.toggleEnable(sender.getName());
-			sendMessage(Prefix.DEFAULT_GOOD, "L'antibot est désormais %s&7.", AntiBotHandler.isEnable() ? "&cActivé" : "&2Désactiver");
-		}
+			antibot.showStatus(proxiedPlayer);
+		else if (cmd.getArgument(0) instanceof Boolean)
+			antibot.setStatus(proxiedPlayer, cmd.getArgument(0));
+		else
+			antibot.setStatus(proxiedPlayer, !antibot.isEnable());
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_CONFIGS", min = 2, args = { "CONFIGS", "reload|save" })

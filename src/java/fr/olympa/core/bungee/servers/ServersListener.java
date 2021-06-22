@@ -14,7 +14,6 @@ import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -61,9 +60,9 @@ public class ServersListener implements Listener {
 			if (serverFallback == null)
 				serverFallback = ServersConnection.getBestServer(OlympaServer.AUTH, serverKicked);
 			if (serverFallback == null) {
-				TextComponent msg = BungeeUtils.connectScreen("&eLe &6%s&e redémarre, merci de te reconnecter dans quelques secondes...", Utils.capitalize(serverKicked.getName()));
+				String msg = BungeeUtils.connectScreen("&eLe &6%s&e redémarre, merci de te reconnecter dans quelques secondes...", Utils.capitalize(serverKicked.getName()));
 				player.sendMessage(msg);
-				event.setKickReasonComponent(new ComponentBuilder(msg).create());
+				event.setKickReason(msg);
 				return;
 			}
 			event.setCancelled(true);

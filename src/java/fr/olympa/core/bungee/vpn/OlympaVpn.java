@@ -63,7 +63,7 @@ public class OlympaVpn {
 	}
 
 	public void addUser(String username) {
-		if (username == null)
+		if (username == null || username.isBlank())
 			return;
 		if (users == null)
 			users = new ArrayList<>();
