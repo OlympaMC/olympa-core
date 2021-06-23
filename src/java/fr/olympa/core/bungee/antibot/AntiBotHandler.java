@@ -67,7 +67,8 @@ public class AntiBotHandler {
 			//			boolean hasTooManyUserOnSameIp = (currentTimeSeconds - olympaVpn.getTime()) / 2628000 * 2 < olympaVpn.getUsers().size();
 			if (enabled) {
 				// Disallow not french people with account created more than 1 week
-				boolean accountOtherCountryTooFreshlyCreated = currentTimeSeconds - cache.getOlympaPlayer().getFirstConnection() < 604800 && !"France".equals(olympaVpn.getCountry());
+				boolean accountOtherCountryTooFreshlyCreated = cache.getOlympaPlayer() == null
+						|| currentTimeSeconds - cache.getOlympaPlayer().getFirstConnection() < 604800 && !"France".equals(olympaVpn.getCountry());
 				if (accountOtherCountryTooFreshlyCreated) {
 					event.setCancelReason(BungeeUtils.connectScreen("&eBienvenue %s sur Olympa&r\n" +
 							"&6On dirait que tu nous rejoins au mauvais moment, nous subissons une attaque de bot&r\n" +
