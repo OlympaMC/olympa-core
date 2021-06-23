@@ -249,11 +249,11 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 	public void antibot(CommandContext cmd) {
 		AntiBotHandler antibot = SecurityHandler.getInstance().getAntibot();
 		if (cmd.getArgumentsLength() == 0)
-			antibot.showStatus(proxiedPlayer);
+			antibot.showStatus(sender);
 		else if (cmd.getArgument(0) instanceof Boolean)
-			antibot.setStatus(proxiedPlayer, cmd.getArgument(0));
+			antibot.setStatus(sender, cmd.getArgument(0));
 		else
-			antibot.setStatus(proxiedPlayer, !antibot.isEnable());
+			antibot.setStatus(sender, !antibot.isEnable());
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_CONFIGS", min = 2, args = { "CONFIGS", "reload|save" })

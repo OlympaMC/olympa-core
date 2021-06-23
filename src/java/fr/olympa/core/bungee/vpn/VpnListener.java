@@ -22,7 +22,6 @@ public class VpnListener implements Listener {
 	public void onPing(ProxyPingEvent event) {
 		PendingConnection connection = event.getConnection();
 		ServerPing ping = event.getResponse();
-
 		if (!SecurityHandler.getInstance().isCheckVpnOnMotd())
 			return;
 		OlympaVpn olympaVpn;

@@ -11,6 +11,7 @@ import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.login.HandlerLogin;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
+import fr.olympa.core.bungee.security.SecurityHandler;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -38,7 +39,6 @@ public class RegisterCommand extends BungeeCommand {
 			sendError("Tu as déjà un mot de passe. Pour le changer, fais &4/passwd <ancien mot de passe> <nouveau mot de passe>&c.");
 			return;
 		}
-
 		if (args.length == 0) {
 			this.sendMessage(Prefix.DEFAULT_GOOD, "Cette commande permet de choisir un mot de passe pour son compte Olympa. Valable sur notre site, forum, et minecraft (obligatoire si version non premium).");
 			return;
@@ -47,6 +47,8 @@ public class RegisterCommand extends BungeeCommand {
 			sendUsage(command);
 			return;
 		}
+		if (!SecurityHandler.getInstance().getAntibot().getCase().canRegisterOrLogin(proxiedPlayer, args, "/register"))
+			return;
 		String password = args[0];
 		if (password.length() < 5) {
 			this.sendMessage(Prefix.DEFAULT_BAD, "Désolé, 5 caratères minimum.");

@@ -1,12 +1,16 @@
 package fr.olympa.core.bungee.antibot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.bungee.player.CachePlayer;
 import fr.olympa.api.bungee.player.DataHandler;
+import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.utils.Prefix;
@@ -14,12 +18,15 @@ import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import fr.olympa.core.bungee.vpn.OlympaVpn;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
 
 public class AntiBotHandler {
+
+	public Map<ProxiedPlayer, String> playerCanRegister = new HashMap<>();
 
 	public class AntiBotCase {
 
@@ -55,24 +62,56 @@ public class AntiBotHandler {
 			boolean isWhitelist = olympaVpn.getWhitelistUsers() != null && olympaVpn.getWhitelistUsers().contains(connection.getName());
 			if (isWhitelist)
 				return;
-			// 1 semaine
-			if (enabled && Utils.getCurrentTimeInSeconds() - cache.getOlympaPlayer().getFirstConnection() < 604800 && !"France".equals(olympaVpn.getCountry()))
-				event.setCancelReason(BungeeUtils.connectScreen("&eBienvenue %s sur Olympa\n" +
-						"&6On dirait que tu nous rejoins au mauvais moment, nous subissons une attaque de bot\n" +
-						"&6Tu es l'un des rares joueurs à ne pas pouvoir te connecter, contacte un staff haut gradé\n" +
-						"&6(avec ce screen) pour qu'il t'ajoute à la whitelist des VPN manuellement.\n\n" +
-						"&eTu peux aussi attendre, le temps que l'attaque de bots s'arrête.", connection.getName()));
+			long currentTimeSeconds = Utils.getCurrentTimeInSeconds();
+			// Allow 2 username on same IP by mounth of ip detected
+			//			boolean hasTooManyUserOnSameIp = (currentTimeSeconds - olympaVpn.getTime()) / 2628000 * 2 < olympaVpn.getUsers().size();
+			if (enabled) {
+				// Disallow not french people with account created more than 1 week
+				boolean accountOtherCountryTooFreshlyCreated = currentTimeSeconds - cache.getOlympaPlayer().getFirstConnection() < 604800 && !"France".equals(olympaVpn.getCountry());
+				if (accountOtherCountryTooFreshlyCreated) {
+					event.setCancelReason(BungeeUtils.connectScreen("&eBienvenue %s sur Olympa&r\n" +
+							"&6On dirait que tu nous rejoins au mauvais moment, nous subissons une attaque de bot&r\n" +
+							"&6Tu es l'un des rares joueurs à ne pas pouvoir te connecter, contacte un staff haut gradé&r\n&r" +
+							"&6(avec ce screen) pour qu'il t'ajoute à la whitelist des VPN manuellement.&r\n\n" +
+							"&eTu peux aussi attendre, le temps que l'attaque de bots s'arrête.&r", connection.getName()));
+					event.setCancelled(true);
+				}
+			}
 			if (olympaVpn.isProxy() || olympaVpn.isHosting()) {
 				if (!connectionWithVpn.contains(ip))
 					connectionWithVpn.add(ip);
-				if (connectionWithVpn.size() > 3)
+				if (connectionWithVpn.size() >= 3)
 					setEnable(true, null);
 				LinkSpigotBungee.getInstance().sendMessage("&cVPN Détecté en %s Pseudo %s IP %s", olympaVpn.getCountry(), connection.getName(), ip);
-				event.setCancelReason(BungeeUtils.connectScreen("&cImpossible d'utiliser un VPN.\n\n&e&lSi tu penses qu'il y a une erreur, contacte un membre du staff."));
+				event.setCancelReason(BungeeUtils.connectScreen("&cImpossible d'utiliser un VPN.\n\n&e&lSi tu penses qu'il y a une erreur, contacte un membre du staff.&r"));
 				event.setCancelled(true);
 			}
 		}
 
+		public boolean canRegisterOrLogin(ProxiedPlayer proxiedPlayer, String[] args, String command) {
+			if (enabled)
+				if (!playerCanRegister.containsKey(proxiedPlayer) || args.length < 2 || !playerCanRegister.get(proxiedPlayer).equals(args[1])) {
+					String newCode = generateRandomWord();
+					playerCanRegister.put(proxiedPlayer, newCode);
+					proxiedPlayer.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT, "&4JE NE SUIS PAS UN ROBOT &c[&2OUI&c]&4.", command + " " + args[0] + " " + newCode,
+							"Clique ici pour continuer"));
+					return false;
+				}
+			return true;
+		}
+
+	}
+
+	private static String generateRandomWord() {
+		int wordLength = 10;
+		Random r = new Random();
+		StringBuilder sb = new StringBuilder(wordLength);
+		for (int i = 0; i < wordLength; i++) {
+			char tmp = (char) ('a' + r.nextInt('z' - 'a'));
+			sb.append(tmp);
+		}
+		String code = sb.toString();
+		return code;
 	}
 
 	private boolean enabled = false;
@@ -106,7 +145,7 @@ public class AntiBotHandler {
 					wantToDisable++;
 				else
 					return true;
-		} else if (!manualModification && (queueTooLarge || connectionWithVpn.size() > 2 || newConnectionCracked.size() > 5))
+		} else if (!manualModification && (queueTooLarge || connectionWithVpn.size() >= 3 || newConnectionCracked.size() > 5))
 			return true;
 		return false;
 	}
@@ -114,6 +153,7 @@ public class AntiBotHandler {
 	public void enable() {
 		if (enabled)
 			return;
+		wantToDisable = 0;
 		enabled = true;
 		printInfo(null);
 	}
@@ -130,12 +170,13 @@ public class AntiBotHandler {
 	public void disable() {
 		if (!enabled)
 			return;
+		wantToDisable = 0;
 		enabled = false;
 		printInfo(null);
 	}
 
-	public void setStatus(ProxiedPlayer player, Boolean enable) {
-		String playerName = player.getName();
+	public void setStatus(CommandSender sender, Boolean enable) {
+		String playerName = sender.getName();
 		if (enable != null) {
 			setEnable(enable, playerName);
 			if (!enable)
@@ -149,11 +190,11 @@ public class AntiBotHandler {
 			else
 				manualModification = false;
 		}
-		player.sendMessage(Prefix.DEFAULT.formatMessageB("&eL'antibot est désormais %s&7.", getStatus()));
+		sender.sendMessage(Prefix.DEFAULT.formatMessageB("&eL'antibot est désormais %s&7.", getStatus()));
 	}
 
-	public void showStatus(ProxiedPlayer player) {
-		player.sendMessage(Prefix.DEFAULT.formatMessageB("&eL'antibot est actuellement %s&7.", getStatus()));
+	public void showStatus(CommandSender sender) {
+		sender.sendMessage(Prefix.DEFAULT.formatMessageB("&eL'antibot est actuellement %s&7.", getStatus()));
 	}
 
 	private void toggleEnable(String source) {

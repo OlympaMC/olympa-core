@@ -1,8 +1,5 @@
 package fr.olympa.core.bungee.security;
 
-import java.util.concurrent.TimeUnit;
-
-import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.core.bungee.antibot.AntiBotHandler;
 
 public class SecurityHandler implements Cloneable {
@@ -36,7 +33,7 @@ public class SecurityHandler implements Cloneable {
 
 	public SecurityHandler() {
 		setDefault();
-		LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> pingBeforeJoin = true, 20, TimeUnit.SECONDS);
+		//		LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> pingBeforeJoin = true, 20, TimeUnit.SECONDS);
 	}
 
 	public void setDefault() {
@@ -50,11 +47,11 @@ public class SecurityHandler implements Cloneable {
 	}
 
 	public void antiBotConfig() {
-		pingBeforeJoin = false;
+		pingBeforeJoin = true;
 		checkCorrectEntredIp = true;
 		checkCorrectEntredIpNumber = true;
 		checkVpn = true;
-		checkVpnOnMotd = true;
+		checkVpnOnMotd = false;
 		allowCrack = true;
 		allowPremium = true;
 	}

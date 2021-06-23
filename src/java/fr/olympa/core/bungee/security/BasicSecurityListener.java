@@ -76,7 +76,7 @@ public class BasicSecurityListener implements Listener {
 			event.setCancelled(true);
 		}
 
-		if (securityHandler.isPingBeforeJoin()) {
+		if (securityHandler.isPingBeforeJoin() || securityHandler.getAntibot().isEnable()) {
 			String test = cache.asMap().get(ip);
 			if (test == null) {
 				event.setCancelReason(BungeeUtils.connectScreen("&7[&cSécurité&7] &2Actualise la liste des serveurs pour te connecter.&r"));

@@ -11,6 +11,7 @@ import fr.olympa.core.bungee.ban.execute.SanctionExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.bungee.login.HandlerLogin;
+import fr.olympa.core.bungee.security.SecurityHandler;
 import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -44,16 +45,12 @@ public class LoginCommand extends BungeeCommand {
 			sendError("Tu n'as pas de mot de passe. Pour le créer, fais &4/register <mot de passe>&c.");
 			return;
 		}
-
 		if (args.length == 0 || args.length > 2) {
 			sendUsage();
 			return;
 		}
-
-		if (olympaPlayer.getPassword() == null) {
-			sendUsage();
+		if (!SecurityHandler.getInstance().getAntibot().getCase().canRegisterOrLogin(proxiedPlayer, args, "/login"))
 			return;
-		}
 		String testPassword = args[0];
 		if (!olympaPlayer.isSamePassword(testPassword)) {
 			String ip = proxiedPlayer.getAddress().getAddress().getHostAddress();
