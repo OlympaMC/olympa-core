@@ -57,7 +57,7 @@ public class StaffChatCommand extends BungeeCommand implements TabExecutor {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public Iterable<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		if (args.length == 0) {
 
 			List<String> reasons = Arrays.asList("on", "off");

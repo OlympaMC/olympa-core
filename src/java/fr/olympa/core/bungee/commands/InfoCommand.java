@@ -149,7 +149,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		if (args.length == 1) {
 			List<String> postentielNames;
 			postentielNames = Utils.startWords(args[0], AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));

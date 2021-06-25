@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.bungee.utils.BungeeUtils;
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.server.OlympaServer;
@@ -12,7 +13,6 @@ import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -38,7 +38,7 @@ public class ServersListener implements Listener {
 		if (AuthListener.wait.contains(player.getName()))
 			return; // il est en cours de suppression = il a quitté le serveur de lui-même
 
-		OlympaBungee.getInstance().sendMessage("§6" + player.getName() + "§7 a été kick pour \"§e" + kickReason + "§7\" (état : " + event.getState() + ")");
+		OlympaBungee.getInstance().sendMessage("§6" + player.getName() + "§7 a été kick pour \"§e" + kickReason + "§7\" (état : " + event.getState() + ") " + event.getCause().name());
 		if (kickReason.contains("whitelist")) {
 			TxtComponentBuilder.of(Prefix.NONE, "Tu n'as pas accès au serveur &4%s&c.", serverKicked.getName());
 			return;
@@ -71,16 +71,20 @@ public class ServersListener implements Listener {
 					"Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter environ 30 secondes avant d'être reconnecté automatiquement.")));
 			ServersConnection.tryConnect(player, olympaServer, true);
 			return;
-		} else if (kickReason.startsWith("Outdated client! Please use")) {
-			String serverVersion = kickReason.replaceFirst("Outdated client! Please use ", "");
-			List<ProtocolAPI> playerVersion = ProtocolAPI.getAll(player.getPendingConnection().getVersion());
-			event.setKickReasonComponent(TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du Serveur %s > Ta version (%s)", serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
-		} else if (kickReason.startsWith("Outdated server! I'm still on")) {
-			String serverVersion = kickReason.replaceFirst("Outdated server! I'm still on ", "");
-			List<ProtocolAPI> playerVersion = ProtocolAPI.getAll(player.getPendingConnection().getVersion());
-			event.setKickReasonComponent(TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du Serveur %s < Ta version (%s)", serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
 		}
 		if (!kickReason.contains("ban")) {
+			if (kickReason.startsWith("Outdated server! I'm still on")) {
+				String serverVersion = kickReason.replaceFirst("Outdated server! I'm still on ", "");
+				List<ProtocolAPI> playerVersion = ProtocolAPI.getAll(player.getPendingConnection().getVersion());
+				event.setKickReasonComponent(
+						TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du Serveur %s < Ta version (%s)", serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
+			}
+			if (kickReason.startsWith("Outdated client! Please use")) {
+				String serverVersion = kickReason.replaceFirst("Outdated client! Please use ", "");
+				List<ProtocolAPI> playerVersion = ProtocolAPI.getAll(player.getPendingConnection().getVersion());
+				event.setKickReasonComponent(
+						TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du Serveur %s > Ta version (%s)", serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
+			}
 			//			if (player.getServer() != null && player.getServer().getInfo().getName().equals(serverKicked.getName())) {
 			//				event.setCancelled(true);
 			//				event.setCancelServer(null);

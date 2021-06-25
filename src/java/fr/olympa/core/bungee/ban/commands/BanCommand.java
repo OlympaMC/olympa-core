@@ -15,9 +15,8 @@ import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class BanCommand extends BungeeCommand implements TabExecutor {
+public class BanCommand extends BungeeCommand {
 
 	public BanCommand(Plugin plugin) {
 		super(plugin, "ban", OlympaCorePermissionsBungee.BAN_BAN_COMMAND, "tempban", "bann");
@@ -33,7 +32,7 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		switch (args.length) {
 		case 1:
 			return Utils.startWords(args[0], AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));

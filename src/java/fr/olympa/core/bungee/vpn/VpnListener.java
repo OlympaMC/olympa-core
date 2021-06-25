@@ -3,10 +3,10 @@ package fr.olympa.core.bungee.vpn;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import fr.olympa.api.bungee.utils.BungeeUtils;
 import fr.olympa.api.common.chat.Chat;
 import fr.olympa.core.bungee.motd.MotdListener;
 import fr.olympa.core.bungee.security.SecurityHandler;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.PendingConnection;

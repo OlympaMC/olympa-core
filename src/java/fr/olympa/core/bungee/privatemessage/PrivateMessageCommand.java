@@ -53,7 +53,7 @@ public class PrivateMessageCommand extends BungeeCommand {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public Iterable<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		Set<String> players = OlympaBungee.getInstance().getProxy().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toSet());
 		if (args.length == 0)
 			return players;

@@ -16,10 +16,10 @@ import com.viaversion.viaversion.ViaVersionPlugin;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.bukkit.platform.BukkitViaAPI;
 
-import fr.olympa.api.spigot.hook.VersionByPluginApi;
 import fr.olympa.api.spigot.utils.ProtocolAPI;
+import fr.olympa.api.spigot.version.PluginHandleVersion;
 
-public class ViaVersionHook implements VersionByPluginApi {
+public class ViaVersionHook implements PluginHandleVersion {
 
 	private ViaVersionPlugin viaVersionPlugin;
 	private BukkitViaAPI api;
@@ -40,16 +40,16 @@ public class ViaVersionHook implements VersionByPluginApi {
 	}
 
 	@Override
-	public List<Integer> getAllVersionsSupported() {
+	public List<Integer> getEnabledProtocols() {
 		if (viaVersionPlugin == null)
-			return null;
+			throw new UnsupportedOperationException("ViaVersion is not detected.");
 		return new ArrayList<>(api.getSupportedVersions());
 	}
 
 	@Override
-	public List<Integer> getAllVersionsUnSupported() {
+	public List<Integer> getDisabledProtocols() {
 		if (viaVersionPlugin == null)
-			return null;
+			throw new UnsupportedOperationException("ViaVersion is not detected.");
 		return api.getFullSupportedVersions().stream().filter(version -> !api.getSupportedVersions().contains(version)).collect(Collectors.toList());
 	}
 
@@ -72,16 +72,16 @@ public class ViaVersionHook implements VersionByPluginApi {
 	}
 
 	@Override
-	public ProtocolAPI getPlayerVersion(Player player) {
+	public int getPlayerProtocol(Player player) {
 		if (viaVersionPlugin == null)
-			return null;
-		return ProtocolAPI.get(api.getPlayerVersion(player));
+			throw new UnsupportedOperationException("ViaVersion is not detected.");
+		return api.getPlayerVersion(player);
 	}
 
 	@Override
 	public String getVersionsSupported() {
 		if (viaVersionPlugin == null)
-			return null;
+			throw new UnsupportedOperationException("ViaVersion is not detected.");
 		return api.getSupportedVersions().stream().map(ver -> ProtocolAPI.getName(ver)).distinct().collect(Collectors.joining(", "));
 	}
 

@@ -14,6 +14,7 @@ import fr.olympa.api.bungee.mojangapi.MojangAPI;
 import fr.olympa.api.bungee.mojangapi.objects.UuidResponse;
 import fr.olympa.api.bungee.player.CachePlayer;
 import fr.olympa.api.bungee.player.DataHandler;
+import fr.olympa.api.bungee.utils.BungeeUtils;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.common.provider.BungeeNewPlayerEvent;
@@ -21,7 +22,6 @@ import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.security.SecurityHandler;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import fr.olympa.core.bungee.utils.SpigotPlayerPack;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.PendingConnection;
@@ -56,7 +56,6 @@ public class AuthListener implements Listener {
 				return;
 			}
 		CachePlayer cache = new CachePlayer(name);
-
 		OlympaPlayer olympaPlayer;
 		try {
 			olympaPlayer = AccountProvider.getter().get(name);
@@ -159,7 +158,13 @@ public class AuthListener implements Listener {
 			return;
 		}
 		cache.setSubDomain(event.getConnection());
-		DataHandler.addPlayer(cache);
+		try {
+			DataHandler.addPlayer(cache);
+		} catch (Exception e) {
+			event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenu. Signale au staff. #ErrorCantData"));
+			event.setCancelled(true);
+			return;
+		}
 	}
 
 	@EventHandler(priority = (byte) 128)

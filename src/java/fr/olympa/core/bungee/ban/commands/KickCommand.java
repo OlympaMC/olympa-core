@@ -1,6 +1,7 @@
 package fr.olympa.core.bungee.ban.commands;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
@@ -60,7 +61,7 @@ public class KickCommand extends BungeeCommand {
 	//	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		switch (args.length) {
 		case 1:
 			return Utils.startWords(args[0], ProxyServer.getInstance().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toList()));

@@ -53,7 +53,7 @@ public class PlayerLogin {
 	private static Map<Player, PlayerLogin> w8forCaptcha = new HashMap<>();
 	private static NametagHandler nameTagHandler = (nametag, player, to) -> {
 		if (w8forCaptcha.containsKey(player.getPlayer()))
-			nametag.appendPrefix("&5[&dCAPTCHA&5]");
+			nametag.appendPrefix("§5[§dCAPTCHA§5]§r");
 	};
 	private static List<Class<? extends Packet<PacketListenerPlayIn>>> allowedPackets = List.of(PacketPlayInChat.class, PacketPlayInKeepAlive.class, PacketPlayInPositionLook.class,
 			PacketPlayInPosition.class, PacketPlayInLook.class, PacketPlayInWindowClick.class, PacketPlayInTeleportAccept.class, PacketPlayInBlockDig.class);
@@ -75,10 +75,8 @@ public class PlayerLogin {
 		ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
 			@Override
 			public void channelRead(ChannelHandlerContext channelHandlerContext, Object handledPacket) throws Exception {
-				if (w8forCaptcha.containsKey(p) && allowedPackets.stream().noneMatch(clazz -> handledPacket.getClass().isAssignableFrom(clazz))) {
-					System.out.println("packet IN " + handledPacket.getClass().getSimpleName() + " of " + p.getName() + " was cancel.");
+				if (w8forCaptcha.containsKey(p) && allowedPackets.stream().noneMatch(clazz -> handledPacket.getClass().isAssignableFrom(clazz)))
 					return;
-				}
 				super.channelRead(channelHandlerContext, handledPacket);
 			}
 		};
@@ -103,7 +101,7 @@ public class PlayerLogin {
 		playerLogin.playerContents.clearInventory();
 		playerLogin.playerContents.returnHisInventory();
 		if (playerLogin.location != null)
-			player.teleport(playerLogin.location);
+			core.getTask().runTask(() -> player.teleport(playerLogin.location));
 		remove(player);
 		return true;
 	}
@@ -144,6 +142,7 @@ public class PlayerLogin {
 			PlayerLogin.w8forCaptcha.put(player, pl);
 			handlePlayerPackets(player);
 		}
+		setMapToPlayer(player);
 		setHidingBlock(player);
 		player.sendTitle(ColorUtils.color("&4Captcha"), ColorUtils.color("&cEcrit les lettres en minuscules dans le chat"), 0, 100, 0);
 		player.setWalkSpeed(0);
@@ -153,7 +152,6 @@ public class PlayerLogin {
 				.forEach(p -> p.hidePlayer(core, player)));
 		if (core.getNameTagApi() != null)
 			core.getNameTagApi().callNametagUpdate(AccountProvider.getter().get(player.getUniqueId()));
-		setMapToPlayer(player);
 	}
 
 	public static void remove(Player player) {

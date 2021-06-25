@@ -14,7 +14,7 @@ public class BungeeLagCommand extends BungeeCommand {
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		sender.sendMessage(new TpsMessageBungee(proxiedPlayer == null).getInfoMessage().build());
+		sender.sendMessage(new TpsMessageBungee(getOlympaPlayer()).getInfoMessage().build());
 	}
 
 }

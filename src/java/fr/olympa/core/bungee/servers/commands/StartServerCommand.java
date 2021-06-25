@@ -11,10 +11,9 @@ import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.plugin.TabExecutor;
 
 @SuppressWarnings("deprecation")
-public class StartServerCommand extends BungeeCommand implements TabExecutor {
+public class StartServerCommand extends BungeeCommand {
 
 	private static String commandName;
 
@@ -36,7 +35,7 @@ public class StartServerCommand extends BungeeCommand implements TabExecutor {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public Iterable<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		if (args.length == 0)
 			return OlympaBungee.getInstance().getProxy().getServers().keySet();
 		else if (args.length == 1)

@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 
 import fr.olympa.api.bungee.command.BungeeComplexCommand;
 import fr.olympa.api.bungee.config.BungeeCustomConfig;
+import fr.olympa.api.bungee.utils.BungeeUtils;
 import fr.olympa.api.common.chat.TableGenerator;
 import fr.olympa.api.common.chat.TableGenerator.Alignment;
 import fr.olympa.api.common.chat.TableGenerator.Receiver;
@@ -19,7 +20,6 @@ import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.antibot.AntiBotHandler;
 import fr.olympa.core.bungee.connectionqueue.QueueHandler;
 import fr.olympa.core.bungee.security.SecurityHandler;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import fr.olympa.core.bungee.utils.SpigotPlayerPack;
 import fr.olympa.core.bungee.vpn.OlympaVpn;
 import fr.olympa.core.bungee.vpn.VpnHandler;
@@ -74,7 +74,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_TPS")
 	public void tps(CommandContext cmd) {
-		sender.sendMessage(new TpsMessageBungee(proxiedPlayer == null).getInfoMessage().build());
+		sender.sendMessage(new TpsMessageBungee(getOlympaPlayer()).getInfoMessage().build());
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")

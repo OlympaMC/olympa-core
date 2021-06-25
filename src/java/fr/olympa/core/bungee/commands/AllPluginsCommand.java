@@ -33,7 +33,7 @@ public class AllPluginsCommand extends BungeeCommand {
 			serverPlugins.extra(ServerInfoAdvanced.getPluginsToString(bungeeServerInfo.getPlugins(), isConsole(), true));
 			out.extra(serverPlugins);
 		}
-		servers.forEach(server -> {
+		servers.stream().forEach(server -> {
 			TxtComponentBuilder serverPlugins = new TxtComponentBuilder("&3" + server.getHumanName() + "&b > ");
 			serverPlugins.extra(ServerInfoAdvanced.getPluginsToString(server.getServerDebugInfo().getPlugins(), isConsole(), true));
 			out.extra(serverPlugins);

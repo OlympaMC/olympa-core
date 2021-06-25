@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,14 +13,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.spigot.hook.VersionByPluginApi;
 import fr.olympa.api.spigot.utils.ProtocolAPI;
-import fr.olympa.core.spigot.OlympaCore;
+import fr.olympa.api.spigot.version.PluginHandleVersion;
 import protocolsupport.ProtocolSupport;
 import protocolsupport.api.ProtocolSupportAPI;
 import protocolsupport.api.ProtocolVersion;
 
-public class ProtocolSupportHook implements VersionByPluginApi {
+public class ProtocolSupportHook implements PluginHandleVersion {
 
 	private ProtocolSupport protocolSupport;
 
@@ -44,13 +41,6 @@ public class ProtocolSupportHook implements VersionByPluginApi {
 	@Deprecated(forRemoval = true, since = "20/05/2020")
 	public void disable1_8() {
 		disableAllUnderI(ProtocolAPI.V1_8_9);
-	}
-
-	private String getBigVersion(String version) {
-		Matcher matcher = Pattern.compile("\\d+.\\d+").matcher(version);
-		if (matcher.find())
-			return matcher.group();
-		return null;
 	}
 
 	public ProtocolSupport getProtocolSupport() {
@@ -75,48 +65,25 @@ public class ProtocolSupportHook implements VersionByPluginApi {
 	@Override
 	public Entry<String, String> getRangeVersionArray() {
 		List<String> proto = getStreamProtocolSupported().map(ProtocolVersion::getName).collect(Collectors.toList());
-		String first = proto.get(0);
-		String last;
-		if (OlympaCore.getInstance().getViaVersionHook() == null)
-			last = proto.get(proto.size() - 1);
-		else
-			last = OlympaCore.getInstance().getViaVersionHook().getHighVersion();
-
+		String first = proto.get(proto.size() - 1);
+		String last = proto.get(0);
 		return new AbstractMap.SimpleEntry<>(first, last);
 	}
 
 	@Override
-	public List<Integer> getAllVersionsSupported() {
+	public List<Integer> getEnabledProtocols() {
 		return getStreamProtocolSupported().map(ProtocolVersion::getId).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<Integer> getAllVersionsUnSupported() {
-		return getStreamProtocolSupported().filter(protocol -> !ProtocolSupportAPI.isProtocolVersionEnabled(protocol)).map(ProtocolVersion::getId).collect(Collectors.toList());
+	public List<Integer> getDisabledProtocols() {
+		return Arrays.stream(ProtocolVersion.getAllSupported()).filter(protocol -> !ProtocolSupportAPI.isProtocolVersionEnabled(protocol)).map(ProtocolVersion::getId).collect(Collectors.toList());
 	}
-
-	//	@Override
-	//	public String getVersionsSupported() {
-	//		List<ProtocolVersion> proto = getProtocolSupported();
-	//		ProtocolVersion lastProtocol = proto.get(0);
-	//		if (proto.size() == 1)
-	//			return lastProtocol.getName();
-	//		ProtocolVersion firstProtocol = proto.get(proto.size() - 1);
-	//		return firstProtocol.getName() + "-" + lastProtocol.getName();
-	//	}
 
 	@Override
-	public ProtocolAPI getPlayerVersion(Player p) {
-		if (protocolSupport != null)
-			return ProtocolAPI.get(ProtocolSupportAPI.getProtocolVersion(p).getId());
-		return ProtocolAPI.getDefaultSpigotProtocol();
+	public int getPlayerProtocol(Player player) {
+		return ProtocolSupportAPI.getProtocolVersion(player).getId();
 	}
-
-	//	@Override
-	//	public String getVersionsUnSupported() {
-	//		// TODO Auto-generated method stub
-	//		return null;
-	//	}
 
 	@Override
 	public boolean disable(ProtocolAPI... versions) {

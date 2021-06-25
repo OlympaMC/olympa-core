@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.player.CachePlayer;
 import fr.olympa.api.bungee.player.DataHandler;
+import fr.olympa.api.bungee.utils.BungeeUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
@@ -16,7 +17,6 @@ import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.bungee.privatemessage.PrivateMessage;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;

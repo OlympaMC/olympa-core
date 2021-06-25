@@ -10,8 +10,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nullable;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -57,7 +55,6 @@ import fr.olympa.api.spigot.customevents.SpigotConfigReloadEvent;
 import fr.olympa.api.spigot.frame.ImageFrameManager;
 import fr.olympa.api.spigot.gui.Inventories;
 import fr.olympa.api.spigot.holograms.HologramsManager;
-import fr.olympa.api.spigot.hook.VersionByPluginApi;
 import fr.olympa.api.spigot.region.tracking.RegionManager;
 import fr.olympa.api.sql.DbConnection;
 import fr.olympa.api.sql.DbCredentials;
@@ -101,8 +98,7 @@ import fr.olympa.core.spigot.security.HelpCommand;
 import fr.olympa.core.spigot.security.PluginCommand;
 import fr.olympa.core.spigot.status.SetStatusCommand;
 import fr.olympa.core.spigot.status.StatusMotdListener;
-import fr.olympa.core.spigot.versionhook.VersionHandler;
-import fr.olympa.core.spigot.versionhook.ViaVersionHook;
+import fr.olympa.core.spigot.versionhook.VersionHook;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
@@ -116,8 +112,9 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 
 	protected DbConnection database = null;
 	private SwearHandler swearHandler;
-	private @Nullable VersionHandler versionHandler;
+	@Deprecated
 	private String lastVersion = "unknown";
+	@Deprecated
 	private String firstVersion = "unknown";
 	private ErrorOutputStream errorOutputStream;
 	public GamemodeCommand gamemodeCommand = null;
@@ -149,21 +146,9 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 		this.firstVersion = firstVersion;
 	}
 
-	public VersionHandler getVersionHandler() {
-		return versionHandler;
-	}
-
-	public @Nullable ViaVersionHook getViaVersionHook() {
-		if (versionHandler == null)
-			return null;
-		return versionHandler.getViaVersion();
-	}
-
 	@Override
-	public @Nullable VersionByPluginApi getProtocolSupport() {
-		if (versionHandler == null)
-			return null;
-		return versionHandler.getProtocolSupport();
+	public VersionHook getVersionHandler() {
+		return (VersionHook) versionHandler;
 	}
 
 	@Override
@@ -292,7 +277,7 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 
 			new AntiWD(this);
 			try {
-				getTask().runTask(() -> versionHandler = new VersionHandler(this));
+				getTask().runTask(() -> versionHandler = new VersionHook(this));
 			} catch (Exception e) {
 				getLogger().severe("Une erreur est survenue lors de la detection des versions avec ViaVersion ou ProtocolSupport.");
 				e.printStackTrace();
@@ -467,4 +452,5 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 	public boolean isDatabaseConnected() {
 		return dbConnected;
 	}
+
 }

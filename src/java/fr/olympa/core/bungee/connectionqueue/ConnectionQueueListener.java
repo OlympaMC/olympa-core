@@ -1,6 +1,6 @@
 package fr.olympa.core.bungee.connectionqueue;
 
-import fr.olympa.core.bungee.utils.BungeeUtils;
+import fr.olympa.api.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;

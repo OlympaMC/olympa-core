@@ -12,6 +12,7 @@ import fr.olympa.api.common.command.complex.CommandContext;
 import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.spigot.command.ComplexCommand;
 import fr.olympa.api.spigot.scoreboard.tab.Nametag;
+import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
@@ -23,8 +24,7 @@ public class NameTagCommand extends ComplexCommand {
 	private NametagAPI api;
 
 	public NameTagCommand(OlympaCore plugin, NametagAPI api) {
-		//		super(plugin, "nametag", "Gestion et test des nameTag", OlympaCorePermissions.NAMETAG_COMMAND, "nt");
-		super(plugin, "nametag", "Gestion et test des nameTag.", OlympaCorePermissionsSpigot.SPIGOT_LAG_COMMAND, "nt");
+		super(plugin, "nametag", "Gestion et test des nameTag.", OlympaCorePermissionsSpigot.NAMETAG_COMMAND);
 		this.api = api;
 	}
 
@@ -38,6 +38,7 @@ public class NameTagCommand extends ComplexCommand {
 		nameTag.appendPrefix(prefix);
 		nameTag.appendSuffix(suffix);
 		api.manager.changeFakeNametag(player.getName(), nameTag, sortPriority, List.of(getPlayer()));
+		sendMessage(Prefix.DEFAULT_GOOD, "NameTag modifié en '%s', uniquement pour toi.", nameTag.toString());
 	}
 
 	@Cmd()

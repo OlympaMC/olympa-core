@@ -1,6 +1,7 @@
 package fr.olympa.core.bungee.ban.commands;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.permission.OlympaPermission;
@@ -31,7 +32,7 @@ public class BanIpCommand extends BungeeCommand {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		switch (args.length) {
 		case 1:
 			return Utils.startWords(args[0], AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));

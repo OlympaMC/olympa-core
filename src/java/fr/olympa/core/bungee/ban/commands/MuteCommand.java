@@ -62,7 +62,7 @@ public class MuteCommand extends BungeeCommand {
 	//	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		switch (args.length) {
 		case 1:
 			List<String> postentielNames = Utils.startWords(args[0], AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));

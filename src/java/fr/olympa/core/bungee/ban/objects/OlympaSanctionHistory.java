@@ -2,9 +2,9 @@ package fr.olympa.core.bungee.ban.objects;
 
 import com.google.gson.Gson;
 
+import fr.olympa.api.bungee.utils.BungeeUtils;
 import fr.olympa.api.common.player.OlympaConsole;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 
 public class OlympaSanctionHistory {
 

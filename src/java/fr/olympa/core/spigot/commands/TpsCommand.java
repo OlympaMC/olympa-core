@@ -41,7 +41,7 @@ public class TpsCommand extends OlympaCommand implements Listener, ModuleApi<Oly
 			else
 				sendMessage(Prefix.DEFAULT_BAD, "La TPS ActionBar a été désactivée.");
 		} else
-			sendComponents(new TpsMessage(player == null).getInfoMessage().build());
+			sendComponents(new TpsMessage(getOlympaPlayer()).getInfoMessage().build());
 		return false;
 	}
 

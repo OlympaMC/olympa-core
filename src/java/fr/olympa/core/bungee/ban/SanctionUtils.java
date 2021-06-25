@@ -9,11 +9,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.bungee.utils.BungeeUtils;
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.config.Configuration;
 
 public class SanctionUtils {

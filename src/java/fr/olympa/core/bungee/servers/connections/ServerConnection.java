@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.sort.Sorting;
+import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.servers.MonitorInfoBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;
@@ -80,7 +81,7 @@ public class ServerConnection {
 		player.connect(serverInfo, callback, false, TIMEOUT);
 	}
 
-	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except, ProxiedPlayer w8forConnect) {
+	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except, ProxiedPlayer w8forConnect, ProtocolAPI protocol) {
 		if (!olympaServer.hasMultiServers())
 			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(MonitorInfoBungee::getServerInfo).orElse(null);
 

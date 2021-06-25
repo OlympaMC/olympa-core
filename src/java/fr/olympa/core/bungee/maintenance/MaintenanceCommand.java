@@ -117,7 +117,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		switch (args.length) {
 		case 0:
 			return arg2;

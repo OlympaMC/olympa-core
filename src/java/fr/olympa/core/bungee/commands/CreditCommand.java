@@ -45,7 +45,7 @@ public class CreditCommand extends BungeeCommand {
 			List<PluginInfoAdvanced> allPlugins = new ArrayList<>();
 			servers.stream().forEach(serv -> {
 				if (serv.getServerDebugInfo() != null && !serv.getServerDebugInfo().getPlugins().isEmpty())
-					serv.getServerDebugInfo().getPlugins().forEach(pl -> {
+					serv.getServerDebugInfo().getPlugins().stream().forEach(pl -> {
 						if (!pl.getAuthors().isEmpty())
 							allPlugins.add(pl);
 					});

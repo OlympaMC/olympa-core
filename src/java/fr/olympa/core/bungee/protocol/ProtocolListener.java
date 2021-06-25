@@ -1,10 +1,10 @@
 package fr.olympa.core.bungee.protocol;
 
 import fr.olympa.api.bungee.customevent.OlympaPlayerLoginEvent;
+import fr.olympa.api.bungee.utils.BungeeUtils;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PreLoginEvent;
@@ -19,7 +19,7 @@ public class ProtocolListener implements Listener {
 		if (event.isCancelled())
 			return;
 		PendingConnection connection = event.getConnection();
-		ProtocolAPI playerVersion = ProtocolAPI.get(connection.getVersion());
+		ProtocolAPI playerVersion = ProtocolAPI.getHighestVersion(connection.getVersion());
 		if (playerVersion == null || !playerVersion.isAllowed()) {
 			ProtocolAPI lastVersion = ProtocolAPI.getLastVersion();
 			event.setCancelReason(
@@ -35,7 +35,7 @@ public class ProtocolListener implements Listener {
 			return;
 		ProxiedPlayer player = event.getPlayer();
 		ProtocolAPI recommandedVersion = ProtocolAPI.getLastVersion();
-		ProtocolAPI playerVersion = ProtocolAPI.get(player.getPendingConnection().getVersion());
+		ProtocolAPI playerVersion = ProtocolAPI.getHighestVersion(player.getPendingConnection().getVersion());
 		if (playerVersion == null)
 			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Pour une meilleur expérience, il est préférable d'utiliser la version &2&n&l%s&c", recommandedVersion));
 		else if (!recommandedVersion.equals(playerVersion))

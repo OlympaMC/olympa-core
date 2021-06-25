@@ -16,6 +16,7 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
@@ -65,6 +66,15 @@ public class LoginChatListener implements Listener {
 	private void addLegacyText(TextComponent component, String legacyText) {
 		for (BaseComponent compo : TextComponent.fromLegacyText(legacyText))
 			component.addExtra(compo);
+	}
+
+	@EventHandler
+	public void onChat(TabCompleteEvent event) {
+		if (!(event.getReceiver() instanceof ProxiedPlayer))
+			return;
+		ProxiedPlayer player = (ProxiedPlayer) event.getReceiver();
+		if (DataHandler.isUnlogged(player))
+			event.setCancelled(true);
 	}
 
 	@EventHandler

@@ -11,8 +11,10 @@ import com.google.gson.Gson;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.bungee.command.BungeeCommandListener;
+import fr.olympa.api.bungee.command.BungeeCommandListenerWaterFall;
 import fr.olympa.api.bungee.config.BungeeCustomConfig;
 import fr.olympa.api.bungee.task.BungeeTaskManager;
+import fr.olympa.api.bungee.utils.BungeeUtils;
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.groups.SQLGroup;
 import fr.olympa.api.common.permission.OlympaPermission;
@@ -217,6 +219,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		pluginManager.registerListener(this, new PlayerSwitchListener());
 		pluginManager.registerListener(this, new PermissionCheckListener());
 		pluginManager.registerListener(this, new ShowPingMotdListener());
+		if (BungeeUtils.isWaterfall())
+			pluginManager.registerListener(this, new BungeeCommandListenerWaterFall());
 
 		new BanCommand(this).register();
 		new BanHistoryCommand(this).register();
@@ -492,11 +496,11 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 
 	@Override
 	public String getFirstVersion() {
-		return ProtocolAPI.getVersionsRangeBungee().getKey();
+		return ProtocolAPI.getBungeeVersionsNames().get(ProtocolAPI.getBungeeVersionsNames().size() - 1);
 	}
 
 	@Override
 	public String getLastVersion() {
-		return ProtocolAPI.getVersionsRangeBungee().getValue();
+		return ProtocolAPI.getBungeeVersionsNames().get(0);
 	}
 }
