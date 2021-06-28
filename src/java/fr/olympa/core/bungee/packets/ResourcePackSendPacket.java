@@ -1,27 +1,31 @@
 package fr.olympa.core.bungee.packets;
 
-import java.beans.ConstructorProperties;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.Objects;
 
 import com.google.common.hash.Hashing;
 
+import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.core.bungee.utils.SpigotPlayerPack;
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.protocol.AbstractPacketHandler;
 import net.md_5.bungee.protocol.DefinedPacket;
+import net.md_5.bungee.protocol.ProtocolConstants.Direction;
 
 /**
  * Created by Phoenix616 on 24.03.2015.
+ * Updated by SkytAsul since 2021.
  */
 public class ResourcePackSendPacket extends DefinedPacket {
 
 	private String url;
 	private String hash;
+	private boolean required = false;
+	private String prompt = null;
 
 	public ResourcePackSendPacket() {}
 
-	@ConstructorProperties({ "url", "hash" })
 	public ResourcePackSendPacket(String url, String hash) {
 		this.url = url;
 		if (hash != null)
@@ -34,19 +38,32 @@ public class ResourcePackSendPacket extends DefinedPacket {
 	public void handle(AbstractPacketHandler handler) throws Exception {
 		SpigotPlayerPack.sendPacket(this);
 	}
-
+	
 	@Override
-	public void read(ByteBuf buf) {
+	public void read(ByteBuf buf, Direction direction, int protocolVersion) {
 		url = readString(buf);
 		try {
-			hash = readString(buf);
+			hash = readString(buf, 40);
 		} catch (IndexOutOfBoundsException ignored) {} // No hash
+		if (protocolVersion >= ProtocolAPI.V1_17.getProtocolNumber()) {
+			required = buf.readBoolean();
+			if (buf.readBoolean()) prompt = readString(buf);
+		}
 	}
-
+	
 	@Override
-	public void write(ByteBuf buf) {
+	public void write(ByteBuf buf, Direction direction, int protocolVersion) {
 		writeString(url, buf);
 		writeString(hash, buf);
+		if (protocolVersion >= ProtocolAPI.V1_17.getProtocolNumber()) {
+			buf.writeBoolean(required);
+			if (prompt != null) {
+				buf.writeBoolean(true);
+				writeString(prompt, buf);
+			}else {
+				buf.writeBoolean(false);
+			}
+		}
 	}
 
 	public String getUrl() {
@@ -65,12 +82,28 @@ public class ResourcePackSendPacket extends DefinedPacket {
 		if (hash != null)
 			this.hash = hash.substring(0, 39).toLowerCase(Locale.ROOT);
 		else
-			this.hash = Hashing.sha1().hashString(getUrl(), StandardCharsets.UTF_8).toString().substring(0, 39).toLowerCase(Locale.ROOT);
+			this.hash = Hashing.sha1().hashString(url, StandardCharsets.UTF_8).toString().substring(0, 39).toLowerCase(Locale.ROOT);
 	}
 
+	public boolean isRequired() {
+		return required;
+	}
+	
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
+	
+	public String getPrompt() {
+		return prompt;
+	}
+	
+	public void setPrompt(String prompt) {
+		this.prompt = prompt;
+	}
+	
 	@Override
 	public String toString() {
-		return "ResourcePackSend(url=" + getUrl() + ", hash=" + getHash() + ")";
+		return "ResourcePackSend(url=" + url + ", hash=" + hash + ", required=" + required + ", prompt=" + prompt + ")";
 	}
 
 	@Override
@@ -79,22 +112,10 @@ public class ResourcePackSendPacket extends DefinedPacket {
 			return true;
 		else if (obj instanceof ResourcePackSendPacket) {
 			ResourcePackSendPacket other = (ResourcePackSendPacket) obj;
-			String this$url = getUrl();
-			String other$url = other.getUrl();
-			if (this$url == null && other$url == null)
-				return true;
-			if (this$url == null || other$url == null)
-				return false;
-			if (!this$url.equals(other$url))
-				return false;
-			String this$hash = getHash();
-			String other$hash = other.getHash();
-
-			if (this$hash == null && other$hash == null)
-				return true;
-			if (this$hash == null || other$hash == null)
-				return false;
-			return this$hash.equals(other$hash);
+			if (required != other.required) return false;
+			if (!Objects.equals(url, other.url)) return false;
+			if (!Objects.equals(hash, other.hash)) return false;
+			if (!Objects.equals(prompt, other.prompt)) return false;
 		}
 		return false;
 	}
@@ -102,10 +123,10 @@ public class ResourcePackSendPacket extends DefinedPacket {
 	@Override
 	public int hashCode() {
 		int result = 1;
-		String $url = getUrl();
-		result = result * 59 + ($url == null ? 0 : $url.hashCode());
-		String $hash = getHash();
-		result = result * 59 + ($hash == null ? 0 : $hash.hashCode());
+		result = result * 59 + (url == null ? 0 : url.hashCode());
+		result = result * 59 + (hash == null ? 0 : hash.hashCode());
+		result = result * 59 + (required ? 1 : 0);
+		result = result * 59 + (prompt == null ? 0 : prompt.hashCode());
 		return result;
 	}
 }
