@@ -1,9 +1,9 @@
 package fr.olympa.core.bungee.commands;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
-import fr.olympa.api.common.redis.RedisAccess;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.redis.RedisAccess;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 import redis.clients.jedis.JedisPubSub;

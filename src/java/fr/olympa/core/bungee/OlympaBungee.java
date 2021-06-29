@@ -3,7 +3,6 @@ package fr.olympa.core.bungee;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -12,32 +11,16 @@ import com.google.gson.Gson;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.bungee.command.BungeeCommandListener;
 import fr.olympa.api.bungee.command.BungeeCommandListenerWaterFall;
-import fr.olympa.api.bungee.config.BungeeCustomConfig;
-import fr.olympa.api.bungee.task.BungeeTaskManager;
+import fr.olympa.api.bungee.plugin.OlympaBungeeCore;
 import fr.olympa.api.bungee.utils.BungeeUtils;
-import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.groups.SQLGroup;
 import fr.olympa.api.common.permission.OlympaPermission;
-import fr.olympa.api.common.permission.list.OlympaAPIPermissionsBungee;
-import fr.olympa.api.common.permission.list.OlympaAPIPermissionsGlobal;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
-import fr.olympa.api.common.plugin.OlympaBungeeInterface;
-import fr.olympa.api.common.plugin.OlympaPluginInterface;
 import fr.olympa.api.common.provider.AccountProviderAPI;
-import fr.olympa.api.common.provider.AccountProviderGetter;
-import fr.olympa.api.common.redis.RedisAccess;
 import fr.olympa.api.common.redis.RedisChannel;
 import fr.olympa.api.common.redis.RedisClass;
-import fr.olympa.api.common.redis.RedisConnection;
-import fr.olympa.api.common.server.OlympaServer;
-import fr.olympa.api.common.server.ServerInfoBasic;
+import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.common.server.ServerStatus;
-import fr.olympa.api.spigot.utils.ProtocolAPI;
-import fr.olympa.api.sql.DbConnection;
-import fr.olympa.api.sql.DbCredentials;
-import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.CacheStats;
-import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.bungee.ban.commands.BanCommand;
 import fr.olympa.core.bungee.ban.commands.BanHistoryCommand;
 import fr.olympa.core.bungee.ban.commands.BanIpCommand;
@@ -109,18 +92,17 @@ import fr.olympa.core.bungee.staffchat.StaffChatListener;
 import fr.olympa.core.bungee.tabtext.TabTextListener;
 import fr.olympa.core.bungee.vpn.VpnHandler;
 import fr.olympa.core.bungee.vpn.VpnListener;
-import fr.olympa.core.bungee.vpn.VpnSql;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.provider.AccountProviderGetter;
+import fr.olympa.core.common.redis.RedisAccess;
+import fr.olympa.core.common.sql.DbConnection;
+import fr.olympa.core.common.sql.DbCredentials;
+import fr.olympa.core.common.sql.MySQL;
+import fr.olympa.core.common.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
-import net.md_5.bungee.config.Configuration;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPubSub;
 
-public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPluginInterface, OlympaBungeeInterface {
+public class OlympaBungee extends OlympaBungeeCore {
 
 	private static OlympaBungee instance;
 
@@ -128,30 +110,9 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 		return instance;
 	}
 
-	protected DbConnection database = null;
-	protected BungeeCustomConfig defaultConfig;
-	protected BungeeCustomConfig maintConfig;
-	private BungeeTaskManager task;
-	private ServerStatus status;
-	private String serverName = "bungee1";
-	private RedisAccess redisAccess;
-	private boolean redisConnected = false;
-	private boolean dbConnected = false;
-
-	@Override
-	public Configuration getConfig() {
-		return defaultConfig.getConfig();
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
-
 	@Override
 	public void onDisable() {
-		if (task != null)
-			task.cancelTaskByName("monitor_serveurs");
+		super.onDisable();
 		//		RedisAccess.close();
 		if (database != null)
 			database.close();
@@ -160,179 +121,118 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 
 	@Override
 	public void onLoad() {
+		super.onLoad();
 		instance = this;
 		LinkSpigotBungee.Provider.link = this;
 	}
 
 	@Override
 	public void onEnable() {
-		OlympaPermission.registerPermissions(OlympaCorePermissionsBungee.class);
-		OlympaPermission.registerPermissions(OlympaAPIPermissionsGlobal.class);
-		OlympaPermission.registerPermissions(OlympaAPIPermissionsBungee.class);
-
-		new RestartBungeeCommand(this).register();
-		task = new BungeeTaskManager(this);
-		defaultConfig = new BungeeCustomConfig(this, "config");
-		defaultConfig.loadSafe();
-		defaultConfig.addTask("redis_config", config -> {
-			redisAccess = RedisAccess.init(config.getConfig());
-			AccountProviderAPI.setRedisConnection(redisAccess);
-		});
-		maintConfig = new BungeeCustomConfig(this, "maintenance");
-		maintConfig.loadSafe();
-		status = ServerStatus.get(maintConfig.getConfig().getString("settings.status"));
-		setupDatabase();
 		try {
-			MySQL sql = new MySQL(database);
-			AccountProviderAPI.init(sql, new AccountProviderGetter(sql));
-		} catch (SQLException ex) {
-			sendMessage("§cUne erreur est survenue lors du chargement du MySQL.");
-			ex.printStackTrace();
-		}
-		new VpnSql(database);
-		setupRedis();
+			super.onEnable();
+			OlympaPermission.registerPermissions(OlympaCorePermissionsBungee.class);
 
-		// BungeeTaskManager tasks = new BungeeTaskManager(this);
-		// tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new
-		// RedisTestListener(), "test"));
-		// tasks.runTaskAsynchronously(() -> this.jedis.subscribe(new
-		// OlympaPlayerBungeeReceiveListener(), "OlympaPlayerReceive"));
+			new RestartBungeeCommand(this).register();
+			setupDatabase();
+			defaultConfig.addTask("redis_config", config -> {
+				redisAccess = RedisAccess.init(config.getConfig());
+				AccountProviderAPI.setRedisConnection(redisAccess);
+			});
+			setupRedis();
+			defaultConfig.addTask("db_config", config -> {
+				getDatabaseHandler().updateCredentials(new DbCredentials(config.getConfig()));
+			});
+			try {
+				MySQL sql = new MySQL(getDatabaseHandler());
+				AccountProviderAPI.init(sql, new AccountProviderGetter(sql));
+			} catch (SQLException ex) {
+				sendMessage("§cUne erreur est survenue lors du chargement du MySQL.");
+				ex.printStackTrace();
+			}
 
-		PluginManager pluginManager = getProxy().getPluginManager();
-		pluginManager.registerListener(this, new MotdListener());
-		pluginManager.registerListener(this, new MaintenanceListener());
-		pluginManager.registerListener(this, new AuthListener());
-		pluginManager.registerListener(this, new BasicSecurityListener());
-		pluginManager.registerListener(this, new SanctionListener());
-		pluginManager.registerListener(this, new ServersListener());
-		// pluginManager.registerListener(this, new TestListener());
-		pluginManager.registerListener(this, new PrivateMessageListener());
-		pluginManager.registerListener(this, new LoginChatListener());
-		pluginManager.registerListener(this, new FailsPasswordEvent());
-		pluginManager.registerListener(this, new VpnListener());
-		pluginManager.registerListener(this, new OlympaLoginListener());
-		pluginManager.registerListener(this, new StaffChatListener());
-		pluginManager.registerListener(this, new ProtocolListener());
-		pluginManager.registerListener(this, new TabTextListener());
-		pluginManager.registerListener(this, new BungeeCommandListener());
-		pluginManager.registerListener(this, new ConnectionQueueListener());
-		pluginManager.registerListener(this, new PlayerSwitchListener());
-		pluginManager.registerListener(this, new PermissionCheckListener());
-		pluginManager.registerListener(this, new ShowPingMotdListener());
-		if (BungeeUtils.isWaterfall())
-			pluginManager.registerListener(this, new BungeeCommandListenerWaterFall());
+			PluginManager pluginManager = getProxy().getPluginManager();
+			pluginManager.registerListener(this, new MotdListener());
+			pluginManager.registerListener(this, new MaintenanceListener());
+			pluginManager.registerListener(this, new AuthListener());
+			pluginManager.registerListener(this, new BasicSecurityListener());
+			pluginManager.registerListener(this, new SanctionListener());
+			pluginManager.registerListener(this, new ServersListener());
+			pluginManager.registerListener(this, new PrivateMessageListener());
+			pluginManager.registerListener(this, new LoginChatListener());
+			pluginManager.registerListener(this, new FailsPasswordEvent());
+			pluginManager.registerListener(this, new VpnListener());
+			pluginManager.registerListener(this, new OlympaLoginListener());
+			pluginManager.registerListener(this, new StaffChatListener());
+			pluginManager.registerListener(this, new ProtocolListener());
+			pluginManager.registerListener(this, new TabTextListener());
+			pluginManager.registerListener(this, new BungeeCommandListener());
+			pluginManager.registerListener(this, new ConnectionQueueListener());
+			pluginManager.registerListener(this, new PlayerSwitchListener());
+			pluginManager.registerListener(this, new PermissionCheckListener());
+			pluginManager.registerListener(this, new ShowPingMotdListener());
+			if (BungeeUtils.isWaterfall())
+				pluginManager.registerListener(this, new BungeeCommandListenerWaterFall());
 
-		new BanCommand(this).register();
-		new BanHistoryCommand(this).register();
-		new BanIpCommand(this).register();
-		new DelbanCommand(this).register();
-		new ForceKickCommand(this).register();
-		new KickCommand(this).register();
-		new MuteCommand(this).register();
-		new MuteCommand(this).register();
-		new UnbanCommand(this).register();
-		new UnmuteCommand(this).register();
-		new ReplyCommand(this).register();
-		new PrivateMessageCommand(this).register();
-		new PrivateMessageToggleCommand(this).register();
-		new ListServerCommand(this).register();
-		new ListPlayerCommand(this).register();
-		new MaintenanceCommand(this).register();
-		new LoginCommand(this).register().registerPreProcess();
-		new RegisterCommand(this).register().registerPreProcess();
-		new PasswdCommand(this).register().registerPreProcess();
-		new EmailCommand(this).register();
-		new ServerSwitchCommand(this).register();
-		new InfoCommand(this).register();
-		new StaffChatCommand(this).register();
-		new StartServerCommand(this).register();
-		new StopServerCommand(this).register();
-		new RestartServerCommand(this).register();
-		new LobbyCommand(this).register();
-		new LeaveQueueCommand(this).register();
-		new BungeeLagCommand(this).register();
-		new RedisCommand(this).register();
-		new BungeePingCommand(this).register();
-		new BungeeQueueCommand(this).register();
-		//		new BungeeConfigCommand(this).register();
-		new NewBungeeCommand(this).register();
-		new BungeeBroadcastCommand(this).register();
-		new NickCommand(this).register();
-		new IpCommand(this).register();
-		new CreditCommand(this).register();
-		new ShowPingMotdCommand(this).register();
-		new AllPluginsCommand(this).register();
+			new BanCommand(this).register();
+			new BanHistoryCommand(this).register();
+			new BanIpCommand(this).register();
+			new DelbanCommand(this).register();
+			new ForceKickCommand(this).register();
+			new KickCommand(this).register();
+			new MuteCommand(this).register();
+			new MuteCommand(this).register();
+			new UnbanCommand(this).register();
+			new UnmuteCommand(this).register();
+			new ReplyCommand(this).register();
+			new PrivateMessageCommand(this).register();
+			new PrivateMessageToggleCommand(this).register();
+			new ListServerCommand(this).register();
+			new ListPlayerCommand(this).register();
+			new MaintenanceCommand(this).register();
+			new LoginCommand(this).register().registerPreProcess();
+			new RegisterCommand(this).register().registerPreProcess();
+			new PasswdCommand(this).register().registerPreProcess();
+			new EmailCommand(this).register();
+			new ServerSwitchCommand(this).register().registerPreProcess();
+			new InfoCommand(this).register();
+			new StaffChatCommand(this).register();
+			new StartServerCommand(this).register();
+			new StopServerCommand(this).register();
+			new RestartServerCommand(this).register();
+			new LobbyCommand(this).register();
+			new LeaveQueueCommand(this).register();
+			new BungeeLagCommand(this).register();
+			new RedisCommand(this).register();
+			new BungeePingCommand(this).register();
+			new BungeeQueueCommand(this).register();
+			//		new BungeeConfigCommand(this).register();
+			new NewBungeeCommand(this).register().registerPreProcess();
+			new BungeeBroadcastCommand(this).register();
+			new NickCommand(this).register();
+			new IpCommand(this).register();
+			new CreditCommand(this).register();
+			new ShowPingMotdCommand(this).register();
+			new AllPluginsCommand(this).register();
 
-		MonitorServers.init(this);
-		SQLGroup.init();
+			MonitorServers.init(this);
+			SQLGroup.init();
 
-		CacheStats.addCache("VPN", VpnHandler.cache);
-		CacheStats.addCache("WRONG_PASSWORD", HandlerLogin.timesFails);
-		CacheStats.addCache("REDIS_ASK_SERVER_OF_PLAYER", RedisSpigotSend.askPlayerServer);
-
-		//				try {
-		//					Field remoteAddressField = AbstractChannel.class.getDeclaredField("remoteAddress");
-		//					remoteAddressField.setAccessible(true);
-		//
-		//					Field serverChild = PipelineUtils.class.getField("SERVER_CHILD");
-		//					serverChild.setAccessible(true);
-		//
-		//					Field modifiersField = Field.class.getDeclaredField("modifiers");
-		//					modifiersField.setAccessible(true);
-		//					modifiersField.setInt(serverChild, serverChild.getModifiers() & ~Modifier.FINAL);
-		//
-		//					ChannelInitializer<Channel> bungeeChannelInitializer = PipelineUtils.SERVER_CHILD;
-		//
-		//					Method initChannelMethod = ChannelInitializer.class.getDeclaredMethod("initChannel", Channel.class);
-		//					initChannelMethod.setAccessible(true);
-		//					serverChild.set(null, new ChannelInitializer<>() {
-		//						@Override
-		//						protected void initChannel(Channel channel) throws Exception {
-		//							initChannelMethod.invoke(bungeeChannelInitializer, channel);
-		//							channel.pipeline().addAfter(PipelineUtils.TIMEOUT_HANDLER, "haproxy-decoder", new HAProxyMessageDecoder());
-		//							channel.pipeline().addAfter("haproxy-decoder", "haproxy-handler", new ChannelInboundHandlerAdapter() {
-		//								@Override
-		//								public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		//									if (msg instanceof HAProxyMessage) {
-		//										HAProxyMessage message = (HAProxyMessage) msg;
-		//										remoteAddressField.set(channel, new InetSocketAddress(message.sourceAddress(), message.sourcePort()));
-		//									} else
-		//										super.channelRead(ctx, msg);
-		//								}
-		//							});
-		//						}
-		//					});
-		//				} catch (Exception e) {
-		//					getLogger().log(Level.SEVERE, e.getMessage(), e);
-		//					getProxy().stop();
-		//				}
-
-		sendMessage("&2" + getDescription().getName() + "&a (" + getDescription().getVersion() + ") est activé.");
-		CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
-
-		try {
-			BungeePackets.registerPackets();
-		} catch (ReflectiveOperationException e) {
+			CacheStats.addCache("VPN", VpnHandler.cache);
+			CacheStats.addCache("WRONG_PASSWORD", HandlerLogin.timesFails);
+			CacheStats.addCache("REDIS_ASK_SERVER_OF_PLAYER", RedisSpigotSend.askPlayerServer);
+			CacheStats.addDebugMap("PERMISSION", OlympaPermission.permissions);
+			try {
+				BungeePackets.registerPackets();
+			} catch (ReflectiveOperationException e) {
+				e.printStackTrace();
+			}
+			isEnable = true;
+			sendMessage("&2%s&a (%s) est activé.", getDescription().getName(), getDescription().getVersion());
+		} catch (Error | Exception e) {
+			setStatus(ServerStatus.MAINTENANCE);
+			getLogger().severe(String.format("Une erreur est survenu lors de l'activation de %s. Le serveur est désormais en maintenance.", this.getClass().getSimpleName()));
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void sendMessage(String message, Object... args) {
-		getProxy().getConsole().sendMessage(TextComponent.fromLegacyText(String.format(ColorUtils.color(getPrefixConsole() + message), args)));
-	}
-
-	@Override
-	public OlympaServer getOlympaServer() {
-		return OlympaServer.BUNGEE;
-	}
-
-	public void setDefaultConfig(BungeeCustomConfig defaultConfig) {
-		this.defaultConfig = defaultConfig;
-	}
-
-	public void setMaintConfig(BungeeCustomConfig maintConfig) {
-		this.maintConfig = maintConfig;
 	}
 
 	private void setupDatabase(int... is) {
@@ -351,31 +251,6 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 			getTask().runTaskLater("db_setup", () -> setupDatabase(i), 10, TimeUnit.SECONDS);
 			dbConnected = false;
 		}
-	}
-
-	@Override
-	public void registerRedisSub(JedisPubSub sub, String channel) {
-		registerRedisSub(redisAccess.connect(), sub, channel);
-	}
-
-	@Override
-	public RedisConnection getRedisAccess() {
-		return redisAccess;
-	}
-
-	@Override
-	public void registerRedisSub(Jedis jedis, JedisPubSub sub, String channel) {
-		Thread t = new Thread(() -> {
-			jedis.subscribe(sub, channel);
-			jedis.disconnect();
-		}, "Redis sub " + channel);
-		Thread.UncaughtExceptionHandler h = (th, ex) -> {
-			ex.printStackTrace();
-			if (RedisAccess.INSTANCE != null)
-				registerRedisSub(RedisAccess.INSTANCE.connect(), sub, channel);
-		};
-		t.setUncaughtExceptionHandler(h);
-		t.start();
 	}
 
 	private void setupRedis(int... is) {
@@ -407,56 +282,13 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	}
 
 	@Override
-	public ServerStatus getStatus() {
-		return status;
-	}
-
-	@Override
-	public void setStatus(ServerStatus status) {
-		this.status = status;
-	}
-
-	@Override
-	public boolean isSpigot() {
-		return false;
-	}
-
-	@Override
 	public Connection getDatabase() throws SQLException {
 		return database.getConnection();
 	}
 
 	@Override
-	public BungeeCustomConfig getDefaultConfig() {
-		return defaultConfig;
-	}
-
-	public Configuration getMaintConfig() {
-		return maintConfig != null ? maintConfig.getConfig() : null;
-	}
-
-	public BungeeCustomConfig getMaintCustomConfig() {
-		return maintConfig;
-	}
-
-	@Override
-	public String getPrefixConsole() {
-		return "&f[&6" + getDescription().getName() + "&f] &e";
-	}
-
-	@Override
-	public String getServerName() {
-		return "bungee";
-	}
-
-	@Override
-	public BungeeTaskManager getTask() {
-		return task;
-	}
-
-	@Override
-	public void launchAsync(Runnable run) {
-		getTask().runTaskAsynchronously(run);
+	public DbConnection getDatabaseHandler() {
+		return (DbConnection) database;
 	}
 
 	@Override
@@ -465,42 +297,8 @@ public class OlympaBungee extends Plugin implements LinkSpigotBungee, OlympaPlug
 	}
 
 	@Override
-	public List<String> getPlayersNames() {
-		return ProxyServer.getInstance().getPlayers().stream().map(ProxiedPlayer::getDisplayName).collect(Collectors.toList());
+	public Collection<ServerInfoAdvanced> getMonitorServers() {
+		return MonitorServers.getServers().stream().map(monitorInfoBungee -> (ServerInfoAdvanced) monitorInfoBungee).collect(Collectors.toList());
 	}
 
-	@Override
-	public boolean isServerName(String serverName) {
-		return this.serverName.equals(serverName);
-	}
-
-	@Override
-	public void setServerName(String serverName) {
-		this.serverName = serverName;
-	}
-
-	@Override
-	public Collection<ServerInfoBasic> getMonitorServers() {
-		return MonitorServers.getServers().stream().map(monitorInfoBungee -> (ServerInfoBasic) monitorInfoBungee).collect(Collectors.toList());
-	}
-
-	@Override
-	public boolean isRedisConnected() {
-		return redisConnected;
-	}
-
-	@Override
-	public boolean isDatabaseConnected() {
-		return dbConnected;
-	}
-
-	@Override
-	public String getFirstVersion() {
-		return ProtocolAPI.getBungeeVersionsNames().get(ProtocolAPI.getBungeeVersionsNames().size() - 1);
-	}
-
-	@Override
-	public String getLastVersion() {
-		return ProtocolAPI.getBungeeVersionsNames().get(0);
-	}
 }

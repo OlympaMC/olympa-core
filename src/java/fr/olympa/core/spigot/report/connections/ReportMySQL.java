@@ -18,13 +18,13 @@ import java.util.stream.Stream;
 
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.player.OlympaPlayerInformations;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.common.report.OlympaReport;
 import fr.olympa.api.common.report.ReportStatus;
 import fr.olympa.api.common.report.ReportStatusInfo;
 import fr.olympa.api.common.sql.statement.OlympaStatement;
 import fr.olympa.api.common.sql.statement.StatementType;
-import fr.olympa.api.sql.DbConnection;
+import fr.olympa.core.common.provider.AccountProvider;
+import fr.olympa.core.common.sql.DbConnection;
 
 public class ReportMySQL {
 

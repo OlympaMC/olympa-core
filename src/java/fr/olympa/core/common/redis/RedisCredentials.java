@@ -1,4 +1,4 @@
-package fr.olympa.api.common.redis;
+package fr.olympa.core.common.redis;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;

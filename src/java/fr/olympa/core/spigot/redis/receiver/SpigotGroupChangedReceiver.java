@@ -4,11 +4,11 @@ import org.bukkit.entity.Player;
 
 import fr.olympa.api.common.groups.OlympaGroup;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
-import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.common.provider.AccountProvider;
+import fr.olympa.core.common.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import redis.clients.jedis.JedisPubSub;
@@ -22,7 +22,7 @@ public class SpigotGroupChangedReceiver extends JedisPubSub {
 		if (from.equals(OlympaCore.getInstance().getServerName()))
 			return;
 		OlympaPlayer newOlympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(args[1], OlympaPlayer.class);
-		Player player = newOlympaPlayer.getPlayer();
+		Player player = (Player) newOlympaPlayer.getPlayer();
 		if (player == null)
 			return;
 		String[] infoGroup = args[2].split(":");

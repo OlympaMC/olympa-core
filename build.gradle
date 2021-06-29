@@ -92,7 +92,7 @@ def getDate() {
 group = 'fr.olympa'
 version = '0.0.1-SNAPSHOT'
 description = 'olympa-core'
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_16
 
 publishing {
     publications {

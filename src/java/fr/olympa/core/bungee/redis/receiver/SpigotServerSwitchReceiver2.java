@@ -1,10 +1,10 @@
 package fr.olympa.core.bungee.redis.receiver;
 
 import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.servers.MonitorInfoBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -25,7 +25,7 @@ public class SpigotServerSwitchReceiver2 extends JedisPubSub {
 		if (server == null)
 			serverName = args[1];
 		else {
-			MonitorInfoBungee monitorInfo = MonitorServers.getMonitor(server);
+			ServerInfoAdvancedBungee monitorInfo = MonitorServers.getMonitor(server);
 			if (monitorInfo == null)
 				serverName = Utils.capitalize(server.getName());
 			else

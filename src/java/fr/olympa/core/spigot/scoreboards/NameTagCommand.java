@@ -9,10 +9,10 @@ import org.bukkit.entity.Player;
 
 import fr.olympa.api.common.command.complex.Cmd;
 import fr.olympa.api.common.command.complex.CommandContext;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.spigot.command.ComplexCommand;
 import fr.olympa.api.spigot.scoreboard.tab.Nametag;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
 import net.minecraft.server.v1_16_R3.EntityPlayer;

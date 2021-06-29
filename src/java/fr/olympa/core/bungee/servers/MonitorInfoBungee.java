@@ -48,12 +48,12 @@ public class MonitorInfoBungee extends ServerInfoBasic {
 			if (motd.length >= 2 && RegexMatcher.FLOAT.is(motd[1]))
 				tps = RegexMatcher.FLOAT.parse(motd[1]);
 			if (motd.length >= 3 && RegexMatcher.INT.is(motd[2]))
-				ramUsage = RegexMatcher.INT.parse(motd[2]);
+				ramUsage = RegexMatcher.LONG.parse(motd[2]);
 			if (motd.length >= 4) {
 				String[] threadsWithAllThreads = motd[3].split("/");
 				threads = RegexMatcher.INT.parse(threadsWithAllThreads[0]);
 				if (threadsWithAllThreads.length > 1)
-					allThreads = RegexMatcher.INT.parse(threadsWithAllThreads[1]);
+					allThreads = RegexMatcher.LONG.parse(threadsWithAllThreads[1]);
 			}
 			if (motd.length >= 5)
 				firstVersion = motd[4];

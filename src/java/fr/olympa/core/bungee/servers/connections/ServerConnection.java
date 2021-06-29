@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.common.sort.Sorting;
 import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.utils.Prefix;
@@ -83,7 +84,7 @@ public class ServerConnection {
 
 	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except, ProxiedPlayer w8forConnect, ProtocolAPI protocol) {
 		if (!olympaServer.hasMultiServers())
-			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(MonitorInfoBungee::getServerInfo).orElse(null);
+			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(ServerInfoAdvancedBungee::getServerInfo).orElse(null);
 
 		Map<ServerInfo, Integer> servers = MonitorServers.getServers(olympaServer).values().stream()
 				.filter(x -> x.getStatus().canConnect() && (except == null || !except.getName().equals(x.getName())) && (!x.getOlympaServer().hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
@@ -98,13 +99,12 @@ public class ServerConnection {
 	public ServerInfo findOther(ServerInfo other) {
 		if (!olympaServer.hasMultiServers())
 			return null;
-		List<MonitorInfoBungee> monitorInfos = MonitorServers.getServers(olympaServer).entrySet().stream()
+		List<ServerInfoAdvancedBungee> monitorInfos = MonitorServers.getServers(olympaServer).entrySet().stream()
 				.filter(e -> (other == null || !e.getValue().getServerInfo().equals(other)) && e.getValue().getStatus().canConnect()).map(e -> e.getValue())
 				.collect(Collectors.toList());
 		if (monitorInfos.isEmpty())
 			return null;
-		LinkedHashMap<ToLongFunction<MonitorInfoBungee>, Boolean> sortArgs = new LinkedHashMap<>();
-
+		LinkedHashMap<ToLongFunction<ServerInfoAdvancedBungee>, Boolean> sortArgs = new LinkedHashMap<>();
 		sortArgs.put(mi -> mi.getStatus().ordinal(), false);
 		sortArgs.put(mi -> mi.getMaxPlayers() - mi.getOnlinePlayers(), true);
 		monitorInfos.sort(new Sorting<>(sortArgs));

@@ -23,7 +23,6 @@ import fr.olympa.api.common.command.complex.CommandContext;
 import fr.olympa.api.common.groups.OlympaGroup;
 import fr.olympa.api.common.permission.OlympaPermission;
 import fr.olympa.api.common.permission.OlympaSpigotPermission;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.common.player.Gender;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.provider.OlympaPlayerObject;
@@ -31,6 +30,7 @@ import fr.olympa.api.common.server.ServerFrameworkType;
 import fr.olympa.api.spigot.command.ComplexCommand;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.core.spigot.OlympaCore;
 
 @SuppressWarnings("deprecation")
@@ -147,7 +147,7 @@ public class PermissionCommand extends ComplexCommand {
 			}
 		} else if (cmd.getArgument(1) instanceof OlympaPlayer) {
 			op = cmd.getArgument(1);
-			target = op.getPlayer();
+			target = (Player) op.getPlayer();
 			if (spigotPerm.hasPermission(op.getUniqueId())) {
 				sendError("Le joueur &4%s&c a déjà la permission &4%s&c.", op.getName(), permName);
 				return;
@@ -204,7 +204,7 @@ public class PermissionCommand extends ComplexCommand {
 			}
 		} else if (cmd.getArgument(1) instanceof OlympaPlayer) {
 			op = cmd.getArgument(1);
-			target = op.getPlayer();
+			target = (Player) op.getPlayer();
 			if (spigotPerm.hasPermission(op.getUniqueId())) {
 				sendError("Le joueur &4%s&c a déjà la permission &4%s&c.", op.getName(), permName);
 				return;
@@ -252,11 +252,15 @@ public class PermissionCommand extends ComplexCommand {
 			OlympaPlayer op = cmd.getArgument(0);
 			OfflinePlayer target = Bukkit.getOfflinePlayer(op.getUniqueId());
 			List<String> extraPermission = OlympaPermission.permissions.entrySet().stream().filter(entry -> entry.getValue().isInAllowedBypass(op.getUniqueId())).map(Entry::getKey).collect(Collectors.toList());
-			List<String> noPermission = OlympaPermission.permissions.entrySet().stream().filter(entry -> !entry.getValue().hasPermission(op.getUniqueId())).map(Entry::getKey).collect(Collectors.toList());
+			List<String> noPermission = OlympaPermission.permissions.entrySet().stream().filter(entry -> !entry.getValue().hasPermission(op)).map(Entry::getKey).collect(Collectors.toList());
 			List<String> customPermission = op.getCustomPermissions().entrySet().stream().map(e -> e.getKey() + e.getValue() != null ? " (" + e.getValue().getNameCaps() + ")" : "").collect(Collectors.toList());
-			sendMessage(Prefix.DEFAULT_GOOD, "&2%s&a a %s permission%s sur %s. %s", op.getName(), allPerms.size() - noPermission.size(), noPermission.size() > 1 ? "s" : "", allPerms.size(), target.isOp() ? "&a[&2OP&a]" : "");
-			if (!noPermission.isEmpty())
+			sendMessage(Prefix.DEFAULT_GOOD, "&2%s&a a %s permission%s sur %s. %s", op.getName(), allPerms.size() - noPermission.size(), noPermission.size() > 1 ? "s" : "", allPerms.size(),
+					target != null && target.isOp() ? "&a[&2OP&a]" : "");
+			if (!noPermission.isEmpty() && noPermission.size() < 20)
 				sendMessage(Prefix.NONE, "&cIl manque l%s permission%s :\n&6%s", noPermission.size() > 1 ? "es" : "a", noPermission.size() > 1 ? "s" : "", String.join("&e, &6", noPermission));
+			else
+				sendMessage(Prefix.NONE, "&cIl lui manque %d permissions.", noPermission.size());
+
 			if (!extraPermission.isEmpty())
 				sendMessage(Prefix.ERROR, "Extra permission%s :\n&6%s", extraPermission.size() > 1 ? "s" : "", String.join("&e, &6", extraPermission));
 			if (!customPermission.isEmpty())

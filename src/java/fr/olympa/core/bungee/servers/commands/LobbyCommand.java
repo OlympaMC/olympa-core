@@ -1,11 +1,11 @@
 package fr.olympa.core.bungee.servers.commands;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.servers.ServersConnection;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.ServerConnectEvent.Reason;

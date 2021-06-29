@@ -1,4 +1,4 @@
-package fr.olympa.api.common.permission.list;
+package fr.olympa.core.common.permission.list;
 
 import fr.olympa.api.bungee.permission.OlympaBungeePermission;
 import fr.olympa.api.common.groups.OlympaGroup;

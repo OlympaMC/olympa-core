@@ -12,7 +12,6 @@ import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.plugin.PluginInfoAdvanced;
 import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.servers.MonitorInfoBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -27,8 +26,8 @@ public class CreditCommand extends BungeeCommand {
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		TxtComponentBuilder out = new TxtComponentBuilder("&eListe non exhaustive des développeurs de nos plugins > ").extraSpliter("\n\n");
-		Collection<MonitorInfoBungee> allServers = MonitorServers.getServers();
-		List<String> serversNames = allServers.stream().filter(mib -> mib.getServerDebugInfo() != null).map(mib -> mib.getOlympaServer().getNameCaps()).distinct().collect(Collectors.toList());
+		Collection<ServerInfoAdvancedBungee> allServers = MonitorServers.getServers();
+		List<String> serversNames = allServers.stream().filter(mib -> mib.hasFullInfos()).map(mib -> mib.getOlympaServer().getNameCaps()).distinct().collect(Collectors.toList());
 		ServerInfoAdvancedBungee bungeeServerInfo = new ServerInfoAdvancedBungee(OlympaBungee.getInstance());
 
 		if (bungeeServerInfo.getPlugins() != null && !bungeeServerInfo.getPlugins().isEmpty()) {
@@ -38,14 +37,13 @@ public class CreditCommand extends BungeeCommand {
 			out.extra(new TxtComponentBuilder("&6%s\n&2Devs Olympa &a%s\n&7Devs Plugin Public %s", bungeeServerInfo.getHumanName(), authorPluginOlympa, otherAuthors));
 		}
 		serversNames.stream().forEach(name -> {
-			List<MonitorInfoBungee> servers = allServers.stream().filter(mib -> mib.getServerDebugInfo() != null
-					&& mib.getServerDebugInfo().getPlugins() != null && !mib.getServerDebugInfo().getPlugins().isEmpty()
+			List<ServerInfoAdvancedBungee> servers = allServers.stream().filter(mib -> mib.hasFullInfos() && mib.getPlugins() != null && !mib.getPlugins().isEmpty()
 					&& name.equals(mib.getOlympaServer().getNameCaps()))
 					.collect(Collectors.toList());
 			List<PluginInfoAdvanced> allPlugins = new ArrayList<>();
 			servers.stream().forEach(serv -> {
-				if (serv.getServerDebugInfo() != null && !serv.getServerDebugInfo().getPlugins().isEmpty())
-					serv.getServerDebugInfo().getPlugins().stream().forEach(pl -> {
+				if (!serv.getPlugins().isEmpty())
+					serv.getPlugins().stream().forEach(pl -> {
 						if (!pl.getAuthors().isEmpty())
 							allPlugins.add(pl);
 					});

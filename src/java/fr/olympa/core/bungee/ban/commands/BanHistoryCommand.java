@@ -4,23 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.common.chat.ColorUtils;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
-import fr.olympa.api.common.provider.AccountProvider;
-import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;
-import fr.olympa.core.bungee.ban.objects.OlympaSanction;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.config.Configuration;
 
 public class BanHistoryCommand extends BungeeCommand {
 
@@ -69,7 +58,7 @@ public class BanHistoryCommand extends BungeeCommand {
 		banArg.printInfo();
 	}
 
-	@SuppressWarnings("deprecation")
+	/*@SuppressWarnings("deprecation")
 	public static void histSanctions(CommandSender sender, String target) {
 		Configuration config = OlympaBungee.getInstance().getConfig();
 		List<OlympaSanction> sanctions = BanMySQL.getSanctions(target);
@@ -118,7 +107,7 @@ public class BanHistoryCommand extends BungeeCommand {
 				msg.addExtra(s);
 		});
 		sender.sendMessage(msg);
-	}
+	}*/
 
 	//	@Override
 	//	public void onCommand(CommandSender sender, String[] args) {

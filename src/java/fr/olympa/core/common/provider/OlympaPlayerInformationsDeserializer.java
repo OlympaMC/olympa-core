@@ -1,4 +1,4 @@
-package fr.olympa.api.common.provider;
+package fr.olympa.core.common.provider;
 
 import java.lang.reflect.Type;
 import java.util.UUID;

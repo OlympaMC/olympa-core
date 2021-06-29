@@ -16,11 +16,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.common.task.OlympaTask;
 import fr.olympa.api.spigot.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.spigot.utils.SpigotUtils;
+import fr.olympa.core.common.provider.AccountProvider;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class DataManagmentListener implements Listener {

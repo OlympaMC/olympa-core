@@ -2,7 +2,6 @@ package fr.olympa.core.spigot.versionhook;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
@@ -14,7 +13,7 @@ import fr.olympa.api.spigot.version.PluginHandleVersion;
 import fr.olympa.api.spigot.version.VersionHandler;
 import fr.olympa.core.spigot.OlympaCore;
 
-public class VersionHook implements VersionHandler {
+public class VersionHook implements VersionHandler<Player> {
 
 	private PluginHandleVersion protocolSupport;
 	private PluginHandleVersion viaVersion;
@@ -41,16 +40,7 @@ public class VersionHook implements VersionHandler {
 			plugin.getLogger().severe("Une erreur est survenu avec ProtocolSupport. Vérifie sa version.");
 			e.printStackTrace();
 		}
-		List<ProtocolAPI> versions = getProtocolSupported();
-		if (versions != null && !versions.isEmpty()) {
-			ProtocolAPI first = versions.get(0);
-			plugin.setFirstVersion(first.getName());
-			if (versions.size() > 1)
-				plugin.setFirstVersion(versions.get(versions.size() - 1).getName());
-			else
-				plugin.setLastVersion(first.getName());
-		}
-		plugin.setProtocols(getProtocolSupported());
+		plugin.setProtocols(getProtocolsSupported());
 	}
 
 	public PluginHandleVersion getProtocolSupport() {
@@ -59,18 +49,6 @@ public class VersionHook implements VersionHandler {
 
 	public PluginHandleVersion getViaVersion() {
 		return viaVersion;
-	}
-
-	@Override
-	public boolean isPlayerVersionUnder(Player player, ProtocolAPI version) {
-		int protocolPlayer = getPlayerProtocol(player);
-		return version.getProtocolNumber() > protocolPlayer;
-	}
-
-	@Override
-	public boolean isPlayerVersionSameOrUpper(Player player, ProtocolAPI version) {
-		int protocolPlayer = getPlayerProtocol(player);
-		return version.getProtocolNumber() <= protocolPlayer;
 	}
 
 	@Override
@@ -90,14 +68,28 @@ public class VersionHook implements VersionHandler {
 	}
 
 	@Override
-	public List<ProtocolAPI> getProtocolSupported() {
+	public List<ProtocolAPI> getProtocolsSupported() {
 		List<ProtocolAPI> versions = new ArrayList<>();
 		if (protocolSupport != null)
 			versions.addAll(protocolSupport.getProtocols());
 		if (viaVersion != null)
 			versions.addAll(viaVersion.getProtocols());
 		if (versions.isEmpty())
-			return ProtocolAPI.getNativeSpigotProtocolAPI().getSameProtocol();
+			versions.addAll(ProtocolAPI.getNativeSpigotProtocolAPI().getSameProtocol());
+		return versions.stream().distinct().sorted(new Sorting<>(ProtocolAPI::ordinal)).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<ProtocolAPI> getProtocolsDisabled() {
+		List<ProtocolAPI> versions = new ArrayList<>();
+		if (protocolSupport != null)
+			protocolSupport.getDisabledProtocols().forEach(protocolId -> {
+				versions.addAll(ProtocolAPI.getAll(protocolId));
+			});
+		if (viaVersion != null)
+			viaVersion.getDisabledProtocols().forEach(protocolId -> {
+				versions.addAll(ProtocolAPI.getAll(protocolId));
+			});
 		return versions.stream().distinct().sorted(new Sorting<>(ProtocolAPI::ordinal)).collect(Collectors.toList());
 	}
 
@@ -113,35 +105,12 @@ public class VersionHook implements VersionHandler {
 		return ProtocolAPI.getRange(versions);
 	}
 
-	@Override
-	public String getVersionsDisabled() {
-		return ProtocolAPI.getRange(getVersionsSupportedDisable());
-	}
-
-	@Override
-	public List<ProtocolAPI> getVersionsSupportedDisable() {
-		List<ProtocolAPI> versions = new ArrayList<>();
-		getProtocolsDisabled().forEach(protocolNb -> versions.addAll(ProtocolAPI.getAll(protocolNb)));
-		return versions.stream().sorted(new Sorting<>(ProtocolAPI::ordinal)).collect(Collectors.toList());
-	}
-
-	@Override
-	public Entry<String, String> getRangeVersionArray() {
-		return ProtocolAPI.getRangeEntry(getProtocolSupported());
-	}
-
-	public List<Integer> getProtocolsEnabled() {
-		return getProtocolSupported().stream().map(ProtocolAPI::getProtocolNumber).collect(Collectors.toList());
-	}
-
-	public List<Integer> getProtocolsDisabled() {
-		List<Integer> versions = new ArrayList<>();
-		if (protocolSupport != null)
-			versions.addAll(protocolSupport.getDisabledProtocols());
-		if (viaVersion != null)
-			versions.addAll(viaVersion.getDisabledProtocols());
-		return versions.stream().distinct().sorted().collect(Collectors.toList());
-	}
+	//	@Override
+	//	public List<ProtocolAPI> getVersionsSupportedDisable() {
+	//		List<ProtocolAPI> versions = new ArrayList<>();
+	//		getProtocolsDisabled().forEach(protocolNb -> versions.addAll(ProtocolAPI.getAll(protocolNb)));
+	//		return versions.stream().sorted(new Sorting<>(ProtocolAPI::ordinal)).collect(Collectors.toList());
+	//	}
 
 	@Override
 	public boolean disable(ProtocolAPI[] versions) {

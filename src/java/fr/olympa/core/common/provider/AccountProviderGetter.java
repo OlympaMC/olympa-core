@@ -1,4 +1,4 @@
-package fr.olympa.api.common.provider;
+package fr.olympa.core.common.provider;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,12 +19,14 @@ import fr.olympa.api.common.player.OlympaAccount;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.player.OlympaPlayerInformations;
 import fr.olympa.api.common.player.OlympaPlayerProvider;
-import fr.olympa.api.common.redis.RedisAccess;
+import fr.olympa.api.common.provider.AccountProviderGetterInterface;
+import fr.olympa.api.common.provider.OlympaPlayerObject;
 import fr.olympa.api.common.sql.SQLColumn;
 import fr.olympa.api.common.sql.SQLTable;
-import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.CacheStats;
-import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
+import fr.olympa.core.common.redis.RedisAccess;
+import fr.olympa.core.common.sql.MySQL;
+import fr.olympa.core.common.utils.GsonCustomizedObjectTypeAdapter;
 import redis.clients.jedis.Jedis;
 
 public class AccountProviderGetter implements AccountProviderGetterInterface {
@@ -159,13 +161,20 @@ public class AccountProviderGetter implements AccountProviderGetterInterface {
 	@Nullable
 	public synchronized OlympaPlayerInformations getPlayerInformations(long id) {
 		OlympaPlayerInformations info = cachedInformations.get(id);
-		if (info == null)
-			try {
-				info = playerSQL.getPlayerInformations(id);
-				cachedInformations.put(id, info);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		if (info == null) {
+
+			OlympaPlayer olympaPlayer = getFromCache(id);
+			if (olympaPlayer != null)
+				info = new OlympaPlayerInformationsObject(olympaPlayer.getId(), olympaPlayer.getName(), olympaPlayer.getUniqueId());
+			else
+				try {
+					info = playerSQL.getPlayerInformations(id);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if (info != null)
+				cachedInformations.put(info.getId(), info);
+		}
 		return info;
 	}
 
@@ -173,14 +182,19 @@ public class AccountProviderGetter implements AccountProviderGetterInterface {
 	@Nullable
 	public synchronized OlympaPlayerInformations getPlayerInformations(UUID uuid) {
 		OlympaPlayerInformations info = cachedInformations.values().stream().filter(opi -> opi.getUUID().equals(uuid)).findFirst().orElse(null);
-		if (info == null)
-			try {
-				info = playerSQL.getPlayerInformations(uuid);
-				if (info != null)
-					cachedInformations.put(info.getId(), info);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		if (info == null) {
+			OlympaPlayer olympaPlayer = get(uuid);
+			if (olympaPlayer != null)
+				info = new OlympaPlayerInformationsObject(olympaPlayer.getId(), olympaPlayer.getName(), olympaPlayer.getUniqueId());
+			else
+				try {
+					info = playerSQL.getPlayerInformations(uuid);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if (info != null)
+				cachedInformations.put(info.getId(), info);
+		}
 		return info;
 	}
 
@@ -188,14 +202,19 @@ public class AccountProviderGetter implements AccountProviderGetterInterface {
 	@Nullable
 	public synchronized OlympaPlayerInformations getPlayerInformations(String name) {
 		OlympaPlayerInformations info = cachedInformations.values().stream().filter(opi -> opi.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
-		if (info == null)
-			try {
-				info = playerSQL.getPlayerInformations(name);
-				if (info != null)
-					cachedInformations.put(info.getId(), info);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		if (info == null) {
+			OlympaPlayer olympaPlayer = getFromCache(name);
+			if (olympaPlayer != null)
+				info = new OlympaPlayerInformationsObject(olympaPlayer.getId(), olympaPlayer.getName(), olympaPlayer.getUniqueId());
+			else
+				try {
+					info = playerSQL.getPlayerInformations(name);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if (info != null)
+				cachedInformations.put(info.getId(), info);
+		}
 		return info;
 	}
 
@@ -247,6 +266,7 @@ public class AccountProviderGetter implements AccountProviderGetterInterface {
 		pluginPlayerTable.insert(player.getId());
 		LinkSpigotBungee.Provider.link.sendMessage("Données créées pour le joueur §6%s", player.getName());
 		player.loaded();
+		getPlayerInformations(player);
 		return true;
 	}
 
@@ -254,7 +274,7 @@ public class AccountProviderGetter implements AccountProviderGetterInterface {
 	public Map<Long, OlympaPlayerInformations> getCachedInformations() {
 		return cachedInformations;
 	}
-	
+
 	@Override
 	public OlympaPlayerProvider getOlympaPlayerProvider() {
 		return pluginPlayerProvider;

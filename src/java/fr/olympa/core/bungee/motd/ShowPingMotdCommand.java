@@ -3,8 +3,8 @@ package fr.olympa.core.bungee.motd;
 import fr.olympa.api.bungee.command.BungeeComplexCommand;
 import fr.olympa.api.common.command.complex.Cmd;
 import fr.olympa.api.common.command.complex.CommandContext;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class ShowPingMotdCommand extends BungeeComplexCommand {

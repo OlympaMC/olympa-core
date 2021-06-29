@@ -9,11 +9,9 @@ import java.util.List;
 
 import fr.olympa.api.common.sql.statement.OlympaStatement;
 import fr.olympa.api.common.sql.statement.StatementType;
-import fr.olympa.api.sql.DbConnection;
 
 public class VpnSql {
 	private static String tableName = "commun.vpn";
-	private static DbConnection dbConnection;
 
 	private static OlympaStatement insert = new OlympaStatement(
 			"INSERT INTO " + tableName + " (`ip`, `is_vpn`, `is_mobile`, `is_host`, `pseudo`, `country`, `city`, `org`, `as`, `last_update`, `date`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").returnGeneratedKeys();
@@ -47,17 +45,6 @@ public class VpnSql {
 			return olympaVpn;
 		}
 	}
-
-	/*
-	 * public static OlympaVpn getIp(OlympaPlayer olympaPlayer) throws SQLException
-	 * { OlympaVpn info = null; Statement state =
-	 * dbConnection.getConnection().createStatement(); ResultSet resultSet =
-	 * state.executeQuery("SELECT * FROM " + tableName + " WHERE users REGEXP '" +
-	 * olympaPlayer.getId() + "($|\\W)';"); while (resultSet.next()) { info =
-	 * getInfo(resultSet); if (info != null &&
-	 * info.getUsers().contains(olympaPlayer.getId())) { info = getInfo(resultSet);
-	 * } } state.close(); return info; }
-	 */
 
 	private static OlympaVpn getInfo(ResultSet resultSet) throws SQLException {
 		int i = 1;
@@ -115,18 +102,5 @@ public class VpnSql {
 			update.executeUpdate(pstate);
 			olympaVpn.setUpWithDB(true);
 		}
-	}
-
-	/*
-	 * public static boolean setIp(String ip, boolean isVpn) throws SQLException {
-	 * try { String ps = "INSERT INTO " + tableName +
-	 * " (`ip`, is_vpn) VALUES (?, ?);"; int i = 1; PreparedStatement pstate =
-	 * dbConnection.getConnection().prepareStatement(ps); pstate.setString(i++, ip);
-	 * pstate.setInt(i++, isVpn ? 1 : 0); pstate.executeUpdate(); pstate.close(); }
-	 * catch (SQLException e) { e.printStackTrace(); return false; } return true; }
-	 */
-
-	public VpnSql(DbConnection dbConnection) {
-		VpnSql.dbConnection = dbConnection;
 	}
 }

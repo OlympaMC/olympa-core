@@ -14,8 +14,8 @@ import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.match.RegexMatcher;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.player.OlympaPlayerInformations;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -240,19 +240,22 @@ public class OlympaSanction {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return new ComponentBuilder(ColorUtils.color("&6Information sanction n°&e" + getId() + "\n"))
-				.append(ColorUtils.color("&6Joueur: &e" + playerNames + "\n"))
-				.append(ColorUtils.color("&6Auteur: &e" + getAuthorName() + "\n"))
-				.append(ColorUtils.color("&6Type: &e" + getType().getName(!isPermanent()) + "\n"))
-				.append(ColorUtils.color("&6Raison: &e" + getReason() + "\n"))
-				.append(ColorUtils.color("&6Crée: &e" + Utils.timestampToDateAndHour(getCreated()) + "\n"))
-				.append(ColorUtils.color("&6Expire: &e" + (getExpires() != 0 ? Utils.timestampToDateAndHour(getExpires()) + "\n&6Durée de base: &e" + Utils
-						.timestampToDuration(Utils.getCurrentTimeInSeconds() + getBanTime())
-						+ (getExpires() >= Utils.getCurrentTimeInSeconds() ? "\n&6Durée restante: &e" + Utils
-								.timestampToDuration(getExpires()) : "")
-						: "permanant") + "\n"))
-				.append(ColorUtils.color("&6Statut: &e" + getStatus().getColor() + getStatus().getName()))
-				.create();
+		ComponentBuilder cb = new ComponentBuilder(ColorUtils.color("&6Information sanction n°&e" + getId() + "\n"));
+		cb.append(ColorUtils.color("&eJoueur: &e" + playerNames + "\n"));
+		cb.append(ColorUtils.color("&eStaff: &e" + getAuthorName() + "\n"));
+		cb.append(ColorUtils.color("&eType: &e" + getType().getName(!isPermanent()) + "\n"));
+		cb.append(ColorUtils.color("&eRaison: &e" + getReason() + "\n"));
+		cb.append(ColorUtils.color("&eCrée: &e" + Utils.timestampToDateAndHour(getCreated()) + " " + Utils.tsToShortDur(getCreated()) + "\n"));
+		if (getExpires() != 0) {
+			cb.append(ColorUtils.color("&eExpire: &7" + Utils.timestampToDateAndHour(getExpires()) + "\n"));
+			if (getExpires() >= Utils.getCurrentTimeInSeconds())
+				cb.append(ColorUtils.color("&eDurée restante: &7" + Utils.tsToShortDur(getExpires()) + "\n"));
+			cb.append(ColorUtils.color("&eDurée de base: &7" + Utils.tsToShortDur(Utils.getCurrentTimeInSeconds() + getBanTime()) + "\n"));
+		} else if (getType() != OlympaSanctionType.KICK)
+			cb.append(ColorUtils.color("&cSanction permanante"));
+		cb.append(ColorUtils.color("&eStatut: &7" + getStatus().getNameColored()));
+
+		return cb.create();
 	}
 
 }

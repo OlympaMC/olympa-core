@@ -1,4 +1,4 @@
-package fr.olympa.api.utils;
+package fr.olympa.core.common.utils;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -1,4 +1,4 @@
-package fr.olympa.api;
+package fr.olympa.core.common;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,8 @@
-package fr.olympa.api.common.redis;
+package fr.olympa.core.common.redis;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
+import fr.olympa.api.common.redis.RedisConnection;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import net.md_5.bungee.config.Configuration;

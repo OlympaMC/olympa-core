@@ -15,10 +15,8 @@ import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.match.RegexMatcher;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.player.OlympaConsole;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.BanMySQL;
@@ -26,6 +24,8 @@ import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 
@@ -292,7 +292,10 @@ public class SanctionExecute {
 		} else {
 			TxtComponentBuilder builder = new TxtComponentBuilder(Prefix.DEFAULT_GOOD, "%d résultats pour %s.", allSanctions.size(), ColorUtils.joinGreenEt(targetsString)).extraSpliterBN();
 			for (OlympaSanction sanction : allSanctions)
-				builder.extra(new TxtComponentBuilder("%d - %s %s %s", sanction.getId(), sanction.getStatus().getNameColored(), sanction.getAuthorName(), sanction.getReason()).onHoverText(sanction.toBaseComplement()));
+				builder.extra(new TxtComponentBuilder("%d - %s %s %s %s", sanction.getId(), sanction.getStatus().getNameColored(),
+						sanction.getType().getName(!sanction.isPermanent()), sanction.getAuthorName(), sanction.getReason(),
+						sanction.getExpires() > 0 ? Utils.timeToDuration(sanction.getBanTime()) : sanction.getType() != OlympaSanctionType.KICK ? "&cPermanant" : "")
+								.onHoverText(sanction.toBaseComplement()).onClickCommand("/histban %d", sanction.getId()));
 			getAuthorSender().sendMessage(builder.build());
 		}
 	}

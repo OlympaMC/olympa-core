@@ -1,4 +1,4 @@
-package fr.olympa.api.brigadier;
+package fr.olympa.core.common.brigadier;
 
 import java.util.UUID;
 

@@ -21,8 +21,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import fr.olympa.api.common.chat.ColorUtils;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.common.task.OlympaTask;
 import fr.olympa.api.spigot.captcha.MapCaptcha;
 import fr.olympa.api.spigot.captcha.PlayerContents;
@@ -31,6 +29,8 @@ import fr.olympa.api.spigot.region.shapes.Cuboid;
 import fr.olympa.api.spigot.scoreboard.tab.INametagApi.NametagHandler;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.core.common.provider.AccountProvider;
 import fr.olympa.core.spigot.OlympaCore;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;

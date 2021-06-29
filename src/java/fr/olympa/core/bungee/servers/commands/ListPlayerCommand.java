@@ -8,11 +8,11 @@ import java.util.Map;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.provider.AccountProvider;
-import fr.olympa.core.bungee.servers.MonitorInfoBungee;
+import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -29,13 +29,13 @@ public class ListPlayerCommand extends BungeeCommand {
 		Collection<ProxiedPlayer> globalPlayers = ProxyServer.getInstance().getPlayers();
 		TxtComponentBuilder out = new TxtComponentBuilder("§7➤ &6Liste des joueurs : §a(" + globalPlayers.size() + ")").extraSpliterBN();
 
-		Map<MonitorInfoBungee, List<ProxiedPlayer>> servers = new HashMap<>();
+		Map<ServerInfoAdvancedBungee, List<ProxiedPlayer>> servers = new HashMap<>();
 		globalPlayers.forEach(player -> {
 			servers.computeIfAbsent(MonitorServers.getMonitor(player.getServer().getInfo()), server -> new ArrayList<>()).add(player);
 		});
 
 		servers.entrySet().stream().sorted((o1, o2) -> Integer.compare(o2.getValue().size(), o1.getValue().size())).forEach(entry -> {
-			MonitorInfoBungee server = entry.getKey();
+			ServerInfoAdvancedBungee server = entry.getKey();
 			List<ProxiedPlayer> players = entry.getValue();
 
 			TxtComponentBuilder out2 = new TxtComponentBuilder().extraSpliter(" ");

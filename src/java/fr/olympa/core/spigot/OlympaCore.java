@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.spigotmc.SpigotConfig;
@@ -20,25 +19,20 @@ import org.spigotmc.SpigotConfig;
 import com.google.gson.Gson;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.SwearHandler;
 import fr.olympa.api.common.groups.OlympaGroup;
 import fr.olympa.api.common.logger.LoggerUtils;
 import fr.olympa.api.common.module.OlympaModule;
 import fr.olympa.api.common.permission.OlympaPermission;
 import fr.olympa.api.common.permission.list.OlympaAPIPermissionsSpigot;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.common.player.OlympaAccount;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.plugin.OlympaSpigot;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.common.provider.AccountProviderAPI;
-import fr.olympa.api.common.provider.AccountProviderGetter;
-import fr.olympa.api.common.redis.RedisAccess;
 import fr.olympa.api.common.redis.RedisChannel;
 import fr.olympa.api.common.redis.RedisClass;
 import fr.olympa.api.common.redis.ResourcePackHandler;
 import fr.olympa.api.common.report.ReportReason;
-import fr.olympa.api.common.server.ServerInfoBasic;
+import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.spigot.command.CommandListener;
 import fr.olympa.api.spigot.command.essentials.ColorCommand;
@@ -50,20 +44,23 @@ import fr.olympa.api.spigot.command.essentials.ItemCommand;
 import fr.olympa.api.spigot.command.essentials.ListCommand;
 import fr.olympa.api.spigot.command.essentials.PingCommand;
 import fr.olympa.api.spigot.command.essentials.SayCommand;
-import fr.olympa.api.spigot.config.CustomConfig;
-import fr.olympa.api.spigot.customevents.SpigotConfigReloadEvent;
 import fr.olympa.api.spigot.frame.ImageFrameManager;
 import fr.olympa.api.spigot.gui.Inventories;
 import fr.olympa.api.spigot.holograms.HologramsManager;
 import fr.olympa.api.spigot.region.tracking.RegionManager;
-import fr.olympa.api.sql.DbConnection;
-import fr.olympa.api.sql.DbCredentials;
-import fr.olympa.api.sql.MySQL;
 import fr.olympa.api.utils.CacheStats;
-import fr.olympa.api.utils.ErrorLoggerHandler;
-import fr.olympa.api.utils.ErrorOutputStream;
-import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.common.SwearHandler;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.core.common.provider.AccountProvider;
+import fr.olympa.core.common.provider.AccountProviderGetter;
+import fr.olympa.core.common.redis.RedisAccess;
+import fr.olympa.core.common.sql.DbConnection;
+import fr.olympa.core.common.sql.DbCredentials;
+import fr.olympa.core.common.sql.MySQL;
+import fr.olympa.core.common.utils.ErrorLoggerHandler;
+import fr.olympa.core.common.utils.ErrorOutputStream;
+import fr.olympa.core.common.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.chat.CancerListener;
 import fr.olympa.core.spigot.chat.ChatCommand;
 import fr.olympa.core.spigot.chat.ChatListener;
@@ -112,10 +109,6 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 
 	protected DbConnection database = null;
 	private SwearHandler swearHandler;
-	@Deprecated
-	private String lastVersion = "unknown";
-	@Deprecated
-	private String firstVersion = "unknown";
 	private ErrorOutputStream errorOutputStream;
 	public GamemodeCommand gamemodeCommand = null;
 	private RedisAccess redisAccess;
@@ -123,37 +116,8 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 	private boolean dbConnected = false;
 
 	@Override
-	public String getLastVersion() {
-		return lastVersion;
-	}
-
-	public void setLastVersion(String lastVersion) {
-		this.lastVersion = lastVersion;
-	}
-
-	@Override
-	public String getFirstVersion() {
-		return firstVersion;
-	}
-
-	public String getRangeVersion() {
-		if (firstVersion.equals(lastVersion))
-			return firstVersion;
-		return firstVersion + " à " + lastVersion;
-	}
-
-	public void setFirstVersion(String firstVersion) {
-		this.firstVersion = firstVersion;
-	}
-
-	@Override
 	public VersionHook getVersionHandler() {
 		return (VersionHook) versionHandler;
-	}
-
-	@Override
-	public Connection getDatabase() throws SQLException {
-		return database.getConnection();
 	}
 
 	public SwearHandler getSwearHandler() {
@@ -207,7 +171,7 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 				setupRedis();
 				setupDatabase();
 			}
-			RedisClass.SERVER_INFO.registerCallback(mi -> {
+			RedisClass.SERVER_INFO_ADVANCED.registerCallback(mi -> {
 				lastInfo = Utils.getCurrentTimeInSeconds();
 				monitorInfos.clear();
 				monitorInfos.addAll(mi);
@@ -305,25 +269,9 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 			sendMessage("&2%s&a (%s) est activé.", getDescription().getName(), getDescription().getVersion());
 		} catch (Error | Exception e) {
 			setStatus(ServerStatus.MAINTENANCE);
-			getLogger().severe(String.format("Une erreur est survenu lors du chargement de %s. Le serveur est désormais en maintenance.", this.getClass().getSimpleName()));
+			getLogger().severe(String.format("Une erreur est survenu lors de l'activation de %s. Le serveur est désormais en maintenance.", this.getClass().getSimpleName()));
 			e.printStackTrace();
 		}
-	}
-
-	@EventHandler
-	public void onSpigotConfigReload(SpigotConfigReloadEvent event) {
-		CustomConfig newConfig = event.getConfig();
-		String newFileName = newConfig.getFileName();
-		if (newFileName.equals(getConfig().getFileName()))
-			swearHandler = new SwearHandler(getConfig().getStringList("chat.insult"));
-		else if (newFileName.equals(imageFrameManager.getFileName()))
-			imageFrameManager.loadMaps(newConfig);
-		/*else if (newFileName.equals(hologramsManager.getFile().getName()))
-			try {
-				hologramsManager = new HologramsManager(new File(getDataFolder(), "holograms.yml"));
-			}catch (IOException | ReflectiveOperationException e) {
-				e.printStackTrace();
-			}*/
 	}
 
 	@Override
@@ -400,7 +348,7 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 	}
 
 	@Override
-	public void retreiveMonitorInfos(BiConsumer<List<ServerInfoBasic>, Boolean> callback, boolean freshDoubleCallBack) {
+	public void retreiveMonitorInfos(BiConsumer<List<ServerInfoAdvanced>, Boolean> callback, boolean freshDoubleCallBack) {
 		if (monitorInfos.isEmpty() || Utils.getCurrentTimeInSeconds() - lastInfo > 10)
 			if (freshDoubleCallBack)
 				RedisClass.ASK_SERVER_INFO.askServerInfo(callback);
@@ -439,7 +387,21 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 	}
 
 	@Override
+	public Connection getDatabase() throws SQLException {
+		Connection connection = database.getConnection();
+		if (!database.isConnected())
+			dbConnected = false;
+		else if (!dbConnected)
+			dbConnected = true;
+		return connection;
+	}
+
+	@Override
 	public RedisAccess getRedisAccess() {
+		if (!redisAccess.isConnected())
+			redisConnected = false;
+		else if (!redisConnected)
+			redisConnected = true;
 		return redisAccess;
 	}
 
@@ -452,5 +414,4 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 	public boolean isDatabaseConnected() {
 		return dbConnected;
 	}
-
 }

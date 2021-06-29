@@ -1,4 +1,4 @@
-package fr.olympa.api;
+package fr.olympa.core.common;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,14 +11,26 @@ import java.util.regex.Pattern;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.spigot.OlympaCore;
 
 public class SwearHandler {
 
-	private Map<String, Pattern> regexSwear;
+	static {
+		if (LinkSpigotBungee.getInstance().isSpigot())
+			OlympaCore.getInstance().getConfig().addTask("SwearHandler", customConfig -> {
+				new SwearHandler(customConfig.getStringList("chat.insult"));
+			});
+		else
+			OlympaBungee.getInstance().getDefaultConfig().addTask("SwearHandler", customConfig -> {
+				new SwearHandler(customConfig.getConfig().getStringList("chat.insult"));
+			});
+	}
+	private static Map<String, Pattern> regexSwear;
 
 	public SwearHandler(List<String> swears) {
-
 		regexSwear = new HashMap<>();
 		for (String swear : swears) {
 			StringBuilder sb = new StringBuilder();

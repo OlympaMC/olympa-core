@@ -1,7 +1,7 @@
 package fr.olympa.core.bungee.ban.commands;
 
 import fr.olympa.api.bungee.command.BungeeComplexCommand;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class BanMenuCommand extends BungeeComplexCommand {

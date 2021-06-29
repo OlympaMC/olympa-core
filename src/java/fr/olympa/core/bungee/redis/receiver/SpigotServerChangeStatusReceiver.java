@@ -2,9 +2,9 @@ package fr.olympa.core.bungee.redis.receiver;
 
 import java.util.Map;
 
+import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.servers.MonitorInfoBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -19,12 +19,12 @@ public class SpigotServerChangeStatusReceiver extends JedisPubSub {
 		if (serverInfo != null) {
 			ServerStatus status = ServerStatus.get(Integer.parseInt(args[1]));
 			ServerStatus previous = ServerStatus.UNKNOWN;
-			MonitorInfoBungee info = MonitorServers.getMonitor(serverInfo);
+			ServerInfoAdvancedBungee info = MonitorServers.getMonitor(serverInfo);
 			String serverName;
 			if (info != null) {
-				Map<Integer, MonitorInfoBungee> previousInfoServers = MonitorServers.getServers(info.getOlympaServer());
+				Map<Integer, ServerInfoAdvancedBungee> previousInfoServers = MonitorServers.getServers(info.getOlympaServer());
 				if (previousInfoServers != null) {
-					MonitorInfoBungee previousInfo = previousInfoServers.get(info.getServerID());
+					ServerInfoAdvancedBungee previousInfo = previousInfoServers.get(info.getServerId());
 					if (previousInfo != null)
 						previous = previousInfo.getStatus();
 				}

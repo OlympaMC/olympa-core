@@ -2,8 +2,8 @@ package fr.olympa.core.bungee.redis.receiver;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.provider.AccountProvider;
-import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
+import fr.olympa.core.common.provider.AccountProvider;
+import fr.olympa.core.common.utils.GsonCustomizedObjectTypeAdapter;
 import redis.clients.jedis.JedisPubSub;
 
 public class SpigotOlympaPlayerReceiver extends JedisPubSub {

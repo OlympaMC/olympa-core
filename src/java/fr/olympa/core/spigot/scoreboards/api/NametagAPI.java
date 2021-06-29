@@ -38,7 +38,7 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 			public void updateNameTag(Nametag nametag, OlympaPlayer op, OlympaPlayer to) {
 				nametag.appendPrefix(op.getGroupPrefix().stripTrailing());
 			}
-			
+
 			@Override
 			public boolean needsDatas() {
 				return false;
@@ -94,19 +94,20 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 			OlympaCore.getInstance().sendMessage("&cModule NameTag &4désactiver &8> &cImpossible de mettre à jour le nameTag de &4%s&7.", player.getName());
 			return;
 		}
-		if (player.getPlayer() == null || !player.getPlayer().isOnline()) {
+		if (player.getPlayer() == null || !((Player) player.getPlayer()).isOnline()) {
 			OlympaCore.getInstance().sendMessage("§cTentative de mise à jour du nametag du joueur hors-ligne §4%s", player.getName());
 			return;
 		}
 		Map<Nametag, List<Player>> nametags = new HashMap<>();
 		for (OlympaPlayer to : toPlayers) {
-			if (to.getPlayer() == null || !to.getPlayer().isOnline())
+			if (to.getPlayer() == null || !((Player) to.getPlayer()).isOnline())
 				continue;
 			Nametag tag = new Nametag();
 			for (Entry<EventPriority, NametagHandler> handlerEntry : handlers)
 				try {
 					NametagHandler handler = handlerEntry.getValue();
-					if (!handler.needsDatas() || withDatas) handler.updateNameTag(tag, player, to);
+					if (!handler.needsDatas() || withDatas)
+						handler.updateNameTag(tag, player, to);
 				} catch (Exception ex) {
 					OlympaCore.getInstance().sendMessage("§cUne erreur est survenue lors de la mise à jour du nametag de %s", player.getName());
 					ex.printStackTrace();
@@ -116,7 +117,7 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 				similarTags = new ArrayList<>();
 				nametags.put(tag, similarTags);
 			}
-			similarTags.add(to.getPlayer());
+			similarTags.add((Player) to.getPlayer());
 		}
 		nametags.forEach((tag, players) -> manager.changeFakeNametag(player.getName(), tag, player.getGroup().getIndex(), players));
 	}

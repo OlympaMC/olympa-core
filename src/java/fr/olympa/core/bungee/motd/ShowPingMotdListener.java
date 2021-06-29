@@ -16,10 +16,10 @@ import com.google.gson.Gson;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;

@@ -20,13 +20,13 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.chat.Chat;
 import fr.olympa.api.common.groups.OlympaGroup;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.api.spigot.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.core.common.provider.AccountProvider;
 import fr.olympa.core.spigot.OlympaCore;
 
 @SuppressWarnings("deprecation")

@@ -14,13 +14,13 @@ import com.google.common.cache.CacheBuilder;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.groups.OlympaGroup;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.redis.RedisAccess;
 import fr.olympa.api.common.redis.RedisChannel;
 import fr.olympa.api.common.report.OlympaReport;
 import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
-import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
+import fr.olympa.core.common.redis.RedisAccess;
+import fr.olympa.core.common.utils.GsonCustomizedObjectTypeAdapter;
 import fr.olympa.core.spigot.OlympaCore;
 import redis.clients.jedis.Jedis;
 

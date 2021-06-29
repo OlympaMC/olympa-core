@@ -17,6 +17,7 @@ import fr.olympa.api.common.bash.OlympaRuntime;
 import fr.olympa.api.common.match.MatcherPattern;
 import fr.olympa.api.common.match.RegexMatcher;
 import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.common.server.ServerStatus;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -60,7 +61,7 @@ public class ServersConnection {
 	}
 
 	public static boolean canPlayerConnect(ServerInfo server) {
-		MonitorInfoBungee monitor = MonitorServers.getMonitor(server);
+		ServerInfoAdvancedBungee monitor = MonitorServers.getMonitor(server);
 		return monitor != null && monitor.getStatus().canConnect();
 	}
 
@@ -70,10 +71,10 @@ public class ServersConnection {
 
 	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except, ProxiedPlayer w8forConnect) {
 		if (!olympaServer.hasMultiServers())
-			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(MonitorInfoBungee::getServerInfo).orElse(null);
-
+			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(ServerInfoAdvancedBungee::getServerInfo).orElse(null);
 		Map<ServerInfo, Integer> servers = MonitorServers.getServers(olympaServer).values().stream()
-				.filter(x -> x.getStatus().canConnect() && (except == null || !except.getName().equals(x.getName())) && (!x.getOlympaServer().hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
+				.filter(x -> x.hasMinimalInfo() && x.getStatus().canConnect() && (except == null || !except.getName().equals(x.getName()))
+						&& (!x.getOlympaServer().hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
 				.collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayers()));
 		ServerInfo bestServer = servers.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(Entry::getKey).findFirst().orElse(null);
 		if (bestServer != null)

@@ -1,4 +1,4 @@
-package fr.olympa.api.sql;
+package fr.olympa.core.common.sql;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;

@@ -12,15 +12,15 @@ import com.google.gson.Gson;
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.vpn.OlympaVpn;
 import fr.olympa.core.bungee.vpn.VpnHandler;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -82,7 +82,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 		out2 = new TextComponent(TextComponent.fromLegacyText("§3Grades : §b" + target.getGroupsToHumainString()));
 		out.addExtra(out2);
 		out.addExtra("\n");
-		Map<Long, String> histName = target.getHistHame();
+		Map<Long, String> histName = target.getHistName();
 		if (!histName.isEmpty()) {
 			int size = histName.size();
 			String s = Utils.withOrWithoutS(size);

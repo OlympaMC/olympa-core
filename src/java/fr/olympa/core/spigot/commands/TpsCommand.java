@@ -15,13 +15,13 @@ import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.machine.JavaInstanceInfo;
 import fr.olympa.api.common.machine.TpsMessage;
 import fr.olympa.api.common.module.OlympaModule.ModuleApi;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.common.plugin.OlympaAPIPlugin;
 import fr.olympa.api.common.task.OlympaTask;
 import fr.olympa.api.spigot.command.OlympaCommand;
 import fr.olympa.api.spigot.utils.TPS;
 import fr.olympa.api.spigot.utils.TPSUtils;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class TpsCommand extends OlympaCommand implements Listener, ModuleApi<OlympaCore> {

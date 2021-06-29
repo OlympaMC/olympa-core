@@ -9,11 +9,11 @@ import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.command.complex.Cmd;
 import fr.olympa.api.common.command.complex.CommandContext;
 import fr.olympa.api.common.match.RegexMatcher;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class IpCommand extends BungeeComplexCommand {

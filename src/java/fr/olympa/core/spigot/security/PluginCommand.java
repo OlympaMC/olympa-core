@@ -10,11 +10,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.common.chat.TxtComponentBuilder;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.common.plugin.PluginInfoAdvanced;
 import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.spigot.command.OlympaCommand;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
 
 public class PluginCommand extends OlympaCommand {
 

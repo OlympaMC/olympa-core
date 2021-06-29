@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 import fr.olympa.api.common.match.RegexMatcher;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.provider.AccountProvider;
+import fr.olympa.core.common.provider.AccountProvider;
 import redis.clients.jedis.JedisPubSub;
 
 /**

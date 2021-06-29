@@ -1,4 +1,4 @@
-package fr.olympa.api.common.provider;
+package fr.olympa.core.common.provider;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -14,9 +14,12 @@ import com.google.gson.JsonParseException;
 import fr.olympa.api.common.groups.OlympaGroup;
 import fr.olympa.api.common.player.Gender;
 import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProviderAPI;
+import fr.olympa.api.common.provider.OlympaPlayerObject;
 
 public class OlympaPlayerDeserializer implements JsonDeserializer<OlympaPlayer> {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public OlympaPlayerObject deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 		JsonObject object = json.getAsJsonObject();
@@ -43,8 +46,6 @@ public class OlympaPlayerDeserializer implements JsonDeserializer<OlympaPlayer> 
 			player.premiumUuid = context.deserialize(object.get("premiumUuid"), UUID.class);
 		if (object.has("vanish"))
 			player.vanish = object.get("vanish").getAsBoolean();
-		//			if (object.has("discordOlympaId"))
-		//				player.discordOlympaId = object.get("discordOlympaId").getAsInt();
 		if (object.has("teamspeakId"))
 			player.teamspeakId = object.get("teamspeakId").getAsInt();
 		if (object.has("customPermissions"))

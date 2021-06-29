@@ -16,15 +16,15 @@ import org.bukkit.plugin.Plugin;
 
 import fr.olympa.api.common.command.complex.Cmd;
 import fr.olympa.api.common.command.complex.CommandContext;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.api.common.player.OlympaPlayerInformations;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.common.report.OlympaReport;
 import fr.olympa.api.common.report.ReportReason;
 import fr.olympa.api.common.report.ReportStatus;
 import fr.olympa.api.common.report.ReportStatusInfo;
 import fr.olympa.api.spigot.command.ComplexCommand;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.core.common.provider.AccountProvider;
 import fr.olympa.core.spigot.report.ReportHandler;
 import fr.olympa.core.spigot.report.ReportMsg;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;

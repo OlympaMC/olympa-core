@@ -1,4 +1,4 @@
-package fr.olympa.api.sql;
+package fr.olympa.core.common.sql;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,9 +20,9 @@ import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.player.OlympaPlayerInformations;
 import fr.olympa.api.common.player.PlayerSQL;
 import fr.olympa.api.common.provider.AccountProviderAPI;
-import fr.olympa.api.common.provider.OlympaPlayerInformationsObject;
 import fr.olympa.api.common.sql.statement.OlympaStatement;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.common.provider.OlympaPlayerInformationsObject;
 
 public class MySQL implements PlayerSQL {
 

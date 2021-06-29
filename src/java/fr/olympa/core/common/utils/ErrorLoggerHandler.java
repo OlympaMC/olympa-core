@@ -1,4 +1,4 @@
-package fr.olympa.api.utils;
+package fr.olympa.core.common.utils;
 
 import java.util.function.Consumer;
 import java.util.logging.Handler;

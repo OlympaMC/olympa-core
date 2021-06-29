@@ -12,11 +12,11 @@ import org.bukkit.inventory.ItemStack;
 
 import fr.olympa.api.common.groups.OlympaGroup;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.common.sort.Sorting;
 import fr.olympa.api.spigot.gui.OlympaGUI;
 import fr.olympa.api.spigot.item.ItemUtils;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.common.provider.AccountProvider;
 
 public class StaffGui extends OlympaGUI {
 

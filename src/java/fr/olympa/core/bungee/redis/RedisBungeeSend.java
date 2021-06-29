@@ -2,16 +2,12 @@ package fr.olympa.core.bungee.redis;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.redis.RedisAccess;
 import fr.olympa.api.common.redis.RedisChannel;
-import fr.olympa.api.common.redis.RedisClass;
-import fr.olympa.api.common.server.ServerInfoBasic;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
-import fr.olympa.core.bungee.servers.MonitorServers;
+import fr.olympa.core.common.redis.RedisAccess;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import redis.clients.jedis.Jedis;
@@ -61,14 +57,6 @@ public class RedisBungeeSend {
 			jedis.publish(RedisChannel.BUNGEE_ASK_SEND_SERVERNAME.name(), adress.getAddress().getHostAddress().replace("127.0.0.1", "localhost") + ";" + adress.getPort() + ";" + serverInfo.getName());
 		}
 		RedisAccess.INSTANCE.disconnect();
-	}
-
-	/**
-	 * @see fr.olympa.api.common.redis.spigotsub.BungeeServerInfo
-	 */
-	@Deprecated
-	public static boolean sendServerInfos() {
-		return RedisClass.SERVER_INFO.sendServerInfos(MonitorServers.getServers().stream().map(mib -> (ServerInfoBasic) mib).collect(Collectors.toList()));
 	}
 
 	public static void sendPlayerServer(String serverName, String playerUUID, String playerServer) {

@@ -12,12 +12,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import fr.olympa.api.common.player.OlympaPlayer;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent;
 import fr.olympa.api.spigot.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.spigot.customevents.PlayerSexChangeEvent;
 import fr.olympa.api.spigot.scoreboard.tab.FakeTeam;
 import fr.olympa.api.spigot.scoreboard.tab.INametagApi;
+import fr.olympa.core.common.provider.AccountProvider;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.module.CoreModules;
 import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
@@ -46,7 +46,7 @@ public class ScoreboardTeamListener implements Listener {
 		nameTagApi.callNametagUpdate(olympaPlayer);
 		List<OlympaPlayer> self = Arrays.asList(olympaPlayer);
 		for (OlympaPlayer other : AccountProvider.getter().getAll())
-			if (other != olympaPlayer && other.getPlayer() != null && other.getPlayer().isOnline())
+			if (other != olympaPlayer && other.getPlayer() != null && ((Player) other.getPlayer()).isOnline())
 				nameTagApi.callNametagUpdate(other, self, true);
 	}
 
@@ -88,7 +88,7 @@ public class ScoreboardTeamListener implements Listener {
 		Nametag nameTag = event.getNameTag();
 		nameTag.appendPrefix(olympaPlayer.getGroupPrefix());
 	}
-	
+
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void on4PlayerNameTagEdit(PlayerNameTagEditEvent event) {
 		Player player = event.getPlayer();
@@ -96,7 +96,7 @@ public class ScoreboardTeamListener implements Listener {
 		Nametag nameTag = event.getNameTag();
 		if (event.isCancelled())
 			return;
-	
+
 		FakeTeam team = nameTagApi.getFakeTeam(player);
 		if (team == null || event.isForceCreateTeam())
 			nameTagApi.setNametag(player.getName(), nameTag.getPrefix(), nameTag.getSuffix(), event.getSortPriority());

@@ -4,12 +4,12 @@ import fr.olympa.api.bungee.command.BungeeComplexCommand;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.command.complex.Cmd;
 import fr.olympa.api.common.command.complex.CommandContext;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.servers.MonitorInfoBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectEvent.Reason;
@@ -21,7 +21,7 @@ public class ServerSwitchCommand extends BungeeComplexCommand {
 
 	}
 
-	@Cmd(otherArg = true, args = { "SERVERS", "OLYMPA_PLAYERS" }, min = 1)
+	@Cmd(otherArg = true, args = { "SERVERS", "PLAYERS" }, min = 1)
 	public void otherArg(CommandContext cmd) {
 		ProxiedPlayer target = null;
 		ServerInfo server = cmd.getArgument(0);
@@ -34,7 +34,7 @@ public class ServerSwitchCommand extends BungeeComplexCommand {
 		} else
 			target = cmd.getArgument(1);
 		ProxiedPlayer finalTarget = target;
-		MonitorInfoBungee monitorInfo = MonitorServers.getMonitor(server);
+		ServerInfoAdvancedBungee monitorInfo = MonitorServers.getMonitor(server);
 		if (monitorInfo == null) {
 			sendError("Impossible d'aller vers le serveur §2%s§a, son état est inconnu.", Utils.capitalize(server.getName()));
 			return;

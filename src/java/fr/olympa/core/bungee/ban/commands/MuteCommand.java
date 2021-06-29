@@ -6,13 +6,13 @@ import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.match.RegexMatcher;
-import fr.olympa.api.common.permission.list.OlympaCorePermissionsBungee;
-import fr.olympa.api.common.provider.AccountProvider;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -69,9 +69,9 @@ public class MuteCommand extends BungeeCommand {
 			return postentielNames;
 		case 2:
 			List<String> units = new ArrayList<>();
-			if (args[1].isBlank())
+			Integer time;
+			if (args[1].isBlank() || (time = RegexMatcher.INT.extractAndParse(args[1])) == null)
 				return Arrays.asList("15min", "30min", "1h", "2h", "3h", "6h", "12h", "1j");
-			int time = RegexMatcher.INT.extractAndParse(args[1]);
 			for (List<String> unit : SanctionUtils.units)
 				for (String u : unit)
 					units.add(time + u);

@@ -1,4 +1,4 @@
-package fr.olympa.api.common.provider;
+package fr.olympa.core.common.provider;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.provider.AccountProviderAPI;
 import fr.olympa.api.utils.Utils;
 import redis.clients.jedis.Jedis;
 
@@ -61,10 +62,6 @@ public class AccountProvider extends AccountProviderAPI {
 			jedis.del(getKey());
 		}
 		redisAccesss.disconnect();
-	}
-
-	public void saveToCache(OlympaPlayer olympaPlayer) {
-		cache.put(uuid, olympaPlayer);
 	}
 
 	/*@Override

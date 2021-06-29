@@ -1,4 +1,4 @@
-package fr.olympa.api.utils;
+package fr.olympa.core.common.utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,8 +15,8 @@ import com.google.gson.stream.JsonWriter;
 
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.player.OlympaPlayerInformations;
-import fr.olympa.api.common.provider.OlympaPlayerDeserializer;
-import fr.olympa.api.common.provider.OlympaPlayerInformationsDeserializer;
+import fr.olympa.core.common.provider.OlympaPlayerDeserializer;
+import fr.olympa.core.common.provider.OlympaPlayerInformationsDeserializer;
 
 public class GsonCustomizedObjectTypeAdapter extends TypeAdapter<Object> {
 

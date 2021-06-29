@@ -31,7 +31,7 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 		INametagApi nameTagApi = plugin.getNameTagApi();
 		if (nameTagApi != null) {
 			handler = (nametag, op, to) -> {
-				if (isVanished(op.getPlayer()) && OlympaAPIPermissionsSpigot.VANISH_SEE.hasPermission(to))
+				if (isVanished((Player) op.getPlayer()) && OlympaAPIPermissionsSpigot.VANISH_SEE.hasPermission(to))
 					nametag.appendSuffix("§d[§5VANISH§d]§r");
 			};
 			nameTagApi.addNametagHandler(EventPriority.HIGHEST, handler);
@@ -65,7 +65,7 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 
 	@Override
 	public void disable(OlympaPlayer olympaPlayer, boolean showMessage) {
-		Player player = olympaPlayer.getPlayer();
+		Player player = (Player) olympaPlayer.getPlayer();
 		OlympaCore plugin = OlympaCore.getInstance();
 		player.removePotionEffect(PotionEffectType.NIGHT_VISION);
 		player.setCollidable(true);
@@ -78,7 +78,7 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 	}
 
 	public void enable(OlympaPlayer olympaPlayer, boolean showMessage, boolean isSuperVanish) {
-		Player player = olympaPlayer.getPlayer();
+		Player player = (Player) olympaPlayer.getPlayer();
 		OlympaCore plugin = OlympaCore.getInstance();
 		player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
 		player.setCollidable(false);
@@ -88,8 +88,8 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 		//		OlympaAPIPermissions.VANISH_SEE.getOlympaPlayers(playerPerm -> {
 		new OlympaSpigotPermission(olympaPlayer.getGroup()).getOlympaPlayers(playerPerm -> {
 			api.callNametagUpdate(olympaPlayer, playerPerm);
-			olympaPlayer.getPlayer().showPlayer(plugin, player);
-		}, noPerm -> noPerm.forEach(noStaff -> noStaff.getPlayer().hidePlayer(plugin, player)));
+			((Player) olympaPlayer.getPlayer()).showPlayer(plugin, player);
+		}, noPerm -> noPerm.forEach(noStaff -> ((Player) noStaff.getPlayer()).hidePlayer(plugin, player)));
 		if (showMessage)
 			if (isSuperVanish)
 				Prefix.DEFAULT_GOOD.sendMessage(player, "Tu es désormais en super-vanish, le staff.");
@@ -99,7 +99,7 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 
 	@Override
 	public void enable(OlympaPlayer olympaPlayer, boolean showMessage) {
-		Player player = olympaPlayer.getPlayer();
+		Player player = (Player) olympaPlayer.getPlayer();
 		OlympaCore plugin = OlympaCore.getInstance();
 		player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
 		player.setCollidable(false);
@@ -109,8 +109,8 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 		//		OlympaAPIPermissions.VANISH_SEE.getOlympaPlayers(playerPerm -> {
 		new OlympaSpigotPermission(olympaPlayer.getGroup()).getOlympaPlayers(playerPerm -> {
 			api.callNametagUpdate(olympaPlayer, playerPerm);
-			olympaPlayer.getPlayer().showPlayer(plugin, player);
-		}, noPerm -> noPerm.forEach(noStaff -> noStaff.getPlayer().hidePlayer(plugin, player)));
+			((Player) olympaPlayer.getPlayer()).showPlayer(plugin, player);
+		}, noPerm -> noPerm.forEach(noStaff -> ((Player) noStaff.getPlayer()).hidePlayer(plugin, player)));
 		if (showMessage)
 			Prefix.DEFAULT_GOOD.sendMessage(player, "Tu es désormais en vanish.");
 	}
