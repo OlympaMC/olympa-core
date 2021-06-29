@@ -48,12 +48,12 @@ public class MonitorServers {
 
 	public static Stream<ServerInfoAdvancedBungee> getServersSorted() {
 		return bungeeServers.values().stream().sorted((o1, o2) -> {
-			int i = Integer.compare(o1.getOlympaServer().ordinal(), o2.getOlympaServer().ordinal());
-			if (i == 0 && o2.getOnlinePlayers() != null && o1.getOnlinePlayers() != null)
-				i = Integer.compare(o1.getStatus().getId(), o2.getStatus().getId());
+			int i = Integer.compare(o1.getStatus().ordinal(), o2.getStatus().ordinal());
+			if (i == 0)
+				i = Integer.compare(o1.getOlympaServer().ordinal(), o2.getOlympaServer().ordinal());
 			if (i == 0 && o2.getOnlinePlayers() != null && o1.getOnlinePlayers() != null)
 				i = Integer.compare(o2.getOnlinePlayers(), o1.getOnlinePlayers());
-			if (i == 0)
+			if (i == 0 && o2.getPing() != null && o1.getPing() != null)
 				i = Integer.compare(o2.getPing(), o1.getPing());
 			return i;
 		});
@@ -78,7 +78,7 @@ public class MonitorServers {
 			ServerInfoAdvancedBungee.removeReadTimeException(serverInfo);
 			ServerInfoAdvancedBungee info = ServerInfoAdvancedBungee.getFromPingServer(serverInfo, nano, result, error);
 			bungeeServers.put(serverInfo, info);
-			olympaServers.get(info.getOlympaServer()).put(info.getServerId(), info);
+			oldMonitor = olympaServers.get(info.getOlympaServer()).put(info.getServerId(), info);
 			ServerStatus previousStatus = oldMonitor == null ? ServerStatus.UNKNOWN : oldMonitor.getStatus();
 			if (previousStatus != info.getStatus()) {
 				OlympaBungee.getInstance().sendMessage("§7Serveur §e" + info.getName() + "§7 : " + previousStatus.getNameColored()

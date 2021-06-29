@@ -22,6 +22,7 @@ public class ListServerCommand extends BungeeCommand {
 		TxtComponentBuilder out = new TxtComponentBuilder("&6Liste des serveurs :").extraSpliterBN();
 		MonitorServers.getServersSorted().forEach(serverInfo -> {
 			try {
+				boolean hasFullInfo = serverInfo.hasFullInfos();
 				ServerStatus status = serverInfo.getStatus();
 				TxtComponentBuilder out2 = new TxtComponentBuilder("&7[%s&7]", status.getNameColored()).extraSpliter(" ");
 				out2.extra("%s%s", status.getColor(), serverInfo.getName());
@@ -29,7 +30,7 @@ public class ListServerCommand extends BungeeCommand {
 					out2.extra("%s/%s", serverInfo.getOnlinePlayers(), serverInfo.getMaxPlayers());
 				if (serverInfo.getTps() != null)
 					out2.extra("%stps", TPSUtils.getTpsColor(serverInfo.getTps()));
-				if (serverInfo.getCPUUsage() != null)
+				if (hasFullInfo)
 					out2.extra("%scpu", serverInfo.getCPUUsage());
 				if (serverInfo.getError() != null && !serverInfo.getError().isBlank())
 					out2.extra("%sErreur : %s", status.getColor(), serverInfo.getError());
@@ -38,14 +39,14 @@ public class ListServerCommand extends BungeeCommand {
 				sb.add(serverInfo.getHumanName());
 				if (serverInfo.getPing() != null)
 					sb.add(serverInfo.getPing() + "ms");
-				if (serverInfo.hasFullInfos()) {
+				if (hasFullInfo) {
 					sb.add(serverInfo.getMemUsage() + " RAM&7");
 					sb.add(serverInfo.getRangeVersionMinecraft());
 				}
-				if (serverInfo.getPlugins() != null && !serverInfo.getPlugins().isEmpty())
+				if (hasFullInfo && serverInfo.getPlugins() != null && !serverInfo.getPlugins().isEmpty())
 					try {
 						StringJoiner sb2 = new StringJoiner(", ");
-						serverInfo.getPlugins().forEach(plugin -> {
+						serverInfo.getPlugins().stream().forEach(plugin -> {
 							sb2.add(plugin.getNameColored() + "&7 (" + plugin.getVersion() + " " + plugin.getLastModifiedTime() + ")");
 						});
 						//					sb.add("\nPlugins : " + debugInfo.getPlugins().stream()

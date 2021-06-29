@@ -16,7 +16,6 @@ import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.common.sort.Sorting;
 import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.core.bungee.servers.MonitorInfoBungee;
 import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -39,8 +38,6 @@ public class ServerConnection {
 	String niceServerName;
 	@Nullable
 	ServerInfo serverInfo;
-	@Nullable
-	MonitorInfoBungee monitorInfo;
 	boolean w8ForConnect;
 
 	int i = 0;
