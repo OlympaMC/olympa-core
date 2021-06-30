@@ -94,7 +94,7 @@ public class TpsCommand extends OlympaCommand implements Listener, ModuleApi<Oly
 		taskId = task.scheduleSyncRepeatingTask(() -> {
 			double[] tps = TPS.getDoubleTPS();
 			TxtComponentBuilder textBuilder = new TxtComponentBuilder();
-			JavaInstanceInfo mi = new JavaInstanceInfo();
+			JavaInstanceInfo mi = new JavaInstanceInfo(System.currentTimeMillis());
 			textBuilder.extra("&3RAM: &b%s&3", mi.getMemUsage().replace("%", "%%"));
 			textBuilder.extra(" ");
 			textBuilder.extra("&3CPU Serv: &b%s&3", mi.getCPUUsage().replace("%", "%%"));
