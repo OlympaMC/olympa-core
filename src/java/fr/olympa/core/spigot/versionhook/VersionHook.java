@@ -43,6 +43,8 @@ public class VersionHook implements VersionHandler<Player> {
 			e.printStackTrace();
 		}
 		plugin.setProtocols(getProtocolsSupported());
+		if (viaVersion != null || protocolSupport != null)
+			plugin.getTask().runTaskLater(() -> plugin.setProtocols(getProtocolsSupported()), 2);
 	}
 
 	public PluginHandleVersion getProtocolSupport() {
