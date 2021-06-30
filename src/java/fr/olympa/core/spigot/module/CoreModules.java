@@ -35,7 +35,7 @@ public class CoreModules {
 			.cmd(tpsCommand.getClass()).listener(tpsCommand.getClass()).softDepend(NAME_TAG);
 	private static final ChatCatcher chatCatcher = new ChatCatcher(pl);
 	public static final OlympaModule<ChatCatcher, Listener, OlympaCore, OlympaCommand> CHAT_CATCHER = new SpigotModule<>(pl, "chatcatcher", plugin -> chatCatcher)
-			.cmd(chatCatcher.getClass()).listener(chatCatcher.getClass());
+			.cmd(chatCatcher.getClass()).listener(chatCatcher.getClass()).enableByDefault(false);
 
 	public CoreModules() {
 		NAME_TAG.registerModule();
