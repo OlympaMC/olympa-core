@@ -165,7 +165,7 @@ public class OlympaPlayerObject extends OlympaPlayerCore {
 
 	@Override
 	public void setIp(String ip) {
-		setIp(ip);
+		super.setIp(ip);
 		COLUMN_IP.updateAsync(this, ip, null, null);
 	}
 
