@@ -20,6 +20,8 @@ public class SpigotServerSwitchReceiver2 extends JedisPubSub {
 		String[] args = message.split(":");
 		OlympaBungee instance = OlympaBungee.getInstance();
 		ProxiedPlayer player = OlympaBungee.getInstance().getProxy().getPlayer(args[0]);
+		if (player == null)
+			return;
 		String serverName;
 		ServerInfo server = instance.getProxy().getServersCopy().get(args[1]);
 		if (server == null)

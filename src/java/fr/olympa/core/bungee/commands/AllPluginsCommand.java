@@ -25,7 +25,7 @@ public class AllPluginsCommand extends BungeeCommand {
 	public void onCommand(CommandSender sender, String[] args) {
 		TxtComponentBuilder out = new TxtComponentBuilder("&eListe non exhaustive des plugins des serveurs > ").extraSpliter("\n\n");
 		Collection<ServerInfoAdvancedBungee> allServers = MonitorServers.getServers();
-		List<ServerInfoAdvancedBungee> servers = allServers.stream().filter(mib -> mib.hasFullInfos()).collect(Collectors.toList());
+		List<ServerInfoAdvanced> servers = allServers.stream().filter(mib -> mib.hasFullInfos()).collect(Collectors.toList());
 		ServerInfoAdvancedBungee bungeeServerInfo = new ServerInfoAdvancedBungee(OlympaBungee.getInstance());
 		if (bungeeServerInfo.getPlugins() != null && !bungeeServerInfo.getPlugins().isEmpty()) {
 			TxtComponentBuilder serverPlugins = new TxtComponentBuilder("&3" + bungeeServerInfo.getHumanName() + "&b > ");

@@ -13,8 +13,11 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.player.OlympaPlayerInformations;
+import fr.olympa.api.common.server.ServerInfoAdvanced;
+import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.core.common.provider.OlympaPlayerDeserializer;
 import fr.olympa.core.common.provider.OlympaPlayerInformationsDeserializer;
 
@@ -27,7 +30,14 @@ public class GsonCustomizedObjectTypeAdapter extends TypeAdapter<Object> {
 			.registerTypeHierarchyAdapter(Map.class, adapter)
 			.registerTypeHierarchyAdapter(List.class, adapter)
 			.excludeFieldsWithoutExposeAnnotation();
-	public static final Gson GSON = GSON_BUILDER.create();
+	public static final Gson GSON;
+
+	static {
+		if (LinkSpigotBungee.Provider.link.isSpigot())
+			GSON = GSON_BUILDER.registerTypeHierarchyAdapter(ServerInfoAdvanced.class, new ServerInfoAdvanced()).create();
+		else
+			GSON = GSON_BUILDER.registerTypeHierarchyAdapter(ServerInfoAdvancedBungee.class, new ServerInfoAdvancedBungee()).create();
+	}
 
 	private final TypeAdapter<Object> delegate = new Gson().getAdapter(Object.class);
 

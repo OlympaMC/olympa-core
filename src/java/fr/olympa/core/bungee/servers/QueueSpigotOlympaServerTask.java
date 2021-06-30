@@ -4,7 +4,6 @@ import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ServerInfoAdvanced;
-import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import net.md_5.bungee.api.ProxyServer;
@@ -51,7 +50,7 @@ public class QueueSpigotOlympaServerTask implements Runnable {
 			return;
 		}
 		String serverName;
-		ServerInfoAdvancedBungee monitorInfo = MonitorServers.getMonitor(server);
+		ServerInfoAdvanced monitorInfo = MonitorServers.getMonitor(server);
 		if (monitorInfo == null)
 			serverName = Utils.capitalize(server.getName());
 		else

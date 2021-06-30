@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.player.OlympaPlayer;
@@ -31,17 +33,21 @@ public class ListPlayerCommand extends BungeeCommand {
 
 		Map<ServerInfoAdvancedBungee, List<ProxiedPlayer>> servers = new HashMap<>();
 		globalPlayers.forEach(player -> {
-			servers.computeIfAbsent(MonitorServers.getMonitor(player.getServer().getInfo()), server -> new ArrayList<>()).add(player);
+			servers.computeIfAbsent(player.getServer() == null ? null : MonitorServers.getMonitor(player.getServer().getInfo()), server -> new ArrayList<>()).add(player);
 		});
 
 		servers.entrySet().stream().sorted((o1, o2) -> Integer.compare(o2.getValue().size(), o1.getValue().size())).forEach(entry -> {
+			@Nullable
 			ServerInfoAdvancedBungee server = entry.getKey();
 			List<ProxiedPlayer> players = entry.getValue();
 
 			TxtComponentBuilder out2 = new TxtComponentBuilder().extraSpliter(" ");
 
-			out2.extra("§7[%s§7]", server.getStatus().getNameColored());
-			out2.extra("%s%s", server.getStatus().getColor(), server.getName());
+			if (server != null) {
+				out2.extra("§7[%s§7]", server.getStatus().getNameColored());
+				out2.extra("%s%s", server.getStatus().getColor(), server.getName());
+			} else
+				out2.extra("§7[%s§7]", "§cEn connexion");
 			out2.extra("§a(%d)§e:", players.size());
 
 			for (int i = 0; i < players.size(); i++) {

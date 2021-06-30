@@ -17,6 +17,7 @@ import fr.olympa.api.common.bash.OlympaRuntime;
 import fr.olympa.api.common.match.MatcherPattern;
 import fr.olympa.api.common.match.RegexMatcher;
 import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.common.server.ServerStatus;
 import net.md_5.bungee.api.ProxyServer;
@@ -61,7 +62,7 @@ public class ServersConnection {
 	}
 
 	public static boolean canPlayerConnect(ServerInfo server) {
-		ServerInfoAdvancedBungee monitor = MonitorServers.getMonitor(server);
+		ServerInfoAdvanced monitor = MonitorServers.getMonitor(server);
 		return monitor != null && monitor.getStatus().canConnect();
 	}
 
@@ -81,8 +82,10 @@ public class ServersConnection {
 			return bestServer;
 
 		// Ouvre un serveur
-		ServerInfo serverToOpen = MonitorServers.getServersMap().entrySet().stream().filter(e -> (except == null || !e.getKey().getName().equals(except.getName())) && MonitorServers.getServers(olympaServer).values().stream()
-				.anyMatch(mInfo -> mInfo.getName().equals(e.getKey().getName()) && mInfo.getStatus().equals(ServerStatus.CLOSE) && mInfo.isUsualError())).map(Entry::getKey).findFirst().orElse(null);
+		ServerInfo serverToOpen = MonitorServers.getServersMap().entrySet().stream().filter(e -> (except == null || !e.getKey().getName().equals(except.getName()))
+				&& MonitorServers.getServers(olympaServer).values().stream().anyMatch(mInfo -> mInfo.getName().equals(e.getKey().getName())
+						&& mInfo.getStatus().equals(ServerStatus.CLOSE) && mInfo.isUsualError()))
+				.map(Entry::getKey).findFirst().orElse(null);
 		if (serverToOpen != null) {
 			if (!waitToStart.contains(serverToOpen)) {
 				waitToStart.add(serverToOpen);
@@ -94,11 +97,15 @@ public class ServersConnection {
 			if (w8forConnect != null) {
 				while (waitToStart.contains(serverToOpen))
 					try {
+						if (!w8forConnect.isConnected())
+							break;
 						w8forConnect.getPendingConnection().unsafe().sendPacket(new KeepAlive(ThreadLocalRandom.current().nextLong()));
 						Thread.sleep(5000);
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
+				if (!w8forConnect.isConnected())
+					return null;
 				return serverToOpen;
 			}
 		}

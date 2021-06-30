@@ -3,7 +3,7 @@ package fr.olympa.core.bungee.servers;
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.server.OlympaServer;
-import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
+import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -47,13 +47,13 @@ public class QueueSpigotServerTask implements Runnable {
 			return;
 		}
 		String serverName;
-		ServerInfoAdvancedBungee monitorInfo = MonitorServers.getMonitor(server);
+		ServerInfoAdvanced monitorInfo = MonitorServers.getMonitor(server);
 		if (monitorInfo == null)
 			serverName = Utils.capitalize(server.getName());
 		else
 			serverName = monitorInfo.getHumanName();
 		if (!ServersConnection.canPlayerConnect(server)) {
-			TextComponent text = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_BAD + ColorUtils.color("Tu es dans la file d'attente du &4" + serverName + "&c...")));
+			TextComponent text = new TextComponent(Prefix.QUEUE.formatMessageB("En attente du &4" + serverName + "&c... &7[&4QUITTER&7]&c.", serverName));
 			text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(ColorUtils.color("&cClique ici pour sortir de la file d'attente"))));
 			text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/leavequeue"));
 			proxiedPlayer.sendMessage(text);

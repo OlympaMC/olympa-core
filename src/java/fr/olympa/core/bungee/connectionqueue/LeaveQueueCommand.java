@@ -18,7 +18,7 @@ public class LeaveQueueCommand extends BungeeCommand {
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		if (ServersConnection.removeTryToConnect(proxiedPlayer))
-			proxiedPlayer.sendMessage(Prefix.DEFAULT_GOOD + ColorUtils.color("Tu as quitté la file d'attente."));
+			proxiedPlayer.sendMessage(Prefix.QUEUE.formatMessageB("Quittée"));
 		else
 			proxiedPlayer.sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color("Tu n'es dans aucune file d'attente."));
 	}

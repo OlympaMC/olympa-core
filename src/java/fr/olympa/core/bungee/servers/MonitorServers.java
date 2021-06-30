@@ -16,7 +16,6 @@ import fr.olympa.api.bungee.task.BungeeTaskManager;
 import fr.olympa.api.common.module.OlympaModule;
 import fr.olympa.api.common.redis.RedisClass;
 import fr.olympa.api.common.server.OlympaServer;
-import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.utils.Utils;
@@ -71,15 +70,16 @@ public class MonitorServers {
 		long nano = System.nanoTime();
 		serverInfo.ping((result, error) -> {
 			ServerInfoAdvancedBungee oldMonitor = getMonitor(serverInfo);
-			if (OlympaModule.DEBUG)
-				OlympaBungee.getInstance().sendMessage("&7Debug Serveur &e%s&7 a été ping.", serverInfo.getName());
-			if (oldMonitor != null && error instanceof ReadTimeoutException && ServerInfoAdvancedBungee.addReadTimeException(serverInfo))
+			if (oldMonitor != null && error instanceof ReadTimeoutException && ServerInfoAdvancedBungee.addReadTimeException(serverInfo)) {
+				if (OlympaModule.DEBUG)
+					OlympaBungee.getInstance().sendMessage("&7Debug Serveur &e%s&7 a été ping et une &cReadTimeoutException est appru.", serverInfo.getName());
 				return;
+			}
 			ServerInfoAdvancedBungee.removeReadTimeException(serverInfo);
 			ServerInfoAdvancedBungee info = ServerInfoAdvancedBungee.getFromPingServer(serverInfo, nano, result, error);
 			bungeeServers.put(serverInfo, info);
-			oldMonitor = olympaServers.get(info.getOlympaServer()).put(info.getServerId(), info);
-			ServerStatus previousStatus = oldMonitor == null ? ServerStatus.UNKNOWN : oldMonitor.getStatus();
+			olympaServers.get(info.getOlympaServer()).put(info.getServerId(), info);
+			ServerStatus previousStatus = oldMonitor == null || oldMonitor.getStatus() == null ? ServerStatus.UNKNOWN : oldMonitor.getStatus();
 			if (previousStatus != info.getStatus()) {
 				OlympaBungee.getInstance().sendMessage("§7Serveur §e" + info.getName() + "§7 : " + previousStatus.getNameColored()
 						+ " §7-> " + info.getStatus().getNameColored() + (info.getError() != null ? " (" + info.getError() + ")" : ""));
@@ -107,7 +107,7 @@ public class MonitorServers {
 			for (ServerInfo serverInfo : plugin.getProxy().getServersCopy().values())
 				updateServer(serverInfo, false);
 			if (Utils.getCurrentTimeInSeconds() - SpigotAskMonitorInfoReceiver.lastTimeAsk > 30)
-				RedisClass.SERVER_INFO_ADVANCED.sendServerInfos(bungeeServers.values().stream().map(mib -> (ServerInfoAdvanced) mib).collect(Collectors.toList()));
+				RedisClass.SERVER_INFO_ADVANCED.sendServerInfos(bungeeServers.values().stream().map(mib -> mib).collect(Collectors.toList()));
 		}, 1, 20, TimeUnit.SECONDS);
 	}
 }

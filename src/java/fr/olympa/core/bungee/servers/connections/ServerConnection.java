@@ -39,6 +39,7 @@ public class ServerConnection {
 	@Nullable
 	ServerInfo serverInfo;
 	boolean w8ForConnect;
+	boolean isLoginScreenConnection = false;
 
 	int i = 0;
 	int iDone = 0;
