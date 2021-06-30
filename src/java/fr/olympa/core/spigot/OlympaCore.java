@@ -241,7 +241,7 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 
 			new AntiWD(this);
 			try {
-				getTask().runTask(() -> versionHandler = new VersionHook(this));
+				versionHandler = new VersionHook(this);
 			} catch (Exception e) {
 				getLogger().severe("Une erreur est survenue lors de la detection des versions avec ViaVersion ou ProtocolSupport.");
 				e.printStackTrace();

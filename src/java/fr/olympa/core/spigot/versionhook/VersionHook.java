@@ -17,8 +17,10 @@ public class VersionHook implements VersionHandler<Player> {
 
 	private PluginHandleVersion protocolSupport;
 	private PluginHandleVersion viaVersion;
+	private OlympaCore plugin;
 
 	public VersionHook(OlympaCore plugin) {
+		this.plugin = plugin;
 		plugin.setVersionHandler(this);
 		try {
 			if (plugin.getServer().getPluginManager().isPluginEnabled("ProtocolSupport"))
@@ -120,6 +122,7 @@ public class VersionHook implements VersionHandler<Player> {
 			b = protocolSupport.disable(versions);
 		if (viaVersion != null)
 			b2 = viaVersion.disable(versions);
+		plugin.setProtocols(getProtocolsSupported());
 		return b || b2;
 	}
 
@@ -131,6 +134,7 @@ public class VersionHook implements VersionHandler<Player> {
 			b = protocolSupport.disable(versions);
 		if (viaVersion != null)
 			b2 = viaVersion.disable(versions);
+		plugin.setProtocols(getProtocolsSupported());
 		return b || b2;
 	}
 
@@ -142,6 +146,7 @@ public class VersionHook implements VersionHandler<Player> {
 			b = protocolSupport.disableAllUnderI(version);
 		if (viaVersion != null)
 			b2 = viaVersion.disableAllUnderI(version);
+		plugin.setProtocols(getProtocolsSupported());
 		return b || b2;
 	}
 
@@ -153,6 +158,7 @@ public class VersionHook implements VersionHandler<Player> {
 			b = protocolSupport.disableAllUpperI(version);
 		if (viaVersion != null)
 			b2 = viaVersion.disableAllUpperI(version);
+		plugin.setProtocols(getProtocolsSupported());
 		return b || b2;
 	}
 }
