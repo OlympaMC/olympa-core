@@ -36,7 +36,7 @@ public class ProtocolListener implements Listener {
 		if (event.isCancelled())
 			return;
 		ProxiedPlayer player = event.getPlayer();
-		String recommandedVersion = ProtocolAPI.getRecommandedVersion().getCompleteName();
+		String recommandedVersion = ProtocolAPI.getRecommandedVersion().getName();
 
 		String playerVersion = OlympaBungee.getInstance().getVersionHandler().getVersion(player);
 		if (playerVersion == null)
