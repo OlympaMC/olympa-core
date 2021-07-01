@@ -47,7 +47,6 @@ import fr.olympa.api.spigot.command.essentials.SayCommand;
 import fr.olympa.api.spigot.frame.ImageFrameManager;
 import fr.olympa.api.spigot.gui.Inventories;
 import fr.olympa.api.spigot.holograms.HologramsManager;
-import fr.olympa.api.spigot.region.tracking.RegionManager;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.common.SwearHandler;
@@ -138,6 +137,8 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 		if (database != null)
 			database.close();
 		LoggerUtils.unHookAll();
+		if (redisAccess != null)
+			redisAccess.disconnect();
 		sendMessage("&4%s&c (%s) est désactivé.", getDescription().getName(), getDescription().getVersion());
 	}
 
@@ -213,7 +214,6 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 			pluginManager.registerEvents(new StatusMotdListener(), this);
 			pluginManager.registerEvents(new ChatListener(), this);
 			pluginManager.registerEvents(new CommandListener(), this);
-			pluginManager.registerEvents(regionManager = new RegionManager(), this);
 
 			new GroupCommand(this).register();
 			new ChatCommand(this).register();
@@ -222,7 +222,12 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 			new PluginCommand(this).registerPreProcess().register();
 			new HelpCommand(this).register().registerPreProcess();
 			new SayCommand(this).registerPreProcess();
-			new UtilsCommand(this).register();
+			try {
+				new UtilsCommand(this).register();
+			} catch (Exception e) {
+				getLogger().severe("Une erreur est survenue avec la commande /utils.");
+				e.printStackTrace();
+			}
 			new GenderCommand(this).register();
 			gamemodeCommand = (GamemodeCommand) new GamemodeCommand(this).register().registerPreProcess();
 			new InvseeCommand(this).register();

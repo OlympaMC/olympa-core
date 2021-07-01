@@ -51,11 +51,11 @@ public class VanishListener implements Listener {
 			modeField.setAccessible(true);
 			profileField = Class.forName(PacketPlayOutPlayerInfo.class.getName() + "$PlayerInfoData").getDeclaredField("d");
 			profileField.setAccessible(true);
-		}catch (ReflectiveOperationException ex) {
+		} catch (ReflectiveOperationException ex) {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
@@ -63,22 +63,24 @@ public class VanishListener implements Listener {
 		//		player.getActivePotionEffects().removeIf(p -> p.getType() == PotionEffectType.INVISIBILITY && p.getDuration() == 0);
 
 		CoreModules.VANISH.getApi().getVanished().forEach(vanishPlayer -> player.hidePlayer(plugin, vanishPlayer));
-		
-		if (datasField == null) return;
+
+		if (datasField == null)
+			return;
 		((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline().addBefore("packet_handler", "hide_spectators", new ChannelDuplexHandler() {
+			@Override
 			public void write(io.netty.channel.ChannelHandlerContext ctx, Object msg, io.netty.channel.ChannelPromise promise) throws Exception {
 				if (msg instanceof PacketPlayOutPlayerInfo) {
 					PacketPlayOutPlayerInfo packet = (PacketPlayOutPlayerInfo) msg;
 					List<Object> infos = (List<Object>) datasField.get(packet);
-					for (Object data : infos) {
+					for (Object data : infos)
 						if (modeField.get(data) == EnumGamemode.SPECTATOR) {
-							if (((GameProfile) profileField.get(data)).getId().equals(player.getUniqueId())) continue;
+							if (((GameProfile) profileField.get(data)).getId().equals(player.getUniqueId()))
+								continue;
 							modeField.set(data, EnumGamemode.ADVENTURE);
 						}
-					}
 				}
 				super.write(ctx, msg, promise);
-			};
+			}
 		});
 	}
 
@@ -124,7 +126,7 @@ public class VanishListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
-		if (vanishHandler != null && vanishHandler.isVanished(player))
+		if (vanishHandler != null && !vanishHandler.isVanished(player))
 			return;
 		if (event.getAction() == Action.PHYSICAL && event.getClickedBlock().getType() == Material.FARMLAND)
 			event.setCancelled(true);
@@ -178,7 +180,7 @@ public class VanishListener implements Listener {
 	public void onPlayerPickupItem(EntityPickupItemEvent event) {
 		if (event.getEntityType() != EntityType.PLAYER)
 			return;
-		
+
 		//		Location locationOfItem = event.getEntity().getLocation();
 		Player player = (Player) event.getEntity();
 		if (!(event.getEntity() instanceof Player))
@@ -188,5 +190,3 @@ public class VanishListener implements Listener {
 			event.setCancelled(true);
 	}
 }
-
-

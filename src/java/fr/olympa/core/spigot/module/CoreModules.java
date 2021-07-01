@@ -8,6 +8,9 @@ import fr.olympa.api.spigot.afk.AfkHandler;
 import fr.olympa.api.spigot.chat.ChatCatcher;
 import fr.olympa.api.spigot.command.OlympaCommand;
 import fr.olympa.api.spigot.command.essentials.AfkCommand;
+import fr.olympa.api.spigot.region.tracking.BypassCommand;
+import fr.olympa.api.spigot.region.tracking.BypassFluidsCommand;
+import fr.olympa.api.spigot.region.tracking.RegionManager;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.commands.TpsCommand;
 import fr.olympa.core.spigot.scoreboards.NameTagCommand;
@@ -37,12 +40,17 @@ public class CoreModules {
 	public static final OlympaModule<ChatCatcher, Listener, OlympaCore, OlympaCommand> CHAT_CATCHER = new SpigotModule<>(pl, "chatcatcher", plugin -> chatCatcher)
 			.cmd(chatCatcher.getClass()).listener(chatCatcher.getClass()).enableByDefault(false);
 
+	private static final RegionManager regionManager = new RegionManager();
+	public static final OlympaModule<RegionManager, Listener, OlympaCore, OlympaCommand> REGION_MANAGER = new SpigotModule<>(pl, "regionManager", plugin -> regionManager)
+			.cmd(BypassCommand.class, BypassFluidsCommand.class).listener(regionManager.getClass());
+
 	public CoreModules() {
 		NAME_TAG.registerModule();
 		VANISH.registerModule();
 		AFK.registerModule();
 		TPS.registerModule();
 		CHAT_CATCHER.registerModule();
+		REGION_MANAGER.registerModule();
 	}
 
 }

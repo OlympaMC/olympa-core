@@ -71,7 +71,7 @@ public class BasicSecurityListener implements Listener {
 		// Vérifie si l'adresse est correct
 		if (RegexMatcher.IP.is(connectIp) && securityHandler.isCheckCorrectEntredIpNumber()
 				|| securityHandler.isCheckCorrectEntredIp() && (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net")
-						|| !subdomain.equalsIgnoreCase("play") && !subdomain.equalsIgnoreCase("buildeur"))) {
+						|| !subdomain.equalsIgnoreCase("play") && !subdomain.equalsIgnoreCase("buildeur") && !subdomain.equalsIgnoreCase("dev"))) {
 			event.setCancelReason(BungeeUtils.connectScreen("&7[&cSécurité&7] &cTu dois te connecter avec l'adresse &nplay.olympa.fr&c."));
 			event.setCancelled(true);
 		}

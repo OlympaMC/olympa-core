@@ -24,7 +24,8 @@ public class NewSpigotCommand extends ComplexCommand {
 		addArgumentParser("DEBUG_LIST", (sender, msg) -> CacheStats.getDebugLists().keySet(), x -> CacheStats.getDebugList(x), x -> "&4%s&c doit être un id de debugList qui existe.");
 		addArgumentParser("DEBUG_MAP", (sender, msg) -> CacheStats.getDebugMaps().keySet(), x -> CacheStats.getDebugMap(x), x -> "&4%s&c doit être un id de debugMap qui existe.");
 		addArgumentParser("ALIGNMENT", Alignment.class);
-		addArgumentParser("MODULES", (sender, msg) -> OlympaModule.getModulesNames(), x -> OlympaModule.getModule(x), x -> "&4%s&c n'est pas un module, essaye &4" + String.join(", ", OlympaModule.getModulesNames()) + "&c.");
+		addArgumentParser("MODULES", (sender, msg) -> OlympaModule.getModulesNames(), x -> OlympaModule.getModule(x),
+				x -> String.format("&4%s&c n'est pas un module, essaye &4%s&c.", x, String.join(", ", OlympaModule.getModulesNames())));
 	}
 
 	@Cmd(permissionName = "SPIGOT_COMMAND_CACHE", args = { "CACHE", "clear|print|stats" }, description = "Affiche tous les Caches qui ont été enregister")
@@ -86,7 +87,7 @@ public class NewSpigotCommand extends ComplexCommand {
 	@Cmd(args = { "MODULES", "on|off|debugon|debugoff" }, min = 1, description = "Active ou désactive un module")
 	public void module(CommandContext cmd) {
 		OlympaModule<? extends Object, Listener, ? extends Plugin, OlympaCommand> module = cmd.getArgument(0);
-		if (cmd.getArgumentsLength() == 0) {
+		if (cmd.getArgumentsLength() == 1) {
 			sendMessage(Prefix.DEFAULT, "Le module &8%s&7 est %s", module.getName(), module.isEnabledString());
 			return;
 		}

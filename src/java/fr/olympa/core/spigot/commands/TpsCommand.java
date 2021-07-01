@@ -21,6 +21,7 @@ import fr.olympa.api.spigot.command.OlympaCommand;
 import fr.olympa.api.spigot.utils.TPS;
 import fr.olympa.api.spigot.utils.TPSUtils;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.core.spigot.OlympaCore;
 
@@ -94,7 +95,7 @@ public class TpsCommand extends OlympaCommand implements Listener, ModuleApi<Oly
 		taskId = task.scheduleSyncRepeatingTask(() -> {
 			double[] tps = TPS.getDoubleTPS();
 			TxtComponentBuilder textBuilder = new TxtComponentBuilder();
-			JavaInstanceInfo mi = new JavaInstanceInfo(System.currentTimeMillis());
+			JavaInstanceInfo mi = new JavaInstanceInfo(Utils.getCurrentTimeInSeconds());
 			textBuilder.extra("&3RAM: &b%s&3", mi.getMemUsage().replace("%", "%%"));
 			textBuilder.extra(" ");
 			textBuilder.extra("&3CPU Serv: &b%s&3", mi.getCPUUsage().replace("%", "%%"));
@@ -110,13 +111,13 @@ public class TpsCommand extends OlympaCommand implements Listener, ModuleApi<Oly
 		disableTask();
 		players.clear();
 		players = null;
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean enable(OlympaCore plugin) {
 		players = new ArrayList<>();
-		return false;
+		return true;
 	}
 
 	@Override
