@@ -36,12 +36,14 @@ public class ProtocolListener implements Listener {
 		if (event.isCancelled())
 			return;
 		ProxiedPlayer player = event.getPlayer();
-		String recommandedVersion = ProtocolAPI.getRecommandedVersion().getName();
+		ProtocolAPI recommandedVersionProtocol = ProtocolAPI.getRecommandedVersion();
+		String recommandedVersion = recommandedVersionProtocol.getName();
 
+		int playerVersionProtocol = OlympaBungee.getInstance().getVersionHandler().getPlayerProtocol(player);
 		String playerVersion = OlympaBungee.getInstance().getVersionHandler().getVersion(player);
 		if (playerVersion == null)
 			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Pour une meilleur expérience, il est préférable d'utiliser la version &2&n&l%s&c", recommandedVersion));
-		else if (!recommandedVersion.equals(playerVersion))
+		else if (!recommandedVersionProtocol.contains(playerVersionProtocol))
 			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Pour une meilleur expérience, il est préférable d'utiliser la version &2&n&l%s&c. "
 					+ "Tu utilise actuellement la version &4%s&c.", (Object) recommandedVersion, (Object) playerVersion));
 	}

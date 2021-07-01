@@ -3,10 +3,14 @@ package fr.olympa.core.spigot.vanish;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.Chest;
+import org.bukkit.block.Container;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Openable;
+import org.bukkit.block.data.type.EnderChest;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
@@ -16,6 +20,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityPickupItemEvent;
@@ -26,11 +32,13 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import com.mojang.authlib.GameProfile;
 
 import fr.olympa.api.spigot.vanish.IVanishApi;
+import fr.olympa.api.utils.Prefix;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.module.CoreModules;
 import io.netty.channel.ChannelDuplexHandler;
@@ -114,6 +122,36 @@ public class VanishListener implements Listener {
 			event.setCancelled(true);
 	}
 
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onBlockBreak(BlockBreakEvent event) {
+		Player player = event.getPlayer();
+		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
+		if (vanishHandler == null || !vanishHandler.isVanished(player) || event.isCancelled() && player.getGameMode() != GameMode.CREATIVE)
+			return;
+		Block block = event.getBlock();
+		if (player.getGameMode() == GameMode.CREATIVE)
+			player.getInventory().addItem(block.getDrops().toArray(ItemStack[]::new));
+		block.setType(Material.AIR);
+		event.setCancelled(true);
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onBlockPlace(BlockPlaceEvent event) {
+		Player player = event.getPlayer();
+		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
+		if (vanishHandler == null || !vanishHandler.isVanished(player) || event.isCancelled() && player.getGameMode() != GameMode.CREATIVE)
+			return;
+		ItemStack itemInHand = event.getItemInHand();
+		Block block = event.getBlock();
+		if (player.getGameMode() != GameMode.CREATIVE)
+			if (itemInHand.getAmount() > 1)
+				itemInHand.setAmount(itemInHand.getAmount() - 1);
+			else
+				player.getInventory().removeItem(itemInHand);
+		block.getWorld().getBlockAt(block.getLocation()).setType(itemInHand.getType());
+		event.setCancelled(true);
+	}
+
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
 		Player player = event.getPlayer();
@@ -126,28 +164,34 @@ public class VanishListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
-		if (vanishHandler != null && !vanishHandler.isVanished(player))
+		if (vanishHandler == null || !vanishHandler.isVanished(player))
 			return;
-		if (event.getAction() == Action.PHYSICAL && event.getClickedBlock().getType() == Material.FARMLAND)
+		if (event.getAction() == Action.PHYSICAL)
 			event.setCancelled(true);
-		else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+		else if ((!player.isSneaking() || player.getInventory().getItemInMainHand().getType() == Material.AIR) && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			Block block = event.getClickedBlock();
-			Inventory inventory = null;
 			BlockState blockState = block.getState();
-			switch (block.getType()) {
-			case TRAPPED_CHEST:
-			case CHEST:
-				Chest chest = (Chest) blockState;
-				inventory = chest.getInventory();
-				break;
-			case ENDER_CHEST:
-				inventory = player.getEnderChest();
-				break;
-			default:
-				return;
+			BlockData blockData = block.getBlockData();
+			if (blockData instanceof EnderChest) {
+				event.setCancelled(true);
+				player.openInventory(player.getEnderChest());
+				Prefix.VANISH.sendMessage(player, "Ouverture forcé et silencieuse de ton EnderChest");
+			} else if (blockData instanceof Openable) {
+				Openable openable = (Openable) blockData;
+				event.setCancelled(true);
+				if (openable.isOpen())
+					Prefix.VANISH.sendMessage(player, "Fermeture forcé de %s", Utils.capitalize(block.getType().toString().replace("_", " ")));
+				else
+					Prefix.VANISH.sendMessage(player, "Ouverture forcé de %s", Utils.capitalize(block.getType().toString().replace("_", " ")));
+				openable.setOpen(!openable.isOpen());
+				blockState.setBlockData(openable);
+				blockState.update();
+			} else if (blockState instanceof Container) {
+				Container container = (Container) blockState;
+				event.setCancelled(true);
+				player.openInventory(container.getInventory());
+				Prefix.VANISH.sendMessage(player, "Ouverture forcé du %s", Utils.capitalize(block.getType().toString().replace("_", " ")));
 			}
-			event.setCancelled(true);
-			player.openInventory(inventory);
 		}
 	}
 
