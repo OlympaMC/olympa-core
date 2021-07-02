@@ -1,8 +1,10 @@
 package fr.olympa.core.bungee.servers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -13,7 +15,6 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableMap;
 
 import fr.olympa.api.bungee.task.BungeeTaskManager;
-import fr.olympa.api.common.module.OlympaModule;
 import fr.olympa.api.common.redis.RedisClass;
 import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
@@ -45,6 +46,13 @@ public class MonitorServers {
 		return bungeeServers.values();
 	}
 
+	public static Collection<ServerInfoAdvancedBungee> getServersWithBungee() {
+		List<ServerInfoAdvancedBungee> list = new ArrayList<>();
+		list.add(new ServerInfoAdvancedBungee(OlympaBungee.getInstance()));
+		list.addAll(bungeeServers.values());
+		return bungeeServers.values();
+	}
+
 	public static Stream<ServerInfoAdvancedBungee> getServersSorted() {
 		return bungeeServers.values().stream().sorted((o1, o2) -> {
 			int i = Integer.compare(o1.getStatus().ordinal(), o2.getStatus().ordinal());
@@ -62,19 +70,12 @@ public class MonitorServers {
 		return bungeeServers;
 	}
 
-	public static void updateServer(ServerInfo serverInfo, boolean instantUpdate) {
-		updateServer(serverInfo, instantUpdate, null);
-	}
-
 	public static void updateServer(ServerInfo serverInfo, boolean instantUpdate, Consumer<ServerInfo> sucess) {
 		long nano = System.nanoTime();
 		serverInfo.ping((result, error) -> {
 			ServerInfoAdvancedBungee oldMonitor = getMonitor(serverInfo);
-			if (oldMonitor != null && error instanceof ReadTimeoutException && ServerInfoAdvancedBungee.addReadTimeException(serverInfo)) {
-				if (OlympaModule.DEBUG)
-					OlympaBungee.getInstance().sendMessage("&7Debug Serveur &e%s&7 a été ping et une &cReadTimeoutException est appru.", serverInfo.getName());
+			if (oldMonitor != null && error instanceof ReadTimeoutException && ServerInfoAdvancedBungee.addReadTimeException(serverInfo))
 				return;
-			}
 			ServerInfoAdvancedBungee.removeReadTimeException(serverInfo);
 			ServerInfoAdvancedBungee info = ServerInfoAdvancedBungee.getFromPingServer(serverInfo, nano, result, error);
 			bungeeServers.put(serverInfo, info);
@@ -105,9 +106,9 @@ public class MonitorServers {
 		BungeeTaskManager task = plugin.getTask();
 		task.scheduleSyncRepeatingTask("monitor_serveurs", () -> {
 			for (ServerInfo serverInfo : plugin.getProxy().getServersCopy().values())
-				updateServer(serverInfo, false);
+				updateServer(serverInfo, false, null);
 			if (Utils.getCurrentTimeInSeconds() - SpigotAskMonitorInfoReceiver.lastTimeAsk > 30)
 				RedisClass.SERVER_INFO_ADVANCED.sendServerInfos(bungeeServers.values().stream().map(mib -> mib).collect(Collectors.toList()));
-		}, 1, 20, TimeUnit.SECONDS);
+		}, 1, 25, TimeUnit.SECONDS);
 	}
 }
