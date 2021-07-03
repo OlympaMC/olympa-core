@@ -18,7 +18,6 @@ import org.spigotmc.SpigotConfig;
 
 import com.google.gson.Gson;
 
-import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.groups.OlympaGroup;
 import fr.olympa.api.common.logger.LoggerUtils;
 import fr.olympa.api.common.module.OlympaModule;
@@ -105,6 +104,11 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 	public static OlympaCore getInstance() {
 		return instance;
 	}
+	
+	public OlympaCore() {
+		super();
+		instance = this;
+	}
 
 	protected DbConnection database = null;
 	private SwearHandler swearHandler;
@@ -144,8 +148,6 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 
 	@Override
 	public void onLoad() {
-		instance = this;
-		LinkSpigotBungee.Provider.link = this;
 		SpigotConfig.sendNamespaced = false;
 		errorOutputStream = new ErrorOutputStream(System.err, RedisSpigotSend::sendError, run -> getServer().getScheduler().runTaskLater(this, run, 20));
 		System.setErr(new PrintStream(errorOutputStream));
