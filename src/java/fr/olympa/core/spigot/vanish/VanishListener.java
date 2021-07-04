@@ -15,8 +15,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Openable;
 import org.bukkit.block.data.type.EnderChest;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -250,9 +248,8 @@ public class VanishListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onPotionSplash(PotionSplashEvent event) {
 		for (LivingEntity entity : event.getAffectedEntities()) {
-			if (!(entity instanceof Player))
+			if (!(entity instanceof Player player))
 				continue;
-			Player player = (Player) entity;
 			IVanishApi vanishHandler = CoreModules.VANISH.getApi();
 			if (vanishHandler != null && vanishHandler.isVanished(player))
 				event.setIntensity(player, 0);
@@ -260,27 +257,16 @@ public class VanishListener implements Listener {
 	}
 
 	@EventHandler(ignoreCancelled = true)
-	public void onPotionSplash(FoodLevelChangeEvent event) {
-		Player player;
-		HumanEntity entity = event.getEntity();
-		if (!(entity instanceof Player))
-			return;
-		player = (Player) entity;
+	public void onFoodChange(FoodLevelChangeEvent event) {
+		if (!(event.getEntity()instanceof Player player)) return;
 		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
 		if (vanishHandler != null && vanishHandler.isVanished(player))
-			return;
-		event.setCancelled(true);
+			event.setCancelled(true);
 	}
 
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerPickupItem(EntityPickupItemEvent event) {
-		if (event.getEntityType() != EntityType.PLAYER)
-			return;
-
-		//		Location locationOfItem = event.getEntity().getLocation();
-		Player player = (Player) event.getEntity();
-		if (!(event.getEntity() instanceof Player))
-			return;
+		if (!(event.getEntity()instanceof Player player)) return;
 		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
 		if (vanishHandler != null && vanishHandler.isVanished(player))
 			event.setCancelled(true);
