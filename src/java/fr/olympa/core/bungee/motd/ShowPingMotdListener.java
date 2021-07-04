@@ -65,9 +65,9 @@ public class ShowPingMotdListener implements Listener {
 			if (virtualHost.getAddress() != null)
 				connectVirtualIp = virtualHost.getAddress().getHostAddress();
 		}
-		LinkSpigotBungee.Provider.link.sendMessage("&dPing de &5%s&d - &5%s&d (%s) -> &5%s&d - %s", potentialNames, ip, ProtocolAPI.getName(connection.getVersion()), connectIp, connectVirtualIp);
+		LinkSpigotBungee.getInstance().sendMessage("&dPing de &5%s&d - &5%s&d (%s) -> &5%s&d - %s", potentialNames, ip, ProtocolAPI.getName(connection.getVersion()), connectIp, connectVirtualIp);
 		if (debug)
-			LinkSpigotBungee.Provider.link.sendMessage(new Gson().toJson(connection.getSocketAddress()));*/
+			LinkSpigotBungee.getInstance().sendMessage(new Gson().toJson(connection.getSocketAddress()));*/
 	}
 
 	public void add(PendingConnection connection) {
@@ -85,7 +85,7 @@ public class ShowPingMotdListener implements Listener {
 	}
 
 	public void print(String ip, List<PlayerPingServer> playerPingServer) {
-		LinkSpigotBungee.Provider.link.launchAsync(() -> {
+		LinkSpigotBungee.getInstance().launchAsync(() -> {
 			StringJoiner sj = new StringJoiner(" ");
 			sj.add("&5Ping");
 			String potentialNames;
@@ -113,7 +113,7 @@ public class ShowPingMotdListener implements Listener {
 				long time = playerPingServer.get(playerPingServer.size() - 1).getTime() - playerPingServer.get(0).getTime();
 				sj.add(playerPingServer.size() + " fois en " + time + "s");
 			}
-			LinkSpigotBungee.Provider.link.sendMessage(sj.toString());
+			LinkSpigotBungee.getInstance().sendMessage(sj.toString());
 		});
 	}
 

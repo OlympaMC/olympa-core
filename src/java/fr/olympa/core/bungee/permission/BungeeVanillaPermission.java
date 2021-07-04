@@ -36,7 +36,7 @@ public enum BungeeVanillaPermission {
 
 	public static BungeeVanillaPermission get(String bungeeVanillaName) {
 		return Arrays.stream(BungeeVanillaPermission.values()).filter(p -> p.getBungeeVanillaName().equals(bungeeVanillaName)).findFirst().or(() -> {
-			LinkSpigotBungee.Provider.link.sendMessage("&4%s&c is not register in %s. You need to add it to handle this permission with OlympaPermission system.",
+			LinkSpigotBungee.getInstance().sendMessage("&4%s&c is not register in %s. You need to add it to handle this permission with OlympaPermission system.",
 					bungeeVanillaName, BungeeVanillaPermission.class.getName());
 			return Optional.of(BYPASS_PERM_NOT_EXIST);
 		}).get();

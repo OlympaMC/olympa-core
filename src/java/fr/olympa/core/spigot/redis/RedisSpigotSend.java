@@ -32,7 +32,7 @@ public class RedisSpigotSend {
 	public static boolean errorsEnabled = false;
 
 	public static void askServerName() {
-		LinkSpigotBungee.Provider.link.launchAsync(() -> {
+		LinkSpigotBungee.getInstance().launchAsync(() -> {
 			try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 				String serverName = OlympaCore.getInstance().getServerName();
 				jedis.publish(RedisChannel.SPIGOT_ASK_SERVERNAME.name(), serverName);
@@ -48,7 +48,7 @@ public class RedisSpigotSend {
 
 	public static void askPlayerServer(UUID uuid, Consumer<String> result) {
 		RedisSpigotSend.askPlayerServer.put(uuid, result);
-		LinkSpigotBungee.Provider.link.launchAsync(() -> {
+		LinkSpigotBungee.getInstance().launchAsync(() -> {
 			try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 				String serverName = OlympaCore.getInstance().getServerName();
 				jedis.publish(RedisChannel.SPIGOT_ASK_PLAYERSERVER.name(), serverName + ";" + uuid);
@@ -65,8 +65,8 @@ public class RedisSpigotSend {
 			}
 			RedisAccess.INSTANCE.disconnect();
 		};
-		if (LinkSpigotBungee.Provider.link.isEnabled())
-			LinkSpigotBungee.Provider.link.launchAsync(run);
+		if (LinkSpigotBungee.getInstance().isEnabled())
+			LinkSpigotBungee.getInstance().launchAsync(run);
 		else
 			run.run();
 	}
@@ -97,7 +97,7 @@ public class RedisSpigotSend {
 	}
 
 	public static void sendModificationsReceive(UUID uuid) {
-		LinkSpigotBungee.Provider.link.launchAsync(() -> {
+		LinkSpigotBungee.getInstance().launchAsync(() -> {
 			try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 				jedis.publish(RedisChannel.SPIGOT_CHANGE_GROUP_RECEIVE.toString(), uuid.toString());
 			}

@@ -23,7 +23,7 @@ public class ErrorLoggerHandler extends Handler {
 				String stackTrace = ExceptionUtils.getStackTrace(record.getThrown());
 				sendError.accept(record.getLevel().getName() + " [" + record.getLoggerName() + "] " + record.getMessage().replaceAll("ask #?\\d+", "ask XXX") + "\n" + stackTrace); // remove "Task XXXX"
 			} catch (Exception ex) {
-				LinkSpigotBungee.Provider.link.sendMessage("§cUne erreur est survenue durant le passage d'une erreur au bungee via redis: ", ExceptionUtils.getMessage(ex));
+				LinkSpigotBungee.getInstance().sendMessage("§cUne erreur est survenue durant le passage d'une erreur au bungee via redis: ", ExceptionUtils.getMessage(ex));
 			}
 	}
 

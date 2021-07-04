@@ -66,6 +66,6 @@ public class AccountProvider extends AccountProviderAPI {
 
 	/*@Override
 	public void saveToDb(OlympaPlayer olympaPlayer) {
-		LinkSpigotBungee.Provider.link.launchAsync(() -> MySQL.savePlayer(olympaPlayer));
+		LinkSpigotBungee.getInstance().launchAsync(() -> MySQL.savePlayer(olympaPlayer));
 	}*/
 }

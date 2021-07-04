@@ -91,7 +91,7 @@ public class ProtocolSupportHook implements PluginHandleVersion {
 		for (ProtocolAPI ver : versions)
 			if (disable(ver))
 				disabledProtocols.add(ver);
-		LinkSpigotBungee.Provider.link.sendMessage("Disabling %s support by ProtocolSupport.", disabledProtocols.stream().map(ProtocolAPI::getCompleteName).distinct().collect(Collectors.joining(", ")));
+		LinkSpigotBungee.getInstance().sendMessage("Disabling %s support by ProtocolSupport.", disabledProtocols.stream().map(ProtocolAPI::getCompleteName).distinct().collect(Collectors.joining(", ")));
 		return !disabledProtocols.isEmpty();
 	}
 
@@ -110,7 +110,7 @@ public class ProtocolSupportHook implements PluginHandleVersion {
 		ProtocolVersion protocol = getProtocolVersion(version);
 		boolean isSomeDisble = disable(protocol);
 		if (isSomeDisble)
-			LinkSpigotBungee.Provider.link.sendMessage("Disabling %s support by ProtocolSupport.", protocol.getName());
+			LinkSpigotBungee.getInstance().sendMessage("Disabling %s support by ProtocolSupport.", protocol.getName());
 		return isSomeDisble;
 	}
 
@@ -131,7 +131,7 @@ public class ProtocolSupportHook implements PluginHandleVersion {
 		for (ProtocolVersion protocol : protocols)
 			if (disable(protocol))
 				disabledProtocols.add(protocol);
-		LinkSpigotBungee.Provider.link.sendMessage("Disabling %s support by ProtocolSupport.", disabledProtocols.stream().map(ProtocolVersion::getName).collect(Collectors.joining(", ")));
+		LinkSpigotBungee.getInstance().sendMessage("Disabling %s support by ProtocolSupport.", disabledProtocols.stream().map(ProtocolVersion::getName).collect(Collectors.joining(", ")));
 		return !disabledProtocols.isEmpty();
 	}
 

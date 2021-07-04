@@ -89,7 +89,7 @@ public class ServersConnection {
 		if (serverToOpen != null) {
 			if (!waitToStart.contains(serverToOpen)) {
 				waitToStart.add(serverToOpen);
-				LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> {
+				LinkSpigotBungee.getInstance().getTask().runTaskLater(() -> {
 					waitToStart.remove(serverToOpen);
 				}, 1, TimeUnit.MINUTES);
 				OlympaRuntime.action("start", serverToOpen.getName()).start();
@@ -147,7 +147,7 @@ public class ServersConnection {
 			wc.isChangeServer = false;
 			return b;
 		}
-		BungeeTaskManager taskHandler = (BungeeTaskManager) LinkSpigotBungee.Provider.link.getTask();
+		BungeeTaskManager taskHandler = (BungeeTaskManager) LinkSpigotBungee.getInstance().getTask();
 		ScheduledTask task = wc.task;
 		if (task != null) {
 			taskHandler.cancelTaskById(task.getId());
@@ -160,7 +160,7 @@ public class ServersConnection {
 
 	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer, boolean isChangeServer) {
 		removeTryToConnect(player);
-		BungeeTaskManager taskHandler = (BungeeTaskManager) LinkSpigotBungee.Provider.link.getTask();
+		BungeeTaskManager taskHandler = (BungeeTaskManager) LinkSpigotBungee.getInstance().getTask();
 		ScheduledTask task = taskHandler.scheduleSyncRepeatingTaskAndGet("tryconnect_player_" + player.getUniqueId(), new QueueSpigotServerTask(player, olympaServer), 0, 20, TimeUnit.SECONDS);
 		addConnection(new WaitingConnection(player.getUniqueId(), olympaServer, task, isChangeServer));
 	}

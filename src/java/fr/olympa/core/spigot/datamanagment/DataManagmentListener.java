@@ -73,12 +73,12 @@ public class DataManagmentListener implements Listener {
 			}
 			if (i == 5 || i == 8) {
 				olympaPlayer = olympaAccount.getFromRedis();
-				LinkSpigotBungee.Provider.link.sendMessage("&4OlympaPlayer de %s pas encore trouvé, tentative de le récupérer via redis n°%d après %s secondes d'attente. Résultat: %s",
+				LinkSpigotBungee.getInstance().sendMessage("&4OlympaPlayer de %s pas encore trouvé, tentative de le récupérer via redis n°%d après %s secondes d'attente. Résultat: %s",
 						uuid, i == 5 ? 1 : 2, i, olympaPlayer != null ? "Réussi" : "Non trouvé");
 			} else if (i == 9)
 				try {
 					olympaPlayer = olympaAccount.fromDb();
-					LinkSpigotBungee.Provider.link.sendMessage("&4OlympaPlayer de %s pas encore trouvé, tentative de le récupérer via BDD (risque de perte de données majeure) n°%d. Résultat: %s", uuid, i + 1, olympaPlayer != null);
+					LinkSpigotBungee.getInstance().sendMessage("&4OlympaPlayer de %s pas encore trouvé, tentative de le récupérer via BDD (risque de perte de données majeure) n°%d. Résultat: %s", uuid, i + 1, olympaPlayer != null);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}

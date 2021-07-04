@@ -246,7 +246,7 @@ public class AccountProviderGetter implements AccountProviderGetterInterface {
 			Class<? extends OlympaPlayer> oldPlayerClass = this.playerClass;
 			this.playerClass = playerClass;
 			pluginPlayerProvider = provider;
-			LinkSpigotBungee.Provider.link.sendMessage("§aUtilisation de §2§l%s§a à la place de §2%s§a.", playerClass.getSimpleName(), oldPlayerClass.getSimpleName());
+			LinkSpigotBungee.getInstance().sendMessage("§aUtilisation de §2§l%s§a à la place de §2%s§a.", playerClass.getSimpleName(), oldPlayerClass.getSimpleName());
 		} catch (SQLException e) {
 			e.printStackTrace();
 			pluginPlayerTable = null;
@@ -264,7 +264,7 @@ public class AccountProviderGetter implements AccountProviderGetterInterface {
 			return false;
 		}
 		pluginPlayerTable.insert(player.getId());
-		LinkSpigotBungee.Provider.link.sendMessage("Données créées pour le joueur §6%s", player.getName());
+		LinkSpigotBungee.getInstance().sendMessage("Données créées pour le joueur §6%s", player.getName());
 		player.loaded();
 		getPlayerInformations(player);
 		return true;

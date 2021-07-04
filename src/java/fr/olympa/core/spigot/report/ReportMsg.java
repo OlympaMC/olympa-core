@@ -31,7 +31,7 @@ public class ReportMsg {
 
 	public static void sendAlert(OlympaReport report, String authorName, String targetName, String targetServer) {
 		BaseComponent out;
-		if (LinkSpigotBungee.Provider.link.isSpigot()) {
+		if (LinkSpigotBungee.getInstance().isSpigot()) {
 			out = ReportUtils.getAlert(report, authorName, targetName, targetServer, OlympaCore.getInstance().getServerName());
 			Bukkit.getConsoleSender().spigot().sendMessage(out);
 			OlympaCorePermissionsSpigot.REPORT_SEE_NOTIF.getPlayers(players -> players.forEach(p -> p.spigot().sendMessage(out)));

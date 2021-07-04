@@ -33,7 +33,7 @@ public class SecurityHandler implements Cloneable {
 
 	public SecurityHandler() {
 		setDefault();
-		//		LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> pingBeforeJoin = true, 20, TimeUnit.SECONDS);
+		//		LinkSpigotBungee.getInstance().getTask().runTaskLater(() -> pingBeforeJoin = true, 20, TimeUnit.SECONDS);
 	}
 
 	public void setDefault() {

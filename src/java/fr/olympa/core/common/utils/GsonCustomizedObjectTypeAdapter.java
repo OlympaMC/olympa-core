@@ -33,7 +33,7 @@ public class GsonCustomizedObjectTypeAdapter extends TypeAdapter<Object> {
 	public static final Gson GSON;
 
 	static {
-		if (LinkSpigotBungee.Provider.link.isSpigot())
+		if (LinkSpigotBungee.getInstance().isSpigot())
 			GSON = GSON_BUILDER.registerTypeHierarchyAdapter(ServerInfoAdvanced.class, new ServerInfoAdvanced()).create();
 		else
 			GSON = GSON_BUILDER.registerTypeHierarchyAdapter(ServerInfoAdvancedBungee.class, new ServerInfoAdvancedBungee()).create();

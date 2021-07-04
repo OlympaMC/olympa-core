@@ -211,7 +211,7 @@ public class AntiBotHandler {
 	}
 
 	private void printInfo(String source) {
-		LinkSpigotBungee link = LinkSpigotBungee.Provider.link;
+		LinkSpigotBungee link = LinkSpigotBungee.getInstance();
 		String msg = "&cANTIBOT > L'anti bot est maintenant &4%s&c par &4%s&c.";
 		Object[] arg = new String[] { enabled ? "activé" : "désactiver", source != null ? source : "automatisme" };
 		if (link.isSpigot())
