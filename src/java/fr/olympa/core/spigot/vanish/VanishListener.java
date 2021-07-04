@@ -1,7 +1,10 @@
 package fr.olympa.core.spigot.vanish;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -34,6 +37,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.mojang.authlib.GameProfile;
 
 import fr.olympa.api.spigot.vanish.IVanishApi;
@@ -47,18 +52,31 @@ import net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo;
 
 public class VanishListener implements Listener {
 
+	private Field actionField;
 	private Field datasField;
 	private Field modeField;
+	private Field pingField;
 	private Field profileField;
-
+	private Field nameField;
+	private Constructor<?> playerDataConstructor;
+	private Cache<PacketPlayOutPlayerInfo, PacketState> packets = CacheBuilder.newBuilder().expireAfterWrite(5, TimeUnit.SECONDS).initialCapacity(10).build();
+	
 	public VanishListener() {
 		try {
+			actionField = PacketPlayOutPlayerInfo.class.getDeclaredField("a");
+			actionField.setAccessible(true);
 			datasField = PacketPlayOutPlayerInfo.class.getDeclaredField("b");
 			datasField.setAccessible(true);
 			modeField = Class.forName(PacketPlayOutPlayerInfo.class.getName() + "$PlayerInfoData").getDeclaredField("c");
 			modeField.setAccessible(true);
+			pingField = Class.forName(PacketPlayOutPlayerInfo.class.getName() + "$PlayerInfoData").getDeclaredField("b");
+			pingField.setAccessible(true);
 			profileField = Class.forName(PacketPlayOutPlayerInfo.class.getName() + "$PlayerInfoData").getDeclaredField("d");
 			profileField.setAccessible(true);
+			nameField = Class.forName(PacketPlayOutPlayerInfo.class.getName() + "$PlayerInfoData").getDeclaredField("e");
+			nameField.setAccessible(true);
+			playerDataConstructor = Class.forName(PacketPlayOutPlayerInfo.class.getName() + "$PlayerInfoData").getDeclaredConstructors()[0];
+			playerDataConstructor.setAccessible(true);
 		} catch (ReflectiveOperationException ex) {
 			ex.printStackTrace();
 		}
@@ -68,25 +86,59 @@ public class VanishListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		OlympaCore plugin = OlympaCore.getInstance();
-		//		player.getActivePotionEffects().removeIf(p -> p.getType() == PotionEffectType.INVISIBILITY && p.getDuration() == 0);
-
+		
 		CoreModules.VANISH.getApi().getVanished().forEach(vanishPlayer -> player.hidePlayer(plugin, vanishPlayer));
 
 		if (datasField == null)
 			return;
+		
 		((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline().addBefore("packet_handler", "hide_spectators", new ChannelDuplexHandler() {
 			@Override
 			public void write(io.netty.channel.ChannelHandlerContext ctx, Object msg, io.netty.channel.ChannelPromise promise) throws Exception {
 				if (msg instanceof PacketPlayOutPlayerInfo) {
 					PacketPlayOutPlayerInfo packet = (PacketPlayOutPlayerInfo) msg;
-					List<Object> infos = (List<Object>) datasField.get(packet);
-					for (Object data : infos)
-						if (modeField.get(data) == EnumGamemode.SPECTATOR) {
-							if (((GameProfile) profileField.get(data)).getId().equals(player.getUniqueId()))
-								continue;
-							modeField.set(data, EnumGamemode.ADVENTURE);
+					
+					Object action = actionField.get(packet);
+					if (action == PacketPlayOutPlayerInfo.EnumPlayerInfoAction.UPDATE_GAME_MODE || action == PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER) {
+						PacketState state = packets.getIfPresent(packet);
+						if (state != PacketState.IGNORE) {
+							
+							List<Object> infos = (List<Object>) datasField.get(packet);
+							
+							for (Object data : infos) {
+								EnumGamemode mode = (EnumGamemode) modeField.get(data);
+								if (mode == EnumGamemode.SPECTATOR) {
+									modeField.set(data, EnumGamemode.ADVENTURE);
+									packets.put(packet, PacketState.EDITED);
+									state = PacketState.EDITED;
+									mode = EnumGamemode.ADVENTURE;
+								}
+								if (state == PacketState.EDITED) {
+									GameProfile profile = (GameProfile) profileField.get(data);
+									if (profile.getId().equals(player.getUniqueId())) {
+										EnumGamemode realMode = EnumGamemode.getById(player.getGameMode().getValue());
+										if (mode != realMode) {
+											PacketPlayOutPlayerInfo newPacket = new PacketPlayOutPlayerInfo();
+											actionField.set(newPacket, action);
+											List<Object> newInfos = new ArrayList<>(infos.size());
+											for (Object newData : infos) {
+												if (data == newData) {
+													newData = playerDataConstructor.newInstance(newPacket, profile, pingField.getInt(data), realMode, nameField.get(data));
+												}
+												newInfos.add(newData);
+											}
+											datasField.set(newPacket, newInfos);
+											packets.put(newPacket, PacketState.IGNORE);
+											((CraftPlayer) player).getHandle().playerConnection.sendPacket(newPacket);
+											return;
+										}
+									}
+								}
+							}
 						}
+					}
 				}
+				
 				super.write(ctx, msg, promise);
 			}
 		});
@@ -232,5 +284,9 @@ public class VanishListener implements Listener {
 		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
 		if (vanishHandler != null && vanishHandler.isVanished(player))
 			event.setCancelled(true);
+	}
+	
+	enum PacketState {
+		EDITED, IGNORE;
 	}
 }
