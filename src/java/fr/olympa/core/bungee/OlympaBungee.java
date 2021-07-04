@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 
-import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.bungee.command.BungeeCommandListener;
 import fr.olympa.api.bungee.command.BungeeCommandListenerWaterFall;
 import fr.olympa.api.bungee.plugin.OlympaBungeeCore;
@@ -123,7 +122,6 @@ public class OlympaBungee extends OlympaBungeeCore {
 	public void onLoad() {
 		super.onLoad();
 		instance = this;
-		LinkSpigotBungee.Provider.link = this;
 	}
 
 	@Override

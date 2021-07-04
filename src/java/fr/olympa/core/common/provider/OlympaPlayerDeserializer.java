@@ -35,7 +35,7 @@ public class OlympaPlayerDeserializer implements JsonDeserializer<OlympaPlayer> 
 		if (object.has("histIp"))
 			player.histIp = context.deserialize(object.get("histIp"), TreeMap.class);
 		if (object.has("histName"))
-			player.histName = context.deserialize(object.get("histName"), TreeMap.class);
+			((Map<Long, String>) context.deserialize(object.get("histName"), Map.class)).forEach(player.histName::put);
 		if (object.has("id"))
 			player.id = object.get("id").getAsLong();
 		if (object.has("lastConnection"))
