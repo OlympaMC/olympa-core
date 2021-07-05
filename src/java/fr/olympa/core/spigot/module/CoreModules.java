@@ -11,6 +11,7 @@ import fr.olympa.api.spigot.command.essentials.AfkCommand;
 import fr.olympa.api.spigot.region.tracking.BypassCommand;
 import fr.olympa.api.spigot.region.tracking.BypassFluidsCommand;
 import fr.olympa.api.spigot.region.tracking.RegionManager;
+import fr.olympa.api.spigot.region.tracking.RegionsCommand;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.commands.TpsCommand;
 import fr.olympa.core.spigot.scoreboards.NameTagCommand;
@@ -42,7 +43,7 @@ public class CoreModules {
 
 	private static final RegionManager regionManager = new RegionManager();
 	public static final OlympaModule<RegionManager, Listener, OlympaCore, OlympaCommand> REGION_MANAGER = new SpigotModule<>(pl, "regionManager", plugin -> regionManager)
-			.cmd(BypassCommand.class, BypassFluidsCommand.class).listener(regionManager.getClass());
+			.cmd(BypassCommand.class, BypassFluidsCommand.class, RegionsCommand.class).listener(regionManager.getClass());
 
 	public CoreModules() {
 		NAME_TAG.registerModule();
