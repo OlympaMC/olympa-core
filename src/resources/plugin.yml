@@ -1,6 +1,6 @@
 name: OlympaCore
 main: fr.olympa.core.spigot.OlympaCore
-authors: [Tristiisch, SkytAsul]
+authors: Tristiisch & SkytAsul
 contributors: [Bullobily]
 version: @plugin_version@
 softdepend: [ProtocolSupport, ViaVersion]
