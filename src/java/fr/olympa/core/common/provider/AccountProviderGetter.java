@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -26,7 +27,6 @@ import fr.olympa.api.common.sql.SQLTable;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.core.common.redis.RedisAccess;
 import fr.olympa.core.common.sql.MySQL;
-import fr.olympa.core.common.utils.GsonCustomizedObjectTypeAdapter;
 import redis.clients.jedis.Jedis;
 
 public class AccountProviderGetter implements AccountProviderGetterInterface {
@@ -136,25 +136,37 @@ public class AccountProviderGetter implements AccountProviderGetterInterface {
 	@Override
 	@Nullable
 	public OlympaPlayer getFromRedis(String name) {
-		OlympaPlayer olympaPlayer = null;
-		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			olympaPlayer = jedis.keys("player:*").stream().filter(v -> v.contains(name)).map(v -> GsonCustomizedObjectTypeAdapter.GSON.fromJson(v, playerClass))
-					.filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+		Set<String> allKeys;
+		RedisAccess redisAcces = RedisAccess.INSTANCE;
+		try (Jedis jedis = redisAcces.connect()) {
+			allKeys = jedis.keys("player:*");
 		}
-		RedisAccess.INSTANCE.disconnect();
-		return olympaPlayer;
+		redisAcces.disconnect();
+		return allKeys.stream().map(key -> getFromRedisKey(key, "\\\"name\\\":\\\"" + name + "\\\"")).filter(p -> p != null && p.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
 	}
 
 	@Override
 	@Nullable
 	public OlympaPlayer getFromRedis(long id) {
-		OlympaPlayer olympaPlayer = null;
-		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			olympaPlayer = jedis.keys("player:*").stream().filter(v -> v.contains(String.valueOf(id))).map(value -> GsonCustomizedObjectTypeAdapter.GSON.fromJson(value, playerClass))
-					.filter(p -> p.getId() == id).findFirst().orElse(null);
+		Set<String> allKeys;
+		RedisAccess redisAcces = RedisAccess.INSTANCE;
+		try (Jedis jedis = redisAcces.connect()) {
+			allKeys = jedis.keys("player:*");
 		}
-		RedisAccess.INSTANCE.disconnect();
-		return olympaPlayer;
+		redisAcces.disconnect();
+		return allKeys.stream().map(key -> getFromRedisKey(key, "\\\"id\\\":" + id)).filter(p -> p != null && p.getId() == id).findFirst().orElse(null);
+	}
+
+	private OlympaPlayer getFromRedisKey(String key, String valueAndField) {
+		String json = null;
+		RedisAccess redisAcces = RedisAccess.INSTANCE;
+		try (Jedis jedis = redisAcces.connect()) {
+			json = jedis.get(key);
+		}
+		redisAcces.disconnect();
+		if (json == null || json.isEmpty() || !json.contains(valueAndField))
+			return null;
+		return LinkSpigotBungee.getInstance().getGson().fromJson(json, playerClass);
 	}
 
 	@Override
