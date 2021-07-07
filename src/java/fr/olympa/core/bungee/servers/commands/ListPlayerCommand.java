@@ -48,7 +48,7 @@ public class ListPlayerCommand extends BungeeCommand {
 				out2.extra("%s%s", server.getStatus().getColor(), server.getName());
 			} else
 				out2.extra("§7[%s§7]", "§cEn connexion");
-			out2.extra("§a(%d)§e:", players.size());
+			out2.extra("§e(%d):", players.size());
 
 			for (int i = 0; i < players.size(); i++) {
 				ProxiedPlayer player = players.get(i);
