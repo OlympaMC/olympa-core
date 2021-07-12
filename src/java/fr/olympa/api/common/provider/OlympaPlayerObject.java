@@ -45,6 +45,12 @@ public class OlympaPlayerObject extends OlympaPlayerCore {
 	}
 
 	@Override
+	public void removeGroup(OlympaGroup group) {
+		super.removeGroup(group);
+		updateGroups();
+	}
+
+	@Override
 	public void addGroup(OlympaGroup group, long time) {
 		super.addGroup(group, time);
 		updateGroups();

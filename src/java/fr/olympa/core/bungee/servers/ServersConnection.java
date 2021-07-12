@@ -160,6 +160,8 @@ public class ServersConnection {
 
 	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer, boolean isChangeServer) {
 		removeTryToConnect(player);
+		if (!player.isConnected())
+			return;
 		BungeeTaskManager taskHandler = (BungeeTaskManager) LinkSpigotBungee.getInstance().getTask();
 		ScheduledTask task = taskHandler.scheduleSyncRepeatingTaskAndGet("tryconnect_player_" + player.getUniqueId(), new QueueSpigotServerTask(player, olympaServer), 0, 20, TimeUnit.SECONDS);
 		addConnection(new WaitingConnection(player.getUniqueId(), olympaServer, task, isChangeServer));

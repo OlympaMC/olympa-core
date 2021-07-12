@@ -17,7 +17,7 @@ public class OlympaCorePermissionsSpigot {
 	public static final OlympaSpigotPermission UTILS_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH);
 	public static final OlympaSpigotPermission GETUUID_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 
-	public static final OlympaSpigotPermission CHAT_COLOR = new OlympaSpigotPermission(OlympaGroup.RESP_TECH);
+	public static final OlympaSpigotPermission CHAT_COLOR = new OlympaSpigotPermission(OlympaGroup.GRAPHISTE);
 
 	public static final OlympaSpigotPermission REPORT_COMMAND = new OlympaSpigotPermission(OlympaGroup.PLAYER);
 	public static final OlympaSpigotPermission REPORT_SEE_NOTIF = new OlympaSpigotPermission(OlympaGroup.GRAPHISTE);
