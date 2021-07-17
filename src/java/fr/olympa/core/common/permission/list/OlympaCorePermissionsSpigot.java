@@ -38,9 +38,10 @@ public class OlympaCorePermissionsSpigot {
 	public static final OlympaSpigotPermission VERIFMOD_SEE_IN_TAB = new OlympaSpigotPermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaSpigotPermission VANISH_SEE_IN_TAB = new OlympaSpigotPermission(OlympaGroup.MODP);
 
-	public static final OlympaSpigotPermission SPIGOT_COMMAND = new OlympaSpigotPermission(OlympaGroup.PLAYER);
+	public static final OlympaSpigotPermission SPIGOT_COMMAND = new OlympaSpigotPermission(OlympaGroup.DEV);
 	public static final OlympaSpigotPermission SPIGOT_COMMAND_ANTIBOT = new OlympaSpigotPermission(OlympaGroup.RESP_BUILDER, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaSpigotPermission SPIGOT_COMMAND_CACHE = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, OlympaGroup.ADMIN).lockPermission();
+	public static final OlympaSpigotPermission SPIGOT_COMMAND_MODULE = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV, OlympaGroup.DEVP });
 
 	public static final OlympaSpigotPermission NAMETAG_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 
