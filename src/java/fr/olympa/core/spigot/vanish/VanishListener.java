@@ -4,7 +4,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -39,6 +42,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.mojang.authlib.GameProfile;
 
+import fr.olympa.api.common.module.OlympaModule;
 import fr.olympa.api.spigot.vanish.IVanishApi;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
@@ -57,7 +61,9 @@ public class VanishListener implements Listener {
 	private Field profileField;
 	private Field nameField;
 	private Constructor<?> playerDataConstructor;
-	private Cache<PacketPlayOutPlayerInfo, PacketState> packets = CacheBuilder.newBuilder().expireAfterWrite(5, TimeUnit.SECONDS).initialCapacity(10).build();
+	private Cache<PacketPlayOutPlayerInfo, PacketState> packets = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.SECONDS).initialCapacity(10).build();
+	
+	private Lock specLock = new ReentrantLock();
 	
 	public VanishListener() {
 		try {
@@ -93,11 +99,11 @@ public class VanishListener implements Listener {
 		((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline().addBefore("packet_handler", "hide_spectators", new ChannelDuplexHandler() {
 			@Override
 			public void write(io.netty.channel.ChannelHandlerContext ctx, Object msg, io.netty.channel.ChannelPromise promise) throws Exception {
-				if (msg instanceof PacketPlayOutPlayerInfo) {
-					PacketPlayOutPlayerInfo packet = (PacketPlayOutPlayerInfo) msg;
+				if (msg instanceof PacketPlayOutPlayerInfo packet) {
 					
 					Object action = actionField.get(packet);
 					if (action == PacketPlayOutPlayerInfo.EnumPlayerInfoAction.UPDATE_GAME_MODE || action == PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER) {
+						specLock.lock();
 						PacketState state = packets.getIfPresent(packet);
 						if (state != PacketState.IGNORE) {
 							
@@ -128,12 +134,15 @@ public class VanishListener implements Listener {
 											datasField.set(newPacket, newInfos);
 											packets.put(newPacket, PacketState.IGNORE);
 											((CraftPlayer) player).getHandle().playerConnection.sendPacket(newPacket);
+											specLock.unlock();
 											return;
 										}
 									}
 								}
 							}
 						}
+						specLock.unlock();
+						if (OlympaModule.DEBUG) System.out.println("Sent PacketPlayOutPlayerInfo to " + player.getName() + " state " + Objects.toString(state) + " : " + packet.toString());
 					}
 				}
 				

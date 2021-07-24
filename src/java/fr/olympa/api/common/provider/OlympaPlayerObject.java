@@ -85,6 +85,7 @@ public class OlympaPlayerObject extends OlympaPlayerCore {
 		return Collections.unmodifiableMap(customPermissions);
 	}
 
+	@Override
 	public void addCustomPermission(OlympaPermission perm, OlympaServer serv) {
 		if (serv == null)
 			serv = OlympaServer.ALL;
@@ -92,6 +93,7 @@ public class OlympaPlayerObject extends OlympaPlayerCore {
 		COLUMN_CUSTOM_PERMISSIONS.updateAsync(this, GsonCustomizedObjectTypeAdapter.GSON.toJson(customPermissions), null, null);
 	}
 
+	@Override
 	public void removeCustomPermission(OlympaPermission perm, OlympaServer serv) {
 		if (serv != null)
 			customPermissions.remove(perm.getName(), serv);

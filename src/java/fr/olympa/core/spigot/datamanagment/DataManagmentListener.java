@@ -128,7 +128,7 @@ public class DataManagmentListener implements Listener {
 			try {
 				if (player.isOnline()) {
 					if (AccountProvider.getter().loadPlayerDatas(olympaPlayer))
-						SpigotUtils.broadcastMessage("§d§k##§6 Bienvenue au joueur " + olympaPlayer.getGroup().getColor() + "§l" + player.getName() + "§6 qui rejoint le serveur ! §d§k##");
+						SpigotUtils.broadcastMessage("§d§k##§6 Bienvenue à %s§l%s§6 qui se connecte au %s ! §d§k##", olympaPlayer.getGroup().getColor(), player.getName(), OlympaCore.getInstance().getServerName());
 
 					if (player.isOnline()) {
 						OlympaPlayerLoadEvent loginevent = new OlympaPlayerLoadEvent(player, olympaPlayer, true);
