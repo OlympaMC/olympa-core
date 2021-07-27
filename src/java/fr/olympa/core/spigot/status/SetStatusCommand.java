@@ -44,7 +44,7 @@ public class SetStatusCommand extends OlympaCommand {
 			sendError("Le serveur est déjà en mode " + oldStatus.getNameColored() + "&c.");
 			return true;
 		}
-		OlympaSpigotPermission needPermission = (OlympaSpigotPermission) newStatus.getPermission();
+		OlympaSpigotPermission needPermission = newStatus.getPermission().getUnderlying();
 		if (needPermission != null && !needPermission.hasSenderPermission(sender)) {
 			sendError("Tu n'a pas la permission d'être connecter si tu met le mode " + oldStatus.getNameColored() + "&c.");
 			return true;
