@@ -67,7 +67,7 @@ public class ServerConnection {
 			if (result)
 				player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_GOOD, "Connexion au serveur %s établie !", serverName));
 			else if (error != null) {
-				player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Echec de la connexion au serveur &4%s&c: &4%s&c. ", serverName, error.getMessage()));
+				player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Échec de la connexion au serveur &4%s&c: &4%s&c. ", serverName, error.getMessage()));
 				if (!isDeadConnection()) {
 					ServerInfo newServerInfo = findOther();
 					if (newServerInfo != null) {
@@ -88,7 +88,7 @@ public class ServerConnection {
 		List<ServerInfoAdvancedBungee> serversCanBeReady;
 		serversCanBeReady = MonitorServers.getServers(olympaServer).values().stream().filter(serv -> serv.isOpen()).collect(Collectors.toList());
 		if (serversCanBeReady.isEmpty()) {
-			player.sendMessage(Prefix.QUEUE.formatMessageB("&cAucun serveur &4%s&c ne sont disponible.", olympaServer.getNameCaps()));
+			player.sendMessage(Prefix.QUEUE.formatMessageB("&cAucun serveur &4%s&c n'est disponible.", olympaServer.getNameCaps()));
 			// TODO open server
 			// TODO create new server
 			return null;

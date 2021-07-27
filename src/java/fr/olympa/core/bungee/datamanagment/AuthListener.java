@@ -161,7 +161,7 @@ public class AuthListener implements Listener {
 		try {
 			DataHandler.addPlayer(cache);
 		} catch (Exception e) {
-			event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenu. Signale au staff. #ErrorCantData"));
+			event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. Signale au staff. #ErrorCantData"));
 			event.setCancelled(true);
 			return;
 		}

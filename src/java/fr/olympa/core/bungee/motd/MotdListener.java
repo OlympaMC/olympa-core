@@ -29,8 +29,8 @@ public class MotdListener implements Listener {
 	String site = "§6Site: §e§nwww.olympa.fr§r";
 	String twitter = "§6Twitter: §e@Olympa_fr";
 	String discord = "§6Discord: §e§ndiscord.olympa.fr§r";
-	String games = "§bPvP-Kits §c¤§3 ZTA §c¤ §bCréatif §c¤ §b§mPvP-Factions§r";
-	String pvp = "§7Le PvP est inspiré de la 1.8";
+	String games = "§bPvP-Kits §c¤§3 ZTA §c¤ §bCréatif §c¤ §bPvP-Factions§r";
+	String pvp = "§7Le PvP fonctionne comme en 1.8";
 	String version = "§cUtilise la " + ProtocolAPI.getLastVersion().getName() + "§l✖§r";
 	String reason = "§6Raison de la maintenance :";
 	String separator = " §7| ";
@@ -152,10 +152,10 @@ public class MotdListener implements Listener {
 		case SOON:
 			players.setSample(new PlayerInfoBuilder().append("").append(games).append(pvp).append("")
 					.append("§cOuverture très prochainement, suivez-nous")
-					.append("§csur les réseaux pour plus d'infos.")
+					.append("§csur les réseaux pour plus d'informations.")
 					.append("").append(discord).append(teamspeak).append(twitter).append(site).append("").build());
 			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
-			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§dOn ouvre bientôt t'inquiète")));
+			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§dOuverture prochaine!")));
 			break;
 		case BETA:
 			players.setSample(new PlayerInfoBuilder().append("").append(games).append(pvp).append("")

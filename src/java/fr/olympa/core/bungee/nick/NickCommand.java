@@ -16,7 +16,7 @@ public class NickCommand extends BungeeCommand {
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		proxiedPlayer.setDisplayName(args[0]);
-		sendMessage(Prefix.DEFAULT_GOOD, "Tu nom est désormais &2%s&a.", args[0]);
+		sendMessage(Prefix.DEFAULT_GOOD, "Tu t'appelles désormais &2%s&a.", args[0]);
 	}
 
 }

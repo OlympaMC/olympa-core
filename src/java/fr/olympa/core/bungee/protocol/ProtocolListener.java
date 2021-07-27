@@ -24,7 +24,7 @@ public class ProtocolListener implements Listener {
 		ProtocolAPI playerVersion = ProtocolAPI.getHighestVersion(connection.getVersion());
 		if (playerVersion == null || !playerVersion.isAllowed()) {
 			event.setCancelReason(
-					BungeeUtils.connectScreen("&cLa version que tu utilise n'est pas compatible avec le serveur.\n&4Utilise une version entre &c&l%s&4 et &c&l%s&4."
+					BungeeUtils.connectScreen("&cLa version que tu utilises n'est pas compatible avec le serveur.\n&4Utilise une version entre &c&l%s&4 et &c&l%s&4."
 							+ "\n\n&4&nLa version recommandée est &c&n%s&4.",
 							ProtocolAPI.getFirstVersion().getName(), ProtocolAPI.getLastVersion().getName(), ProtocolAPI.getRecommandedVersion().getName()));
 			event.setCancelled(true);
@@ -42,9 +42,9 @@ public class ProtocolListener implements Listener {
 		int playerVersionProtocol = OlympaBungee.getInstance().getVersionHandler().getPlayerProtocol(player);
 		String playerVersion = OlympaBungee.getInstance().getVersionHandler().getVersion(player);
 		if (playerVersion == null)
-			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Pour une meilleur expérience, il est préférable d'utiliser la version &2&n&l%s&c", recommandedVersion));
+			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Pour une meilleure expérience, il est préférable d'utiliser la version &2&n&l%s&c", recommandedVersion));
 		else if (!recommandedVersionProtocol.contains(playerVersionProtocol))
-			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Pour une meilleur expérience, il est préférable d'utiliser la version &2&n&l%s&c. "
-					+ "Tu utilise actuellement la version &4%s&c.", (Object) recommandedVersion, (Object) playerVersion));
+			player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Pour une meilleure expérience, il est préférable d'utiliser la version &2&n&l%s&c. "
+					+ "Tu utilises actuellement la version &4%s&c.", (Object) recommandedVersion, (Object) playerVersion));
 	}
 }

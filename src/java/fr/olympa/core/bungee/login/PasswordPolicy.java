@@ -81,15 +81,13 @@ public class PasswordPolicy {
 				if (passwordPolicy.check(password, player.getName()))
 					goodPassword++;
 			if (goodPassword == 3 && password.length() > 30)
-				player.sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("&7Tu utilise un mot de passe &2très sécurisé&7."));
+				player.sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("&7Tu utilises un mot de passe &2très sécurisé&7."));
 			if (goodPassword == 3 || password.length() > 20)
-				player.sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("&7Tu utilise un mot de passe &2sécurisé&7."));
+				player.sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("&7Tu utilises un mot de passe &2sécurisé&7."));
 			else if (goodPassword == 2 || password.length() > 13)
-				player.sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("&7Tu utilise un mot de passe &2assez sécurisé&7."));
+				player.sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("&7Tu utilises un mot de passe &2assez sécurisé&7."));
 			else if (password.length() > 13)
-				player.sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("&7Tu utilise un mot de passe &2moyennement sécurisé&7."));
-			if (password.length() > 13)
-				player.sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("&7Tu utilise un mot de passe &2moyennement sécurisé&7."));
+				player.sendMessage(Prefix.DEFAULT_GOOD.formatMessageB("&7Tu utilises un mot de passe &2moyennement sécurisé&7."));
 			return true;
 		}
 		player.sendMessage(Prefix.DEFAULT_BAD.formatMessageB("&c%s %s.", prefixMsg, String.join(", ", msg)));
