@@ -12,7 +12,7 @@ import fr.olympa.api.common.chat.TableGenerator.Alignment;
 import fr.olympa.api.common.chat.TableGenerator.Receiver;
 import fr.olympa.api.common.command.complex.Cmd;
 import fr.olympa.api.common.command.complex.CommandContext;
-import fr.olympa.api.common.machine.TpsMessageBungee;
+import fr.olympa.api.common.machine.TpsMessageProvider;
 import fr.olympa.api.common.module.OlympaModule;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Prefix;
@@ -74,7 +74,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_TPS")
 	public void tps(CommandContext cmd) {
-		sender.sendMessage(new TpsMessageBungee(getOlympaPlayer()).getInfoMessage().build());
+		sender.sendMessage(new TpsMessageProvider(getOlympaPlayer()).getInfoMessage().build());
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")

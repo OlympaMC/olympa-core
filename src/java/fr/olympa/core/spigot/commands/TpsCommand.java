@@ -13,8 +13,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.machine.JavaInstanceInfo;
-import fr.olympa.api.common.machine.TpsMessage;
+import fr.olympa.api.common.machine.TpsMessageProvider;
 import fr.olympa.api.common.module.OlympaModule.ModuleApi;
+import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.plugin.OlympaAPIPlugin;
 import fr.olympa.api.common.task.OlympaTask;
 import fr.olympa.api.spigot.command.OlympaCommand;
@@ -42,7 +43,7 @@ public class TpsCommand extends OlympaCommand implements Listener, ModuleApi<Oly
 			else
 				sendMessage(Prefix.DEFAULT_BAD, "La TPS ActionBar a été désactivée.");
 		} else
-			sendComponents(new TpsMessage(player != null ? getOlympaPlayer() : null).getInfoMessage().build());
+			sendComponents(new TpsMessageProvider(super.<OlympaPlayer>getOlympaPlayerNullable()).getInfoMessage().build());
 		return false;
 	}
 

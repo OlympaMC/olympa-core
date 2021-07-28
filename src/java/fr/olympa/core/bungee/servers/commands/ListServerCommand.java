@@ -28,7 +28,7 @@ public class ListServerCommand extends BungeeCommand {
 				out2.extra("%s%s", status.getColor(), serverInfo.getName());
 				if (serverInfo.getOnlinePlayers() != null)
 					out2.extra("%s/%s", serverInfo.getOnlinePlayers(), serverInfo.getMaxPlayers());
-				if (serverInfo.getTps() != null)
+				if (serverInfo.getTpsArray() != null)
 					out2.extra("%stps", TPSUtils.getTpsColor(serverInfo.getTps()));
 				if (hasFullInfo)
 					out2.extra("%scpu", serverInfo.getCPUUsage());
