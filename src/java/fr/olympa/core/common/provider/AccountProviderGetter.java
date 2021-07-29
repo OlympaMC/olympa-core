@@ -198,14 +198,15 @@ public class AccountProviderGetter implements AccountProviderGetterInterface {
 			OlympaPlayer olympaPlayer = get(uuid);
 			if (olympaPlayer != null)
 				info = new OlympaPlayerInformationsObject(olympaPlayer.getId(), olympaPlayer.getName(), olympaPlayer.getUniqueId());
-			else
+			else {
 				try {
 					info = playerSQL.getPlayerInformations(uuid);
+					if (info != null)
+						cachedInformations.put(info.getId(), info);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-			if (info != null)
-				cachedInformations.put(info.getId(), info);
+			}
 		}
 		return info;
 	}
@@ -218,14 +219,15 @@ public class AccountProviderGetter implements AccountProviderGetterInterface {
 			OlympaPlayer olympaPlayer = getFromCache(name);
 			if (olympaPlayer != null)
 				info = new OlympaPlayerInformationsObject(olympaPlayer.getId(), olympaPlayer.getName(), olympaPlayer.getUniqueId());
-			else
+			else {
 				try {
 					info = playerSQL.getPlayerInformations(name);
+					if (info != null)
+						cachedInformations.put(info.getId(), info);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-			if (info != null)
-				cachedInformations.put(info.getId(), info);
+			}
 		}
 		return info;
 	}

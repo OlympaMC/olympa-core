@@ -43,6 +43,7 @@ import fr.olympa.api.spigot.command.essentials.ItemCommand;
 import fr.olympa.api.spigot.command.essentials.ListCommand;
 import fr.olympa.api.spigot.command.essentials.PingCommand;
 import fr.olympa.api.spigot.command.essentials.SayCommand;
+import fr.olympa.api.spigot.feedback.FeedbackManager;
 import fr.olympa.api.spigot.frame.ImageFrameManager;
 import fr.olympa.api.spigot.gui.Inventories;
 import fr.olympa.api.spigot.holograms.HologramsManager;
@@ -192,6 +193,13 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 				return;
 			}
 			new ReportMySQL(database);
+			
+			try {
+				setFeedbackManager(new FeedbackManager(this));
+			}catch (Exception ex) {
+				sendMessage("§cUne erreur est survenue lors du chargment des retours.");
+				ex.printStackTrace();
+			}
 
 			try {
 				new CoreModules();
