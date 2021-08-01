@@ -155,7 +155,7 @@ public class MotdListener implements Listener {
 					.append("§csur les réseaux pour plus d'informations.")
 					.append("").append(discord).append(teamspeak).append(twitter).append(site).append("").build());
 			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
-			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§dOuverture prochaine!")));
+			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§dOuverture le samedi 7 août")));
 			break;
 		case BETA:
 			players.setSample(new PlayerInfoBuilder().append("").append(games).append(pvp).append("")

@@ -61,7 +61,7 @@ public class AuthListener implements Listener {
 			olympaPlayer = AccountProvider.getter().get(name);
 		} catch (Exception | NoClassDefFoundError e) {
 			e.printStackTrace();
-			event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#SQLBungeeLost"));
+			event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue.\n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#SQLBungeeLost"));
 			event.setCancelled(true);
 			return;
 		}

@@ -30,7 +30,7 @@ public class MaintenanceListener implements Listener {
 			event.setCancelled(true);
 			bungee.sendMessage("&d" + playername + " ne peux pas se connecter (serveur en dev)");
 		} else if (status == ServerStatus.SOON) {
-			event.setCancelReason(BungeeUtils.connectScreen("&cNous ouvrons bientôt !.\n\n&3Plus d'infos sur le &bTwitter &n@Olympa_fr\\n&3Ou &bDiscord &nwww.discord.olympa.fr"));
+			event.setCancelReason(BungeeUtils.connectScreen("&cNous ouvrons bientôt !.\n\n&3Plus d'infos sur le &bTwitter &n@Olympa_fr\n&3Ou &bDiscord &nwww.discord.olympa.fr"));
 			event.setCancelled(true);
 			bungee.sendMessage("&d" + playername + " ne peux pas se connecter (serveur en maintenance : open soon)");
 		} else if (status == ServerStatus.BETA) {
