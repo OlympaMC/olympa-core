@@ -36,7 +36,7 @@ public class ForceKickCommand extends BungeeCommand {
 			boolean force = args.length > 1 && Boolean.parseBoolean(args[1]);
 			PendingConnection connection = target.getPendingConnection();
 			try {
-				Field channelField = connection.getClass().getField("ch");
+				Field channelField = connection.getClass().getDeclaredField("ch");
 				channelField.setAccessible(true);
 				Object channel = channelField.get(connection);
 				Method isClosing = channel.getClass().getDeclaredMethod("isClosing");
