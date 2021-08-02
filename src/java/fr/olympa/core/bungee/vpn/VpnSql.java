@@ -11,7 +11,7 @@ import fr.olympa.api.common.sql.statement.OlympaStatement;
 import fr.olympa.api.common.sql.statement.StatementType;
 
 public class VpnSql {
-	private static String tableName = "commun.vpn";
+	private static String tableName = "common.vpn";
 
 	private static OlympaStatement insert = new OlympaStatement(
 			"INSERT INTO " + tableName + " (`ip`, `is_vpn`, `is_mobile`, `is_host`, `pseudo`, `country`, `city`, `org`, `as`, `last_update`, `date`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").returnGeneratedKeys();

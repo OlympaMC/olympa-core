@@ -50,7 +50,7 @@ public class MySQL implements PlayerSQL {
 
 	public MySQL(DbConnection dbConnection) {
 		this.dbConnection = dbConnection;
-		table = String.format("`%s`.`%s`", "commun", "players");
+		table = String.format("`%s`.`%s`", "common", "players");
 		getNameFromUUIDStatement = new OlympaStatement("SELECT `pseudo` FROM " + table + " WHERE `uuid_server` = ?");
 		getPlayerInformationsByIdStatement = new OlympaStatement("SELECT `pseudo`, `uuid_server` FROM " + table + " WHERE `id` = ?");
 		getPlayerInformationsByNameStatement = new OlympaStatement("SELECT `id`, `pseudo`, `uuid_server` FROM " + table + " WHERE `pseudo` = ?");
@@ -75,6 +75,7 @@ public class MySQL implements PlayerSQL {
 		return table;
 	}
 
+	@Override
 	public String getTableCleanName() {
 		return table.replace("`", "");
 	}
