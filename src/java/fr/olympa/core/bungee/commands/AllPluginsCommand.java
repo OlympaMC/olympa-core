@@ -17,7 +17,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class AllPluginsCommand extends BungeeCommand {
 
 	public AllPluginsCommand(Plugin plugin) {
-		super(plugin, "allplugins", "Affiche tous les plugins par serveur", OlympaCorePermissionsBungee.ALLPLUGINS_COMMAND, "plall", "allpl");
+		super(plugin, "allplugins", "Affiche tous les plugins par serveur", OlympaCorePermissionsBungee.ALLPLUGINS_COMMAND, "plall");
 		minArg = 0;
 	}
 

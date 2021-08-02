@@ -41,6 +41,7 @@ public class MotdListener implements Listener {
 		ServerPing ping = event.getResponse();
 		ServerPing.Protocol ver = ping.getVersion();
 		ServerPing.Players players = ping.getPlayers();
+		String onlineCount = "§7§l" + players.getOnline() + "§7 connecté" + (players.getOnline() == 1 ? "" : "s") + "§r";
 
 		// Petit troll pour ceux qui récup des stats
 		//		if (ip.equals("54.38.31.134")) {
@@ -48,7 +49,7 @@ public class MotdListener implements Listener {
 		//			return;
 		//		}
 
-		ver.setName(version + " §7" + players.getOnline() + "§8 connecté" + (players.getOnline() == 1 ? "" : "s"));
+		ver.setName(version + onlineCount);
 		// ping.setVersion(ver);
 		Configuration config = OlympaBungee.getInstance().getMaintConfig();
 		String statusString = config.getString("settings.status");
@@ -113,7 +114,7 @@ public class MotdListener implements Listener {
 						sb.append(separator);
 					before = random;
 				}
-				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD(sb.toString())));
+				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD(sb.toString()) + "§r"));
 			}
 			break;
 		case MAINTENANCE:
@@ -129,8 +130,8 @@ public class MotdListener implements Listener {
 			String maintenanceMessage = ColorUtils.color(config.getString("settings.message"));
 			players.setSample(new PlayerInfoBuilder().append("").append(games).append(pvp).append("").append(reason)
 					.append(maintenanceMessage).append("").append(discord).append(teamspeak).append(twitter).append(site).append("").build());
-			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§8 - §7" + players.getOnline() + "§8 connecté" + (players.getOnline() == 1 ? "" : "s"), ping.getVersion().getProtocol() - 1));
-			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§4§l⚠ §cSERVEUR EN MAINTENANCE §4§l⚠")));
+			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§8 - " + onlineCount, ping.getVersion().getProtocol() - 1));
+			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§4§l⚠ §cSERVEUR EN MAINTENANCE §4§l⚠" + "§r")));
 			break;
 		case DEV:
 			try {
@@ -146,16 +147,16 @@ public class MotdListener implements Listener {
 					.append("§2Serveur en développement depuis")
 					.append("§2le 18 octobre 2019")
 					.append("").append(discord).append(teamspeak).append(twitter).append(site).append("").build());
-			ping.setVersion(new ServerPing.Protocol(ColorUtils.randomColor() + "Info §nici§8 - §7" + players.getOnline() + "§8 connecté" + (players.getOnline() == 1 ? "" : "s"), ping.getVersion().getProtocol() - 1));
-			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§cServeur en développement")));
+			ping.setVersion(new ServerPing.Protocol(ColorUtils.randomColor() + "Info §nici§8 - " + onlineCount, ping.getVersion().getProtocol() - 1));
+			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§cServeur en développement") + "§r"));
 			break;
 		case SOON:
 			players.setSample(new PlayerInfoBuilder().append("").append(games).append(pvp).append("")
 					.append("§cOuverture très prochainement, suivez-nous")
 					.append("§csur les réseaux pour plus d'informations.")
 					.append("").append(discord).append(teamspeak).append(twitter).append(site).append("").build());
-			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + players.getOnline() + "§8 connecté" + (players.getOnline() == 1 ? "" : "s"), ping.getVersion().getProtocol() - 1));
-			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§dOuverture le samedi 7 août")));
+			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§8 - " + onlineCount, ping.getVersion().getProtocol() - 1));
+			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§dOuverture le samedi 7 août") + "§r"));
 			break;
 		case BETA:
 			players.setSample(new PlayerInfoBuilder().append("").append(games).append(pvp).append("")
@@ -165,7 +166,7 @@ public class MotdListener implements Listener {
 					.append("§eà rejoindre la bêta.")
 					.append("§cIl y a de place, tu as toutes tes chances...")
 					.append("").append(discord).append(teamspeak).append(twitter).append(site).append("").build());
-			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§c[§6Bêta&c] &e-> &binscrit-toi sur www.olympa.fr")));
+			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§c[§6Bêta&c] &e-> &binscrit-toi sur www.olympa.fr") + "§r"));
 			break;
 		case CLOSE_BETA:
 			players.setSample(new PlayerInfoBuilder()
@@ -183,8 +184,8 @@ public class MotdListener implements Listener {
 					.append(site)
 					.append("")
 					.build());
-			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + players.getOnline() + "§8 connecté" + (players.getOnline() == 1 ? "" : "s"), ping.getVersion().getProtocol() - 1));
-			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§6Bêta fermée")));
+			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§8 - " + onlineCount, ping.getVersion().getProtocol() - 1));
+			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§6Bêta fermée") + "§r"));
 			break;
 		default:
 			break;
