@@ -129,7 +129,7 @@ public class MotdListener implements Listener {
 			String maintenanceMessage = ColorUtils.color(config.getString("settings.message"));
 			players.setSample(new PlayerInfoBuilder().append("").append(games).append(pvp).append("").append(reason)
 					.append(maintenanceMessage).append("").append(discord).append(teamspeak).append(twitter).append(site).append("").build());
-			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§8 - §7" + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
+			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§8 - §7" + players.getOnline() + "§8 connecté" + (players.getOnline() == 1 ? "" : "s"), ping.getVersion().getProtocol() - 1));
 			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§4§l⚠ §cSERVEUR EN MAINTENANCE §4§l⚠")));
 			break;
 		case DEV:
@@ -146,7 +146,7 @@ public class MotdListener implements Listener {
 					.append("§2Serveur en développement depuis")
 					.append("§2le 18 octobre 2019")
 					.append("").append(discord).append(teamspeak).append(twitter).append(site).append("").build());
-			ping.setVersion(new ServerPing.Protocol(ColorUtils.randomColor() + "Info §nici§8 - §7" + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
+			ping.setVersion(new ServerPing.Protocol(ColorUtils.randomColor() + "Info §nici§8 - §7" + players.getOnline() + "§8 connecté" + (players.getOnline() == 1 ? "" : "s"), ping.getVersion().getProtocol() - 1));
 			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§cServeur en développement")));
 			break;
 		case SOON:
@@ -154,7 +154,7 @@ public class MotdListener implements Listener {
 					.append("§cOuverture très prochainement, suivez-nous")
 					.append("§csur les réseaux pour plus d'informations.")
 					.append("").append(discord).append(teamspeak).append(twitter).append(site).append("").build());
-			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
+			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + players.getOnline() + "§8 connecté" + (players.getOnline() == 1 ? "" : "s"), ping.getVersion().getProtocol() - 1));
 			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§dOuverture le samedi 7 août")));
 			break;
 		case BETA:
@@ -183,7 +183,7 @@ public class MotdListener implements Listener {
 					.append(site)
 					.append("")
 					.build());
-			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + ping.getPlayers().getOnline() + "§8/§7" + ping.getPlayers().getMax(), ping.getVersion().getProtocol() - 1));
+			ping.setVersion(new ServerPing.Protocol("§cInfo §nici§7 " + players.getOnline() + "§8 connecté" + (players.getOnline() == 1 ? "" : "s"), ping.getVersion().getProtocol() - 1));
 			ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§6Bêta fermée")));
 			break;
 		default:
