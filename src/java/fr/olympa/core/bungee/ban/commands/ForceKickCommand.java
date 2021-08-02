@@ -2,10 +2,14 @@ package fr.olympa.core.bungee.ban.commands;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.match.RegexMatcher;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.CommandSender;
@@ -16,9 +20,9 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 public class ForceKickCommand extends BungeeCommand {
 
 	public ForceKickCommand(OlympaBungee plugin) {
-		super(plugin, "forcekick", OlympaCorePermissionsBungee.BAN_FORCEKICK_COMMAND, "forceeject");
+		super(plugin, "forcekick", OlympaCorePermissionsBungee.BAN_FORCEKICK_COMMAND);
 		minArg = 1;
-		usageString = plugin.getConfig().getString("ban.usagekick");
+		usageString = "<joueur> <true|false>";
 	}
 
 	@Override
@@ -37,24 +41,32 @@ public class ForceKickCommand extends BungeeCommand {
 				Object channel = channelField.get(connection);
 				Method isClosing = channel.getClass().getDeclaredMethod("isClosing");
 				Method isClosed = channel.getClass().getDeclaredMethod("isClosed");
-				this.sendInfo("Connection is closing: %s, is closed: %s", isClosing.invoke(channel), isClosed.invoke(channel));
-			}catch (ReflectiveOperationException ex) {
+				sendInfo("Connection is closing: %s, is closed: %s", isClosing.invoke(channel), isClosed.invoke(channel));
+			} catch (ReflectiveOperationException ex) {
 				ex.printStackTrace();
 			}
 			connection.disconnect();
 			this.sendMessage(Prefix.DEFAULT_GOOD + "Le joueur &2" + target.getName() + "&a a été kick.");
-			if (force) {
+			if (force)
 				try {
 					Method removeConnection = ProxyServer.getInstance().getClass().getDeclaredMethod("removeConnection", connection.getClass());
 					removeConnection.invoke(ProxyServer.getInstance(), connection);
 					sendSuccess("Le joueur §2%s§a a été force-kick, sa connection est retirée.");
-				}catch (ReflectiveOperationException ex) {
+				} catch (ReflectiveOperationException ex) {
 					ex.printStackTrace();
 				}
-			}
 
 		} else
 			sendUsage(command);
 	}
 
+	@Override
+	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
+		switch (args.length) {
+		case 1:
+			return Utils.startWords(args[0], ProxyServer.getInstance().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toList()));
+		default:
+			return new ArrayList<>();
+		}
+	}
 }
