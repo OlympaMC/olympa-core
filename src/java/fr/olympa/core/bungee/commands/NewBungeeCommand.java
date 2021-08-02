@@ -79,46 +79,45 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void pingBeforeJoin(CommandContext cmd) {
-		boolean b = SecurityHandler.getInstance().pingBeforeJoin;
+		boolean old = SecurityHandler.getInstance().pingBeforeJoin;
 		if (cmd.getArgumentsLength() == 0)
-			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.", "PING_BEFORE_JOIN", b ? "true" : "false");
+			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.", "PING_BEFORE_JOIN", old);
 		else {
-			b = cmd.getArgument(0);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "PING_BEFORE_JOIN", b ? "true" : "false", b);
+			SecurityHandler.getInstance().pingBeforeJoin = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "PING_BEFORE_JOIN", old, SecurityHandler.getInstance().pingBeforeJoin);
 		}
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void allowCrack(CommandContext cmd) {
-		boolean b = SecurityHandler.getInstance().allowCrack;
+		boolean old = SecurityHandler.getInstance().allowCrack;
 		if (cmd.getArgumentsLength() == 0)
-			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.", "ALLOW_CRACK", b ? "true" : "false");
+			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.", "ALLOW_CRACK", old ? "true" : "false");
 		else {
-			b = cmd.getArgument(0);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%&a du bungee est passé de &2%s&a à &2%s&a.", "ALLOW_CRACK", b ? "true" : "false", b);
+			SecurityHandler.getInstance().allowCrack = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%&a du bungee est passé de &2%s&a à &2%s&a.", "ALLOW_CRACK", old, SecurityHandler.getInstance().allowCrack);
 		}
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void allowPremium(CommandContext cmd) {
-		boolean b = SecurityHandler.getInstance().allowPremium;
+		boolean old = SecurityHandler.getInstance().allowPremium;
 		if (cmd.getArgumentsLength() == 0)
-			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.", "ALLOW_PREMIUM", b ? "true" : "false");
+			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.", "ALLOW_PREMIUM", old);
 		else {
-			b = cmd.getArgument(0);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "ALLOW_PREMIUM", b ? "true" : "false", b);
+			SecurityHandler.getInstance().allowPremium = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "ALLOW_PREMIUM", old, SecurityHandler.getInstance().allowPremium);
 		}
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void checkCorrectIP(CommandContext cmd) {
-		boolean b = SecurityHandler.getInstance().checkCorrectEntredIp;
+		boolean old = SecurityHandler.getInstance().checkCorrectEntredIp;
 		if (cmd.getArgumentsLength() == 0)
-			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire qu'un vérifie si l'ip est 'play.olympa.fr'.", "CHECK_CORRECT_ENTRED_IP",
-					b ? "true" : "false");
+			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire qu'un vérifie si l'ip est 'play.olympa.fr'.", "CHECK_CORRECT_ENTRED_IP", old);
 		else {
-			b = cmd.getArgument(0);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_CORRECT_ENTRED_IP", b ? "true" : "false", b ? "true" : "false");
+			SecurityHandler.getInstance().checkCorrectEntredIp = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_CORRECT_ENTRED_IP", old, SecurityHandler.getInstance().checkCorrectEntredIp);
 		}
 	}
 
@@ -126,33 +125,33 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 	public void checkIPNumber(CommandContext cmd) {
 		boolean b = SecurityHandler.getInstance().checkCorrectEntredIpNumber;
 		if (cmd.getArgumentsLength() == 0)
-			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire qu'on autorise/interdit l'utilisation de l'ip en chiffre (cad 89.234.182.172).", "CHECK_CORRECT_ENTRED_IP_NUMBER",
-					b ? "true" : "false");
+			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire qu'on autorise/interdit l'utilisation de l'ip en chiffre (cad 89.234.182.172).",
+					"CHECK_CORRECT_ENTRED_IP_NUMBER", b);
 		else {
-			b = cmd.getArgument(0);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_CORRECT_ENTRED_IP_NUMBER", b ? "true" : "false", b ? "true" : "false");
+			SecurityHandler.getInstance().checkCorrectEntredIpNumber = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_CORRECT_ENTRED_IP_NUMBER", b, SecurityHandler.getInstance().checkCorrectEntredIpNumber);
 		}
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void vpnCheck(CommandContext cmd) {
-		boolean b = SecurityHandler.getInstance().checkVpn;
+		boolean old = SecurityHandler.getInstance().checkVpn;
 		if (cmd.getArgumentsLength() == 0)
-			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire que lorsqu'un joueur se connecte, on vérifie son IP.", "CHECK_VPN", b ? "true" : "false");
+			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire que lorsqu'un joueur se connecte, on vérifie son IP.", "CHECK_VPN", old);
 		else {
-			b = cmd.getArgument(0);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_VPN", b ? "true" : "false", b ? "true" : "false");
+			SecurityHandler.getInstance().checkVpn = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_VPN", old, SecurityHandler.getInstance().checkVpn);
 		}
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void vpnCheckOnMOTD(CommandContext cmd) {
-		boolean b = SecurityHandler.getInstance().checkVpnOnMotd;
+		boolean old = SecurityHandler.getInstance().checkVpnOnMotd;
 		if (cmd.getArgumentsLength() == 0)
-			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire que lorsqu'un joueur demande le motd, on vérifie son IP.", "CHECK_VPN_ON_MOTD", b ? "true" : "false");
+			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.\nCela veux dire que lorsqu'un joueur demande le motd, on vérifie son IP.", "CHECK_VPN_ON_MOTD", old);
 		else {
-			b = cmd.getArgument(0);
-			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_VPN_ON_MOTD", b ? "true" : "false", b ? "true" : "false");
+			SecurityHandler.getInstance().checkVpnOnMotd = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "CHECK_VPN_ON_MOTD", old, SecurityHandler.getInstance().checkVpnOnMotd);
 		}
 	}
 
@@ -162,7 +161,6 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 			OlympaVpn vpnInfo = VpnHandler.get(cmd.getArgument(0));
 			if (vpnInfo == null) {
 				sendMessage(Prefix.DEFAULT_BAD, "L'IP &4%s&c n'est pas dans la base de données anti-vpn.");
-
 				return;
 			}
 			vpnInfo.addUserWhitelist(cmd.getArgument(1));
@@ -224,7 +222,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 		int i = QueueHandler.TIME_BETWEEN_2;
 		if (cmd.getArgumentsLength() == 0)
 			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%d&7.\n&c" +
-					"C'est à dire qu'il a y 1 connexion acceptée toutes les &4%d&7 milisecondes (%1$,.2f secondes).\n" +
+					"C'est à dire qu'il a y 1 connexion acceptée toutes les &4%d&7 milisecondes (%d secondes).\n" +
 					"Et donc qu'il y a &4%d&c connexion/secondes.", "TIME_BETWEEN_2", i, i, i / 1000, 1000d / QueueHandler.TIME_BETWEEN_2);
 		else {
 			QueueHandler.TIME_BETWEEN_2 = (Integer) cmd.getArgument(0);

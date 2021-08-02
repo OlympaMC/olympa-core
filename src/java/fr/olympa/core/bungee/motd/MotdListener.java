@@ -48,7 +48,7 @@ public class MotdListener implements Listener {
 		//			return;
 		//		}
 
-		ver.setName(version + " §7" + players.getOnline() + "§8/§7" + players.getMax());
+		ver.setName(version + " §7" + players.getOnline() + "§8 connecté" + (players.getOnline() == 1 ? "" : "s"));
 		// ping.setVersion(ver);
 		Configuration config = OlympaBungee.getInstance().getMaintConfig();
 		String statusString = config.getString("settings.status");

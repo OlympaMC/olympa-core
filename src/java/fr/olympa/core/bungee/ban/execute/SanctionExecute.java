@@ -67,7 +67,7 @@ public class SanctionExecute {
 		if (matcherDuration.find()) {
 			String time = matcherDuration.group(1);
 			String unit = matcherDuration.group(3);
-			reason = allArgs.substring(matcherDuration.group().length());
+			reason = allArgs.substring(matcherDuration.group().length() + 1);
 			if (reason.isBlank())
 				reason = null;
 			me.setExpire(SanctionUtils.toTimeStamp(Integer.parseInt(time), unit));
