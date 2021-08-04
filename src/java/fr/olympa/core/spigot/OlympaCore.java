@@ -105,7 +105,7 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 	public static OlympaCore getInstance() {
 		return instance;
 	}
-	
+
 	public OlympaCore() {
 		super();
 		instance = this;
@@ -193,10 +193,10 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 				return;
 			}
 			new ReportMySQL(database);
-			
+
 			try {
 				setFeedbackManager(new FeedbackManager(this));
-			}catch (Exception ex) {
+			} catch (Exception ex) {
 				sendMessage("§cUne erreur est survenue lors du chargment des retours.");
 				ex.printStackTrace();
 			}
@@ -268,6 +268,24 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 			defaultGroup.setRuntimePermission("bukkit.command.version", false);
 			defaultGroup.setRuntimePermission("bukkit.command.plugins", false);
 			defaultGroup.setRuntimePermission("bukkit.command.help", false);
+			OlympaGroup assitGroup = OlympaGroup.ASSISTANT;
+			assitGroup.setRuntimePermission("aac.alerts", true);
+			assitGroup.setRuntimePermission("verifplayer.moderator.receivefreezedisconnected", true);
+			OlympaGroup modGroup = OlympaGroup.MOD;
+			modGroup.setRuntimePermission("verifplayer.moderator.command.verif", true);
+			modGroup.setRuntimePermission("verifplayer.moderator.command.freeze", true);
+			modGroup.setRuntimePermission("verifplayer.moderator.command.alertcps", true);
+			modGroup.setRuntimePermission("verifplayer.moderator.receivealert", true);
+			modGroup.setRuntimePermission("verifplayer.moderator.seefreezemsg", true);
+			modGroup.setRuntimePermission("aac.status", true);
+			modGroup.setRuntimePermission("aac.check", true);
+			OlympaGroup modPGroup = OlympaGroup.MODP;
+			modPGroup.setRuntimePermission("verifplayer.moderator.command.verifspec", true);
+			modPGroup.setRuntimePermission("verifplayer.moderator.command.verifvanish", true);
+			modPGroup.setRuntimePermission("aac.spectate", true);
+			modPGroup.setRuntimePermission("verifplayer.admin.command.reload", true);
+			modPGroup.setRuntimePermission("verifplayer.admin.seevanished", true);
+			modPGroup.setRuntimePermission("aac.reload", true);
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 				Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 				players.forEach(p -> {
