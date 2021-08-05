@@ -108,9 +108,8 @@ public class ReportMySQL {
 		}
 	}
 
-	private static OlympaStatement selectAuthorStatement = new OlympaStatement(StatementType.SELECT, tableName, "author_id", null);
-
-	public static List<OlympaReport> getReportsByAuthor(long idAuthor) throws SQLException {
+	public static List<OlympaReport> getReportsByAuthor(long idAuthor, int limit) throws SQLException {
+		OlympaStatement selectAuthorStatement = new OlympaStatement(StatementType.SELECT, tableName, new String[] { "author_id" }, limit, (String[]) null);
 		try (PreparedStatement statement = selectAuthorStatement.createStatement()) {
 			statement.setLong(1, idAuthor);
 			List<OlympaReport> reports = new ArrayList<>();
@@ -121,7 +120,6 @@ public class ReportMySQL {
 			Collections.reverse(reports);
 			return reports;
 		}
-
 	}
 
 	public static List<OlympaReport> getLastReports(int startNumber, int number) throws SQLException {

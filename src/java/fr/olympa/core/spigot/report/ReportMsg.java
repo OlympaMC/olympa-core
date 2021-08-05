@@ -24,6 +24,7 @@ import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.connection.Server;
 
 public class ReportMsg {
 
@@ -39,7 +40,11 @@ public class ReportMsg {
 			ProxyServer.getInstance().getConsole().sendMessage(ReportUtils.getAlert(report, authorName, targetName, targetServer, null));
 			OlympaCorePermissionsBungee.REPORT_SEEREPORT_OTHERSERV.getPlayersBungee(players -> {
 				if (players != null)
-					players.forEach(p -> p.sendMessage(ReportUtils.getAlert(report, authorName, targetName, targetServer, p.getServer().getInfo().getName())));
+					players.forEach(p -> {
+						Server staffServer = p.getServer();
+						if (staffServer == null || !staffServer.getInfo().getName().equals(targetServer))
+							p.sendMessage(ReportUtils.getAlert(report, authorName, targetName, targetServer, p.getServer().getInfo().getName()));
+					});
 			});
 		}
 	}
@@ -63,7 +68,8 @@ public class ReportMsg {
 		if (note != null && !note.isBlank())
 			out.extra(new TxtComponentBuilder("&aNote &2%s", note));
 		out.extra(new TxtComponentBuilder("&aDate &2%s &a(%s)", Utils.timestampToDateAndHour(report.getTime()), Utils.timestampToDuration(report.getTime())));
-		out.extra(new TxtComponentBuilder("&6[&eChanger Statut]").onClickSuggest("/report change " + id).extraSpliter(" ").extra("&6[&eTous]").onClickSuggest("/report see " + report.getTargetName()));
+		out.extra(new TxtComponentBuilder().extraSpliter(" ").extra(new TxtComponentBuilder("&6[&eChanger Statut]").onClickSuggest("/report change " + id),
+				new TxtComponentBuilder("&6[&eTous&6]").onClickCommand("/report see " + report.getTargetName())));
 		List<ReportStatusInfo> statusInfo = report.getStatusInfo();
 		//		if (statusInfo.size() > 1) {
 		//			out.extra(new TxtComponentBuilder("&aDerniers status &2"));
@@ -106,7 +112,7 @@ public class ReportMsg {
 			ReportStatus status = r.getStatus();
 			TxtComponentBuilder txtBuildeur = new TxtComponentBuilder("%s%s -> %s &e(%s) de %s", status.getColor(), r.getReasonNameUpper(), status.getName(), r.getTargetName(), r.getAuthorName(),
 					Utils.tsToShortDur(r.getLastUpdate()));
-			txtBuildeur.onHoverText("\n", r.getLore());
+			txtBuildeur.onHoverText(String.join("\n", r.getLore()));
 			txtBuildeur.onClickCommand("/report seeId " + r.getId());
 			out.extra(txtBuildeur);
 		});

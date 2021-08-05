@@ -23,6 +23,7 @@ import fr.olympa.api.common.report.ReportStatus;
 import fr.olympa.api.common.report.ReportStatusInfo;
 import fr.olympa.api.spigot.command.ComplexCommand;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.core.common.provider.AccountProvider;
 import fr.olympa.core.spigot.report.ReportHandler;
@@ -58,9 +59,22 @@ public class ReportCommand extends ComplexCommand {
 	public void otherArg(CommandContext cmd) {
 		Player player = this.player;
 		OfflinePlayer target = cmd.getArgument(0);
-		if (player != null && target.getUniqueId().equals(player.getUniqueId()))
-			sendError("Tu ne peux pas te report toi même. (enfin si mais que pour tester)");
-		//			return; TODO REMOVE comment
+		if (player != null) {
+			if (target.getUniqueId().equals(player.getUniqueId())) {
+				sendError("Tu ne peux pas te report toi même.");
+				return;
+			}
+			try {
+				List<OlympaReport> allReportsAuthors = ReportMySQL.getReportsByAuthor(this.getOlympaPlayer().getId(), 100);
+				if (allReportsAuthors.size() > 2 && allReportsAuthors.get(2).getTime() > Utils.getCurrentTimeInSeconds() - 10 * 60) {
+					sendError("Tu peux faire seulement 2 reports toutes les 10 minutes.");
+					return;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
 		ReportReason reportReason = null;
 		String note = null;
 		if (cmd.getArgumentsLength() > 1)
@@ -139,7 +153,7 @@ public class ReportCommand extends ComplexCommand {
 			}
 			if (reports.isEmpty())
 				if (isSeeAuthor)
-					reports.addAll(ReportMySQL.getReportsByAuthor(targetId));
+					reports.addAll(ReportMySQL.getReportsByAuthor(targetId, 0));
 				else
 					reports.addAll(ReportMySQL.getReportByTarget(targetId));
 		} catch (SQLException e) {
