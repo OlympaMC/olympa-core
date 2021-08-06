@@ -45,11 +45,12 @@ public class NameTagCommand extends ComplexCommand {
 		Player target = cmd.getArgument(0);
 		String prefix = cmd.getArgument(1);
 		String suffix = cmd.getArgument(2);
-		int sortPriority = cmd.getArgumentsLength() > 3 ? cmd.getArgument(2) : 0;
+		int sortPriority = cmd.getArgumentsLength() > 3 ? cmd.getArgument(3) : 0;
+		Player toTarget = cmd.getArgumentsLength() > 4 ? cmd.getArgument(4) : target;
 		Nametag nameTag = new Nametag();
 		nameTag.appendPrefix(prefix);
 		nameTag.appendSuffix(suffix);
-		api.manager.changeFakeNametag(target.getName(), nameTag, sortPriority, List.of(getPlayer()));
+		api.manager.changeFakeNametag(target.getName(), nameTag, sortPriority, List.of(toTarget));
 		sendMessage(Prefix.DEFAULT_GOOD, "NameTag modifié en '%s&a', uniquement pour %s.", nameTag.toString(), target.getName());
 	}
 
