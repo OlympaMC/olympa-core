@@ -40,7 +40,7 @@ public class NameTagCommand extends ComplexCommand {
 		sendMessage(Prefix.DEFAULT_GOOD, "NameTag modifié en '%s&a', uniquement pour toi.", nameTag.toString());
 	}
 
-	@Cmd(args = { "PLAYER", "prefix", "suffix", "INTEGER", "PLAYERS" }, min = 3)
+	@Cmd(args = { "PLAYERS", "prefix", "suffix", "INTEGER", "PLAYERS" }, min = 3)
 	public void setToPlayer(CommandContext cmd) {
 		Player target = cmd.getArgument(0);
 		String prefix = cmd.getArgument(1);
