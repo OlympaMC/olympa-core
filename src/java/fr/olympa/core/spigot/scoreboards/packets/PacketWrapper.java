@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.google.gson.Gson;
@@ -93,22 +92,20 @@ public class PacketWrapper {
 					PacketAccessor.PREFIX.set(packet, prefix);
 					PacketAccessor.SUFFIX.set(packet, suffix);
 				} else {
-					String colorCode = null;
-					String color = ChatColor.getLastColors(prefix);
-					
+					net.md_5.bungee.api.ChatColor color = ColorUtils.getLastColor(prefix);
 					PacketAccessor.PREFIX.set(packet, toComponent(prefix));
-					if (!color.isEmpty()) {
-						colorCode = color.substring(color.length() - 1);
-						String chatColor = ChatColor.getByChar(colorCode).name();
-
-						if (chatColor.equalsIgnoreCase("MAGIC"))
-							chatColor = "OBFUSCATED";
-
-						Enum<?> colorEnum = Enum.valueOf(typeEnumChatFormat, chatColor);
+					if (color != null) {
+						String colorCode = null;
+						if (color.toString().length() == 14)
+							colorCode = ColorUtils.getNearestForLegacyColor(color).name();
+						else
+							colorCode = color.name();
+						if (colorCode.equalsIgnoreCase("MAGIC"))
+							colorCode = "OBFUSCATED";
+						Enum<?> colorEnum = Enum.valueOf(typeEnumChatFormat, colorCode);
 						PacketAccessor.TEAM_COLOR.set(packet, colorEnum);
+						suffix = color.toString() + suffix;
 					}
-					if (colorCode != null)
-						suffix = ChatColor.getByChar(colorCode) + suffix;
 					PacketAccessor.SUFFIX.set(packet, toComponent(suffix));
 					PacketAccessor.DISPLAY_NAME.set(packet, toComponent(name));
 				}
@@ -127,7 +124,7 @@ public class PacketWrapper {
 			throw new IllegalArgumentException("Method must be remove team");
 		setupDefaults(name, param);
 	}
-	
+
 	private IChatBaseComponent toComponent(String string) {
 		return IChatBaseComponent.ChatSerializer.a(ComponentSerializer.toString(new TextComponent(TextComponent.fromLegacyText(string))));
 	}

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -15,9 +16,11 @@ import fr.olympa.api.common.module.OlympaModule.ModuleApi;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.spigot.scoreboard.tab.INametagApi;
 import fr.olympa.api.spigot.scoreboard.tab.Nametag;
+import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.scoreboards.NameTagManager;
 import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
+import fr.olympa.core.spigot.versionhook.VersionHook;
 
 /**
  * Implements the INametagAPI interface. There only exists one instance of this
@@ -119,6 +122,16 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 			}
 			similarTags.add((Player) to.getPlayer());
 		}
+		VersionHook versionHandler = OlympaCore.getInstance().getVersionHandler();
+		nametags.forEach((tag, players) -> {
+			Map<Boolean, List<Player>> ps = players.stream().collect(Collectors.partitioningBy(p -> versionHandler.isPlayerVersionUnder(p, ProtocolAPI.V1_16)));
+			List<Player> playersUnder1_16 = ps.get(false);
+			List<Player> playersUpper1_16 = ps.get(true);
+			if (!playersUpper1_16.isEmpty())
+				manager.changeFakeNametag(player.getName(), tag, player.getGroup().getIndex(), playersUpper1_16);
+			if (!playersUnder1_16.isEmpty())
+				manager.changeFakeNametag(player.getName(), tag.removeRBG(), player.getGroup().getIndex(), playersUnder1_16);
+		});
 		nametags.forEach((tag, players) -> manager.changeFakeNametag(player.getName(), tag, player.getGroup().getIndex(), players));
 	}
 
