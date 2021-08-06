@@ -1,6 +1,5 @@
 package fr.olympa.core.spigot.scoreboards.packets;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,19 +16,19 @@ import fr.olympa.api.spigot.scoreboard.tab.FakeTeam;
 import fr.olympa.core.spigot.module.CoreModules;
 import fr.olympa.core.spigot.scoreboards.NameTagManager;
 import fr.olympa.core.spigot.scoreboards.utils.UtilsScoreboard;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
+import net.minecraft.server.v1_16_R3.IChatBaseComponent;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class PacketWrapper {
 
-	private static Constructor<?> chatComponentText;
 	private static Class<? extends Enum> typeEnumChatFormat;
 
 	static {
 		try {
 			if (!PacketAccessor.isLegacyVersion()) {
 				String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-				Class<?> typeChatComponentText = Class.forName("net.minecraft.server." + version + ".ChatComponentText");
-				chatComponentText = typeChatComponentText.getConstructor(String.class);
 				typeEnumChatFormat = (Class<? extends Enum>) Class.forName("net.minecraft.server." + version + ".EnumChatFormat");
 			}
 		} catch (Exception e) {
@@ -96,7 +95,8 @@ public class PacketWrapper {
 				} else {
 					String colorCode = null;
 					String color = ChatColor.getLastColors(prefix);
-					PacketAccessor.PREFIX.set(packet, chatComponentText.newInstance(prefix));
+					
+					PacketAccessor.PREFIX.set(packet, toComponent(prefix));
 					if (!color.isEmpty()) {
 						colorCode = color.substring(color.length() - 1);
 						String chatColor = ChatColor.getByChar(colorCode).name();
@@ -109,8 +109,8 @@ public class PacketWrapper {
 					}
 					if (colorCode != null)
 						suffix = ChatColor.getByChar(colorCode) + suffix;
-					PacketAccessor.SUFFIX.set(packet, chatComponentText.newInstance(suffix));
-					PacketAccessor.DISPLAY_NAME.set(packet, chatComponentText.newInstance(name));
+					PacketAccessor.SUFFIX.set(packet, toComponent(suffix));
+					PacketAccessor.DISPLAY_NAME.set(packet, toComponent(name));
 				}
 				PacketAccessor.PACK_OPTION.set(packet, 1);
 				if (PacketAccessor.VISIBILITY != null)
@@ -126,6 +126,10 @@ public class PacketWrapper {
 		if (param != 1)
 			throw new IllegalArgumentException("Method must be remove team");
 		setupDefaults(name, param);
+	}
+	
+	private IChatBaseComponent toComponent(String string) {
+		return IChatBaseComponent.ChatSerializer.a(ComponentSerializer.toString(new TextComponent(TextComponent.fromLegacyText(string))));
 	}
 
 	public void send() {
