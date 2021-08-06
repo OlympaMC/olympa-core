@@ -23,10 +23,10 @@ public class SpigotReceiveOlympaPlayerReceiver extends JedisPubSub {
 		Validate.notNull(olympaPlayer);
 		Player player = (Player) olympaPlayer.getPlayer();
 		if (player == null || !player.isOnline())
-			LinkSpigotBungee.getInstance().sendMessage("§7[Redis] §eDonnées de §a%s §ereçues de §a%s§e, mais il n'est pas connecté", olympaPlayer.getName(), serverFrom);
+			LinkSpigotBungee.getInstance().sendRedis("§eDonnées de §a%s §ereçues de §a%s§e, mais il n'est pas connecté", olympaPlayer.getName(), serverFrom);
 		// TODO remove data from cach if player is not connected in the futur
 		else
-			LinkSpigotBungee.getInstance().sendMessage("§7[Redis] §eDonnées de §a%s §ereçues de §a%s", olympaPlayer.getName(), serverFrom);
+			LinkSpigotBungee.getInstance().sendRedis("§eDonnées de §a%s §ereçues de §a%s", olympaPlayer.getName(), serverFrom);
 		new AccountProvider(olympaPlayer.getUniqueId()).saveToCache(olympaPlayer);
 	}
 }

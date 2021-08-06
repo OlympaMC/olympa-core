@@ -13,7 +13,7 @@ public class SpigotReportReceiver extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
-		OlympaBungee.getInstance().sendMessage("&a[Redis] Report receive " + message);
+		OlympaBungee.getInstance().sendRedis("Report reçu: " + message);
 		OlympaReport report = new Gson().fromJson(message, OlympaReport.class);
 		ProxiedPlayer targetPlayer = ProxyServer.getInstance().getPlayer(report.getTargetName());
 		String targetServer = null;

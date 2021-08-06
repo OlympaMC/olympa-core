@@ -25,6 +25,6 @@ public class SpigotGroupChangeReceiverOnBungee extends JedisPubSub {
 		ChangeType state = ChangeType.get(Integer.parseInt(args[3]));
 		ProxiedPlayer player = ProxyServer.getInstance().getPlayer(olympaPlayer.getUniqueId());
 		ProxyServer.getInstance().getPluginManager().callEvent(new BungeeOlympaGroupChangeEvent(player, olympaPlayer, groupChanged, timestamp, state));
-		OlympaBungee.getInstance().sendMessage("&a[DEBUG] PLAYER CHANGE GROUPE from Redis for " + olympaPlayer.getName() + " from server " + serverInfo.getName() + " " + olympaPlayer.getGroupsToHumainString());
+		OlympaBungee.getInstance().sendRedis("§aChangement de groupe pour §2§l" + olympaPlayer.getName() + " §a: " + olympaPlayer.getGroupsToHumainString() + " §7(depuis " + serverInfo.getName() + ")");
 	}
 }

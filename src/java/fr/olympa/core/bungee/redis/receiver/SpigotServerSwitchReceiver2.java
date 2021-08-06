@@ -46,7 +46,7 @@ public class SpigotServerSwitchReceiver2 extends JedisPubSub {
 			else if (error != null)
 				player.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Echec de la connexion au serveur &4%s&c: &4%s&c. ", serverName, error.getMessage()));
 		};
-		System.out.println(String.format("[REDIS] Demande de serveur switch %s sur le serv %s.", player.getName(), serverName));
+		OlympaBungee.getInstance().sendRedis("[REDIS] Demande de serveur switch %s sur le serv %s.", player.getName(), serverName);
 		player.connect(server, callback, false, Reason.PLUGIN_MESSAGE, 10000);
 	}
 

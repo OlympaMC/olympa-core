@@ -15,7 +15,7 @@ public class SpigotAskMonitorInfoReceiver extends JedisPubSub {
 	public void onMessage(String channel, String message) {
 		lastTimeAsk = Utils.getCurrentTimeInSeconds();
 		ServerInfo serverInfo = ServersConnection.getServerByNameOrIpPort(message);
-		OlympaBungee.getInstance().sendMessage("&7[Redis] &2%s&e demande les informations des autres serveurs.", serverInfo.getName());
+		OlympaBungee.getInstance().sendRedis("&2%s&e demande les informations des autres serveurs.", serverInfo.getName());
 		//		RedisBungeeSend.sendServerInfos();
 		RedisClass.SERVER_INFO_ADVANCED.sendServerInfos();
 	}

@@ -14,7 +14,7 @@ public class SpigotCommandReceiver extends JedisPubSub {
 		if (!OlympaCore.getInstance().isServerName(serverFrom))
 			return;
 		String command = args[1];
-		OlympaCore.getInstance().sendMessage("§7[Redis] §eCommande à exécuter : §2" + command);
+		OlympaCore.getInstance().sendRedis("§eCommande à exécuter : §2" + command);
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 	}
 }

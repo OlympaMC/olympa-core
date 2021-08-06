@@ -42,6 +42,6 @@ public class SpigotGroupChangedReceiver extends JedisPubSub {
 			Prefix.DEFAULT_GOOD.sendMessage(player, "Ton groupe a été changé. Tu as désormais dans le groupe &2%s&a.", newOlympaPlayer.getGroupsToHumainString());
 		OlympaCore.getInstance().getServer().getPluginManager().callEvent(new AsyncOlympaPlayerChangeGroupEvent(player, state, newOlympaPlayer, null, timestamp, groupChanged));
 		RedisSpigotSend.sendModificationsReceive(newOlympaPlayer.getUniqueId());
-		OlympaCore.getInstance().sendMessage("§7[Redis] §eModification du groupe de §a" + newOlympaPlayer.getName() + " §e pour §a" + oldOlympaPlayer.getGroupsToHumainString() + "§e, depuis §a" + from);
+		OlympaCore.getInstance().sendRedis("§eModification du groupe de §a" + newOlympaPlayer.getName() + " §e pour §a" + oldOlympaPlayer.getGroupsToHumainString() + "§e, depuis §a" + from);
 	}
 }

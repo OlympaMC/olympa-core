@@ -12,6 +12,6 @@ public class SpigotOlympaPlayerReceiver extends JedisPubSub {
 	public void onMessage(String channel, String message) {
 		OlympaPlayer olympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(message, OlympaPlayer.class);
 		new AccountProvider(olympaPlayer.getUniqueId()).saveToCache(olympaPlayer);
-		LinkSpigotBungee.getInstance().sendMessage("§7[Redis] §eDonnées de §a%s §ereçues", olympaPlayer.getName());
+		LinkSpigotBungee.getInstance().sendRedis("§eDonnées de §a%s §ereçues", olympaPlayer.getName());
 	}
 }

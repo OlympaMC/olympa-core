@@ -19,6 +19,6 @@ public class BungeeSendOlympaPlayerReceiver extends JedisPubSub {
 			return;
 		OlympaPlayer olympaPlayer = GsonCustomizedObjectTypeAdapter.GSON.fromJson(args[1], OlympaPlayer.class);
 		new AccountProvider(olympaPlayer.getUniqueId()).saveToCache(olympaPlayer);
-		OlympaCore.getInstance().sendMessage("&a[DEBUG] PLAYER receive data from bungee for " + olympaPlayer.getName());
+		OlympaCore.getInstance().sendRedis("Données reçues de §a", olympaPlayer.getName());
 	}
 }
