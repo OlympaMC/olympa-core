@@ -147,6 +147,7 @@ public class GroupCommand extends OlympaCommand {
 						return true;
 					}
 					olympaTarget.removeGroup(newGroup);
+					if (olympaTarget.getGroups().isEmpty()) olympaTarget.addGroup(OlympaGroup.PLAYER);
 					Entry<OlympaGroup, Long> entry = ((TreeMap<OlympaGroup, Long>) olympaTarget.getGroups()).firstEntry();
 					OlympaGroup principalGroup = entry.getKey();
 					Long timestamp2 = entry.getValue();
