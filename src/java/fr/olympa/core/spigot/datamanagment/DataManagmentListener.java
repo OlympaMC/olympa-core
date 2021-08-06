@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.common.task.OlympaTask;
 import fr.olympa.api.spigot.customevents.OlympaPlayerLoadEvent;
@@ -127,7 +128,7 @@ public class DataManagmentListener implements Listener {
 		OlympaCore.getInstance().launchAsync(() -> {
 			try {
 				if (player.isOnline()) {
-					if (AccountProvider.getter().loadPlayerDatas(olympaPlayer))
+					if (AccountProvider.getter().loadPlayerDatas(olympaPlayer) && OlympaCore.getInstance().getOlympaServer() != OlympaServer.LOBBY)
 						SpigotUtils.broadcastMessage("§d§k##§6 Bienvenue à %s§l%s§6 qui se connecte au %s pour la première fois ! §d§k##", olympaPlayer.getGroup().getColor(), player.getName(), OlympaCore.getInstance().getServerName());
 
 					if (player.isOnline()) {
