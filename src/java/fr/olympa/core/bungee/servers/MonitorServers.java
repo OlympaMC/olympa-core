@@ -38,6 +38,15 @@ public class MonitorServers {
 		return olympaServers;
 	}
 
+	public static Map<OlympaServer, Map<Integer, ServerInfoAdvancedBungee>> getServersByTypeWithBungee() {
+		Map<OlympaServer, Map<Integer, ServerInfoAdvancedBungee>> map = new HashMap<>();
+		Map<Integer, ServerInfoAdvancedBungee> map2nd = new HashMap<>();
+		map2nd.put(1, new ServerInfoAdvancedBungee(OlympaBungee.getInstance()));
+		map.put(OlympaServer.BUNGEE, map2nd);
+		map.putAll(olympaServers);
+		return olympaServers;
+	}
+
 	public static ServerInfoAdvancedBungee getMonitor(ServerInfo server) {
 		return bungeeServers.get(server);
 	}

@@ -28,17 +28,29 @@ public class NameTagCommand extends ComplexCommand {
 		this.api = api;
 	}
 
-	@Cmd(args = { "prefix", "suffix", "INTEGER", "PLAYERS" }, min = 2)
+	@Cmd(args = { "prefix", "suffix", "INTEGER", "PLAYERS" }, min = 2, player = true)
 	public void set(CommandContext cmd) {
 		String prefix = cmd.getArgument(0);
 		String suffix = cmd.getArgument(1);
 		int sortPriority = cmd.getArgumentsLength() > 2 ? cmd.getArgument(2) : 0;
-		Player player = cmd.getArgumentsLength() > 3 ? cmd.getArgument(3) : getPlayer();
 		Nametag nameTag = new Nametag();
 		nameTag.appendPrefix(prefix);
 		nameTag.appendSuffix(suffix);
-		api.manager.changeFakeNametag(player.getName(), nameTag, sortPriority, List.of(getPlayer()));
-		sendMessage(Prefix.DEFAULT_GOOD, "NameTag modifié en '%s', uniquement pour toi.", nameTag.toString());
+		api.manager.changeFakeNametag(getPlayer().getName(), nameTag, sortPriority, List.of(getPlayer()));
+		sendMessage(Prefix.DEFAULT_GOOD, "NameTag modifié en '%s&a', uniquement pour toi.", nameTag.toString());
+	}
+
+	@Cmd(args = { "PLAYER", "prefix", "suffix", "INTEGER", "PLAYERS" }, min = 3)
+	public void setToPlayer(CommandContext cmd) {
+		Player target = cmd.getArgument(0);
+		String prefix = cmd.getArgument(1);
+		String suffix = cmd.getArgument(2);
+		int sortPriority = cmd.getArgumentsLength() > 3 ? cmd.getArgument(2) : 0;
+		Nametag nameTag = new Nametag();
+		nameTag.appendPrefix(prefix);
+		nameTag.appendSuffix(suffix);
+		api.manager.changeFakeNametag(target.getName(), nameTag, sortPriority, List.of(getPlayer()));
+		sendMessage(Prefix.DEFAULT_GOOD, "NameTag modifié en '%s&a', uniquement pour %s.", nameTag.toString(), target.getName());
 	}
 
 	@Cmd()
