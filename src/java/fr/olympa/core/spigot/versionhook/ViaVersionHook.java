@@ -116,7 +116,7 @@ public class ViaVersionHook implements PluginHandleVersion {
 		throw new UnsupportedOperationException("Can't disable versions on ViaVersion yet. Maybe contribute to find a solution ?");
 		/*
 		List<ProtocolAPI> toDisable = ProtocolAPI.getAllUnderI(version.getProtocolNumber());
-
+		
 		ServerProtocolVersion lastProtocolVersion = versionHandler.getServerProtocolVersion();
 		Set<Integer> newSupportedVersion = lastProtocolVersion.supportedVersions().stream().filter(protocolId -> !toDisable.stream().anyMatch(protocol -> protocol.getProtocolNumber() != protocolId)).collect(Collectors.toSet());
 		ServerProtocolVersion serverProtocolVersion;

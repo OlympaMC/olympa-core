@@ -122,8 +122,8 @@ public class VersionHook implements VersionHandler<Player> {
 		boolean b2 = false;
 		if (protocolSupport != null)
 			b = protocolSupport.disable(versions);
-		if (viaVersion != null)
-			b2 = viaVersion.disable(versions);
+		//		if (viaVersion != null)
+		//			b2 = viaVersion.disable(versions);
 		plugin.setProtocols(getProtocolsSupported());
 		return b || b2;
 	}
@@ -134,8 +134,8 @@ public class VersionHook implements VersionHandler<Player> {
 		boolean b2 = false;
 		if (protocolSupport != null)
 			b = protocolSupport.disable(versions);
-		if (viaVersion != null)
-			b2 = viaVersion.disable(versions);
+		//		if (viaVersion != null)
+		//			b2 = viaVersion.disable(versions);
 		plugin.setProtocols(getProtocolsSupported());
 		return b || b2;
 	}
@@ -146,8 +146,8 @@ public class VersionHook implements VersionHandler<Player> {
 		boolean b2 = false;
 		if (protocolSupport != null)
 			b = protocolSupport.disableAllUnderI(version);
-		if (viaVersion != null)
-			b2 = viaVersion.disableAllUnderI(version);
+		//		if (viaVersion != null)
+		//			b2 = viaVersion.disableAllUnderI(version);
 		plugin.setProtocols(getProtocolsSupported());
 		return b || b2;
 	}
@@ -158,8 +158,8 @@ public class VersionHook implements VersionHandler<Player> {
 		boolean b2 = false;
 		if (protocolSupport != null)
 			b = protocolSupport.disableAllUpperI(version);
-		if (viaVersion != null)
-			b2 = viaVersion.disableAllUpperI(version);
+		//		if (viaVersion != null)
+		//			b2 = viaVersion.disableAllUpperI(version);
 		plugin.setProtocols(getProtocolsSupported());
 		return b || b2;
 	}
