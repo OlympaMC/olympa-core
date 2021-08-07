@@ -54,7 +54,6 @@ public class DbConnection implements DatabaseConnection {
 			connection = DriverManager.getConnection(dbcredentials.toURI(), dbcredentials.getUser(), dbcredentials.getPassword());
 			connection.setNetworkTimeout(Executors.newSingleThreadExecutor(), 28800);
 			boolean isOpen = !connection.isClosed();
-			LinkSpigotBungee.getInstance().sendMessage("&e[Database] &7Ouverture d'une nouvelle connexion à la base de données. Résultat &e%s", isOpen ? "§2Réussi" : "§cEchec");
 			return isOpen;
 		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();

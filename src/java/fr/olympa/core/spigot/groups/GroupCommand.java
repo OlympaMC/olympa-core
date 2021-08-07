@@ -51,10 +51,6 @@ public class GroupCommand extends OlympaCommand {
 		Player target;
 		OlympaPlayer olympaTarget;
 		AccountProvider olympaAccount = null;
-		if (!isConsole()) {
-			sendUsage("Désactiver.");
-			return true;
-		}
 		if (args.length == 0) {
 			target = player;
 			if (isConsole()) {
@@ -151,7 +147,8 @@ public class GroupCommand extends OlympaCommand {
 						return true;
 					}
 					olympaTarget.removeGroup(newGroup);
-					if (olympaTarget.getGroups().isEmpty()) olympaTarget.addGroup(OlympaGroup.PLAYER);
+					if (olympaTarget.getGroups().isEmpty())
+						olympaTarget.addGroup(OlympaGroup.PLAYER);
 					Entry<OlympaGroup, Long> entry = ((TreeMap<OlympaGroup, Long>) olympaTarget.getGroups()).firstEntry();
 					OlympaGroup principalGroup = entry.getKey();
 					Long timestamp2 = entry.getValue();
