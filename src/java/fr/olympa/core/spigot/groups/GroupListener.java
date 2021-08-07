@@ -84,7 +84,7 @@ public class GroupListener implements Listener {
 			}
 		if (player.isOp() && !OlympaCorePermissionsSpigot.STAFF.hasPermission(olympaPlayer)) {
 			player.setOp(false);
-			LinkSpigotBungee.getInstance().sendMessage("&4%s&c &cétait encore OP, heuresement que je suis là pour lui enlever ...", olympaPlayer.getName());
+			LinkSpigotBungee.getInstance().sendMessage("&4%s&c &cétait encore OP, heureusement que je suis là pour lui enlever...", olympaPlayer.getName());
 		}
 		PermissionAttachment attachment = player.addAttachment(OlympaCore.getInstance());
 		olympaPlayer.getGroup().getAllGroups().sorted(Comparator.comparing(OlympaGroup::getPower)).forEach(group -> group.runtimePermissions.forEach((perm, value) -> attachment.setPermission(perm, value)));

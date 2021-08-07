@@ -192,7 +192,7 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 			table.setReceiver(sender instanceof CommandSender ? Receiver.CONSOLE : Receiver.CLIENT);
 			table.addRow("&ePays &6" + vpnInfo.getCountry(), "&eVille &6" + vpnInfo.getCity());
 			table.addRow("&eOrganisation &6" + vpnInfo.getAs(), "&eNom court &6" + vpnInfo.getOrg());
-			if (vpnInfo != null)
+			if (vpnInfo != null && vpnInfo.getUsers() != null)
 				table.addRow("&eUsers &6" + String.join(",", vpnInfo.getUsers()));
 			if (vpnInfo != null)
 				table.addRow("&eWhitelist &6" + String.join(",", vpnInfo.getWhitelistUsers()));
