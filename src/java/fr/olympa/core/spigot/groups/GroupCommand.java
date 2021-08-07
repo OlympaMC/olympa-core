@@ -51,6 +51,10 @@ public class GroupCommand extends OlympaCommand {
 		Player target;
 		OlympaPlayer olympaTarget;
 		AccountProvider olympaAccount = null;
+		if (!isConsole()) {
+			sendUsage("Désactiver.");
+			return true;
+		}
 		if (args.length == 0) {
 			target = player;
 			if (isConsole()) {
