@@ -111,6 +111,17 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 	}
 
 	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
+	public void allowQueue(CommandContext cmd) {
+		boolean old = QueueHandler.ENABLED;
+		if (cmd.getArgumentsLength() == 0)
+			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%s&7.", "QUEUE", old);
+		else {
+			QueueHandler.ENABLED = cmd.getArgument(0);
+			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "QUEUE", old, QueueHandler.ENABLED);
+		}
+	}
+	
+	@Cmd (permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void checkCorrectIP(CommandContext cmd) {
 		boolean old = SecurityHandler.getInstance().checkCorrectEntredIp;
 		if (cmd.getArgumentsLength() == 0)

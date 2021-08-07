@@ -16,6 +16,7 @@ public class ConnectionQueueListener implements Listener {
 
 	@EventHandler(priority = -128)
 	public void onPreLogin(PreLoginEvent event) {
+		if (!QueueHandler.ENABLED) return;
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
 		int timeToW8 = QueueHandler.add(name);

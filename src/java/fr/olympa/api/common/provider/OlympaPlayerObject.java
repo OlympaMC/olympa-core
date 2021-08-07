@@ -133,7 +133,10 @@ public class OlympaPlayerObject extends OlympaPlayerCore {
 		this.premiumUuid = premiumUuid;
 		for (String groupInfos : groupsString.split(";")) {
 			String[] groupInfo = groupInfos.split(":");
-			OlympaGroup olympaGroup = OlympaGroup.getById(Integer.parseInt(groupInfo[0]));
+			OlympaGroup olympaGroup;
+			if ("".equals(groupInfos)) {
+				olympaGroup = OlympaGroup.PLAYER;
+			}else olympaGroup = OlympaGroup.getById(Integer.parseInt(groupInfo[0]));
 			Long until;
 			if (groupInfo.length > 1)
 				until = Long.parseLong(groupInfo[1]);
