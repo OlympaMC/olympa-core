@@ -159,8 +159,9 @@ public class AuthListener implements Listener {
 		}
 		cache.setSubDomain(event.getConnection());
 		try {
-			DataHandler.addPlayer(cache);
+			DataHandler.addPlayer(cache); // Arrive de temps en temps
 		} catch (Exception e) {
+			e.printStackTrace();
 			event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. Signale au staff. #ErrorCantData"));
 			event.setCancelled(true);
 			return;

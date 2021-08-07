@@ -18,7 +18,7 @@ public class TabTextListener implements Listener {
 		//		if (t - time < 10)
 		//			return;
 		//		time = t;
-		OlympaBungee.getInstance().getTask().runTaskLater("tabText", () -> TabText.sendAll(), 1, TimeUnit.SECONDS);
+		OlympaBungee.getInstance().getTask().runTaskLater("tabText", () -> TabText.sendAll(), 5, TimeUnit.SECONDS);
 	}
 
 	@EventHandler
@@ -29,7 +29,7 @@ public class TabTextListener implements Listener {
 		//		return;
 		//		}
 		//		time = t;
-		TabText.sendAll();
+		OlympaBungee.getInstance().getTask().runTaskLater("tabText", () -> TabText.sendAll(), 5, TimeUnit.SECONDS);
 		TabText.send(event.getPlayer());
 	}
 
