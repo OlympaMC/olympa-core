@@ -16,6 +16,7 @@ public class OlympaCorePermissionsBungee {
 	public static final OlympaBungeePermission BAN_DEF = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
 	public static final OlympaBungeePermission BAN_BANIP_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
 	public static final OlympaBungeePermission BAN_BANIP_SOFT = new OlympaBungeePermission(OlympaGroup.MOD);
+	public static final OlympaBungeePermission BAN_BYPASSTIME = new OlympaBungeePermission(OlympaGroup.MODP);
 	public static final OlympaBungeePermission BAN_BANIPDEF_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
 	public static final OlympaBungeePermission BAN_DELBAN_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
 	public static final OlympaBungeePermission BAN_BANDEF_COMMAND = new OlympaBungeePermission(OlympaGroup.MOD);
