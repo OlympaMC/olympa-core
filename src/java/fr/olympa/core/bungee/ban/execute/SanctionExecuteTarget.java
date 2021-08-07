@@ -103,7 +103,7 @@ public class SanctionExecuteTarget {
 				banExecute.getAuthorSender().sendMessage(msg);
 				return false;
 			}
-			if (banExecute.expire != 0) {
+			if (banExecute.expire != 0 && !OlympaCorePermissionsBungee.BAN_BYPASSTIME.hasPermission(banExecute.getAuthor())) {
 				long mins = (banExecute.expire - Utils.getCurrentTimeInSeconds()) / 60;
 				if (banExecute.sanctionType.isBanType() && mins < SanctionHandler.minTimeBan || banExecute.sanctionType.isMuteType() && mins < SanctionHandler.minTimeMute) {
 					banExecute.getAuthorSender().sendMessage(Prefix.DEFAULT_BAD.formatMessageB(config.getString("ban.cantbypasstime"), "minimal",

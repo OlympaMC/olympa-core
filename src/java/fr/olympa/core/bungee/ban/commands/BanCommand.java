@@ -40,17 +40,20 @@ public class BanCommand extends BungeeCommand {
 			List<String> units = new ArrayList<>();
 			if (args[1].isBlank())
 				return Arrays.asList("1h", "2h", "3h", "6h", "12h", "1j", "2j", "3j", "7j", "1mo", "1an");
-			Integer time = RegexMatcher.INT.extractAndParse(args[1]);
-			if (time == null) return null;
-			for (List<String> unit : SanctionUtils.units)
-				for (String u : unit)
-					units.add(time + u);
-			return Utils.startWords(args[1], units);
+			if (RegexMatcher.INT.is(args[1])) {
+				Integer time = RegexMatcher.INT.extractAndParse(args[1]);
+				if (time == null)
+					return null;
+				for (List<String> unit : SanctionUtils.units)
+					for (String u : unit)
+						units.add(time + u);
+				return Utils.startWords(args[1], units);
+			}
+			break;
 		case 3:
 			List<String> reasons = Arrays.asList("Cheat", "Insulte", "Provocation", "Spam", "Harcèlement", "Publicité");
 			return Utils.startWords(args[2], reasons);
-		default:
-			return new ArrayList<>();
 		}
+		return new ArrayList<>();
 	}
 }

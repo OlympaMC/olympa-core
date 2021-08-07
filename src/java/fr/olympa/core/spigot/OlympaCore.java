@@ -43,6 +43,7 @@ import fr.olympa.api.spigot.command.essentials.ItemCommand;
 import fr.olympa.api.spigot.command.essentials.ListCommand;
 import fr.olympa.api.spigot.command.essentials.PingCommand;
 import fr.olympa.api.spigot.command.essentials.SayCommand;
+import fr.olympa.api.spigot.command.essentials.tp.TpCommand;
 import fr.olympa.api.spigot.feedback.FeedbackManager;
 import fr.olympa.api.spigot.frame.ImageFrameManager;
 import fr.olympa.api.spigot.gui.Inventories;
@@ -251,6 +252,7 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 			new ToggleErrors(this).register();
 			new StaffCommand(this).register();
 			new ItemCommand(this).register();
+			new TpCommand(this).register();
 			new NewSpigotCommand(this).register().registerPreProcess();
 			new ListCommand(this).register().registerPreProcess();
 
@@ -270,19 +272,19 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 			defaultGroup.setRuntimePermission("bukkit.command.help", false);
 			OlympaGroup assitGroup = OlympaGroup.ASSISTANT;
 			assitGroup.setRuntimePermission("aac.alerts", true);
+			assitGroup.setRuntimePermission("verifplayer.moderator.command.verif", true);
 			assitGroup.setRuntimePermission("verifplayer.moderator.receivefreezedisconnected", true);
 			OlympaGroup modGroup = OlympaGroup.MOD;
-			modGroup.setRuntimePermission("verifplayer.moderator.command.verif", true);
 			modGroup.setRuntimePermission("verifplayer.moderator.command.freeze", true);
 			modGroup.setRuntimePermission("verifplayer.moderator.command.alertcps", true);
 			modGroup.setRuntimePermission("verifplayer.moderator.receivealert", true);
 			modGroup.setRuntimePermission("verifplayer.moderator.seefreezemsg", true);
+			modGroup.setRuntimePermission("verifplayer.moderator.command.verifspec", true);
 			modGroup.setRuntimePermission("aac.status", true);
 			modGroup.setRuntimePermission("aac.check", true);
+			modGroup.setRuntimePermission("aac.spectate", true);
 			OlympaGroup modPGroup = OlympaGroup.MODP;
-			modPGroup.setRuntimePermission("verifplayer.moderator.command.verifspec", true);
 			modPGroup.setRuntimePermission("verifplayer.moderator.command.verifvanish", true);
-			modPGroup.setRuntimePermission("aac.spectate", true);
 			modPGroup.setRuntimePermission("verifplayer.admin.command.reload", true);
 			modPGroup.setRuntimePermission("verifplayer.admin.seevanished", true);
 			modPGroup.setRuntimePermission("aac.reload", true);
