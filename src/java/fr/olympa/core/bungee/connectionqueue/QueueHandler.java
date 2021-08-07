@@ -7,6 +7,7 @@ import fr.olympa.core.bungee.security.SecurityHandler;
 
 public class QueueHandler {
 
+	public static boolean ENABLED = true;
 	public static int TIME_BETWEEN_2 = 300;// 300 = 0.30 sec en milisecondes
 	public static int NUMBER_BEFORE_CANCEL = 200; // 1 minute de queue
 	public static int NUMBER_BEFORE_START_ANTIBOT = 50; // 15 secondes de queue
