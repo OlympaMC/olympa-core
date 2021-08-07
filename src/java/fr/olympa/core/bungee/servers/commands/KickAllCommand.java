@@ -34,7 +34,7 @@ public class KickAllCommand extends BungeeCommand {
 			return;
 		}
 		List<ServerInfo> lobbies = MonitorServers.getServers(OlympaServer.LOBBY).values().stream()
-				.filter(x -> x.hasMinimalInfo() && x.getStatus().canConnect()
+				.filter(x -> x.hasMinimalInfo() && x.getStatus().canConnect() && !x.getName().equals(server.getName())
 						&& x.getMaxPlayers() * 0.9 > x.getOnlinePlayers())/*.sorted((o1, o2) -> o1.get)*/.map(ServerInfoAdvancedBungee::getServerInfo).toList();
 		if (lobbies.isEmpty()) {
 			sendError("Il n'y a aucun serveur lobby disponible.");
@@ -57,9 +57,9 @@ public class KickAllCommand extends BungeeCommand {
 	@Override
 	public Iterable<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		if (args.length == 0)
-			return OlympaBungee.getInstance().getProxy().getServers().keySet();
+			return OlympaBungee.getInstance().getProxy().getServersCopy().keySet();
 		else if (args.length == 1)
-			return Utils.startWords(args[0], OlympaBungee.getInstance().getProxy().getServers().keySet());
+			return Utils.startWords(args[0], OlympaBungee.getInstance().getProxy().getServersCopy().keySet());
 		return null;
 	}
 	

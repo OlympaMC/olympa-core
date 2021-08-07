@@ -30,15 +30,7 @@ import fr.olympa.core.bungee.ban.commands.MuteCommand;
 import fr.olympa.core.bungee.ban.commands.UnbanCommand;
 import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
-import fr.olympa.core.bungee.commands.AllPluginsCommand;
-import fr.olympa.core.bungee.commands.BungeeBroadcastCommand;
-import fr.olympa.core.bungee.commands.BungeeLagCommand;
-import fr.olympa.core.bungee.commands.BungeePingCommand;
-import fr.olympa.core.bungee.commands.CreditCommand;
-import fr.olympa.core.bungee.commands.InfoCommand;
-import fr.olympa.core.bungee.commands.IpCommand;
-import fr.olympa.core.bungee.commands.NewBungeeCommand;
-import fr.olympa.core.bungee.commands.RedisCommand;
+import fr.olympa.core.bungee.commands.*;
 import fr.olympa.core.bungee.connectionqueue.BungeeQueueCommand;
 import fr.olympa.core.bungee.connectionqueue.ConnectionQueueListener;
 import fr.olympa.core.bungee.connectionqueue.LeaveQueueCommand;
@@ -172,6 +164,7 @@ public class OlympaBungee extends OlympaBungeeCore {
 			if (BungeeUtils.isWaterfall())
 				pluginManager.registerListener(this, new BungeeCommandListenerWaterFall());
 
+			new ShopCommand(this).register();
 			new BanCommand(this).register();
 			new BanHistoryCommand(this).register();
 			new BanIpCommand(this).register();

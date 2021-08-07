@@ -38,8 +38,10 @@ public class LoginCommand extends BungeeCommand {
 			return;
 		}
 		olympaPlayer = getOlympaPlayer();
-		if (olympaPlayer == null)
+		if (olympaPlayer == null) {
 			sendImpossibleWithOlympaPlayer();
+			return;
+		}
 		String playerPasswordHash = olympaPlayer.getPassword();
 		if (playerPasswordHash == null || playerPasswordHash.isEmpty()) {
 			sendError("Tu n'as pas de mot de passe. Pour le créer, fais &4/register <mot de passe>&c.");
