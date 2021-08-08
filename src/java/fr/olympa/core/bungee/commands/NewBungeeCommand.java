@@ -120,8 +120,8 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%s&a à &2%s&a.", "QUEUE", old, QueueHandler.ENABLED);
 		}
 	}
-	
-	@Cmd (permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
+
+	@Cmd(permissionName = "BUNGEE_COMMAND_SETTINGS", args = "BOOLEAN")
 	public void checkCorrectIP(CommandContext cmd) {
 		boolean old = SecurityHandler.getInstance().checkCorrectEntredIp;
 		if (cmd.getArgumentsLength() == 0)
@@ -232,9 +232,9 @@ public class NewBungeeCommand extends BungeeComplexCommand {
 	public void timeBetween2connections(CommandContext cmd) {
 		int i = QueueHandler.TIME_BETWEEN_2;
 		if (cmd.getArgumentsLength() == 0)
-			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%d&7.\n&c" +
-					"C'est à dire qu'il a y 1 connexion acceptée toutes les &4%d&7 milisecondes (%d secondes).\n" +
-					"Et donc qu'il y a &4%d&c connexion/secondes.", "TIME_BETWEEN_2", i, i, i / 1000, 1000d / QueueHandler.TIME_BETWEEN_2);
+			sendMessage(Prefix.DEFAULT, "Le paramètre &e%s&7 du bungee est actuellement à &e%.2f&7.\n&c" +
+					"C'est à dire qu'il a y 1 connection acceptée toutes les &4%d&7 milisecondes (%d secondes).\n" +
+					"Et donc qu'il y a &4%d&c connection/secondes.", "TIME_BETWEEN_2", i, i, i / 1000, 1000d / QueueHandler.TIME_BETWEEN_2);
 		else {
 			QueueHandler.TIME_BETWEEN_2 = (Integer) cmd.getArgument(0);
 			sendMessage(Prefix.DEFAULT_GOOD, "Le paramètre &2%s&a du bungee est passé de &2%d&a à &2%d&a.", "TIME_BETWEEN_2", i, QueueHandler.TIME_BETWEEN_2);

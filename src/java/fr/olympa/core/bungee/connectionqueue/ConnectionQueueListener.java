@@ -16,14 +16,15 @@ public class ConnectionQueueListener implements Listener {
 
 	@EventHandler(priority = -128)
 	public void onPreLogin(PreLoginEvent event) {
-		if (!QueueHandler.ENABLED) return;
+		if (!QueueHandler.ENABLED)
+			return;
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
 		int timeToW8 = QueueHandler.add(name);
 		if (timeToW8 < 0) {
 			event.setCancelled(true);
 			if (timeToW8 == -1)
-				event.setCancelReason(BungeeUtils.connectScreen("&cIl y a déjà une connexion en attente avec le pseudo %s, réessaye dans %d.", name, QueueHandler.getTimeToW8String(name)));
+				event.setCancelReason(BungeeUtils.connectScreen("&cIl y a déjà une connexion en attente avec le pseudo %s, réessaye dans %s.", name, QueueHandler.getTimeToW8String(name)));
 			else if (timeToW8 == -2)
 				event.setCancelReason(BungeeUtils.connectScreen("&cL'attente pour te connecter est de &4%s&c\n&4Réessaye plus tard.", QueueHandler.getQueueTimeString()));
 		}
