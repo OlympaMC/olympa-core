@@ -282,7 +282,7 @@ public class AuthListener implements Listener {
 			wait.remove(player.getName());
 			OlympaPlayer olympaPlayer = olympaAccount.getFromRedis();
 			if (olympaPlayer == null) {
-				System.out.println("ATTENTION le joueur " + player.getUniqueId() + " n'avait pas de donnés dans redis.");
+				OlympaBungee.getInstance().sendMessage("§4ERROR §cLe joueur " + player.getUniqueId() + " n'avait pas de données dans redis.");
 				return;
 			}
 			olympaPlayer.setLastConnection(Utils.getCurrentTimeInSeconds());

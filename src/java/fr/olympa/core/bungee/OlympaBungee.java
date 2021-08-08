@@ -23,6 +23,7 @@ import fr.olympa.api.utils.CacheStats;
 import fr.olympa.core.bungee.ban.commands.BanCommand;
 import fr.olympa.core.bungee.ban.commands.BanHistoryCommand;
 import fr.olympa.core.bungee.ban.commands.BanIpCommand;
+import fr.olympa.core.bungee.ban.commands.BanListCommand;
 import fr.olympa.core.bungee.ban.commands.DelbanCommand;
 import fr.olympa.core.bungee.ban.commands.ForceKickCommand;
 import fr.olympa.core.bungee.ban.commands.KickCommand;
@@ -206,6 +207,7 @@ public class OlympaBungee extends OlympaBungeeCore {
 			new CreditCommand(this).register();
 			new ShowPingMotdCommand(this).register();
 			new AllPluginsCommand(this).register();
+			new BanListCommand(this).register();
 
 			MonitorServers.init(this);
 			SQLGroup.init();

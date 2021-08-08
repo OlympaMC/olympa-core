@@ -123,7 +123,7 @@ public class ReportMySQL {
 	}
 
 	public static List<OlympaReport> getLastReports(int startNumber, int number) throws SQLException {
-		OlympaStatement opStatement = new OlympaStatement(StatementType.SELECT, tableName, null, startNumber, number);
+		OlympaStatement opStatement = new OlympaStatement(StatementType.SELECT, tableName, null, "id", false, startNumber, number);
 		try (PreparedStatement statement = opStatement.createStatement()) {
 			List<OlympaReport> reports = new ArrayList<>();
 			ResultSet resultSet = opStatement.executeQuery(statement);
@@ -139,8 +139,7 @@ public class ReportMySQL {
 		Collection<OlympaPlayer> players = AccountProvider.getter().getAll();
 		Map<OlympaPlayerInformations, List<OlympaReport>> data = new HashMap<>();
 		Set<String> orPlayers = new HashSet<>();
-		for (@SuppressWarnings("unused")
-		OlympaPlayer player : players)
+		for (int i = 1; players.size() > i; i++)
 			orPlayers.add("target_id");
 		OlympaStatement opStatement = new OlympaStatement(StatementType.SELECT, tableName, new String[] { "target_id" }, orPlayers.toArray(String[]::new), null, null, 0, 0, new String[] {});
 		List<OlympaReport> reports = new ArrayList<>();

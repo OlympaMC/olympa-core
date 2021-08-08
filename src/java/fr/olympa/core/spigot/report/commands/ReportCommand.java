@@ -122,7 +122,7 @@ public class ReportCommand extends ComplexCommand {
 			sender.sendMessage(Prefix.DEFAULT_GOOD.formatMessage("Le report &2n°%s&a envers &2%s&a est passé de %s&a à %s&a.", report.getId(), targetName, oldStatus.getNameColored(), report.getStatus().getNameColored()));
 		} catch (SQLException e) {
 			e.printStackTrace();
-			sendError("Une erreur est survenu avec la base de donnés.");
+			sendError("Une erreur est survenu avec la base de données.");
 		}
 	}
 
@@ -158,7 +158,7 @@ public class ReportCommand extends ComplexCommand {
 					reports.addAll(ReportMySQL.getReportByTarget(targetId));
 		} catch (SQLException e) {
 			e.printStackTrace();
-			sendError("Une erreur est survenu avec la base de donnés.");
+			sendError("Une erreur est survenu avec la base de données.");
 			return;
 		}
 		String target = opi != null ? opi.getName() : cmd.getArgument(0) instanceof Integer ? String.valueOf(cmd.<Integer>getArgument(0)) : cmd.<String>getArgument(0);
@@ -186,7 +186,7 @@ public class ReportCommand extends ComplexCommand {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			sendError("Une erreur est survenu avec la base de donnés.");
+			sendError("Une erreur est survenu avec la base de données.");
 			return;
 		}
 		if (report == null) {
@@ -219,7 +219,7 @@ public class ReportCommand extends ComplexCommand {
 			reports = ReportMySQL.getLastReports(startNumber, limit);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			sendError("Une erreur est survenu avec la base de donnés.");
+			sendError("Une erreur est survenu avec la base de données.");
 			return;
 		}
 		if (reports == null) {
@@ -236,7 +236,7 @@ public class ReportCommand extends ComplexCommand {
 			reports = ReportMySQL.getConnectedReports();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			sendError("Une erreur est survenu avec la base de donnés.");
+			sendError("Une erreur est survenu avec la base de données.");
 			return;
 		}
 		if (reports == null) {

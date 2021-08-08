@@ -32,7 +32,7 @@ public class BanMySQL {
 	`status_id` INT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
-
+	
 	 */
 	/**
 	 * Ajoute un sanction/mute
@@ -258,5 +258,20 @@ public class BanMySQL {
 
 	public static boolean isSanctionActive(Object target, OlympaSanctionType banType) {
 		return getSanctionActive(target, banType) != null;
+	}
+
+	public static List<OlympaSanction> getLastSanctions(int i) throws SQLException {
+		List<OlympaSanction> sanctions = new ArrayList<>();
+		Connection connection = OlympaBungee.getInstance().getDatabase();
+		PreparedStatement pstate = connection.prepareStatement("SELECT * FROM sanctions ORDER BY created ASC LIMIT ?;");
+		pstate.setLong(1, i);
+		ResultSet resultSet = pstate.executeQuery();
+		while (resultSet.next()) {
+			OlympaSanction sanction = getSanction(resultSet);
+			if (sanction != null && sanction.getStatus().isStatus(OlympaSanctionStatus.ACTIVE))
+				sanctions.add(sanction);
+		}
+		pstate.close();
+		return Lists.reverse(sanctions);
 	}
 }

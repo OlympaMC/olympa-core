@@ -152,7 +152,7 @@ public class MySQL implements PlayerSQL {
 	}
 
 	/**
-	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
+	 * Permet de récupérer les données d'un joueur dans la base de données grâce à
 	 * son id
 	 * @throws SQLException
 	 */
@@ -170,7 +170,7 @@ public class MySQL implements PlayerSQL {
 	}
 
 	/**
-	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
+	 * Permet de récupérer les données d'un joueur dans la base de données grâce à
 	 * son pseudo
 	 * @throws SQLException
 	 */
@@ -188,7 +188,7 @@ public class MySQL implements PlayerSQL {
 	}
 
 	/**
-	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
+	 * Permet de récupérer les données d'un joueur dans la base de données grâce à
 	 * son uuid
 	 *
 	 * @throws SQLException
@@ -207,7 +207,7 @@ public class MySQL implements PlayerSQL {
 	}
 
 	/**
-	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
+	 * Permet de récupérer les données d'un joueur dans la base de données grâce à
 	 * son uuid premium
 	 * @throws SQLException
 	 */
@@ -225,7 +225,7 @@ public class MySQL implements PlayerSQL {
 	}
 
 	/**
-	 * Permet de récupérer les donnés d'un joueur dans la base de données grâce à
+	 * Permet de récupérer les données d'un joueur dans la base de données grâce à
 	 * son ts3databaseid
 	 * @throws SQLException
 	 */
