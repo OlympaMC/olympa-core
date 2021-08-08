@@ -12,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.groups.OlympaGroup;
 import fr.olympa.api.common.match.RegexMatcher;
@@ -26,7 +25,8 @@ public class ChatListener implements Listener {
 
 	public String getChatColor(String format) {
 		int index = format.lastIndexOf("%s");
-		return format.substring(index - 3, index - 1);
+		//		return ChatColor.getLastColors(format) format.substring(index - 3, index - 1);
+		return ChatColor.getLastColors(format.substring(0, index - 1));
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
