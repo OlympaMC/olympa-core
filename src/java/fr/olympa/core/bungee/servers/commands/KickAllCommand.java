@@ -50,7 +50,7 @@ public class KickAllCommand extends BungeeCommand {
 				if (Boolean.FALSE.equals(x) || error != null) {
 					sendMessage(sender, Prefix.ERROR, "Impossible d'envoyer le joueur %s au lobby. Erreur : §c", player.getName(), Objects.toString(error));
 				}
-			}, true);
+			});
 		}
 	}
 	
