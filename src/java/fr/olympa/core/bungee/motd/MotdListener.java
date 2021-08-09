@@ -103,7 +103,7 @@ public class MotdListener implements Listener {
 				}
 				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD(sb.toString()) + "§r"));
 			}
-			ping.setVersion(new ServerPing.Protocol(version + onlineCount, ping.getVersion().getProtocol() - 1));
+			ping.setVersion(new ServerPing.Protocol(onlineCount, ping.getVersion().getProtocol() - 1));
 			break;
 		case MAINTENANCE:
 			try {
