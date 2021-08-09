@@ -33,7 +33,7 @@ public class BanMySQL {
 	`status_id` INT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
-	
+
 	 */
 	/**
 	 * Ajoute un sanction/mute
@@ -268,7 +268,7 @@ public class BanMySQL {
 	public static List<OlympaSanction> getLastSanctions(int i) throws SQLException {
 		List<OlympaSanction> sanctions = new ArrayList<>();
 		Connection connection = OlympaBungee.getInstance().getDatabase();
-		PreparedStatement pstate = connection.prepareStatement("SELECT * FROM sanctions ORDER BY created ASC LIMIT ?;");
+		PreparedStatement pstate = connection.prepareStatement("SELECT * FROM sanctions ORDER BY created DESC LIMIT ?;");
 		pstate.setLong(1, i);
 		ResultSet resultSet = pstate.executeQuery();
 		while (resultSet.next()) {

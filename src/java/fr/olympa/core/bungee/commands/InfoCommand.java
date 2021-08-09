@@ -121,7 +121,9 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 			users.remove(target.getName());
 			Map<Boolean, List<OlympaPlayer>> usersAll = AccountProvider.getter().getSQL().getPlayersByAllIp(ip);
 			List<OlympaPlayer> usersAllNow = usersAll.get(true);
-			usersAllNow.remove(target);
+			OlympaPlayer targetFinal = target;
+			users.removeAll(usersAllNow.stream().map(OlympaPlayer::getName).toList());
+			usersAllNow.removeIf(op -> op.getId() == targetFinal.getId());
 			List<OlympaPlayer> usersAllHistory = usersAll.get(false);
 			usersAllHistory.remove(target);
 			if (!usersAllNow.isEmpty())
@@ -133,8 +135,10 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 			if (!users.isEmpty())
 				txtBuilder.extra(new TxtComponentBuilder("§cIP a déjà essayé utiliser les pseudos " + ColorUtils.joinRedEt(users))
 						.onHoverText("&eUne des personnes derrière cette IP a essayé de se connecter ces comptes là"));
-			if (!txtBuilder.isEmpty())
+			if (!txtBuilder.isEmpty()) {
 				out.addExtra(txtBuilder.build());
+				out.addExtra("\n");
+			}
 			if (hasPermission(OlympaCorePermissionsBungee.INFO_COMMAND_EXTRA)) {
 				out2 = new TextComponent(TextComponent.fromLegacyText("§3IP : §b[Cachée]"));
 				StringJoiner sj = new StringJoiner("\n");
