@@ -3,6 +3,7 @@ package fr.olympa.core.bungee.commands;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeComplexCommand;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
@@ -77,7 +78,7 @@ public class IpCommand extends BungeeComplexCommand {
 
 		Map<Boolean, List<OlympaPlayer>> all;
 		try {
-			all = AccountProvider.getter().getSQL().getPlayersByAllIp(potentielIP);
+			all = AccountProvider.getter().getSQL().getPlayersByAllIp(potentielIP).stream().collect(Collectors.partitioningBy(op -> op.getIp().equals(potentielIP)));
 		} catch (SQLException e) {
 			sendError(e);
 			e.printStackTrace();

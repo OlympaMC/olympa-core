@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 
@@ -119,13 +120,11 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 			OlympaVpn ipInfo = VpnHandler.get(ip);
 			List<String> users = ipInfo.getUsers();
 			users.remove(target.getName());
-			Map<Boolean, List<OlympaPlayer>> usersAll = AccountProvider.getter().getSQL().getPlayersByAllIp(ip);
+			Map<Boolean, List<OlympaPlayer>> usersAll = AccountProvider.getter().getSQL().getPlayersByAllIp(ip, target).stream().collect(Collectors.partitioningBy(op -> op.getIp().equals(ip)));
 			List<OlympaPlayer> usersAllNow = usersAll.get(true);
-			OlympaPlayer targetFinal = target;
 			users.removeAll(usersAllNow.stream().map(OlympaPlayer::getName).toList());
-			usersAllNow.removeIf(op -> op.getId() == targetFinal.getId());
 			List<OlympaPlayer> usersAllHistory = usersAll.get(false);
-			usersAllHistory.remove(target);
+			users.removeAll(usersAllHistory.stream().map(OlympaPlayer::getName).toList());
 			if (!usersAllNow.isEmpty())
 				txtBuilder.extra(new TxtComponentBuilder("§cIP partagée actuellement avec " + ColorUtils.joinRedEt(usersAllNow))
 						.onHoverText("&eLa dernière IP utilisés par ces joueurs est identique"));

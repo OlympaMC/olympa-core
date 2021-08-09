@@ -1,6 +1,7 @@
 package fr.olympa.core.bungee.servers;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -20,6 +21,7 @@ import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.common.server.ServerStatus;
+import fr.olympa.api.common.sort.Sorting;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -73,13 +75,14 @@ public class ServersConnection {
 	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except, ProxiedPlayer w8forConnect) {
 		if (!olympaServer.hasMultiServers())
 			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(ServerInfoAdvancedBungee::getServerInfo).orElse(null);
-		Map<ServerInfo, Integer> servers = MonitorServers.getServers(olympaServer).values().stream()
+
+		List<ServerInfoAdvancedBungee> servers = MonitorServers.getServers(olympaServer).values().stream()
 				.filter(x -> x.hasMinimalInfo() && x.getStatus().canConnect() && (except == null || !except.getName().equals(x.getName()))
 						&& (!x.getOlympaServer().hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
-				.collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayers()));
-		ServerInfo bestServer = servers.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(Entry::getKey).findFirst().orElse(null);
-		if (bestServer != null)
-			return bestServer;
+				.sorted(new Sorting<>(Map.of(server -> server.getOnlinePlayers(), true, server -> server.getServerId(), false)))
+				.collect(Collectors.toList());
+		if (servers.isEmpty())
+			return servers.get(0).getServerInfo();
 
 		// Ouvre un serveur
 		ServerInfo serverToOpen = MonitorServers.getServersMap().entrySet().stream().filter(e -> (except == null || !e.getKey().getName().equals(except.getName()))

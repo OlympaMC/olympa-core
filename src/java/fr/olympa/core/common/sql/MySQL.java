@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -266,7 +265,7 @@ public class MySQL implements PlayerSQL {
 		}
 	}
 
-	public Map<Boolean, List<OlympaPlayer>> getPlayersByAllIp(String ipAlreadyUsed) throws SQLException {
+	public List<OlympaPlayer> getPlayersByAllIp(String ipAlreadyUsed) throws SQLException {
 		try (PreparedStatement statement = getPlayersByAllIPStatement.createStatement()) {
 			statement.setString(1, ipAlreadyUsed);
 			statement.setString(2, "%" + ipAlreadyUsed + "%");
@@ -277,7 +276,22 @@ public class MySQL implements PlayerSQL {
 				olympaPlayers.add(op);
 			}
 			resultSet.close();
-			return olympaPlayers.stream().collect(Collectors.partitioningBy(op -> op.getIp().equals(ipAlreadyUsed)));
+			return olympaPlayers.stream().toList();
+		}
+	}
+
+	public List<OlympaPlayer> getPlayersByAllIp(String ipAlreadyUsed, OlympaPlayer except) throws SQLException {
+		try (PreparedStatement statement = getPlayersByAllIPStatement.createStatement()) {
+			statement.setString(1, ipAlreadyUsed);
+			statement.setString(2, "%" + ipAlreadyUsed + "%");
+			List<OlympaPlayer> olympaPlayers = new ArrayList<>();
+			ResultSet resultSet = getPlayersByAllIPStatement.executeQuery(statement);
+			while (resultSet.next()) {
+				OlympaPlayer op = getOlympaPlayer(resultSet);
+				olympaPlayers.add(op);
+			}
+			resultSet.close();
+			return olympaPlayers.stream().filter(op -> op.getId() != except.getId()).toList();
 		}
 	}
 
