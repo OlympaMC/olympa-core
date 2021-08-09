@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.sql.statement.OlympaStatement;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
@@ -181,6 +182,10 @@ public class BanMySQL {
 			return null;
 		}
 		return Lists.reverse(sanctions);
+	}
+
+	public static List<OlympaSanction> getSanctionByOlympaPlayer(OlympaPlayer target) {
+		return getSanctions(target.getId(), null);
 	}
 
 	public static List<OlympaSanction> getSanctions(Object target) {

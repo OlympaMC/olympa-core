@@ -71,7 +71,7 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 		out2 = new TextComponent(TextComponent.fromLegacyText("§3Première connexion : §b" + Utils.timestampToDuration(target.getFirstConnection())));
 		out2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§3Le: §b" + Utils.timestampToDate(target.getFirstConnection()))));
 		out.addExtra(out2);
-		out.addExtra("\n");
+		out.addExtra(" §l| ");
 		if (targetProxied == null) {
 			out2 = new TextComponent(TextComponent.fromLegacyText("§3Dernière : §b" + Utils.timestampToDuration(target.getLastConnection())));
 			out2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§3Le: §b" + Utils.timestampToDate(target.getLastConnection()))));
@@ -112,39 +112,46 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 				TxtComponentBuilder.of(null, "&3UUID : &b" + target.getUniqueId(), ClickEvent.Action.COPY_TO_CLIPBOARD, target.getUniqueId().toString(), HoverEvent.Action.SHOW_TEXT,
 						new Text("§eClique pour copier l'UUID dans le presse-papier")));
 		out.addExtra("\n");
-		if (hasPermission(OlympaCorePermissionsBungee.INFO_COMMAND_EXTRA)) {
-			out2 = new TextComponent(TextComponent.fromLegacyText("§3IP : §b[Cachée]"));
-			StringJoiner sj = new StringJoiner("\n");
-			sj.add("§c" + target.getIp());
-			try {
-				String ip = target.getIp();
-				OlympaVpn ipInfo = VpnHandler.get(ip);
-				List<String> users = ipInfo.getUsers();
-				users.remove(target.getName());
-				Map<Boolean, List<OlympaPlayer>> usersAll = AccountProvider.getter().getSQL().getPlayersByAllIp(ip);
-				List<OlympaPlayer> usersAllNow = usersAll.get(true);
-				usersAllNow.remove(target);
-				List<OlympaPlayer> usersAllHistory = usersAll.get(false);
-				usersAllHistory.remove(target);
-				if (!usersAllNow.isEmpty())
-					sj.add("§cIP partagée actuellement (dernière IP utilisé pour les deux) avec " + ColorUtils.joinRedEt(usersAllNow));
-				if (!usersAllHistory.isEmpty())
-					sj.add("§cIP déjà partager (IP dans l'historique) avec " + ColorUtils.joinRedEt(usersAllHistory));
-				if (!users.isEmpty())
-					sj.add("§cL'IP a déjà essayé utiliser les pseudo " + ColorUtils.joinRedEt(users));
+
+		TxtComponentBuilder txtBuilder = new TxtComponentBuilder().extraSpliterBN();
+		try {
+			String ip = target.getIp();
+			OlympaVpn ipInfo = VpnHandler.get(ip);
+			List<String> users = ipInfo.getUsers();
+			users.remove(target.getName());
+			Map<Boolean, List<OlympaPlayer>> usersAll = AccountProvider.getter().getSQL().getPlayersByAllIp(ip);
+			List<OlympaPlayer> usersAllNow = usersAll.get(true);
+			usersAllNow.remove(target);
+			List<OlympaPlayer> usersAllHistory = usersAll.get(false);
+			usersAllHistory.remove(target);
+			if (!usersAllNow.isEmpty())
+				txtBuilder.extra(new TxtComponentBuilder("§cIP partagée actuellement avec " + ColorUtils.joinRedEt(usersAllNow))
+						.onHoverText("&eLa dernière IP utilisés par ces joueurs est identique"));
+			if (!usersAllHistory.isEmpty())
+				txtBuilder.extra(new TxtComponentBuilder("§cIP déjà partager avec " + ColorUtils.joinRedEt(usersAllHistory))
+						.onHoverText("&eL'adresse IP a déjà été utilisé par ces joueurs"));
+			if (!users.isEmpty())
+				txtBuilder.extra(new TxtComponentBuilder("§cIP a déjà essayé utiliser les pseudos " + ColorUtils.joinRedEt(users))
+						.onHoverText("&eUne des personnes derrière cette IP a essayé de se connecter ces comptes là"));
+			if (!txtBuilder.isEmpty())
+				out.addExtra(txtBuilder.build());
+			if (hasPermission(OlympaCorePermissionsBungee.INFO_COMMAND_EXTRA)) {
+				out2 = new TextComponent(TextComponent.fromLegacyText("§3IP : §b[Cachée]"));
+				StringJoiner sj = new StringJoiner("\n");
+				sj.add("§c" + target.getIp());
+				sj.add("§6Clique pour copier l'IP");
 				if (hasPermission(OlympaCorePermissionsBungee.INFO_COMMAND_EXTRA_EXTRA))
 					sj.add("§e" + new Gson().toJson(ipInfo));
-			} catch (SQLException e) {
-				e.printStackTrace();
+				out2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(sj.toString())));
+				out2.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, target.getIp()));
+				out.addExtra(out2);
+				out.addExtra("\n");
 			}
-			out2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(sj.toString())));
-			out2.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, target.getIp()));
-			out.addExtra(out2);
-			out.addExtra("\n");
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		List<OlympaSanction> sanctions = BanMySQL.getSanctions(target.getUniqueId());
-		out2 = new TextComponent(TextComponent.fromLegacyText("§3Sanctions : §b" + sanctions.size()));
-		out.addExtra(out2);
+		List<OlympaSanction> sanctions = BanMySQL.getSanctionByOlympaPlayer(target);
+		out.addExtra(new TxtComponentBuilder("§3Sanctions : §b" + sanctions.size()).onHoverText("&eClique pour voir les sanctions").onClickCommand("/banhist %s", target.getName()).build());
 		sendMessage(out);
 	}
 
