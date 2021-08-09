@@ -91,7 +91,7 @@ public class MotdListener implements Listener {
 				int before = -1;
 				for (int i = 0; i < 2; i++) {
 					do
-						random = new Random().nextInt(5);
+						random = new Random().nextInt(4);
 					while (before == random);
 					switch (random) {
 					case 0:
@@ -105,9 +105,6 @@ public class MotdListener implements Listener {
 						break;
 					case 3:
 						sb.append(discord);
-						break;
-					case 4:
-						sb.append(pvp);
 						break;
 					}
 					if (i == 0)

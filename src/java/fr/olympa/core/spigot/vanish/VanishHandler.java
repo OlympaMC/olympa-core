@@ -11,7 +11,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import fr.olympa.api.common.module.OlympaModule.ModuleApi;
-import fr.olympa.api.common.permission.OlympaSpigotPermission;
 import fr.olympa.api.common.permission.list.OlympaAPIPermissionsSpigot;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.spigot.scoreboard.tab.INametagApi;
@@ -75,26 +74,7 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 		Bukkit.getOnlinePlayers().forEach(p -> p.showPlayer(plugin, player));
 		if (showMessage)
 			Prefix.DEFAULT_BAD.sendMessage(player, "Tu n'es plus en vanish.");
-	}
-
-	public void enable(OlympaPlayer olympaPlayer, boolean showMessage, boolean isSuperVanish) {
-		Player player = (Player) olympaPlayer.getPlayer();
-		OlympaCore plugin = OlympaCore.getInstance();
-		player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
-		player.setCollidable(false);
-		addVanishMetadata(player);
-		INametagApi api = plugin.getNameTagApi();
-		//		new OlympaSpigotPermission(olympaPlayer.getGroup()).getPlayers(null, noPerm -> noPerm.forEach(noAdmin -> noAdmin.hidePlayer(plugin, player)));
-		//		OlympaAPIPermissions.VANISH_SEE.getOlympaPlayers(playerPerm -> {
-		new OlympaSpigotPermission(olympaPlayer.getGroup()).getOlympaPlayers(playerPerm -> {
-			api.callNametagUpdate(olympaPlayer, playerPerm);
-			((Player) olympaPlayer.getPlayer()).showPlayer(plugin, player);
-		}, noPerm -> noPerm.forEach(noStaff -> ((Player) noStaff.getPlayer()).hidePlayer(plugin, player)));
-		if (showMessage)
-			if (isSuperVanish)
-				Prefix.DEFAULT_GOOD.sendMessage(player, "Tu es désormais en super-vanish, le staff.");
-			else
-				Prefix.DEFAULT_GOOD.sendMessage(player, "Tu es désormais en vanish.");
+		olympaPlayer.setVanish(false);
 	}
 
 	@Override
@@ -105,15 +85,35 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 		player.setCollidable(false);
 		addVanishMetadata(player);
 		INametagApi api = plugin.getNameTagApi();
-		//		new OlympaSpigotPermission(olympaPlayer.getGroup()).getPlayers(null, noPerm -> noPerm.forEach(noAdmin -> noAdmin.hidePlayer(plugin, player)));
-		//		OlympaAPIPermissions.VANISH_SEE.getOlympaPlayers(playerPerm -> {
-		new OlympaSpigotPermission(olympaPlayer.getGroup()).getOlympaPlayers(playerPerm -> {
+		OlympaAPIPermissionsSpigot.VANISH_SEE_ADMIN.getOlympaPlayers(playerPerm -> {
 			api.callNametagUpdate(olympaPlayer, playerPerm);
 			((Player) olympaPlayer.getPlayer()).showPlayer(plugin, player);
-		}, noPerm -> noPerm.forEach(noStaff -> ((Player) noStaff.getPlayer()).hidePlayer(plugin, player)));
+		}, noPerm -> noPerm.forEach(noStaff -> {
+			((Player) noStaff.getPlayer()).hidePlayer(plugin, player);
+			api.callNametagUpdate(olympaPlayer, noPerm);
+		}));
 		if (showMessage)
 			Prefix.DEFAULT_GOOD.sendMessage(player, "Tu es désormais en vanish.");
+		olympaPlayer.setVanish(true);
 	}
+
+	//	@Override
+	//	public void enable(OlympaPlayer olympaPlayer, boolean showMessage) {
+	//		Player player = (Player) olympaPlayer.getPlayer();
+	//		OlympaCore plugin = OlympaCore.getInstance();
+	//		player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
+	//		player.setCollidable(false);
+	//		addVanishMetadata(player);
+	//		INametagApi api = plugin.getNameTagApi();
+	//		//		new OlympaSpigotPermission(olympaPlayer.getGroup()).getPlayers(null, noPerm -> noPerm.forEach(noAdmin -> noAdmin.hidePlayer(plugin, player)));
+	//		//		OlympaAPIPermissions.VANISH_SEE.getOlympaPlayers(playerPerm -> {
+	//		new OlympaSpigotPermission(olympaPlayer.getGroup()).getOlympaPlayers(playerPerm -> {
+	//			api.callNametagUpdate(olympaPlayer, playerPerm);
+	//			((Player) olympaPlayer.getPlayer()).showPlayer(plugin, player);
+	//		}, noPerm -> noPerm.forEach(noStaff -> ((Player) noStaff.getPlayer()).hidePlayer(plugin, player)));
+	//		if (showMessage)
+	//			Prefix.DEFAULT_GOOD.sendMessage(player, "Tu es désormais en vanish.");
+	//	}
 
 	@Override
 	public void addVanishMetadata(Player player) {

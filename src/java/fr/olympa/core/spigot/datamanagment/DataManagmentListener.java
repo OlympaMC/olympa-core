@@ -66,7 +66,7 @@ public class DataManagmentListener implements Listener {
 			return;
 		}
 		int i = 0;
-		while (olympaPlayer == null) {
+		while (olympaPlayer == null && i < 10) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -107,7 +107,8 @@ public class DataManagmentListener implements Listener {
 			event.setJoinMessage(null);
 			return;
 		}
-		event.setJoinMessage(ColorUtils.color(String.format("&7[&a+&7] %s", olympaPlayer.getNameWithPrefix())));
+		if (!olympaPlayer.isVanish())
+			event.setJoinMessage(ColorUtils.format("&7[&a+&7] %s", olympaPlayer.getNameWithPrefix()));
 		//OlympaCore instance = OlympaCore.getInstance();
 		//instance.sendMessage("Version de §6%s§e : §6%s.", player.getName(), instance.getVersionHandler().getVersion(player).getName());
 		//		 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, Reflection.getPlayerConnection(player)));
@@ -118,13 +119,11 @@ public class DataManagmentListener implements Listener {
 	public void on3PlayerLogin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		OlympaPlayer olympaPlayer = AccountProvider.getter().get(player.getUniqueId());
-
 		if (olympaPlayer == null) {
 			player.kickPlayer(SpigotUtils.connectScreen("§cCette erreur ne peut normalement pas se produire, contacte vite le staff. \n§eCode d'erreur: §l#NucléaireHighest"));
 			event.setJoinMessage(null);
 			return;
 		}
-
 		OlympaCore.getInstance().launchAsync(() -> {
 			try {
 				if (player.isOnline()) {
@@ -156,7 +155,7 @@ public class DataManagmentListener implements Listener {
 		Player player = event.getPlayer();
 		AccountProvider account = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = account.getFromCache();
-		if (olympaPlayer != null)
+		if (olympaPlayer != null && !olympaPlayer.isVanish())
 			event.setQuitMessage(ColorUtils.format("&7[&c-&7] %s", olympaPlayer.getNameWithPrefix()));
 		else
 			event.setQuitMessage(null);
