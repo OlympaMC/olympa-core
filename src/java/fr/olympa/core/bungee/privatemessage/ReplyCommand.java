@@ -44,6 +44,6 @@ public class ReplyCommand extends BungeeCommand {
 		String message = String.join(" ", Arrays.copyOfRange(args, 0, args.length));
 
 		PrivateMessage.send(proxiedPlayer, targetPlayer, message);
-
+		PrivateMessage.setReply(targetPlayer, proxiedPlayer);
 	}
 }
