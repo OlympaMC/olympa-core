@@ -50,7 +50,7 @@ public class MotdListener implements Listener {
 		//		}
 
 		ver.setName(version + onlineCount);
-		// ping.setVersion(ver);
+		ping.setVersion(ver);
 		Configuration config = OlympaBungee.getInstance().getMaintConfig();
 		String statusString = config.getString("settings.status");
 		ServerStatus status = ServerStatus.get(statusString);

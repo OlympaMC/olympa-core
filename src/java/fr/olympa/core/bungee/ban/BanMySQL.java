@@ -273,10 +273,10 @@ public class BanMySQL {
 		ResultSet resultSet = pstate.executeQuery();
 		while (resultSet.next()) {
 			OlympaSanction sanction = getSanction(resultSet);
-			if (sanction != null && sanction.getStatus().isStatus(OlympaSanctionStatus.ACTIVE))
+			if (sanction != null)
 				sanctions.add(sanction);
 		}
 		pstate.close();
-		return Lists.reverse(sanctions);
+		return sanctions;
 	}
 }

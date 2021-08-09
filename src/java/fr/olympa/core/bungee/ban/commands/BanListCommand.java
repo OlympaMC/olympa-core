@@ -33,7 +33,7 @@ public class BanListCommand extends BungeeCommand {
 		TxtComponentBuilder builder = new TxtComponentBuilder(Prefix.DEFAULT_GOOD, "Les %d dernières sanctions.", sanctions.size()).extraSpliterBN();
 		for (OlympaSanction sanction : sanctions)
 			builder.extra(new TxtComponentBuilder("%d - %s %s %s %s", sanction.getId(), sanction.getStatus().getNameColored(),
-					sanction.getType().getName(!sanction.isPermanent()), sanction.getAuthorName(), sanction.getReason(),
+					sanction.getType().getName(!sanction.isPermanent()), sanction.getTarget(), sanction.getReason(),
 					sanction.getExpires() > 0 ? Utils.timeToDuration(sanction.getBanTime()) : sanction.getType() != OlympaSanctionType.KICK ? "&cPermanant" : "")
 							.onHoverText(sanction.toBaseComplement()).onClickCommand("/histban %d", sanction.getId()));
 		sender.sendMessage(builder.build());
