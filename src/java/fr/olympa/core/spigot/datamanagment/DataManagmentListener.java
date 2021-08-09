@@ -23,6 +23,7 @@ import fr.olympa.api.spigot.customevents.OlympaPlayerLoadEvent;
 import fr.olympa.api.spigot.utils.SpigotUtils;
 import fr.olympa.core.common.provider.AccountProvider;
 import fr.olympa.core.spigot.OlympaCore;
+import fr.olympa.core.spigot.module.CoreModules;
 
 public class DataManagmentListener implements Listener {
 
@@ -107,7 +108,10 @@ public class DataManagmentListener implements Listener {
 			event.setJoinMessage(null);
 			return;
 		}
-		if (!olympaPlayer.isVanish())
+		if (olympaPlayer.isVanish()) {
+			event.setJoinMessage(null);
+			CoreModules.VANISH.getApi().enable(olympaPlayer, false);
+		} else
 			event.setJoinMessage(ColorUtils.format("&7[&a+&7] %s", olympaPlayer.getNameWithPrefix()));
 		//OlympaCore instance = OlympaCore.getInstance();
 		//instance.sendMessage("Version de §6%s§e : §6%s.", player.getName(), instance.getVersionHandler().getVersion(player).getName());
