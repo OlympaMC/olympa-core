@@ -39,18 +39,9 @@ public class MotdListener implements Listener {
 	public void onPing(ProxyPingEvent event) {
 		InetSocketAddress virtualHost = event.getConnection().getVirtualHost();
 		ServerPing ping = event.getResponse();
-		ServerPing.Protocol ver = ping.getVersion();
 		ServerPing.Players players = ping.getPlayers();
 		String onlineCount = "§7§l" + players.getOnline() + "§7 connecté" + (players.getOnline() == 1 ? "" : "s") + "§r";
-
-		// Petit troll pour ceux qui récup des stats
-		//		if (ip.equals("54.38.31.134")) {
-		//			players.setOnline(new Random().nextInt(10000));
-		//			return;
-		//		}
-
-		ver.setName(version + onlineCount);
-		ping.setVersion(ver);
+		ping.setVersion(new ServerPing.Protocol(version + onlineCount, ping.getVersion().getProtocol() - 1));
 		Configuration config = OlympaBungee.getInstance().getMaintConfig();
 		String statusString = config.getString("settings.status");
 		ServerStatus status = ServerStatus.get(statusString);
