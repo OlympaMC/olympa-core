@@ -41,7 +41,6 @@ public class MotdListener implements Listener {
 		ServerPing ping = event.getResponse();
 		ServerPing.Players players = ping.getPlayers();
 		String onlineCount = "§7§l" + players.getOnline() + "§7 connecté" + (players.getOnline() == 1 ? "" : "s") + "§r";
-		ping.setVersion(new ServerPing.Protocol(version + onlineCount, ping.getVersion().getProtocol() - 1));
 		Configuration config = OlympaBungee.getInstance().getMaintConfig();
 		String statusString = config.getString("settings.status");
 		ServerStatus status = ServerStatus.get(statusString);
@@ -104,6 +103,7 @@ public class MotdListener implements Listener {
 				}
 				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD(sb.toString()) + "§r"));
 			}
+			ping.setVersion(new ServerPing.Protocol(version + onlineCount, ping.getVersion().getProtocol() - 1));
 			break;
 		case MAINTENANCE:
 			try {
