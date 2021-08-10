@@ -173,7 +173,7 @@ public class SanctionExecuteTarget {
 		String actionName = type.getName().toLowerCase();
 		if (newStatus != OlympaSanctionStatus.END && type != OlympaSanctionType.KICK)
 			actionName = newStatus.getPrefix() + actionName;
-		String timeToExpire = Utils.timestampToDuration(sanction.getExpires());
+		String timeToExpire = Utils.timestampToDuration(sanction.getExpires(), 2, sanction.getCreated());
 
 		List<ProxiedPlayer> onlineTargets = getPlayers();
 		List<String> playersNames = new ArrayList<>();
