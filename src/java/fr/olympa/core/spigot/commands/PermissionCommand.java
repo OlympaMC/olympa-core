@@ -253,7 +253,7 @@ public class PermissionCommand extends ComplexCommand {
 			OfflinePlayer target = Bukkit.getOfflinePlayer(op.getUniqueId());
 			List<String> extraPermission = OlympaPermission.permissions.entrySet().stream().filter(entry -> entry.getValue().isInAllowedBypass(op.getUniqueId())).map(Entry::getKey).collect(Collectors.toList());
 			List<String> noPermission = OlympaPermission.permissions.entrySet().stream().filter(entry -> !entry.getValue().hasPermission(op)).map(Entry::getKey).collect(Collectors.toList());
-			List<String> customPermission = op.getCustomPermissions().entrySet().stream().map(e -> e.getKey() + e.getValue() != null ? " (" + e.getValue().getNameCaps() + ")" : "").collect(Collectors.toList());
+			List<String> customPermission = op.getCustomPermissions().entrySet().stream().map(e -> e.getKey() + (e.getValue() != null ? " (" + e.getValue().getNameCaps() + ")" : "")).collect(Collectors.toList());
 			sendMessage(Prefix.DEFAULT_GOOD, "&2%s&a a %s permission%s sur %s. %s", op.getName(), allPerms.size() - noPermission.size(), noPermission.size() > 1 ? "s" : "", allPerms.size(),
 					target != null && target.isOp() ? "&a[&2OP&a]" : "");
 			if (!noPermission.isEmpty() && noPermission.size() < 20)

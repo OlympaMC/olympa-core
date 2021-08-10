@@ -88,14 +88,19 @@ public class GroupListener implements Listener {
 		}
 		PermissionAttachment attachment = player.addAttachment(OlympaCore.getInstance());
 		olympaPlayer.getGroup().getAllGroups().sorted(Comparator.comparing(OlympaGroup::getPower)).forEach(group -> group.runtimePermissions.forEach((perm, value) -> attachment.setPermission(perm, value)));
-		olympaPlayer.getCustomPermissions().entrySet().stream().filter(e -> e.getValue() == null || e.getValue().equals(OlympaCore.getInstance().getOlympaServer()) && (e.getKey().contains(".") || !e.getKey().contains("_")))
-				.forEach(e -> {
-					String permName = e.getKey();
-					if (permName.indexOf(0) == '-')
-						attachment.setPermission(permName.substring(1), false);
-					else
-						attachment.setPermission(permName, true);
-				});
+		olympaPlayer.getCustomPermissions().entrySet().stream().filter(e -> e.getValue() == null || e.getValue().isSame(OlympaCore.getInstance().getOlympaServer()))
+		.forEach(e -> {
+			String permName = e.getKey();
+					if (permName.indexOf(0) == '-') {
+						LinkSpigotBungee.getInstance().sendMessage("&7[CUSTOM PERMISSION] &eLa permission &6%s&e de &6%s&e lui a été retirer%s.", permName, olympaPlayer.getName(),
+								e.getValue() != null ? " &esur les serveurs &6" + e.getValue().getNameCaps() + "&e uniquement " : "");
+				attachment.setPermission(permName.substring(1), false);
+					} else {
+						LinkSpigotBungee.getInstance().sendMessage("&7[CUSTOM PERMISSION] &eLa permission &6%s&e de &6%s&e lui a été ajouté%s.", permName, olympaPlayer.getName(),
+								e.getValue() != null ? " &esur les serveurs &6" + e.getValue().getNameCaps() + "&e uniquement " : "");
+				attachment.setPermission(permName, true);
+					}
+		});
 		player.recalculatePermissions();
 		((CraftServer) Bukkit.getServer()).getHandle().getServer().getCommandDispatcher().a(((CraftPlayer) player).getHandle());
 	}
