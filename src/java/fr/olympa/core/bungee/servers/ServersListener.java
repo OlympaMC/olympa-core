@@ -43,7 +43,7 @@ public class ServersListener implements Listener {
 			TxtComponentBuilder.of(Prefix.NONE, "Tu n'as pas accès au serveur &4%s&c.", serverKicked.getName());
 			return;
 		}
-		if (kickReason.contains("restarting") || kickReason.contains("closed") || kickReason.equals("The server you were previously on went down, you have been connected to a fallback server")) {
+		if (kickReason.contains("restarting") || kickReason.contains("Server closed") || kickReason.equals("The server you were previously on went down, you have been connected to a fallback server")) {
 			ServerInfo serverFallback = null;
 			if (olympaServer.hasMultiServers()) {
 				serverFallback = ServersConnection.getBestServer(olympaServer, serverKicked);
