@@ -107,10 +107,8 @@ public class DataManagmentListener implements Listener {
 			event.setJoinMessage(null);
 			return;
 		}
-		event.setJoinMessage(ColorUtils.format("&7[&a+&7] %s", olympaPlayer.getNameWithPrefix()));
-		//OlympaCore instance = OlympaCore.getInstance();
-		//instance.sendMessage("Version de §6%s§e : §6%s.", player.getName(), instance.getVersionHandler().getVersion(player).getName());
-		//		 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, Reflection.getPlayerConnection(player)));
+		if (OlympaCore.getInstance().getServer().getOnlinePlayers().size() < 100)
+			event.setJoinMessage(ColorUtils.format("&7[&a+&7] %s", olympaPlayer.getNameWithPrefix()));
 
 	}
 
@@ -154,7 +152,7 @@ public class DataManagmentListener implements Listener {
 		Player player = event.getPlayer();
 		AccountProvider account = new AccountProvider(player.getUniqueId());
 		OlympaPlayer olympaPlayer = account.getFromCache();
-		if (olympaPlayer != null && !olympaPlayer.isVanish())
+		if (olympaPlayer != null && !olympaPlayer.isVanish() && !OlympaCore.getInstance().getOlympaServer().isSame(OlympaServer.ZTA, OlympaServer.CREATIF, OlympaServer.LOBBY, OlympaServer.PVPKIT, OlympaServer.LG))
 			event.setQuitMessage(ColorUtils.format("&7[&c-&7] %s", olympaPlayer.getNameWithPrefix()));
 		else
 			event.setQuitMessage(null);

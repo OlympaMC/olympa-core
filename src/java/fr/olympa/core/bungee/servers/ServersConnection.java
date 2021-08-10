@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.servers;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +18,14 @@ import fr.olympa.api.bungee.task.BungeeTaskManager;
 import fr.olympa.api.common.bash.OlympaRuntime;
 import fr.olympa.api.common.match.MatcherPattern;
 import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.common.sort.Sorting;
+import fr.olympa.api.spigot.utils.ProtocolAPI;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -81,8 +85,20 @@ public class ServersConnection {
 						&& (!x.getOlympaServer().hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
 				.sorted(new Sorting<>(Map.of(server -> server.getOnlinePlayers(), true, server -> server.getServerId(), true)))
 				.collect(Collectors.toList());
-		if (!servers.isEmpty())
-			return servers.get(0).getServerInfo();
+		if (!servers.isEmpty()) {
+			try {
+				OlympaPlayer olympaPlayer = new AccountProvider(w8forConnect.getUniqueId()).get();
+				ProtocolAPI version = ProtocolAPI.getHighestVersion(w8forConnect.getPendingConnection().getVersion());
+				if (olympaPlayer != null && version != null) {
+					ServerInfoAdvancedBungee serv = servers.stream().filter(sr -> sr.canConnect(olympaPlayer, version)).findFirst().orElse(null);
+					if (serv != null)
+						return serv.getServerInfo();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
 
 		// Ouvre un serveur
 		ServerInfo serverToOpen = MonitorServers.getServersMap().entrySet().stream().filter(e -> (except == null || !e.getKey().getName().equals(except.getName()))
