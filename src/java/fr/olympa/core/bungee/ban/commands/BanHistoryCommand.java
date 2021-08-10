@@ -14,7 +14,7 @@ import net.md_5.bungee.api.CommandSender;
 public class BanHistoryCommand extends BungeeCommand {
 
 	public BanHistoryCommand(OlympaBungee plugin) {
-		super(plugin, "banhistory", OlympaCorePermissionsBungee.BAN_HISTORY_COMMAND, "banhist", "mutehist", "kickhist", "hist", "histban");
+		super(plugin, "banhistory", "Affiche le casier d'un joueur ou ip", OlympaCorePermissionsBungee.BAN_HISTORY_COMMAND, "banhist", "mutehist", "kickhist", "hist", "histban");
 		minArg = 1;
 		usageString = "<joueur|uuid|id|ip>";
 	}

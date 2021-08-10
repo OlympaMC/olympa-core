@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.match.RegexMatcher;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
@@ -44,20 +45,30 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 	public void onCommand(CommandSender sender, String[] args) {
 		OlympaPlayer target = null;
 		ProxiedPlayer targetProxied = null;
-		if (args.length != 0)
+		if (args.length != 0) {
 			try {
-				target = AccountProvider.getter().get(args[0]);
-				if (target == null) {
-					sendUnknownPlayer(args[0], AccountProvider.getter().getSQL().getNamesBySimilarChars(args[0]));
-					return;
+				if (RegexMatcher.UUID.is(args[0]))
+					target = new AccountProvider(RegexMatcher.UUID.parse(args[0])).get();
+				else if (RegexMatcher.INT.is(args[0]))
+					target = AccountProvider.getter().get(RegexMatcher.INT.parse(args[0]));
+				else {
+					target = AccountProvider.getter().get(args[0]);
+					if (target == null) {
+						sendUnknownPlayer(args[0], AccountProvider.getter().getSQL().getNamesBySimilarChars(args[0]));
+						return;
+					}
 				}
-				targetProxied = ProxyServer.getInstance().getPlayer(target.getUniqueId());
 			} catch (SQLException e) {
 				sendError(e);
 				e.printStackTrace();
 				return;
 			}
-		else if (proxiedPlayer != null) {
+			if (target == null) {
+				sendComponents(Prefix.DEFAULT_BAD.formatMessageB("&4%s n'est pas un argument de type UUID, INT ou Pseudo.", args[0]));
+				return;
+			}
+			targetProxied = ProxyServer.getInstance().getPlayer(target.getUniqueId());
+		} else if (proxiedPlayer != null) {
 			target = getOlympaPlayer();
 			targetProxied = proxiedPlayer;
 		} else {

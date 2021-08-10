@@ -19,7 +19,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class BanCommand extends BungeeCommand {
 
 	public BanCommand(Plugin plugin) {
-		super(plugin, "ban", OlympaCorePermissionsBungee.BAN_BAN_COMMAND, "tempban", "bann");
+		super(plugin, "ban", "Permet de bannir ou tempbannir un joueur ou une ip", OlympaCorePermissionsBungee.BAN_BAN_COMMAND, "tempban", "bann");
 		minArg = 2;
 		usageString = "<joueur|uuid|id|ip> [temps] <motif>";
 	}
@@ -49,7 +49,6 @@ public class BanCommand extends BungeeCommand {
 						units.add(time + u);
 				return Utils.startWords(args[1], units);
 			}
-			break;
 		case 3:
 			List<String> reasons = Arrays.asList("Cheat", "Insulte", "Provocation", "Spam", "Harcèlement", "Publicité");
 			return Utils.startWords(args[2], reasons);

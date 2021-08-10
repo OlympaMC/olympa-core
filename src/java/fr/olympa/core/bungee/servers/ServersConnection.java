@@ -81,7 +81,7 @@ public class ServersConnection {
 						&& (!x.getOlympaServer().hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
 				.sorted(new Sorting<>(Map.of(server -> server.getOnlinePlayers(), true, server -> server.getServerId(), false)))
 				.collect(Collectors.toList());
-		if (servers.isEmpty())
+		if (!servers.isEmpty())
 			return servers.get(0).getServerInfo();
 
 		// Ouvre un serveur
@@ -90,7 +90,8 @@ public class ServersConnection {
 						&& mInfo.getStatus().equals(ServerStatus.CLOSE) && mInfo.isUsualError()))
 				.map(Entry::getKey).findFirst().orElse(null);
 		if (serverToOpen != null) {
-			if (!waitToStart.contains(serverToOpen)) {
+			waitToStart.contains(serverToOpen);
+			if (!waitToStart.contains(serverToOpen) && waitToStart.size() <= 2) {
 				waitToStart.add(serverToOpen);
 				LinkSpigotBungee.getInstance().getTask().runTaskLater(() -> {
 					waitToStart.remove(serverToOpen);
@@ -103,6 +104,7 @@ public class ServersConnection {
 						if (!w8forConnect.isConnected())
 							break;
 						w8forConnect.getPendingConnection().unsafe().sendPacket(new KeepAlive(ThreadLocalRandom.current().nextLong()));
+						LinkSpigotBungee.getInstance().sendMessage("&6Wait serveur %d to start, %d's thread is sleeping for 5s", serverToOpen.getName(), w8forConnect.getName());
 						Thread.sleep(5000);
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();

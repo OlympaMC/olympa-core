@@ -19,7 +19,7 @@ public class BanIpCommand extends BungeeCommand {
 	public static OlympaPermission permToBandef;
 
 	public BanIpCommand(OlympaBungee plugin) {
-		super(plugin, "banip", OlympaCorePermissionsBungee.BAN_BANIP_COMMAND, "tempbanip");
+		super(plugin, "banip", "Permet de bannir ou tempbannir une IP, en utilisant le pseudo", OlympaCorePermissionsBungee.BAN_BANIP_COMMAND, "tempbanip");
 		minArg = 2;
 		usageString = plugin.getConfig().getString("ban.usageban");
 	}

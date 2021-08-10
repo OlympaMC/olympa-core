@@ -58,7 +58,6 @@ public class ReportHandler {
 			e.printStackTrace();
 			String msg = ColorUtils.color(Prefix.DEFAULT_BAD + "Une erreur est survenu, ton report n'a pas été sauvegardé mais le staff connecté est au courant.");
 			if (author != null) {
-
 				author.closeInventory();
 				author.sendMessage(msg);
 			} else
