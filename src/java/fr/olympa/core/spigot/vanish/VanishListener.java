@@ -43,9 +43,12 @@ import com.google.common.cache.CacheBuilder;
 import com.mojang.authlib.GameProfile;
 
 import fr.olympa.api.common.module.OlympaModule;
+import fr.olympa.api.common.permission.list.OlympaAPIPermissionsSpigot;
+import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.spigot.vanish.IVanishApi;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.common.provider.AccountProvider;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.module.CoreModules;
 import io.netty.channel.ChannelDuplexHandler;
@@ -62,9 +65,9 @@ public class VanishListener implements Listener {
 	private Field nameField;
 	private Constructor<?> playerDataConstructor;
 	private Cache<PacketPlayOutPlayerInfo, PacketState> packets = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.SECONDS).initialCapacity(10).build();
-	
+
 	private Lock specLock = new ReentrantLock();
-	
+
 	public VanishListener() {
 		try {
 			actionField = PacketPlayOutPlayerInfo.class.getDeclaredField("a");
@@ -86,29 +89,38 @@ public class VanishListener implements Listener {
 		}
 	}
 
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		OlympaCore plugin = OlympaCore.getInstance();
-		
-		CoreModules.VANISH.getApi().getVanished().forEach(vanishPlayer -> player.hidePlayer(plugin, vanishPlayer));
-
+		OlympaPlayer olympaPlayer = AccountProvider.getter().get(player.getUniqueId());
+		if (!OlympaAPIPermissionsSpigot.VANISH_COMMAND.hasPermission(olympaPlayer))
+			CoreModules.VANISH.getApi().getVanished().forEach(vanishPlayer -> player.hidePlayer(plugin, vanishPlayer));
+		else if (!OlympaAPIPermissionsSpigot.VANISH_SEE_ADMIN.hasPermission(olympaPlayer))
+			CoreModules.VANISH.getApi().getVanished().filter(vanishPlayer -> OlympaAPIPermissionsSpigot.VANISH_SEE_ADMIN.hasPermission(vanishPlayer.getUniqueId()))
+			.forEach(vanishPlayer -> player.hidePlayer(plugin, vanishPlayer));
+		if (olympaPlayer.isVanish())
+			if (OlympaAPIPermissionsSpigot.VANISH_COMMAND.hasPermission(olympaPlayer)) {
+				event.setJoinMessage(null);
+				CoreModules.VANISH.getApi().enable(olympaPlayer, true);
+			} else
+				olympaPlayer.setVanish(false);
 		if (datasField == null)
 			return;
-		
+
 		((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline().addBefore("packet_handler", "hide_spectators", new ChannelDuplexHandler() {
 			@Override
 			public void write(io.netty.channel.ChannelHandlerContext ctx, Object msg, io.netty.channel.ChannelPromise promise) throws Exception {
 				if (msg instanceof PacketPlayOutPlayerInfo packet) {
-					
+
 					Object action = actionField.get(packet);
 					if (action == PacketPlayOutPlayerInfo.EnumPlayerInfoAction.UPDATE_GAME_MODE || action == PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER) {
 						specLock.lock();
 						PacketState state = packets.getIfPresent(packet);
 						if (state != PacketState.IGNORE) {
-							
+
 							List<Object> infos = (List<Object>) datasField.get(packet);
-							
+
 							for (Object data : infos) {
 								EnumGamemode mode = (EnumGamemode) modeField.get(data);
 								if (mode == EnumGamemode.SPECTATOR) {
@@ -126,9 +138,8 @@ public class VanishListener implements Listener {
 											actionField.set(newPacket, action);
 											List<Object> newInfos = new ArrayList<>(infos.size());
 											for (Object newData : infos) {
-												if (data == newData) {
+												if (data == newData)
 													newData = playerDataConstructor.newInstance(newPacket, profile, pingField.getInt(data), realMode, nameField.get(data));
-												}
 												newInfos.add(newData);
 											}
 											datasField.set(newPacket, newInfos);
@@ -142,10 +153,11 @@ public class VanishListener implements Listener {
 							}
 						}
 						specLock.unlock();
-						if (OlympaModule.DEBUG) System.out.println("Sent PacketPlayOutPlayerInfo to " + player.getName() + " state " + Objects.toString(state) + " : " + packet.toString());
+						if (OlympaModule.DEBUG)
+							System.out.println("Sent PacketPlayOutPlayerInfo to " + player.getName() + " state " + Objects.toString(state) + " : " + packet.toString());
 					}
 				}
-				
+
 				super.write(ctx, msg, promise);
 			}
 		});
@@ -280,8 +292,11 @@ public class VanishListener implements Listener {
 		if (vanishHandler != null && vanishHandler.isVanished(player))
 			event.setCancelled(true);
 	}
-	
+
+
+
 	enum PacketState {
-		EDITED, IGNORE;
+		EDITED,
+		IGNORE;
 	}
 }

@@ -1,5 +1,7 @@
 package fr.olympa.core.spigot.vanish;
 
+import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
@@ -85,13 +87,18 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 		player.setCollidable(false);
 		addVanishMetadata(player);
 		INametagApi api = plugin.getNameTagApi();
-		OlympaAPIPermissionsSpigot.VANISH_SEE_ADMIN.getOlympaPlayers(playerPerm -> {
+		Consumer<? super Set<OlympaPlayer>> hide = playerPerm -> {
 			api.callNametagUpdate(olympaPlayer, playerPerm);
-			((Player) olympaPlayer.getPlayer()).showPlayer(plugin, player);
-		}, noPerm -> noPerm.forEach(noStaff -> {
+			playerPerm.forEach(staff -> ((Player) staff.getPlayer()).showPlayer(plugin, player));
+		};
+		Consumer<? super Set<OlympaPlayer>> show = noPerm -> noPerm.forEach(noStaff -> {
 			((Player) noStaff.getPlayer()).hidePlayer(plugin, player);
 			api.callNametagUpdate(olympaPlayer, noPerm);
-		}));
+		});
+		if (OlympaAPIPermissionsSpigot.VANISH_SEE_ADMIN.hasPermission(olympaPlayer))
+			OlympaAPIPermissionsSpigot.VANISH_SEE_ADMIN.getOlympaPlayers(hide, show);
+		else
+			OlympaAPIPermissionsSpigot.VANISH_COMMAND.getOlympaPlayers(hide, show);
 		if (showMessage)
 			Prefix.DEFAULT_GOOD.sendMessage(player, "Tu es désormais en vanish.");
 		olympaPlayer.setVanish(true);
