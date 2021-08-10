@@ -79,7 +79,7 @@ public class ServersConnection {
 		List<ServerInfoAdvancedBungee> servers = MonitorServers.getServers(olympaServer).values().stream()
 				.filter(x -> x.hasMinimalInfo() && x.getStatus().canConnect() && (except == null || !except.getName().equals(x.getName()))
 						&& (!x.getOlympaServer().hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
-				.sorted(new Sorting<>(Map.of(server -> server.getOnlinePlayers(), true, server -> server.getServerId(), false)))
+				.sorted(new Sorting<>(Map.of(server -> server.getOnlinePlayers(), true, server -> server.getServerId(), true)))
 				.collect(Collectors.toList());
 		if (!servers.isEmpty())
 			return servers.get(0).getServerInfo();
