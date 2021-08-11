@@ -72,11 +72,16 @@ public class ScoreboardTeamListener implements Listener {
 		Player player = event.getPlayer();
 		String playerName = player.getName();
 		Set<FakeTeam> teams = NameTagManager.getTeamsOfPlayer(playerName);
+		Set<FakeTeam> teamViewer = NameTagManager.getTeamsOfViewer(player);
+		for (FakeTeam t : teamViewer) {
+			t.removeViewer(player);
+			if (t.getViewers().isEmpty())
+				NameTagManager.removeTeam(t);
+		}
 		for (FakeTeam t : teams) {
 			//			t.removeMember(playerName);
 			PacketWrapper.delete(t).send(t.getViewers());
-			//			t.removeViewers(t.getViewers());
-			//			if (t.getViewers().isEmpty())
+			t.removeViewers(t.getViewers());
 			NameTagManager.removeTeam(t);
 		}
 	}

@@ -83,10 +83,10 @@ public class ServersConnection {
 		List<ServerInfoAdvancedBungee> servers = MonitorServers.getServers(olympaServer).values().stream()
 				.filter(x -> x.hasMinimalInfo() && x.getStatus().canConnect() && (except == null || !except.getName().equals(x.getName()))
 						&& (!x.getOlympaServer().hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
-				.sorted(new Sorting<>(Map.of(server -> server.getOnlinePlayers(), true, server -> server.getServerId(), true)))
+				.sorted(new Sorting<>(Map.of(server -> server.getOnlinePlayers(), false, server -> server.getServerId(), true)))
 				.collect(Collectors.toList());
-		if (!servers.isEmpty())
-			if (w8forConnect != null) {
+		if (!servers.isEmpty()) {
+			if (w8forConnect != null)
 				try {
 					OlympaPlayer olympaPlayer = new AccountProvider(w8forConnect.getUniqueId()).get();
 					ProtocolAPI version = ProtocolAPI.getHighestVersion(w8forConnect.getPendingConnection().getVersion());
@@ -97,10 +97,10 @@ public class ServersConnection {
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
+					return null;
 				}
-				return null;
-			} else
-				return servers.get(0).getServerInfo();
+			return servers.get(0).getServerInfo();
+		}
 
 		// Ouvre un serveur
 		ServerInfo serverToOpen = MonitorServers.getServersMap().entrySet().stream().filter(e -> (except == null || !e.getKey().getName().equals(except.getName()))

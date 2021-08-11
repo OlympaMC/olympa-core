@@ -102,8 +102,7 @@ public class OlympaLoginListener implements Listener {
 						ServerInfo server = ServersConnection.getBestServer(olympaServer, null);
 						if (server == null || !MonitorServers.getMonitor(server).isOpen()) {
 							tryConnect = true;
-							OlympaServer olympaServer2 = olympaServer;
-							ServersConnection.tryConnect(player, olympaServer2, true);
+							ServersConnection.tryConnect(player, olympaServer, true);
 						} else {
 							event.setTarget(server);
 							RedisBungeeSend.sendOlympaPlayerFirstConnection(server, olympaPlayer);

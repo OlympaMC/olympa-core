@@ -41,6 +41,7 @@ public class NameTagManager {
 		playerTeams.forEach((fakeTeam, players) -> {
 			PacketWrapper.delete(fakeTeam).send(players);
 		});
+		playerTeams.clear();
 	}
 
 	public void changeFakeNametag(String playerName, Nametag nameTag, int sortPriority, Collection<Player> toPlayers) {
@@ -56,7 +57,7 @@ public class NameTagManager {
 		if (nameTag.isEmpty())
 			return;
 		//		new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers()).send(toPlayers);
-		Set<FakeTeam> allTeams = getTeamsOfPlayer(playerName);
+		Set<FakeTeam> allTeamsOfPlayer = getTeamsOfPlayer(playerName);
 		String prefix = nameTag.getPrefix();
 		String suffix = nameTag.getSuffix();
 		/*String rawPrefix = nameTag.getPrefix();
@@ -70,7 +71,7 @@ public class NameTagManager {
 		team.addViewers(toPlayers);
 		PacketWrapper.create(team).send(toPlayers);
 		playerTeams.put(team, toPlayers);
-		for (FakeTeam t : allTeams) {
+		for (FakeTeam t : allTeamsOfPlayer) {
 			if (t.getId() == team.getId())
 				continue;
 			//			t.removeMember(playerName);
