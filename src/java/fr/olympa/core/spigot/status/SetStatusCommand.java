@@ -45,7 +45,7 @@ public class SetStatusCommand extends OlympaCommand {
 			sendError("Le serveur est déjà en mode " + oldStatus.getNameColored() + "&c.");
 			return true;
 		}
-		if (args.length != 1 || !args[1].equalsIgnoreCase("dontKick")) {
+		if (args.length != 2 || !args[1].equalsIgnoreCase("dontKick")) {
 			OlympaSpigotPermission needPermission = newStatus.getPermission() == null ? null : newStatus.getPermission().getUnderlying();
 			if (needPermission != null && !needPermission.hasSenderPermission(sender)) {
 				sendError("Tu n'a pas la permission d'être connecter si tu met le mode " + oldStatus.getNameColored() + "&c.");
@@ -63,7 +63,7 @@ public class SetStatusCommand extends OlympaCommand {
 				needPermission.getPlayers(succes, empty);
 			}
 
-	}
+		}
 		sendSuccess("Le serveur est désormais en mode " + newStatus.getNameColored() + "&a, il était avant en mode " + oldStatus.getNameColored() + "&a.");
 		CustomConfig config = coreInstance.getConfig();
 		if (config == null)
