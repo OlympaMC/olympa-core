@@ -1,5 +1,6 @@
 package fr.olympa.core.bungee.servers.commands;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,11 +37,21 @@ public class ListPlayerCommand extends BungeeCommand {
 			servers.computeIfAbsent(player.getServer() == null ? null : MonitorServers.getMonitor(player.getServer().getInfo()), server -> new ArrayList<>()).add(player);
 		});
 
+		boolean canSeeVanish = OlympaCorePermissionsBungee.VANISH_SEE_ADMIN.hasSenderPermissionBungee(sender);
 		servers.entrySet().stream().sorted((o1, o2) -> Integer.compare(o2.getValue().size(), o1.getValue().size())).forEach(entry -> {
 			@Nullable
 			ServerInfoAdvancedBungee server = entry.getKey();
-			List<ProxiedPlayer> players = entry.getValue();
-
+			List<ProxiedPlayer> players = new ArrayList<>();
+			players.addAll(entry.getValue());
+			if (!canSeeVanish)
+				players.removeIf(p -> {
+					try {
+						return new AccountProvider(p.getUniqueId()).get().isVanish();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					return true;
+				});
 			TxtComponentBuilder out2 = new TxtComponentBuilder().extraSpliter(" ");
 
 			if (server != null) {

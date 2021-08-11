@@ -85,7 +85,7 @@ public class NewSpigotCommand extends ComplexCommand {
 		}
 	}
 
-	@Cmd (permissionName = "SPIGOT_COMMAND_MODULE", args = { "MODULES", "on|off|debugon|debugoff" }, min = 1, description = "Active ou désactive un module")
+	//	@Cmd (permissionName = "SPIGOT_COMMAND_MODULE", args = { "MODULES", "on|off|debugon|debugoff" }, min = 1, description = "Active ou désactive un module")
 	public void module(CommandContext cmd) {
 		OlympaModule<? extends Object, Listener, ? extends Plugin, OlympaCommand> module = cmd.getArgument(0);
 		if (cmd.getArgumentsLength() == 1) {
@@ -119,17 +119,17 @@ public class NewSpigotCommand extends ComplexCommand {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Cmd (args = "INTEGER", syntax = "[joueurs maximum]", description = "Permet de voir ou de changer le nombre maximal de joueurs en ligne.")
 	public void maxPlayers(CommandContext cmd) {
 		int oldSlots = Bukkit.getMaxPlayers();
-		if (cmd.getArgumentsLength() == 0) {
+		if (cmd.getArgumentsLength() == 0)
 			sendSuccess("Nombre maximal de joueurs: %d (%d en ligne).", oldSlots, Bukkit.getOnlinePlayers().size());
-		}else {
+		else {
 			int newSlots = cmd.getArgument(0);
-			if (newSlots <= 0) {
+			if (newSlots <= 0)
 				sendError("Voyons... Le nombre maximal de joueur doit être positif !");
-			}else {
+			else {
 				Bukkit.setMaxPlayers(newSlots);
 				OlympaCorePermissionsSpigot.SPIGOT_COMMAND.sendMessage(Prefix.BROADCAST_SERVER.formatMessage("Le nombre maximal de joueurs est passé de %d à %d slots!", oldSlots, newSlots));
 			}

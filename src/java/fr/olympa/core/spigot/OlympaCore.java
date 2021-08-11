@@ -38,6 +38,7 @@ import fr.olympa.api.spigot.command.essentials.ColorCommand;
 import fr.olympa.api.spigot.command.essentials.EcseeCommand;
 import fr.olympa.api.spigot.command.essentials.FlyCommand;
 import fr.olympa.api.spigot.command.essentials.GamemodeCommand;
+import fr.olympa.api.spigot.command.essentials.GodCommand;
 import fr.olympa.api.spigot.command.essentials.InvseeCommand;
 import fr.olympa.api.spigot.command.essentials.ItemCommand;
 import fr.olympa.api.spigot.command.essentials.ListCommand;
@@ -255,6 +256,7 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 			new TpCommand(this).register();
 			new NewSpigotCommand(this).register().registerPreProcess();
 			new ListCommand(this).register().registerPreProcess();
+			new GodCommand(this).register();
 
 			new AntiWD(this);
 			try {

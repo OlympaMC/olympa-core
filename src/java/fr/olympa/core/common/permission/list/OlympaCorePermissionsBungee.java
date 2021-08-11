@@ -73,6 +73,7 @@ public class OlympaCorePermissionsBungee {
 	public static final OlympaBungeePermission IP_COMMAND_SEE_IP = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
 
 	public static final OlympaBungeePermission STAFF = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
-	public static final OlympaBungeePermission PING_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
+	public static final OlympaBungeePermission PING_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV, OlympaGroup.DEVP });
 	public static final OlympaBungeePermission ALLPLUGINS_COMMAND = new OlympaBungeePermission(OlympaGroup.FRIEND);
+	public static final OlympaBungeePermission VANISH_SEE_ADMIN = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEVP });
 }
