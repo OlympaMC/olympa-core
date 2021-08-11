@@ -46,11 +46,12 @@ public class ListPlayerCommand extends BungeeCommand {
 			if (!canSeeVanish)
 				players.removeIf(p -> {
 					try {
-						return new AccountProvider(p.getUniqueId()).get().isVanish();
+						OlympaPlayer op = new AccountProvider(p.getUniqueId()).get();
+						return op != null && op.isVanish();
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}
-					return true;
+					return false;
 				});
 			TxtComponentBuilder out2 = new TxtComponentBuilder().extraSpliter(" ");
 
