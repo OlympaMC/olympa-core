@@ -20,16 +20,7 @@ import fr.olympa.api.common.redis.RedisClass;
 import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.utils.CacheStats;
-import fr.olympa.core.bungee.ban.commands.BanCommand;
-import fr.olympa.core.bungee.ban.commands.BanHistoryCommand;
-import fr.olympa.core.bungee.ban.commands.BanIpCommand;
-import fr.olympa.core.bungee.ban.commands.BanListCommand;
-import fr.olympa.core.bungee.ban.commands.DelbanCommand;
-import fr.olympa.core.bungee.ban.commands.ForceKickCommand;
-import fr.olympa.core.bungee.ban.commands.KickCommand;
-import fr.olympa.core.bungee.ban.commands.MuteCommand;
-import fr.olympa.core.bungee.ban.commands.UnbanCommand;
-import fr.olympa.core.bungee.ban.commands.UnmuteCommand;
+import fr.olympa.core.bungee.ban.commands.*;
 import fr.olympa.core.bungee.ban.listeners.SanctionListener;
 import fr.olympa.core.bungee.commands.*;
 import fr.olympa.core.bungee.connectionqueue.BungeeQueueCommand;
@@ -166,6 +157,7 @@ public class OlympaBungee extends OlympaBungeeCore {
 				pluginManager.registerListener(this, new BungeeCommandListenerWaterFall());
 
 			new ShopCommand(this).register();
+			new VoteCommand(this).register();
 			new BanCommand(this).register();
 			new BanHistoryCommand(this).register();
 			new BanIpCommand(this).register();
