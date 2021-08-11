@@ -77,7 +77,7 @@ public class OlympaPlayerObject extends OlympaPlayerCore {
 
 	@Override
 	public boolean hasCustomPermission(String per, OlympaServer serv) {
-		return customPermissions.entrySet().stream().anyMatch(e -> e.getKey().equals(per) && (e.getValue() == null || e.getValue().equals(serv)));
+		return customPermissions.entrySet().stream().anyMatch(e -> e.getKey().equals(per) && (e.getValue() == null || e.getValue().isSame(serv)));
 	}
 
 	@Override
@@ -134,9 +134,9 @@ public class OlympaPlayerObject extends OlympaPlayerCore {
 		for (String groupInfos : groupsString.split(";")) {
 			String[] groupInfo = groupInfos.split(":");
 			OlympaGroup olympaGroup;
-			if ("".equals(groupInfos)) {
+			if ("".equals(groupInfos))
 				olympaGroup = OlympaGroup.PLAYER;
-			}else olympaGroup = OlympaGroup.getById(Integer.parseInt(groupInfo[0]));
+			else olympaGroup = OlympaGroup.getById(Integer.parseInt(groupInfo[0]));
 			Long until;
 			if (groupInfo.length > 1)
 				until = Long.parseLong(groupInfo[1]);

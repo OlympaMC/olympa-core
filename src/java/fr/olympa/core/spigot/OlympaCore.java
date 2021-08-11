@@ -45,10 +45,12 @@ import fr.olympa.api.spigot.command.essentials.ListCommand;
 import fr.olympa.api.spigot.command.essentials.PingCommand;
 import fr.olympa.api.spigot.command.essentials.SayCommand;
 import fr.olympa.api.spigot.command.essentials.tp.TpCommand;
+import fr.olympa.api.spigot.command.essentials.tp.TpaHandler;
 import fr.olympa.api.spigot.feedback.FeedbackManager;
 import fr.olympa.api.spigot.frame.ImageFrameManager;
 import fr.olympa.api.spigot.gui.Inventories;
 import fr.olympa.api.spigot.holograms.HologramsManager;
+import fr.olympa.api.spigot.utils.TeleportationManager;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.common.SwearHandler;
@@ -309,6 +311,9 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 			getLogger().severe(String.format("Une erreur est survenu lors de l'activation de %s. Le serveur est désormais en maintenance.", this.getClass().getSimpleName()));
 			e.printStackTrace();
 		}
+		TeleportationManager teleportationManager = new TeleportationManager(this, null);
+		getServer().getPluginManager().registerEvents(teleportationManager, this);
+		getServer().getPluginManager().registerEvents(new TpaHandler(this, null, teleportationManager), this);
 	}
 
 	@Override

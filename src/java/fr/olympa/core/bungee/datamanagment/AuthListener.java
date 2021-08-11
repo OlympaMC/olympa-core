@@ -37,7 +37,11 @@ import net.md_5.bungee.event.EventPriority;
 @SuppressWarnings("deprecation")
 public class AuthListener implements Listener {
 
-	public static Set<String> wait = new HashSet<>();
+	private static Set<String> wait = new HashSet<>();
+
+	public static boolean containsWait(ProxiedPlayer proxiedPlayer) {
+		return wait.contains(proxiedPlayer.getName());
+	}
 
 	@EventHandler
 	public void on1PreLogin(PreLoginEvent event) {

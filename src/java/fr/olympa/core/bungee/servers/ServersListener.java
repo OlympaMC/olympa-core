@@ -35,7 +35,7 @@ public class ServersListener implements Listener {
 		}
 		String kickReason = ColorUtils.stripColor(BaseComponent.toLegacyText(event.getKickReasonComponent()));
 
-		if (AuthListener.wait.contains(player.getName()))
+		if (AuthListener.containsWait(player))
 			return; // il est en cours de suppression = il a quitté le serveur de lui-même
 
 		OlympaBungee.getInstance().sendMessage("§6" + player.getName() + "§7 a été kick pour \"§e" + kickReason + "§7\" (état : " + event.getState() + ") " + event.getCause().name());

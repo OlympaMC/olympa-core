@@ -122,7 +122,7 @@ public class ServersConnection {
 						if (!w8forConnect.isConnected())
 							break;
 						w8forConnect.getPendingConnection().unsafe().sendPacket(new KeepAlive(ThreadLocalRandom.current().nextLong()));
-						LinkSpigotBungee.getInstance().sendMessage("&6Wait serveur %d to start, %d's thread is sleeping for 5s", serverToOpen.getName(), w8forConnect.getName());
+						LinkSpigotBungee.getInstance().sendMessage("&6Wait serveur %s to start, %s's thread is sleeping for 5s", serverToOpen.getName(), w8forConnect.getName());
 						Thread.sleep(5000);
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
