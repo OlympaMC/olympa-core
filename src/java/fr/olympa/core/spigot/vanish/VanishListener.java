@@ -247,8 +247,7 @@ public class VanishListener implements Listener {
 				event.setCancelled(true);
 				player.openInventory(player.getEnderChest());
 				Prefix.VANISH.sendMessage(player, "Ouverture forcé et silencieuse de ton EnderChest");
-			} else if (blockData instanceof Openable) {
-				Openable openable = (Openable) blockData;
+			} else if (blockData instanceof Openable openable) {
 				event.setCancelled(true);
 				if (openable.isOpen())
 					Prefix.VANISH.sendMessage(player, "Fermeture forcé de %s", Utils.capitalize(block.getType().toString().replace("_", " ")));
@@ -257,8 +256,7 @@ public class VanishListener implements Listener {
 				openable.setOpen(!openable.isOpen());
 				blockState.setBlockData(openable);
 				blockState.update();
-			} else if (blockState instanceof Container) {
-				Container container = (Container) blockState;
+			} else if (blockState instanceof Container container) {
 				event.setCancelled(true);
 				player.openInventory(container.getInventory());
 				Prefix.VANISH.sendMessage(player, "Ouverture forcé du %s", Utils.capitalize(block.getType().toString().replace("_", " ")));

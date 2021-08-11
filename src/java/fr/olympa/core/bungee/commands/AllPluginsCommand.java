@@ -28,6 +28,8 @@ public class AllPluginsCommand extends BungeeCommand {
 		List<ServerInfoAdvanced> servers = allServers.stream().filter(mib -> mib.hasFullInfos()).collect(Collectors.toList());
 		boolean withVersion = olympaPlayer != null ? OlympaAPIPermissionsGlobal.PLUGINS_SEE_VALUE_VERSION.hasPermission(olympaPlayer) : true;
 		servers.stream().forEach(server -> {
+			if (olympaPlayer != null && !server.canConnect(olympaPlayer))
+				return;
 			TxtComponentBuilder serverPlugins = new TxtComponentBuilder("&3" + server.getHumanName() + "&b > ");
 			serverPlugins.extra(ServerInfoAdvanced.getPluginsToString(server.getPlugins(), isConsole(), withVersion));
 			out.extra(serverPlugins);
