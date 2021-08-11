@@ -31,7 +31,7 @@ public class MotdListener implements Listener {
 	String discord = "§6Discord: §e§ndiscord.olympa.fr§r";
 	String games = "§bPvP-Kits §c¤§3 ZTA §c¤ §bCréatif §c¤ §bPvP-Factions§r";
 	String pvp = "§7Le PvP fonctionne comme en 1.8";
-	String version = "§cUtilise la " + ProtocolAPI.getLastVersion().getName() + "§l✖§r";
+	String version = "§cUtilise la " + ProtocolAPI.getRecommandedVersion().getName() + "§l✖§r";
 	String reason = "§6Raison de la maintenance :";
 	String separator = " §7| ";
 
@@ -44,6 +44,7 @@ public class MotdListener implements Listener {
 		Configuration config = OlympaBungee.getInstance().getMaintConfig();
 		String statusString = config.getString("settings.status");
 		ServerStatus status = ServerStatus.get(statusString);
+		ping.getVersion().setName(version);
 		if (status == null)
 			status = ServerStatus.DEV;
 		String connectIp = null;
@@ -103,7 +104,6 @@ public class MotdListener implements Listener {
 				}
 				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD(sb.toString()) + "§r"));
 			}
-			ping.setVersion(new ServerPing.Protocol(onlineCount, ping.getVersion().getProtocol() - 1));
 			break;
 		case MAINTENANCE:
 			try {
