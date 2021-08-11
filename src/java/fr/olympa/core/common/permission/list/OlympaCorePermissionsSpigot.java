@@ -24,7 +24,7 @@ public class OlympaCorePermissionsSpigot {
 	public static final OlympaSpigotPermission REPORT_SEE_COMMAND = new OlympaSpigotPermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaSpigotPermission REPORT_CHANGE_COMMAND = new OlympaSpigotPermission(OlympaGroup.ASSISTANT);
 
-	public static final OlympaSpigotPermission STAFF = new OlympaSpigotPermission(OlympaGroup.GRAPHISTE, OlympaGroup.AMBASSADOR);
+	public static final OlympaSpigotPermission STAFF = new OlympaSpigotPermission(OlympaGroup.GRAPHISTE, new OlympaGroup[] { OlympaGroup.AMBASSADOR });
 
 	public static final OlympaSpigotPermission SERVER_RESTART_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	// TODO change to OlympaGroup.GRAPHISTE, change to OlympaGroup.ASSISTANT later
@@ -45,7 +45,7 @@ public class OlympaCorePermissionsSpigot {
 
 	public static final OlympaSpigotPermission NAMETAG_COMMAND = new OlympaSpigotPermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 
-	public static final OlympaSpigotPermission BUNGEE_SECURITY_COMMAND = new OlympaSpigotPermission(OlympaGroup.ADMIN, OlympaGroup.RESP_TECH); // XXX what ?
+	public static final OlympaSpigotPermission BUNGEE_SECURITY_COMMAND = new OlympaSpigotPermission(OlympaGroup.ADMIN, new OlympaGroup[] { OlympaGroup.RESP_TECH }); // XXX what ?
 	public static final OlympaSpigotPermission CAPCHAT_SEE_WAITING = new OlympaSpigotPermission(OlympaGroup.ASSISTANT);
 	public static final OlympaSpigotPermission PLUGIN_SEE_VERSION = new OlympaSpigotPermission(OlympaGroup.GRAPHISTE);
 

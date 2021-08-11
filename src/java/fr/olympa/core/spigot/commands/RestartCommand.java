@@ -25,7 +25,7 @@ public class RestartCommand extends OlympaCommand {
 		Bukkit.getOnlinePlayers().forEach(p -> p.kickPlayer("Server is restarting"));
 		Consumer<String> function = player != null ? out -> sender.sendMessage(out) : null;
 		Runtime.getRuntime().addShutdownHook(OlympaRuntime.action("sh start.sh", function));
-		((OlympaCore) plugin).getTask().runTaskLater(() -> plugin.getServer().shutdown(), 40);
+		((OlympaCore) plugin).getTask().runTaskLater(() -> plugin.getServer().shutdown(), 4 * 20);
 		return false;
 	}
 
