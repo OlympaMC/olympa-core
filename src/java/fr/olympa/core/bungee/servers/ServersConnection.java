@@ -76,7 +76,7 @@ public class ServersConnection {
 		return getBestServer(olympaServer, except, null);
 	}
 
-	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except, ProxiedPlayer w8forConnect) {
+	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except, @Nullable ProxiedPlayer w8forConnect) {
 		if (!olympaServer.hasMultiServers())
 			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(ServerInfoAdvancedBungee::getServerInfo).orElse(null);
 
@@ -85,20 +85,22 @@ public class ServersConnection {
 						&& (!x.getOlympaServer().hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
 				.sorted(new Sorting<>(Map.of(server -> server.getOnlinePlayers(), true, server -> server.getServerId(), true)))
 				.collect(Collectors.toList());
-		if (!servers.isEmpty()) {
-			try {
-				OlympaPlayer olympaPlayer = new AccountProvider(w8forConnect.getUniqueId()).get();
-				ProtocolAPI version = ProtocolAPI.getHighestVersion(w8forConnect.getPendingConnection().getVersion());
-				if (olympaPlayer != null && version != null) {
-					ServerInfoAdvancedBungee serv = servers.stream().filter(sr -> sr.canConnect(olympaPlayer, version)).findFirst().orElse(null);
-					if (serv != null)
-						return serv.getServerInfo();
+		if (!servers.isEmpty())
+			if (w8forConnect != null) {
+				try {
+					OlympaPlayer olympaPlayer = new AccountProvider(w8forConnect.getUniqueId()).get();
+					ProtocolAPI version = ProtocolAPI.getHighestVersion(w8forConnect.getPendingConnection().getVersion());
+					if (olympaPlayer != null && version != null) {
+						ServerInfoAdvancedBungee serv = servers.stream().filter(sr -> sr.canConnect(olympaPlayer, version)).findFirst().orElse(null);
+						if (serv != null)
+							return serv.getServerInfo();
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
+				return null;
+			} else
+				return servers.get(0).getServerInfo();
 
 		// Ouvre un serveur
 		ServerInfo serverToOpen = MonitorServers.getServersMap().entrySet().stream().filter(e -> (except == null || !e.getKey().getName().equals(except.getName()))
