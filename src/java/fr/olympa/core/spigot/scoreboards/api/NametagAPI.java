@@ -46,6 +46,11 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 			public boolean needsDatas() {
 				return false;
 			}
+			
+			@Override
+			public Integer getPriority(OlympaPlayer player) {
+				return player.getGroup().getIndex();
+			}
 		};
 		addNametagHandler(EventPriority.LOW, defaultHandler);
 		return true;
@@ -102,6 +107,7 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 			return;
 		}
 		Map<Nametag, List<Player>> nametags = new HashMap<>();
+		int priority = 0;
 		for (OlympaPlayer to : toPlayers) {
 			if (to.getPlayer() == null || !((Player) to.getPlayer()).isOnline())
 				continue;
@@ -109,8 +115,11 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 			for (Entry<EventPriority, NametagHandler> handlerEntry : handlers)
 				try {
 					NametagHandler handler = handlerEntry.getValue();
-					if (!handler.needsDatas() || withDatas)
+					if (!handler.needsDatas() || withDatas) {
 						handler.updateNameTag(tag, player, to);
+						Integer priorityNullable = handler.getPriority(player);
+						if (priorityNullable != null) priority = priorityNullable.intValue();
+					}
 				} catch (Exception ex) {
 					OlympaCore.getInstance().sendMessage("§cUne erreur est survenue lors de la mise à jour du nametag de %s", player.getName());
 					ex.printStackTrace();
@@ -132,7 +141,8 @@ public final class NametagAPI implements INametagApi, ModuleApi<OlympaCore> {
 			if (!playersUnder1_16.isEmpty())
 				manager.changeFakeNametag(player.getName(), tag.removeRBG(), player.getGroup().getIndex(), playersUnder1_16);
 		});
-		nametags.forEach((tag, players) -> manager.changeFakeNametag(player.getName(), tag, player.getGroup().getIndex(), players));
+		int finalPriority = priority;
+		nametags.forEach((tag, players) -> manager.changeFakeNametag(player.getName(), tag, finalPriority, players));
 	}
 
 	public boolean testCompat() {
