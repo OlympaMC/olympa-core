@@ -34,16 +34,7 @@ import fr.olympa.api.common.report.ReportReason;
 import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.spigot.command.CommandListener;
-import fr.olympa.api.spigot.command.essentials.ColorCommand;
-import fr.olympa.api.spigot.command.essentials.EcseeCommand;
-import fr.olympa.api.spigot.command.essentials.FlyCommand;
-import fr.olympa.api.spigot.command.essentials.GamemodeCommand;
-import fr.olympa.api.spigot.command.essentials.GodCommand;
-import fr.olympa.api.spigot.command.essentials.InvseeCommand;
-import fr.olympa.api.spigot.command.essentials.ItemCommand;
-import fr.olympa.api.spigot.command.essentials.ListCommand;
-import fr.olympa.api.spigot.command.essentials.PingCommand;
-import fr.olympa.api.spigot.command.essentials.SayCommand;
+import fr.olympa.api.spigot.command.essentials.*;
 import fr.olympa.api.spigot.command.essentials.tp.TpCommand;
 import fr.olympa.api.spigot.feedback.FeedbackManager;
 import fr.olympa.api.spigot.frame.ImageFrameManager;
@@ -409,6 +400,7 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 
 	@Override
 	public void setStatus(ServerStatus status) {
+		if (this.status == status) return;
 		this.status = status;
 		RedisSpigotSend.changeStatus(status);
 	}

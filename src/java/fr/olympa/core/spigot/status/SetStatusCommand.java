@@ -22,7 +22,7 @@ import fr.olympa.core.spigot.OlympaCore;
 public class SetStatusCommand extends OlympaCommand {
 
 	public SetStatusCommand(Plugin plugin) {
-		super(plugin, "setstatus", "Permet de modifier le statut d'un serveur spigot.", OlympaCorePermissionsSpigot.SETSTATUS_COMMAND, "setstatut");
+		super(plugin, "setstatus", "Modifie le statut d'un serveur spigot.", OlympaCorePermissionsSpigot.SETSTATUS_COMMAND, "setstatut");
 		this.addArgs(false, ServerStatus.getNames());
 		this.addArgs(false, "dontKick");
 	}
@@ -48,13 +48,13 @@ public class SetStatusCommand extends OlympaCommand {
 		if (args.length != 2 || !args[1].equalsIgnoreCase("dontKick")) {
 			OlympaSpigotPermission needPermission = newStatus.getPermission() == null ? null : newStatus.getPermission().getUnderlying();
 			if (needPermission != null && !needPermission.hasSenderPermission(sender)) {
-				sendError("Tu n'a pas la permission d'être connecter si tu met le mode " + oldStatus.getNameColored() + "&c.");
+				sendError("Tu n'as pas la permission d'être connecté si tu mets le mode " + oldStatus.getNameColored() + "&c.");
 				return true;
 			}
 			coreInstance.setStatus(newStatus);
 			if (needPermission != null) {
 				Consumer<? super Set<Player>> succes = players -> {
-					this.sendMessage(players, Prefix.ERROR, "Le serveur est désormais en mode %s&c (Avant &4%s&c).", newStatus.getNameColored(), oldStatus.getNameColored());
+					this.sendMessage(players, Prefix.ERROR, "Le serveur est désormais en mode %s&c (précédemment &4%s&c).", newStatus.getNameColored(), oldStatus.getNameColored());
 				};
 				Consumer<? super Collection<? extends Player>> empty = players -> {
 					sendSuccess("Tu as kick " + players.size() + " joueur, qui n'ont pas la permission &6&n" + needPermission.getName() + "&a.");
@@ -67,11 +67,11 @@ public class SetStatusCommand extends OlympaCommand {
 		sendSuccess("Le serveur est désormais en mode " + newStatus.getNameColored() + "&a, il était avant en mode " + oldStatus.getNameColored() + "&a.");
 		CustomConfig config = coreInstance.getConfig();
 		if (config == null)
-			this.sendMessage(Prefix.BAD, "La config par default n'est pas charger, impossible de sauvegarder le changement de statut.");
+			this.sendMessage(Prefix.BAD, "La config par défaut n'est pas chargée, impossible de sauvegarder le changement de statut.");
 		else {
 			config.set("status", newStatus.getName());
 			config.save();
-			sendSuccess("La config a été également sauvegarder.");
+			sendSuccess("La config a été également sauvegardée.");
 		}
 		return false;
 
