@@ -2,7 +2,6 @@ package fr.olympa.core.bungee.ban.objects;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -167,16 +166,6 @@ public class OlympaSanction {
 		return target;
 	}
 
-	public List<OlympaPlayer> getTargets() throws SQLException {
-		if (getTargetType() != OlympaSanctionTargetType.IP)
-			return AccountProvider.getter().getSQL().getPlayersByIp(target);
-		return Arrays.asList(AccountProvider.getter().get(target));
-	}
-
-	public String getTargetsNames() throws SQLException {
-		return getTargets().stream().map(OlympaPlayer::getName).collect(Collectors.joining(", "));
-	}
-
 	public Long getTargetId() {
 		if (getTargetType() != OlympaSanctionTargetType.OLYMPA_ID)
 			return null;
@@ -206,7 +195,6 @@ public class OlympaSanction {
 				playersInformations.add(AccountProvider.getter().getPlayerInformations(getTargetId()));
 			} else
 				playersInformations = AccountProvider.getter().getSQL().getPlayersByIp(target).stream().map(op -> AccountProvider.getter().getPlayerInformations(op)).collect(Collectors.toSet());
-
 		return playersInformations;
 	}
 
@@ -252,6 +240,7 @@ public class OlympaSanction {
 			e.printStackTrace();
 		}
 		ComponentBuilder cb = new ComponentBuilder(ColorUtils.color("&6Information sanction n°&e" + getId() + "\n"));
+		cb.append(ColorUtils.color("&e#" + id + "\n"));
 		cb.append(ColorUtils.color("&eJoueur: &e" + playerNames + "\n"));
 		cb.append(ColorUtils.color("&eStaff: &e" + getAuthorName() + "\n"));
 		cb.append(ColorUtils.color("&eType: &e" + getType().getName(!isPermanent()) + "\n"));

@@ -42,12 +42,12 @@ public class BanListCommand extends BungeeCommand {
 		for (OlympaSanction sanction : sanctions) {
 			String names;
 			try {
-				names = sanction.getTargetsNames();
+				names = sanction.getPlayersNames();
 			} catch (SQLException e) {
 				names = "sql error";
 				e.printStackTrace();
 			}
-			builder.extra(new TxtComponentBuilder("%d - %s %s %s %s %s", sanction.getId(), sanction.getStatus().getNameColored(),
+			builder.extra(new TxtComponentBuilder("#%d - %s %s %s %s %s", sanction.getId(), sanction.getStatus().getNameColored(),
 					sanction.getType().getName(!sanction.isPermanent()), names, sanction.getReason(),
 					sanction.getExpires() > 0 ? Utils.timeToDuration(sanction.getBanTime()) : sanction.getType() != OlympaSanctionType.KICK ? "&cPermanant" : "")
 					.onHoverText(sanction.toBaseComplement()).onClickCommand("/histban %d", sanction.getId()));
