@@ -72,14 +72,14 @@ public class ServersListener implements Listener {
 			ServersConnection.tryConnect(player, olympaServer, true);
 			return;
 		}
-		if (kickReason.startsWith("Outdated server! I'm still on")) {
+		if (kickReason.contains("Outdated server! I'm still on")) {
 			String serverVersion = kickReason.replaceFirst("Outdated server! I'm still on ", "");
 			List<ProtocolAPI> playerVersion = ProtocolAPI.getAll(player.getPendingConnection().getVersion());
 			event.setKickReasonComponent(
 					TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du Serveur %s < Ta version (%s)", serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
 			return;
 		}
-		if (kickReason.startsWith("Outdated client! Please use")) {
+		if (kickReason.contains("Outdated client! Please use")) {
 			String serverVersion = kickReason.replaceFirst("Outdated client! Please use ", "");
 			List<ProtocolAPI> playerVersion = ProtocolAPI.getAll(player.getPendingConnection().getVersion());
 			event.setKickReasonComponent(
