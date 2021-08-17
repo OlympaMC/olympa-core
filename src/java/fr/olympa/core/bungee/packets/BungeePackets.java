@@ -3,6 +3,8 @@ package fr.olympa.core.bungee.packets;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import fr.olympa.api.spigot.utils.ProtocolAPI;
@@ -18,6 +20,10 @@ public class BungeePackets {
 	private static Object TO_CLIENT;
 	private static Object TO_SERVER;
 	
+	private static Map<Class<? extends AbstractPacketHandler>, Field> connectionFields = new HashMap<>();
+	
+	private static Error cancelSendSignal;
+	
 	private static void processReflection() throws ReflectiveOperationException {
 		Field toClient = Protocol.class.getDeclaredField("TO_CLIENT");
 		Field toServer = Protocol.class.getDeclaredField("TO_SERVER");
@@ -31,6 +37,8 @@ public class BungeePackets {
 		TO_SERVER = toServer.get(Protocol.GAME);
 		regPacket = TO_CLIENT.getClass().getDeclaredMethod("registerPacket", Class.class, Supplier.class, protocolMappingArray);
 		regPacket.setAccessible(true);
+		
+		cancelSendSignal = (Error) Class.forName("net.md_5.bungee.connection.CancelSendSignal").getDeclaredField("INSTANCE").get(null);
 	}
 	
 	private static <P extends DefinedPacket> void regPacket(Object direction, Class<P> packetClass, Supplier<P> constructor, ProtocolMapping... mappings) throws ReflectiveOperationException {
@@ -66,9 +74,16 @@ public class BungeePackets {
 	}
 	
 	public static ProxiedPlayer getPlayer(AbstractPacketHandler handler) throws ReflectiveOperationException {
-		Field field = handler.getClass().getDeclaredField("con");
-		field.setAccessible(true);
+		Field field = connectionFields.get(handler.getClass());
+		if (field == null) {
+			field = handler.getClass().getDeclaredField("con");
+			field.setAccessible(true);
+		}
 		return (ProxiedPlayer) field.get(handler);
+	}
+	
+	public static void cancelPacket() throws Error {
+		throw cancelSendSignal;
 	}
 	
 	public static class ProtocolMapping {

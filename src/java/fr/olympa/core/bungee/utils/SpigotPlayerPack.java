@@ -7,6 +7,7 @@ import java.util.UUID;
 import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ResourcePack;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.packets.BungeePackets;
 import fr.olympa.core.bungee.packets.ResourcePackSendPacket;
 import fr.olympa.core.bungee.packets.ResourcePackStatusPacket;
 import fr.olympa.core.bungee.packets.ResourcePackStatusPacket.ResourcePackStatus;
@@ -15,7 +16,6 @@ import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
-import net.md_5.bungee.connection.CancelSendSignal;
 
 public class SpigotPlayerPack {
 	
@@ -32,7 +32,7 @@ public class SpigotPlayerPack {
 			hasPack.put(player.getUniqueId(), new PackInfo(packet.getResourcePack(), player.getServer().getInfo()));
 		}else {
 			OlympaBungee.getInstance().sendMessage("§6%s§e avait déjà le pack de ressources chargé.", player.getName());
-			if (enabled) throw CancelSendSignal.INSTANCE;
+			if (enabled) BungeePackets.cancelPacket();
 		}
 	}
 	
