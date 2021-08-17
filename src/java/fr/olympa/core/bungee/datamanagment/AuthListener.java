@@ -9,6 +9,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 import fr.olympa.api.bungee.customevent.OlympaPlayerLoginEvent;
 import fr.olympa.api.bungee.mojangapi.MojangAPI;
 import fr.olympa.api.bungee.mojangapi.objects.UuidResponse;
@@ -43,6 +46,8 @@ public class AuthListener implements Listener {
 		return wait.contains(proxiedPlayer.getName());
 	}
 
+	private static Cache<String, UuidResponse> newPlayerPremium = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build();
+
 	@EventHandler
 	public void on1PreLogin(PreLoginEvent event) {
 		if (event.isCancelled())
@@ -75,15 +80,20 @@ public class AuthListener implements Listener {
 			if (!SecurityHandler.getInstance().getAntibot().getCase().canfirstConnectionCrack(event))
 				return;
 
-			UuidResponse response;
-			try {
-				// On regarde si le pseudo est utilisé par un compte premium
-				response = MojangAPI.getFromName(connection);
-			} catch (IOException e) {
-				e.printStackTrace();
-				event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue avec les serveurs d'authentifications de Mojang.\n&eCode d'erreur: &l#BungeeMojangNewPlayer"));
+			UuidResponse response = newPlayerPremium.asMap().get(name);
+			if (response == null)
+				try {
+					// On regarde si le pseudo est utilisé par un compte premium
+					response = MojangAPI.getFromName(connection);
+				} catch (IOException e) {
+					e.printStackTrace();
+					event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue avec les serveurs d'authentifications de Mojang.\n&eCode d'erreur: &l#BungeeMojangNewPlayer"));
+					event.setCancelled(true);
+					return;
+				}
+			else if (response.addRetry() % 2 == 0) {
+				event.setCancelReason(BungeeUtils.connectScreen("&eSi tu utilise un compte crack, change de pseudo, celui-ci est déjà utilisé.\n\n&eSi tu utilise un compte premium, réesaye de te connecter ou/et relancer Minecraft."));
 				event.setCancelled(true);
-				return;
 			}
 			UUID uuidPremium = null;
 
@@ -117,8 +127,10 @@ public class AuthListener implements Listener {
 						return;
 					}
 					OlympaBungee.getInstance().sendMessage("§cChangement de pseudo de %s (anciennement %s), UUID: ", name, olympaPlayer.getName(), uuidPremium);
-				} else
+				} else {
+					newPlayerPremium.put(name, response);
 					OlympaBungee.getInstance().sendMessage("§cNouveau Joueur %s, UUID: %s", name, uuidPremium);
+				}
 			} else {
 				connection.setOnlineMode(false);
 				OlympaBungee.getInstance().sendMessage("§7Joueur crack sans données §e" + name);

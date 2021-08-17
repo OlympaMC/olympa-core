@@ -36,6 +36,7 @@ import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.spigot.command.CommandListener;
 import fr.olympa.api.spigot.command.essentials.*;
 import fr.olympa.api.spigot.command.essentials.tp.TpCommand;
+import fr.olympa.api.spigot.config.CustomConfig;
 import fr.olympa.api.spigot.feedback.FeedbackManager;
 import fr.olympa.api.spigot.frame.ImageFrameManager;
 import fr.olympa.api.spigot.gui.Inventories;
@@ -111,6 +112,7 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 	private RedisAccess redisAccess;
 	private boolean redisConnected = false;
 	private boolean dbConnected = false;
+	private CustomConfig dynamiqueConfig;
 
 	@Override
 	public VersionHook getVersionHandler() {
@@ -168,6 +170,12 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 				setupRedis();
 				setupDatabase();
 			}
+			dynamiqueConfig = new CustomConfig(this, "dynamiqueConfig");
+			if (dynamiqueConfig.hasResource() || config.getFile().exists()) {
+				dynamiqueConfig.load();
+				dynamiqueConfig.saveIfNotExists();
+			} else
+				dynamiqueConfig.save();
 			RedisClass.SERVER_INFO_ADVANCED.registerCallback(mi -> {
 				lastInfo = Utils.getCurrentTimeInSeconds();
 				monitorInfos.clear();

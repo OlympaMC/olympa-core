@@ -28,7 +28,7 @@ public class MotdListener implements Listener {
 	String teamspeak = "§6Teamspeak: §e§nts.olympa.fr§r";
 	String site = "§6Site: §e§nwww.olympa.fr§r";
 	String twitter = "§6Twitter: §e@Olympa_fr";
-	String discord = "§6Discord: §e§ndiscord.olympa.fr§r";
+	String discord = "§6Discord: §e§ndiscord.gg/olympa§r";
 	String games = "§bPvP-Kits §c¤§3 ZTA §c¤ §bCréatif §c¤ §bPvP-Factions§r";
 	String pvp = "§7Le PvP fonctionne comme en 1.8";
 	String version = "§cUtilise la " + ProtocolAPI.getRecommandedVersion().getName() + "§l✖§r";

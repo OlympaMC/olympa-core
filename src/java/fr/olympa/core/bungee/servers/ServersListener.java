@@ -72,18 +72,24 @@ public class ServersListener implements Listener {
 			ServersConnection.tryConnect(player, olympaServer, true);
 			return;
 		}
-		if (kickReason.contains("Outdated server! I'm still on")) {
+		if (kickReason.startsWith("Outdated server! I'm still on")) {
 			String serverVersion = kickReason.replaceFirst("Outdated server! I'm still on ", "");
 			List<ProtocolAPI> playerVersion = ProtocolAPI.getAll(player.getPendingConnection().getVersion());
+			event.setCancelled(true);
+			event.setCancelServer(null);
 			event.setKickReasonComponent(
-					TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du Serveur %s < Ta version (%s)", serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
+					TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du %s %s < Ta version (%s)",
+							serverKicked.getName(), serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
 			return;
 		}
-		if (kickReason.contains("Outdated client! Please use")) {
+		if (kickReason.startsWith("Outdated client! Please use")) {
 			String serverVersion = kickReason.replaceFirst("Outdated client! Please use ", "");
 			List<ProtocolAPI> playerVersion = ProtocolAPI.getAll(player.getPendingConnection().getVersion());
+			event.setCancelled(true);
+			event.setCancelServer(null);
 			event.setKickReasonComponent(
-					TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du Serveur %s > Ta version (%s)", serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
+					TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du %s %s > Ta version (%s)",
+							serverKicked.getName(), serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
 			return;
 		}
 		if (!kickReason.contains("ban")) {
@@ -98,6 +104,7 @@ public class ServersListener implements Listener {
 				return;
 			event.setCancelled(true);
 			event.setCancelServer(serverInfolobby);
+			OlympaBungee.getInstance().sendMessage("§6" + player.getName() + "§7 a envoyé au \"§e" + serverInfolobby.getName() + "§7\".");
 			player.sendMessage(TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Tu as été kick de &4%s&c pour &4%s&c.", serverKicked.getName(), kickReason)));
 		}
 	}
