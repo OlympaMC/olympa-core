@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.sanction.OlympaSanctionType;
 import fr.olympa.api.common.sql.statement.OlympaStatement;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionHistory;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 
 public class BanMySQL {
 

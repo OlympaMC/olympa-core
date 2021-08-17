@@ -3,6 +3,7 @@ package fr.olympa.core.bungee;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -17,7 +18,9 @@ import fr.olympa.api.common.permission.OlympaPermission;
 import fr.olympa.api.common.provider.AccountProviderAPI;
 import fr.olympa.api.common.redis.RedisChannel;
 import fr.olympa.api.common.redis.RedisClass;
+import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ServerInfoAdvanced;
+import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.core.bungee.ban.commands.*;
@@ -281,4 +284,8 @@ public class OlympaBungee extends OlympaBungeeCore {
 		return MonitorServers.getServers().stream().map(monitorInfoBungee -> (ServerInfoAdvanced) monitorInfoBungee).collect(Collectors.toList());
 	}
 
+	@Override
+	public Map<OlympaServer, Map<Integer, ServerInfoAdvancedBungee>> getServersByTypeWithBungee() {
+		return MonitorServers.getServersByTypeWithBungee();
+	}
 }

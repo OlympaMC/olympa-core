@@ -6,7 +6,6 @@ import fr.olympa.api.common.groups.OlympaGroup;
 public class OlympaCorePermissionsBungee {
 
 	/* BUNGEECORD */
-	public static final OlympaBungeePermission DISCORD_COMMAND_MANAGE = new OlympaBungeePermission(OlympaGroup.RESP_TECH, true);
 	public static final OlympaBungeePermission MAINTENANCE_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
 	public static final OlympaBungeePermission BUNGEE_REDIS_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
 
@@ -38,7 +37,6 @@ public class OlympaCorePermissionsBungee {
 	public static final OlympaBungeePermission INFO_COMMAND = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaBungeePermission INFO_COMMAND_EXTRA = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
 	public static final OlympaBungeePermission INFO_COMMAND_EXTRA_EXTRA = new OlympaBungeePermission(OlympaGroup.FONDA, OlympaGroup.ADMIN, OlympaGroup.RESP_TECH);
-	public static final OlympaBungeePermission STAFF_CHAT = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 
 	public static final OlympaBungeePermission BUNGEE_BROADCAST_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_BUILDER);
 	public static final OlympaBungeePermission SERVER_LIST_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
@@ -55,8 +53,6 @@ public class OlympaCorePermissionsBungee {
 	public static final OlympaBungeePermission BUNGEE_LAG_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
 
 	public static final OlympaBungeePermission BUNGEE_QUEUE_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
-	public static final OlympaBungeePermission TEAMSPEAK_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
-	public static final OlympaBungeePermission TEAMSPEAK_COMMAND_MANAGE = new OlympaBungeePermission(OlympaGroup.RESP_TECH, new OlympaGroup[] { OlympaGroup.DEV });
 	public static final OlympaBungeePermission TEAMSPEAK_SEE_MODHELP = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
 	public static final OlympaBungeePermission TEAMSPEAK_SEE_ADMINHELP = new OlympaBungeePermission(OlympaGroup.MODP);
 

@@ -25,7 +25,7 @@ public class UtilsCore {
 	}
 
 	public static void toTextComponent(TextComponent msg, List<TextComponent> list, String separator, String end) {
-		if (list.size() == 0)
+		if (list.isEmpty())
 			return;
 		int i = 1;
 		for (TextComponent targetAccountsText : list) {

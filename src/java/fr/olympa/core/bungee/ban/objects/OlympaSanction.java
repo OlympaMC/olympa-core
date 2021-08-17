@@ -14,6 +14,8 @@ import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.match.RegexMatcher;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.player.OlympaPlayerInformations;
+import fr.olympa.api.common.sanction.OlympaSanctionType;
+import fr.olympa.api.common.sanction.Sanction;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.ProxyServer;
@@ -21,8 +23,9 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-public class OlympaSanction {
+public class OlympaSanction implements Sanction {
 
+	@Override
 	public String getTarget() {
 		return target;
 	}
@@ -105,22 +108,27 @@ public class OlympaSanction {
 		this.history.add(history);
 	}
 
+	@Override
 	public long getAuthor() {
 		return author;
 	}
 
+	@Override
 	public String getAuthorName() {
 		return BungeeUtils.getName(getAuthor());
 	}
 
+	@Override
 	public long getBanTime() {
 		return expires - created;
 	}
 
+	@Override
 	public long getCreated() {
 		return created;
 	}
 
+	@Override
 	public long getExpires() {
 		return expires;
 	}
@@ -133,10 +141,12 @@ public class OlympaSanction {
 		return history;
 	}
 
+	@Override
 	public long getId() {
 		return id;
 	}
 
+	@Override
 	public String getReason() {
 		return reason;
 	}
@@ -152,6 +162,7 @@ public class OlympaSanction {
 		return targetType;
 	}
 
+	@Override
 	public boolean isTarget(OlympaPlayer olympaPlayer) {
 		OlympaSanctionTargetType targetType2 = getTargetType();
 		if (targetType2 == OlympaSanctionTargetType.OLYMPA_ID)
@@ -160,12 +171,14 @@ public class OlympaSanction {
 			return olympaPlayer.getIp().equals(getTargetIp());
 	}
 
+	@Override
 	public String getTargetIp() {
 		if (getTargetType() != OlympaSanctionTargetType.IP)
 			return null;
 		return target;
 	}
 
+	@Override
 	public Long getTargetId() {
 		if (getTargetType() != OlympaSanctionTargetType.OLYMPA_ID)
 			return null;
@@ -176,6 +189,7 @@ public class OlympaSanction {
 	//		playerInformations = olympaPlayers;
 	//	}
 
+	@Override
 	@SuppressWarnings("deprecation")
 	public Set<ProxiedPlayer> getOnlinePlayers() {
 		Set<ProxiedPlayer> onlinePlayers = new HashSet<>();
@@ -188,6 +202,7 @@ public class OlympaSanction {
 		return onlinePlayers;
 	}
 
+	@Override
 	public Set<OlympaPlayerInformations> getPlayersInfos() throws SQLException {
 		if (playersInformations == null)
 			if (getTargetType() == OlympaSanctionTargetType.OLYMPA_ID) {
@@ -198,6 +213,7 @@ public class OlympaSanction {
 		return playersInformations;
 	}
 
+	@Override
 	public String getPlayersNames() throws SQLException {
 		return getPlayersInfos().stream().map(OlympaPlayerInformations::getName).collect(Collectors.joining(", "));
 	}
@@ -206,10 +222,12 @@ public class OlympaSanction {
 		return status;
 	}
 
+	@Override
 	public OlympaSanctionType getType() {
 		return type;
 	}
 
+	@Override
 	public boolean isPermanent() {
 		return expires == 0 && type != OlympaSanctionType.KICK;
 	}
@@ -218,6 +236,7 @@ public class OlympaSanction {
 		this.history.remove(history);
 	}
 
+	@Override
 	public void setId(long id2) {
 		id = id2;
 	}
@@ -232,6 +251,7 @@ public class OlympaSanction {
 
 	// ###########################################################################################################################################################
 
+	@Override
 	public BaseComponent[] toBaseComplement() {
 		String playerNames = "null";
 		try {

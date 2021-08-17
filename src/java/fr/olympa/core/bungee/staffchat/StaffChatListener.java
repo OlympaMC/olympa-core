@@ -3,9 +3,10 @@ package fr.olympa.core.bungee.staffchat;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import fr.olympa.api.bungee.staffchat.StaffChatHandler;
+import fr.olympa.api.common.permission.list.OlympaAPIPermissionsBungee;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -42,7 +43,7 @@ public class StaffChatListener implements Listener {
 			return;
 		}
 
-		if (!OlympaCorePermissionsBungee.STAFF_CHAT.hasPermission(olympaPlayer)) {
+		if (!OlympaAPIPermissionsBungee.STAFF_CHAT.hasPermission(olympaPlayer)) {
 			player.sendMessage(TextComponent.fromLegacyText(Prefix.ERROR.formatMessage("Tu n'as pas la permission d'écrire dans le chat du staff.")));
 			StaffChatHandler.getStaffchat().remove(uuid);
 			return;
