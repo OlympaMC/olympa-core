@@ -1,10 +1,7 @@
 package fr.olympa.core.bungee.packets;
 
-import java.lang.reflect.Field;
-
 import fr.olympa.core.bungee.utils.SpigotPlayerPack;
 import io.netty.buffer.ByteBuf;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.protocol.AbstractPacketHandler;
 import net.md_5.bungee.protocol.DefinedPacket;
 
@@ -24,10 +21,7 @@ public class ResourcePackStatusPacket extends DefinedPacket {
 	
 	@Override
 	public void handle(AbstractPacketHandler handler) throws Exception {
-		Field field = handler.getClass().getDeclaredField("con");
-		field.setAccessible(true);
-		ProxiedPlayer player = (ProxiedPlayer) field.get(handler);
-		SpigotPlayerPack.statusPacket(this, player);
+		SpigotPlayerPack.statusPacket(this, BungeePackets.getPlayer(handler));
 	}
 	
 	@Override

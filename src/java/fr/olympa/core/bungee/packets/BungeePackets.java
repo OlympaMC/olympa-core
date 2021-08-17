@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.util.function.Supplier;
 
 import fr.olympa.api.spigot.utils.ProtocolAPI;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.protocol.AbstractPacketHandler;
 import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.Protocol;
 
@@ -61,6 +63,12 @@ public class BungeePackets {
 				new ProtocolMapping(ProtocolAPI.V1_14, 0x1F),
 				new ProtocolMapping(ProtocolAPI.V1_16, 0x20),
 				new ProtocolMapping(ProtocolAPI.V1_16_3, 0x21));
+	}
+	
+	public static ProxiedPlayer getPlayer(AbstractPacketHandler handler) throws ReflectiveOperationException {
+		Field field = handler.getClass().getDeclaredField("con");
+		field.setAccessible(true);
+		return (ProxiedPlayer) field.get(handler);
 	}
 	
 	public static class ProtocolMapping {
