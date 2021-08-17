@@ -25,6 +25,7 @@ public class OlympaCorePermissionsBungee {
 	public static final OlympaBungeePermission BAN_KICK_COMMAND = new OlympaBungeePermission(OlympaGroup.MOD);
 	public static final OlympaBungeePermission BAN_MUTE_COMMAND = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
 	public static final OlympaBungeePermission BAN_UNMUTE_COMMAND = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
+	public static final OlympaBungeePermission BAN_BANLISTAUTHOR_COMMAND = new OlympaBungeePermission(OlympaGroup.MODP);
 	public static final OlympaBungeePermission BAN_BANLIST_COMMAND = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);
 	public static final OlympaBungeePermission BAN_HISTORY_COMMAND = new OlympaBungeePermission(OlympaGroup.ASSISTANT);
 	public static final OlympaBungeePermission BAN_SEEBANMSG = new OlympaBungeePermission(OlympaGroup.GRAPHISTE);

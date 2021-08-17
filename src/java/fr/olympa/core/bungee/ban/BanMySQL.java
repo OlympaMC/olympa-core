@@ -8,8 +8,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
+import java.util.StringJoiner;
 
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.sql.statement.OlympaStatement;
@@ -65,7 +64,7 @@ public class BanMySQL {
 	}
 
 	public static boolean changeStatus(OlympaSanctionHistory banhistory, long id) {
-		OlympaStatement statement = new OlympaStatement("UPDATE sanctions SET `status_id` = ?, `history` = CONCAT_WS(';', ?, history) WHERE `id` = ?;");
+		OlympaStatement statement = new OlympaStatement("UPDATE sanctions SET `status_id` = ?, `history` = CONCAT_WS(';', ?, history) WHERE `id` = ?");
 		try (PreparedStatement pstate = statement.createStatement()) {
 			pstate.setInt(1, banhistory.getStatus().getId());
 			pstate.setString(2, banhistory.toJson());
@@ -97,7 +96,7 @@ public class BanMySQL {
 		OlympaSanction sanction = null;
 		try {
 			Statement state = OlympaBungee.getInstance().getDatabase().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT * FROM sanctions WHERE `id` = '" + id + "';");
+			ResultSet resultSet = state.executeQuery("SELECT * FROM sanctions WHERE `id` = '" + id + "'");
 			if (resultSet.next())
 				sanction = getSanction(resultSet);
 			state.close();
@@ -166,22 +165,17 @@ public class BanMySQL {
 		return sanction;
 	}
 
-	public static List<OlympaSanction> getSanctionByAuthor(Long playerId) {
+	public static List<OlympaSanction> getSanctionByAuthor(Long playerId) throws SQLException {
 		List<OlympaSanction> sanctions = new ArrayList<>();
-		try {
-			Statement state = OlympaBungee.getInstance().getDatabase().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT * FROM sanctions WHERE `author_id` = '" + playerId + "';");
-			while (resultSet.next()) {
-				OlympaSanction sanction = getSanction(resultSet);
-				if (sanction != null)
-					sanctions.add(sanction);
-			}
-			state.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
+		Statement state = OlympaBungee.getInstance().getDatabase().createStatement();
+		ResultSet resultSet = state.executeQuery("SELECT * FROM sanctions WHERE `author_id` = '" + playerId + "' ORDER BY created DESC");
+		while (resultSet.next()) {
+			OlympaSanction sanction = getSanction(resultSet);
+			if (sanction != null)
+				sanctions.add(sanction);
 		}
-		return Lists.reverse(sanctions);
+		state.close();
+		return sanctions;
 	}
 
 	public static List<OlympaSanction> getSanctionByOlympaPlayer(OlympaPlayer target) {
@@ -195,11 +189,13 @@ public class BanMySQL {
 	public static List<OlympaSanction> getSanctions(Object target, OlympaSanctionType bantype) {
 		List<OlympaSanction> sanctions = new ArrayList<>();
 		try {
-			String exe = "SELECT * FROM sanctions WHERE `target` = '" + target + "' AND `status_id` <> '" + OlympaSanctionStatus.DELETE + "';";
+			StringJoiner exe = new StringJoiner(" ");
+			exe.add("SELECT * FROM sanctions WHERE `target` = '" + target + "' AND `status_id` <> '" + OlympaSanctionStatus.DELETE + "'");
 			if (bantype != null)
-				exe = " AND `type_id` = '" + bantype.getId() + "';";
+				exe.add("AND `type_id` = '" + bantype.getId() + "'");
+			exe.add("ORDER BY created DESC");
 			Statement state = OlympaBungee.getInstance().getDatabase().createStatement();
-			ResultSet resultSet = state.executeQuery(exe);
+			ResultSet resultSet = state.executeQuery(exe.toString());
 			while (resultSet.next()) {
 				OlympaSanction sanction = getSanction(resultSet);
 				if (sanction != null)
@@ -210,14 +206,14 @@ public class BanMySQL {
 			e.printStackTrace();
 			return null;
 		}
-		return Lists.reverse(sanctions);
+		return sanctions;
 	}
 
 	public static List<OlympaSanction> getSanctionsActive(Object target) {
 		List<OlympaSanction> sanctions = new ArrayList<>();
 		try {
 			Statement state = OlympaBungee.getInstance().getDatabase().createStatement();
-			ResultSet resultSet = state.executeQuery("SELECT * FROM sanctions WHERE `target` = '" + target + "' AND `status_id` = " + OlympaSanctionStatus.ACTIVE);
+			ResultSet resultSet = state.executeQuery("SELECT * FROM sanctions WHERE `target` = '" + target + "' AND `status_id` = " + OlympaSanctionStatus.ACTIVE + " ORDER BY created DESC");
 			while (resultSet.next()) {
 				OlympaSanction sanction = getSanction(resultSet);
 				if (sanction != null && sanction.getStatus().isStatus(OlympaSanctionStatus.ACTIVE))
@@ -228,13 +224,13 @@ public class BanMySQL {
 			e.printStackTrace();
 			return null;
 		}
-		return Lists.reverse(sanctions);
+		return sanctions;
 	}
 
 	public static List<OlympaSanction> getSanctionsActive(long targetId, String targetIp) throws SQLException {
 		List<OlympaSanction> sanctions = new ArrayList<>();
 		Connection connection = OlympaBungee.getInstance().getDatabase();
-		PreparedStatement pstate = connection.prepareStatement("SELECT * FROM sanctions WHERE (`target` = ? OR `target` = ?) AND `status_id` = ?;");
+		PreparedStatement pstate = connection.prepareStatement("SELECT * FROM sanctions WHERE (`target` = ? OR `target` = ?) AND `status_id` = ? ORDER BY created DESC");
 		int i = 1;
 		pstate.setLong(i++, targetId);
 		pstate.setString(i++, targetIp);
@@ -246,7 +242,7 @@ public class BanMySQL {
 				sanctions.add(sanction);
 		}
 		pstate.close();
-		return Lists.reverse(sanctions);
+		return sanctions;
 	}
 
 	public static boolean isBanned(String ip) {

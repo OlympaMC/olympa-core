@@ -6,38 +6,65 @@ import java.util.List;
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 
-public class BanListCommand extends BungeeCommand {
+public class BanListAuthorCommand extends BungeeCommand {
 
-	public BanListCommand(Plugin plugin) {
-		super(plugin, "banlist", "Affiche les 10 dernières sanctions", OlympaCorePermissionsBungee.BAN_BANLIST_COMMAND);
-		addArgs(false, "10", "20", "30", "40", "50");
+	public BanListAuthorCommand(Plugin plugin) {
+		super(plugin, "banlistauthor", "Affiche les 10 dernières sanctions d'un modérateur", OlympaCorePermissionsBungee.BAN_BANLISTAUTHOR_COMMAND);
+		addArgs(true, "JOUEUR");
 		minArg = 0;
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		List<OlympaSanction> sanctions = null;
-		int numbers = 10;
-		if (args.length != 0)
-			if (RegexMatcher.INT.is(args[0]))
-				numbers = RegexMatcher.INT.parse(args[0]);
+		OlympaPlayer target = null;
+		if (args.length != 0) {
+			try {
+				if (RegexMatcher.UUID.is(args[0]))
+					target = new AccountProvider(RegexMatcher.UUID.parse(args[0])).get();
+				else if (RegexMatcher.INT.is(args[0]))
+					target = AccountProvider.getter().get(RegexMatcher.INT.parse(args[0]));
+				else {
+					target = AccountProvider.getter().get(args[0]);
+					if (target == null) {
+						sendUnknownPlayer(args[0], AccountProvider.getter().getSQL().getNamesBySimilarChars(args[0]));
+						return;
+					}
+				}
+			} catch (SQLException e) {
+				sendError(e);
+				e.printStackTrace();
+				return;
+			}
+			if (target == null) {
+				sendComponents(Prefix.DEFAULT_BAD.formatMessageB("&4%s n'est pas un argument de type UUID, INT ou Pseudo.", args[0]));
+				return;
+			}
+		} else if (proxiedPlayer != null)
+			target = getOlympaPlayer();
+		else {
+			sendImpossibleWithConsole();
+			return;
+		}
+		List<OlympaSanction> sanctions;
 		try {
-			sanctions = BanMySQL.getLastSanctions(numbers);
+			sanctions = BanMySQL.getSanctionByAuthor(target.getId());
 		} catch (SQLException e) {
 			sendError(e);
 			e.printStackTrace();
 			return;
 		}
-		TxtComponentBuilder builder = new TxtComponentBuilder(Prefix.DEFAULT_GOOD, "Les %s dernières sanctions.", numbers != sanctions.size() ? numbers + "(" + sanctions.size() + ")" : String.valueOf(numbers))
+		TxtComponentBuilder builder = new TxtComponentBuilder(Prefix.DEFAULT_GOOD, "Toute les sanctions faites par %s : %d.", target.getName(), sanctions.size())
 				.extraSpliterBN();
 		for (OlympaSanction sanction : sanctions) {
 			String names;

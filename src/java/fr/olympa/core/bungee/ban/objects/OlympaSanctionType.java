@@ -19,7 +19,7 @@ public enum OlympaSanctionType {
 	int id;
 	String s;
 
-	private OlympaSanctionType(int id, String s) {
+	OlympaSanctionType(int id, String s) {
 		this.id = id;
 		this.s = s;
 	}
@@ -45,7 +45,7 @@ public enum OlympaSanctionType {
 	}
 
 	public String getName(boolean isTemp) {
-		return isTemp ? TEMP + s : s;
+		return isTemp && this != KICK ? TEMP + s : s;
 	}
 
 	public String getNameForPlayer() {

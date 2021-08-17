@@ -2,6 +2,7 @@ package fr.olympa.core.bungee.ban.objects;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -164,6 +165,16 @@ public class OlympaSanction {
 		if (getTargetType() != OlympaSanctionTargetType.IP)
 			return null;
 		return target;
+	}
+
+	public List<OlympaPlayer> getTargets() throws SQLException {
+		if (getTargetType() != OlympaSanctionTargetType.IP)
+			return AccountProvider.getter().getSQL().getPlayersByIp(target);
+		return Arrays.asList(AccountProvider.getter().get(target));
+	}
+
+	public String getTargetsNames() throws SQLException {
+		return getTargets().stream().map(OlympaPlayer::getName).collect(Collectors.joining(", "));
 	}
 
 	public Long getTargetId() {
