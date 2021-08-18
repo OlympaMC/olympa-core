@@ -407,10 +407,12 @@ public class OlympaCore extends OlympaSpigot implements Listener {
 	}
 
 	@Override
-	public void setStatus(ServerStatus status) {
-		if (this.status == status) return;
-		this.status = status;
-		RedisSpigotSend.changeStatus(status);
+	public boolean setStatus(ServerStatus status) {
+		if (super.setStatus(status)) {
+			RedisSpigotSend.changeStatus(status);
+			return true;
+		}
+		return false;
 	}
 
 	@Override
