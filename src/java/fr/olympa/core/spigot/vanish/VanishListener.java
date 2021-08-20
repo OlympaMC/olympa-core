@@ -191,6 +191,7 @@ public class VanishListener implements Listener {
 		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
 		if (vanishHandler != null && vanishHandler.isVanished(player))
 			event.setCancelled(true);
+		Prefix.VANISH.sendMessage(player, "Impossible d'attaquer en vanish");
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -200,10 +201,11 @@ public class VanishListener implements Listener {
 		if (vanishHandler == null || !vanishHandler.isVanished(player) || event.isCancelled() && player.getGameMode() != GameMode.CREATIVE)
 			return;
 		Block block = event.getBlock();
-		if (player.getGameMode() == GameMode.CREATIVE)
+		if (player.getGameMode() != GameMode.CREATIVE)
 			player.getInventory().addItem(block.getDrops().toArray(ItemStack[]::new));
 		block.setType(Material.AIR);
 		event.setCancelled(true);
+		Prefix.VANISH.sendMessage(player, "Bloc casser silencieusement");
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -219,8 +221,9 @@ public class VanishListener implements Listener {
 				itemInHand.setAmount(itemInHand.getAmount() - 1);
 			else
 				player.getInventory().removeItem(itemInHand);
-		block.getWorld().getBlockAt(block.getLocation()).setType(itemInHand.getType());
+		block.setType(itemInHand.getType());
 		event.setCancelled(true);
+		Prefix.VANISH.sendMessage(player, "Bloc placer silencieusement");
 	}
 
 	@EventHandler(ignoreCancelled = true)
@@ -229,6 +232,7 @@ public class VanishListener implements Listener {
 		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
 		if (vanishHandler != null && vanishHandler.isVanished(player))
 			event.setCancelled(true);
+		Prefix.VANISH.sendMessage(player, "&cImpossible de drop en vanish");
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -267,7 +271,7 @@ public class VanishListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onPotionSplash(PotionSplashEvent event) {
 		for (LivingEntity entity : event.getAffectedEntities()) {
-			if (!(entity instanceof Player player))
+			if (!entity instanceof Player player)
 				continue;
 			IVanishApi vanishHandler = CoreModules.VANISH.getApi();
 			if (vanishHandler != null && vanishHandler.isVanished(player))
@@ -277,7 +281,7 @@ public class VanishListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onFoodChange(FoodLevelChangeEvent event) {
-		if (!(event.getEntity()instanceof Player player)) return;
+		if (!event.getEntity()instanceof Player player) return;
 		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
 		if (vanishHandler != null && vanishHandler.isVanished(player))
 			event.setCancelled(true);
@@ -285,7 +289,7 @@ public class VanishListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerPickupItem(EntityPickupItemEvent event) {
-		if (!(event.getEntity()instanceof Player player)) return;
+		if (!event.getEntity()instanceof Player player) return;
 		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
 		if (vanishHandler != null && vanishHandler.isVanished(player))
 			event.setCancelled(true);
