@@ -1,6 +1,7 @@
 package fr.olympa.core.spigot.report;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -10,6 +11,7 @@ import org.bukkit.command.CommandSender;
 
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.command.PaginatorDatabase;
 import fr.olympa.api.common.player.OlympaPlayerInformations;
 import fr.olympa.api.common.report.OlympaReport;
 import fr.olympa.api.common.report.ReportStatus;
@@ -22,6 +24,7 @@ import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.core.common.provider.AccountProvider;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
+import fr.olympa.core.spigot.report.connections.ReportMySQL;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.Server;
@@ -68,7 +71,7 @@ public class ReportMsg {
 		if (note != null && !note.isBlank())
 			out.extra(new TxtComponentBuilder("&aNote &2%s", note));
 		out.extra(new TxtComponentBuilder("&aDate &2%s &a(%s)", Utils.timestampToDateAndHour(report.getTime()), Utils.timestampToDuration(report.getTime())));
-		out.extra(new TxtComponentBuilder().extraSpliter(" ").extra(new TxtComponentBuilder("&6[&eChanger Statut]").onClickSuggest("/report change " + id),
+		out.extra(new TxtComponentBuilder().extraSpliter(" ").extra(new TxtComponentBuilder("&6[&eChanger Statut]").onClickSuggest("/report change " + id + " "),
 				new TxtComponentBuilder("&6[&eTous&6]").onClickCommand("/report see " + report.getTargetName())));
 		List<ReportStatusInfo> statusInfo = report.getStatusInfo();
 		//		if (statusInfo.size() > 1) {
@@ -85,28 +88,86 @@ public class ReportMsg {
 		//			}
 		//
 		//		}
+
 		if (statusInfo.size() > 1)
-			out.extra(new TxtComponentBuilder("&aDerniers statut &2%s", statusInfo.stream().limit(statusInfo.size() - 1l)
-					.map(rsi -> rsi.getStatus().getNameColored() + rsi.getTime() != null ? " &a(" + Utils.timestampToDuration(rsi.getTime()) + ")" : "")
+			out.extra(new TxtComponentBuilder("&aStatuts précédent &2%s", statusInfo.stream().limit(statusInfo.size() - 1l)
+					.map(rsi -> rsi.getStatus().getNameColored() + (!Objects.isNull(rsi.getTime()) ? " &a(" + Utils.timestampToDuration(rsi.getTime()) + ")" : ""))
 					.collect(Collectors.joining("&a, &2")))).extraSpliterBN();
 		sender.spigot().sendMessage(out.build());
 	}
 
-	public static void sendPanelTarget(CommandSender sender, String target, List<OlympaReport> reports) {
-		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Report%s contre %s (%d):", Utils.withOrWithoutS(reports.size()), target, reports.size())).extraSpliterBN();
-		reports.stream().forEach(r -> {
-			r.resolveAuthorName();
-			ReportStatus status = r.getStatus();
-			TxtComponentBuilder line = new TxtComponentBuilder("%s%s -> %s &e(%s) %s", status.getColor(), r.getReasonNameUpper(), status.getName(), r.getAuthorName(), Utils.tsToShortDur(r.getLastUpdate()));
-			line.onHoverText(String.join("\n", r.getLore()));
-			line.onClickCommand("/report seeId " + r.getId());
-			out.extra(line);
-		});
-		sender.spigot().sendMessage(out.build());
+	public static void sendPanelTarget(CommandSender sender, OlympaPlayerInformations target, int page) {
+		PaginatorDatabase<OlympaReport> paginator = new PaginatorDatabase<>(10, String.format("Reports contre %s", target.getName()), ReportMySQL.TABLE, ReportMySQL.COLUMN_TIME, false) {
+			@Override
+			protected BaseComponent getObjectDescription(OlympaReport r) {
+				r.resolveAll();
+				ReportStatus status = r.getStatus();
+				TxtComponentBuilder txtBuildeur = new TxtComponentBuilder("%s%s -> %s &e(%s) %s", status.getColor(), r.getReasonNameUpper(), status.getName(), r.getAuthorName(), Utils.tsToShortDur(r.getLastUpdate()));
+				txtBuildeur.onHoverText(String.join("\n", r.getLore()));
+				txtBuildeur.onClickCommand("/report seeId " + r.getId());
+				return txtBuildeur.build();
+			}
+
+			@Override
+			protected String getCommand(int page) {
+				return "/report see " + target.getName() + " " + page;
+			}
+		};
+		paginator.setWhat(ReportMySQL.COLUMN_TARGET_ID, target.getId());
+		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> sender.spigot().sendMessage(paginator.getPage(page)));
+		//		TxtComponentBuilder out = new TxtComponentBuilder(String.format("Report%s contre %s (%d):", Utils.withOrWithoutS(reports.size()), target, reports.size())).extraSpliterBN();
+		//		reports.stream().forEach(r -> {
+		//			r.resolveAuthorName();
+		//			ReportStatus status = r.getStatus();
+		//			TxtComponentBuilder line = new TxtComponentBuilder("%s%s -> %s &e(%s) %s", status.getColor(), r.getReasonNameUpper(), status.getName(), r.getAuthorName(), Utils.tsToShortDur(r.getLastUpdate()));
+		//			line.onHoverText(String.join("\n", r.getLore()));
+		//			line.onClickCommand("/report seeId " + r.getId());
+		//			out.extra(line);
+		//		});
 	}
 
-	public static void sendPanelLast(CommandSender sender, List<OlympaReport> reports) {
-		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("%s Derniers report%s :", reports.size(), Utils.withOrWithoutS(reports.size()))).extraSpliterBN();
+	//	public static void sendPanelLast(CommandSender sender, List<OlympaReport> reports, int page) {
+	public static void sendPanelLast(CommandSender sender, int page) {
+		PaginatorDatabase<OlympaReport> paginator = new PaginatorDatabase<>(10, "Derniers report", ReportMySQL.TABLE, ReportMySQL.COLUMN_TIME, false) {
+			@Override
+			protected BaseComponent getObjectDescription(OlympaReport r) {
+				r.resolveAll();
+				ReportStatus status = r.getStatus();
+				TxtComponentBuilder txtBuildeur = new TxtComponentBuilder("#%d %s%s -> %s &e(%s) de %s", r.getId(), status.getColor(), r.getReasonNameUpper(), status.getName(), r.getTargetName(), r.getAuthorName(),
+						Utils.tsToShortDur(r.getLastUpdate()));
+				txtBuildeur.onHoverText(String.join("\n", r.getLore()));
+				txtBuildeur.onClickCommand("/report seeId " + r.getId());
+				return txtBuildeur.build();
+			}
+			@Override
+			protected String getCommand(int page) {
+				return "/report seeLast " + page;
+			}
+		};
+		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> sender.spigot().sendMessage(paginator.getPage(page)));
+		//		Paginator<OlympaReport> paginator = new Paginator<>(10, "Derniers report") {
+		//			@Override
+		//			protected List<OlympaReport> getObjects() {
+		//				return reports;
+		//			}
+		//
+		//			@Override
+		//			protected BaseComponent getObjectDescription(OlympaReport r) {
+		//				r.resolveAll();
+		//				ReportStatus status = r.getStatus();
+		//				TxtComponentBuilder txtBuildeur = new TxtComponentBuilder("#%d %s%s -> %s &e(%s) de %s", r.getId(), status.getColor(), r.getReasonNameUpper(), status.getName(), r.getTargetName(), r.getAuthorName(),
+		//						Utils.tsToShortDur(r.getLastUpdate()));
+		//				txtBuildeur.onHoverText(String.join("\n", r.getLore()));
+		//				txtBuildeur.onClickCommand("/report seeId " + r.getId());
+		//				return txtBuildeur.build();
+		//			}
+		//
+		//			@Override
+		//			protected String getCommand(int page) {
+		//				return "/report seeLast " + page;
+		//			}
+		//		};
+		/*TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("%s Derniers report%s :", reports.size(), Utils.withOrWithoutS(reports.size()))).extraSpliterBN();
 		reports.stream().forEach(r -> {
 			r.resolveAll();
 			ReportStatus status = r.getStatus();
@@ -116,7 +177,7 @@ public class ReportMsg {
 			txtBuildeur.onClickCommand("/report seeId " + r.getId());
 			out.extra(txtBuildeur);
 		});
-		sender.spigot().sendMessage(out.build());
+		sender.spigot().sendMessage(out.build());*/
 	}
 
 	public static void sendPanelMax(CommandSender sender, Stream<Entry<OlympaPlayerInformations, List<OlympaReport>>> reports) {
@@ -135,17 +196,35 @@ public class ReportMsg {
 		sender.spigot().sendMessage(out.build());
 	}
 
-	public static void sendPanelAuthor(CommandSender sender, String author, List<OlympaReport> reports) {
-		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Report%s de %s (%d) :", Utils.withOrWithoutS(reports.size()), author, reports.size())).extraSpliterBN();
-		reports.stream().forEach(r -> {
-			r.resolveTargetName();
-			ReportStatus status = r.getStatus();
-			TxtComponentBuilder line = new TxtComponentBuilder("%s%s <- %s &e(%s)", status.getColor(), r.getReasonNameUpper(), status.getName(), r.getTargetName(), Utils.timestampToDuration(r.getLastUpdate(), 1));
-			line.onHoverText(String.join("\n", r.getLore()));
-			line.onClickCommand("/report seeId " + r.getId());
-			out.extra(line);
-		});
-		sender.spigot().sendMessage(out.build());
+	public static void sendPanelAuthor(CommandSender sender, OlympaPlayerInformations target, int page) {
+		PaginatorDatabase<OlympaReport> paginator = new PaginatorDatabase<>(10, String.format("Reports de %s", target.getName()), ReportMySQL.TABLE, ReportMySQL.COLUMN_TIME, false) {
+			@Override
+			protected BaseComponent getObjectDescription(OlympaReport r) {
+				r.resolveAll();
+				ReportStatus status = r.getStatus();
+				TxtComponentBuilder txtBuildeur = new TxtComponentBuilder("%s%s -> %s &e(%s) %s", status.getColor(), r.getReasonNameUpper(), status.getName(), r.getAuthorName(), Utils.tsToShortDur(r.getLastUpdate()));
+				txtBuildeur.onHoverText(String.join("\n", r.getLore()));
+				txtBuildeur.onClickCommand("/report seeId " + r.getId());
+				return txtBuildeur.build();
+			}
+
+			@Override
+			protected String getCommand(int page) {
+				return "/report seeAuthor " + target.getName() + " " + page;
+			}
+		};
+		paginator.setWhat(ReportMySQL.COLUMN_AUTHOR_ID, target.getId());
+		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> sender.spigot().sendMessage(paginator.getPage(page)));
+		//		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD.formatMessage("Report%s de %s (%d) :", Utils.withOrWithoutS(reports.size()), author, reports.size())).extraSpliterBN();
+		//		reports.stream().forEach(r -> {
+		//			r.resolveTargetName();
+		//			ReportStatus status = r.getStatus();
+		//			TxtComponentBuilder line = new TxtComponentBuilder("%s%s <- %s &e(%s)", status.getColor(), r.getReasonNameUpper(), status.getName(), r.getTargetName(), Utils.timestampToDuration(r.getLastUpdate(), 1));
+		//			line.onHoverText(String.join("\n", r.getLore()));
+		//			line.onClickCommand("/report seeId " + r.getId());
+		//			out.extra(line);
+		//		});
+		//		sender.spigot().sendMessage(out.build());
 	}
 
 }
