@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import com.google.gson.annotations.Expose;
 
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.common.groups.OlympaGroup;
 import fr.olympa.api.common.permission.OlympaPermission;
 import fr.olympa.api.common.player.Gender;
@@ -134,15 +135,26 @@ public class OlympaPlayerObject extends OlympaPlayerCore {
 		for (String groupInfos : groupsString.split(";")) {
 			String[] groupInfo = groupInfos.split(":");
 			OlympaGroup olympaGroup;
-			if ("".equals(groupInfos))
+			if ("".equals(groupInfos)) {
 				olympaGroup = OlympaGroup.PLAYER;
-			else olympaGroup = OlympaGroup.getById(Integer.parseInt(groupInfo[0]));
+			}else {
+				int groupID = Integer.parseInt(groupInfo[0]);
+				olympaGroup = OlympaGroup.getById(groupID);
+				if (olympaGroup == null) {
+					LinkSpigotBungee.getInstance().sendMessage("§cImpossible de trouver le groupe §4%d§c pour le joueur §4%s", groupID, name);
+					continue;
+				}
+			}
 			Long until;
 			if (groupInfo.length > 1)
 				until = Long.parseLong(groupInfo[1]);
 			else
 				until = 0l;
 			groups.put(olympaGroup, until);
+		}
+		if (groups.isEmpty()) {
+			LinkSpigotBungee.getInstance().sendMessage("§4%s§c n'avait pas de groupe valide. Ajout de §4PLAYER", name);
+			groups.put(OlympaGroup.PLAYER, 0L);
 		}
 		this.firstConnection = firstConnection;
 		this.lastConnection = lastConnection;
