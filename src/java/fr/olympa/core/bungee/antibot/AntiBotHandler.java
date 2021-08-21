@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import fr.olympa.api.LinkSpigotBungee;
@@ -105,7 +106,7 @@ public class AntiBotHandler {
 
 	private static String generateRandomWord() {
 		int wordLength = 10;
-		Random r = new Random();
+		Random r = ThreadLocalRandom.current();
 		StringBuilder sb = new StringBuilder(wordLength);
 		for (int i = 0; i < wordLength; i++) {
 			char tmp = (char) ('a' + r.nextInt('z' - 'a'));

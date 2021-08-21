@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.imageio.ImageIO;
 
@@ -69,22 +70,23 @@ public class MotdListener implements Listener {
 			}
 		}
 
+		ThreadLocalRandom random = ThreadLocalRandom.current();
 		switch (status) {
 		case OPEN:
 			players.setSample(new PlayerInfoBuilder().append("").append(games).append(pvp).append("").append(discord).append(teamspeak).append(twitter).append(site).append("").build());
-			int random = new Random().nextInt(4);
-			if (random == 0)
+			int randomInt = random.nextInt(4);
+			if (randomInt == 0)
 				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD(games)));
-			else if (random == 1)
+			else if (randomInt == 1)
 				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD(pvp)));
 			else {
 				StringBuilder sb = new StringBuilder();
 				int before = -1;
 				for (int i = 0; i < 2; i++) {
 					do
-						random = new Random().nextInt(4);
-					while (before == random);
-					switch (random) {
+						randomInt = random.nextInt(4);
+					while (before == randomInt);
+					switch (randomInt) {
 					case 0:
 						sb.append(teamspeak);
 						break;
@@ -100,7 +102,7 @@ public class MotdListener implements Listener {
 					}
 					if (i == 0)
 						sb.append(separator);
-					before = random;
+					before = randomInt;
 				}
 				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD(sb.toString()) + "§r"));
 			}
