@@ -63,14 +63,14 @@ public class ReportMsg {
 		report.resolveAll();
 		TxtComponentBuilder out = new TxtComponentBuilder(Prefix.DEFAULT_GOOD, "Report de &2%s -> &2%s :", report.getAuthorName(), report.getTargetName()).extraSpliterBN();
 		String id = String.valueOf(report.getId());
-		out.extra(new TxtComponentBuilder("&aN°&2%s", id));
-		out.extra(new TxtComponentBuilder("&aStatut %s", report.getStatus().getNameColored()));
-		out.extra(new TxtComponentBuilder("&aServeur &2%s", report.getServerName()));
-		out.extra(new TxtComponentBuilder("&aRaison &2%s", report.getReasonName()));
+		out.extra("&aN°&2%s", id);
+		out.extra("&aStatut %s", report.getStatus().getNameColored());
+		out.extra("&aServeur &2%s", report.getServerName());
+		out.extra("&aRaison &2%s", report.getReasonName());
 		String note = report.getNote();
 		if (note != null && !note.isBlank())
-			out.extra(new TxtComponentBuilder("&aNote &2%s", note));
-		out.extra(new TxtComponentBuilder("&aDate &2%s &a(%s)", Utils.timestampToDateAndHour(report.getTime()), Utils.timestampToDuration(report.getTime())));
+			out.extra("&aNote &2%s", note);
+		out.extra("&aDate &2%s &a(%s)", Utils.timestampToDateAndHour(report.getTime()), Utils.timestampToDuration(report.getTime()));
 		out.extra(new TxtComponentBuilder().extraSpliter(" ").extra(new TxtComponentBuilder("&6[&eChanger Statut]").onClickSuggest("/report change " + id + " "),
 				new TxtComponentBuilder("&6[&eTous&6]").onClickCommand("/report see " + report.getTargetName())));
 		List<ReportStatusInfo> statusInfo = report.getStatusInfo();
@@ -102,7 +102,7 @@ public class ReportMsg {
 			protected BaseComponent getObjectDescription(OlympaReport r) {
 				r.resolveAll();
 				ReportStatus status = r.getStatus();
-				TxtComponentBuilder txtBuildeur = new TxtComponentBuilder("%s%s -> %s &e(%s) %s", status.getColor(), r.getReasonNameUpper(), status.getName(), r.getAuthorName(), Utils.tsToShortDur(r.getLastUpdate()));
+				TxtComponentBuilder txtBuildeur = new TxtComponentBuilder("#%d %s%s -> %s &e(%s) %s", r.getId(), status.getColor(), r.getReasonNameUpper(), status.getName(), r.getAuthorName(), Utils.tsToShortDur(r.getLastUpdate()));
 				txtBuildeur.onHoverText(String.join("\n", r.getLore()));
 				txtBuildeur.onClickCommand("/report seeId " + r.getId());
 				return txtBuildeur.build();

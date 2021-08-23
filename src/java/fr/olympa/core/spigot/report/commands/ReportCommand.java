@@ -36,13 +36,10 @@ public class ReportCommand extends ComplexCommand {
 
 	public ReportCommand(Plugin plugin) {
 		super(plugin, "report", "Signale un joueur.", OlympaCorePermissionsSpigot.REPORT_COMMAND, "signale");
-		addArgumentParser("REPORTREASON", (sender, arg) -> ReportReason.values().stream().map(r -> r.getReasonOneWord()).collect(Collectors.toList()), x -> {
-			return ReportReason.getByReason(x.replace("_", " "));
-		}, x -> String.format("&4%s&c doit être une raison tel que &4%s&c", x, ReportReason.values().stream().map(r -> r.getReasonOneWord()).collect(Collectors.joining(", "))));
-
-		addArgumentParser("REPORTSTATUS", (sender, arg) -> Arrays.asList(ReportStatus.values()).stream().map(ReportStatus::getName).collect(Collectors.toList()), x -> {
-			return ReportStatus.get(x);
-		}, x -> String.format("&4%s&c doit être un status tel que &4%s&c", x, Arrays.asList(ReportStatus.values()).stream().map(ReportStatus::getName).collect(Collectors.joining(", "))));
+		addArgumentParser("REPORTREASON", (sender, arg) -> ReportReason.values().stream().map(ReportReason::getReasonOneWord).toList(), x -> ReportReason.getByReason(x.replace("_", " ")),
+				x -> String.format("&4%s&c doit être une raison tel que &4%s&c", x, ReportReason.values().stream().map(ReportReason::getReasonOneWord).collect(Collectors.joining(", "))));
+		addArgumentParser("REPORTSTATUS", (sender, arg) -> Arrays.stream(ReportStatus.values()).map(ReportStatus::getName).toList(), x -> ReportStatus.get(x),
+				x -> String.format("&4%s&c doit être un status tel que &4%s&c", x, Arrays.stream(ReportStatus.values()).map(ReportStatus::getName).collect(Collectors.joining(", "))));
 	}
 
 	@Override
@@ -65,7 +62,7 @@ public class ReportCommand extends ComplexCommand {
 			}
 			try {
 				List<OlympaReport> allReportsAuthors = ReportMySQL.getReportsByAuthor(this.getOlympaPlayer().getId(), 100);
-				if (allReportsAuthors.size() > 2 && allReportsAuthors.get(2).getTime() > Utils.getCurrentTimeInSeconds() - 10 * 60) {
+				if (allReportsAuthors.size() >= 2 && allReportsAuthors.get(1).getTime() > Utils.getCurrentTimeInSeconds() - 10 * 60) {
 					sendError("Tu peux faire seulement 2 reports toutes les 10 minutes.");
 					return;
 				}
@@ -73,7 +70,6 @@ public class ReportCommand extends ComplexCommand {
 				e.printStackTrace();
 			}
 		}
-
 		ReportReason reportReason = null;
 		String note = null;
 		if (cmd.getArgumentsLength() > 1)
@@ -131,7 +127,6 @@ public class ReportCommand extends ComplexCommand {
 		OlympaPlayerInformations opi = null;
 		long targetId = 0;
 		int page = cmd.getArgumentsLength() > 1 ? cmd.<Integer>getArgument(1) : 1;
-		boolean isSeeAuthor = cmd.isAlias("seeauthor");
 		//		try {
 		if (cmd.getArgument(0) instanceof Integer) {
 			targetId = cmd.<Integer>getArgument(0);
@@ -161,12 +156,12 @@ public class ReportCommand extends ComplexCommand {
 		//			sendError("Une erreur est survenu avec la base de données.");
 		//			return;
 		//		}
-			//		String target = opi.getName();
-			//		if (reports.isEmpty()) {
-			//			player.sendMessage(Prefix.DEFAULT_BAD.formatMessage("Aucun report trouvé avec &4%s&c.", target));
-			//			return;
-			//		}
-		if (isSeeAuthor)
+		//		String target = opi.getName();
+		//		if (reports.isEmpty()) {
+		//			player.sendMessage(Prefix.DEFAULT_BAD.formatMessage("Aucun report trouvé avec &4%s&c.", target));
+		//			return;
+		//		}
+		if (cmd.isAlias("seeauthor"))
 			ReportMsg.sendPanelAuthor(sender, opi, page);
 		else
 			ReportMsg.sendPanelTarget(sender, opi, page);
