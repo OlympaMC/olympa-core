@@ -191,7 +191,7 @@ public class VanishListener implements Listener {
 		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
 		if (vanishHandler != null && vanishHandler.isVanished(player)) {
 			event.setCancelled(true);
-			Prefix.VANISH.sendMessage(player, "Impossible d'attaquer en vanish");
+			sendActionBar(player, "Impossible d'attaquer en vanish");
 		}
 	}
 
@@ -206,7 +206,7 @@ public class VanishListener implements Listener {
 			player.getInventory().addItem(block.getDrops().toArray(ItemStack[]::new));
 		block.setType(Material.AIR);
 		event.setCancelled(true);
-		Prefix.VANISH.sendMessage(player, "Bloc casser silencieusement");
+		sendActionBar(player, "Bloc cassé silencieusement");
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -224,7 +224,7 @@ public class VanishListener implements Listener {
 				player.getInventory().removeItem(itemInHand);
 		block.setType(itemInHand.getType());
 		event.setCancelled(true);
-		Prefix.VANISH.sendMessage(player, "Bloc placer silencieusement");
+		sendActionBar(player, "Bloc placé silencieusement.");
 	}
 
 	@EventHandler(ignoreCancelled = true)
@@ -233,7 +233,7 @@ public class VanishListener implements Listener {
 		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
 		if (vanishHandler != null && vanishHandler.isVanished(player)) {
 			event.setCancelled(true);
-			Prefix.VANISH.sendMessage(player, "&cImpossible de drop en vanish");
+			sendActionBar(player, "&cImpossible de drop en vanish.");
 		}
 	}
 
@@ -252,20 +252,20 @@ public class VanishListener implements Listener {
 			if (blockData instanceof EnderChest) {
 				event.setCancelled(true);
 				player.openInventory(player.getEnderChest());
-				Prefix.VANISH.sendMessage(player, "Ouverture forcé et silencieuse de ton EnderChest");
+				Prefix.VANISH.sendMessage(player, "Ouverture forcée et silencieuse de ton EnderChest");
 			} else if (blockData instanceof Openable openable) {
 				event.setCancelled(true);
 				if (openable.isOpen())
-					Prefix.VANISH.sendMessage(player, "Fermeture forcé de %s", Utils.capitalize(block.getType().toString().replace("_", " ")));
+					Prefix.VANISH.sendMessage(player, "Fermeture forcée de %s", Utils.capitalize(block.getType().toString().replace("_", " ")));
 				else
-					Prefix.VANISH.sendMessage(player, "Ouverture forcé de %s", Utils.capitalize(block.getType().toString().replace("_", " ")));
+					Prefix.VANISH.sendMessage(player, "Ouverture forcée de %s", Utils.capitalize(block.getType().toString().replace("_", " ")));
 				openable.setOpen(!openable.isOpen());
 				blockState.setBlockData(openable);
 				blockState.update();
 			} else if (blockState instanceof Container container) {
 				event.setCancelled(true);
 				player.openInventory(container.getInventory());
-				Prefix.VANISH.sendMessage(player, "Ouverture forcé du %s", Utils.capitalize(block.getType().toString().replace("_", " ")));
+				Prefix.VANISH.sendMessage(player, "Ouverture forcée du %s", Utils.capitalize(block.getType().toString().replace("_", " ")));
 			}
 		}
 	}
@@ -297,7 +297,9 @@ public class VanishListener implements Listener {
 			event.setCancelled(true);
 	}
 
-
+	private void sendActionBar(Player p, String message) {
+		p.sendActionBar(Prefix.VANISH.formatMessageB(message));
+	}
 
 	enum PacketState {
 		EDITED,
