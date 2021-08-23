@@ -189,9 +189,10 @@ public class VanishListener implements Listener {
 			return;
 		Player player = (Player) event.getTarget();
 		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
-		if (vanishHandler != null && vanishHandler.isVanished(player))
+		if (vanishHandler != null && vanishHandler.isVanished(player)) {
 			event.setCancelled(true);
-		Prefix.VANISH.sendMessage(player, "Impossible d'attaquer en vanish");
+			Prefix.VANISH.sendMessage(player, "Impossible d'attaquer en vanish");
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -230,9 +231,10 @@ public class VanishListener implements Listener {
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
 		Player player = event.getPlayer();
 		IVanishApi vanishHandler = CoreModules.VANISH.getApi();
-		if (vanishHandler != null && vanishHandler.isVanished(player))
+		if (vanishHandler != null && vanishHandler.isVanished(player)) {
 			event.setCancelled(true);
-		Prefix.VANISH.sendMessage(player, "&cImpossible de drop en vanish");
+			Prefix.VANISH.sendMessage(player, "&cImpossible de drop en vanish");
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
