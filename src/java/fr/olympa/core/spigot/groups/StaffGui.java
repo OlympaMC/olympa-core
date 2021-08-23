@@ -16,6 +16,7 @@ import fr.olympa.api.common.sort.Sorting;
 import fr.olympa.api.spigot.gui.OlympaGUI;
 import fr.olympa.api.spigot.item.ItemUtils;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.core.common.provider.AccountProvider;
 
 public class StaffGui extends OlympaGUI {
@@ -30,17 +31,19 @@ public class StaffGui extends OlympaGUI {
 
 	}
 
-	public StaffGui() throws SQLException {
+	public StaffGui(Player player) throws SQLException {
 		super("Staff", 5);
 		//		List<OlympaPlayer> staff = MySQL.getPlayersByGroupsIds(OlympaGroup.getStaffGroups()).stream().sorted((o1, o2) -> o2.getGroup().getPower() - o1.getGroup().getPower()).collect(Collectors.toList());
 		List<OlympaPlayer> staff = AccountProvider.getter().getSQL().getPlayersByGroupsIds(OlympaGroup.getStaffGroups()).stream().sorted(SORT_STAFF).collect(Collectors.toList());
 		int i = 0;
+		boolean canSeeLastConnexion = OlympaCorePermissionsSpigot.STAFF_SEELASTCONNEXION.hasPermission(player.getUniqueId());
 		for (OlympaPlayer s : staff) {
 			int i2 = i;
+			String lastConnexion = s.isConnected() ? "§8Connecté" + s.getTuneChar() : "§8Dernière connexion " + Utils.timestampToDuration(s.getLastConnection());
 			ItemUtils.skull(x -> inv.setItem(i2, x), s.getGroup().getPrefix(s.getGender()) + s.getName(), s.getName(),
 					"", "§7" + s.getGroupsToHumainString(),
-					s.isConnected() ? "§8Connecté" + s.getTuneChar() : "§8Dernière connexion " + Utils.timestampToDuration(s.getLastConnection()),
-					"§7Premium " + (s.getPremiumUniqueId() != null ? "Oui" : "Non"));
+					"§7Premium " + (s.getPremiumUniqueId() != null ? "Oui" : "Non"),
+					canSeeLastConnexion ? lastConnexion : "");
 			i++;
 		}
 

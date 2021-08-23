@@ -24,7 +24,7 @@ public class StaffCommand extends OlympaCommand {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		StaffGui staffGui;
 		try {
-			staffGui = new StaffGui();
+			staffGui = new StaffGui(player);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			sendError(e);

@@ -48,5 +48,6 @@ public class OlympaCorePermissionsSpigot {
 	public static final OlympaSpigotPermission BUNGEE_SECURITY_COMMAND = new OlympaSpigotPermission(OlympaGroup.ADMIN, new OlympaGroup[] { OlympaGroup.RESP_TECH }); // XXX what ?
 	public static final OlympaSpigotPermission CAPCHAT_SEE_WAITING = new OlympaSpigotPermission(OlympaGroup.ASSISTANT);
 	public static final OlympaSpigotPermission PLUGIN_SEE_VERSION = new OlympaSpigotPermission(OlympaGroup.GRAPHISTE);
+	public static final OlympaSpigotPermission STAFF_SEELASTCONNEXION = new OlympaSpigotPermission(OlympaGroup.GRAPHISTE);
 
 }
