@@ -85,7 +85,7 @@ public class NewSpigotCommand extends ComplexCommand {
 		}
 	}
 
-	//	@Cmd (permissionName = "SPIGOT_COMMAND_MODULE", args = { "MODULES", "on|off|debugon|debugoff" }, min = 1, description = "Active ou désactive un module")
+	@Cmd (permissionName = "SPIGOT_COMMAND_MODULE", args = { "MODULES", "on|off|debugon|debugoff" }, min = 1, description = "Active ou désactive un module")
 	public void module(CommandContext cmd) {
 		OlympaModule<? extends Object, Listener, ? extends Plugin, OlympaCommand> module = cmd.getArgument(0);
 		if (cmd.getArgumentsLength() == 1) {

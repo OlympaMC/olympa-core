@@ -74,14 +74,14 @@ public class SanctionExecuteTarget {
 	public boolean save(SanctionExecute banExecute) throws SQLException {
 		OlympaSanctionStatus newStatus = banExecute.newStatus;
 		boolean isCasualKick = banExecute.sanctionType == OlympaSanctionType.KICK && newStatus == OlympaSanctionStatus.END;
-		if (identifier instanceof InetAddress) {
+		if (identifier instanceof InetAddress ip) {
 			if (banExecute.sanctionType == OlympaSanctionType.BAN)
 				banExecute.sanctionType = OlympaSanctionType.BANIP;
 			else if (banExecute.sanctionType != OlympaSanctionType.BANIP) {
 				new Exception("IP can be only banned.").printStackTrace();
 				return false;
 			}
-			banIdentifier = ((InetAddress) identifier).getHostAddress();
+			banIdentifier = ip.getHostAddress();
 		} else if (olympaPlayers.size() == 1)
 			banIdentifier = String.valueOf(olympaPlayers.get(0).getId());
 		else {
@@ -121,7 +121,7 @@ public class SanctionExecuteTarget {
 					return false;
 				}
 			}
-			sanction = add(banExecute.sanctionType, banExecute.getAuthorId(), banIdentifier, banExecute.reason, banExecute.expire, newStatus);
+			sanction = add(banExecute.sanctionType, banExecute.getAuthorId(), banIdentifier, banExecute.reason, banExecute.expire, newStatus, banExecute.created);
 
 			//		} else if (newStatus == OlympaSanctionStatus.END && banExecute.sanctionType == OlympaSanctionType.MUTE) {
 			//			sanction = add(banExecute.sanctionType, banExecute.getAuthorId(), banIdentifier, banExecute.reason, banExecute.expire, newStatus);
@@ -210,13 +210,12 @@ public class SanctionExecuteTarget {
 		}
 	}
 
-	public static OlympaSanction add(OlympaSanctionType type, long author, String target, String reason, long timestamp) throws SQLException {
-		return add(type, author, target, reason, timestamp, OlympaSanctionStatus.ACTIVE);
+	public static OlympaSanction add(OlympaSanctionType type, long author, String target, String reason, long timestamp, long created) throws SQLException {
+		return add(type, author, target, reason, timestamp, OlympaSanctionStatus.ACTIVE, created);
 	}
 
-	public static OlympaSanction add(OlympaSanctionType type, long author, String target, String reason, long timestamp, OlympaSanctionStatus status) throws SQLException {
-		long actuelTime = Utils.getCurrentTimeInSeconds();
-		OlympaSanction sanction = new OlympaSanction(type, target, author, reason, actuelTime, timestamp, status);
+	public static OlympaSanction add(OlympaSanctionType type, long author, String target, String reason, long timestamp, OlympaSanctionStatus status, long created) throws SQLException {
+		OlympaSanction sanction = new OlympaSanction(type, target, author, reason, created, timestamp, status);
 		long id = BanMySQL.addSanction(sanction);
 		sanction.setId(id);
 		return sanction;

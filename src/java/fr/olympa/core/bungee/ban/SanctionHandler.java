@@ -30,7 +30,7 @@ public class SanctionHandler {
 		OlympaSanction oldMute = getMuteById(mute.getId());
 		if (oldMute != null)
 			if (oldMute.getHistorys().size() > mute.getHistorys().size())
-				new IllegalAccessException("Impossible d'ajouter un mute en cache qui est déjà cache. Le mute en cache à l'air plus récent que celui ajouté. Mute ID: " + mute.getId());
+				new IllegalAccessException("Impossible d'ajouter un mute en cache qui est déjà cache. Le mute en cache à l'air plus récent que celui ajouté. Mute ID: " + mute.getId()).printStackTrace();
 			else
 				mutes.remove(oldMute);
 		mutes.add(mute);

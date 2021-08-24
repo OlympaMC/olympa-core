@@ -27,9 +27,8 @@ public class BanListCommand extends BungeeCommand {
 	public void onCommand(CommandSender sender, String[] args) {
 		List<OlympaSanction> sanctions = null;
 		int numbers = 10;
-		if (args.length != 0)
-			if (RegexMatcher.INT.is(args[0]))
-				numbers = RegexMatcher.INT.parse(args[0]);
+		if (args.length != 0 && RegexMatcher.INT.is(args[0]))
+			numbers = RegexMatcher.INT.parse(args[0]);
 		try {
 			sanctions = BanMySQL.getLastSanctions(numbers);
 		} catch (SQLException e) {
@@ -49,7 +48,7 @@ public class BanListCommand extends BungeeCommand {
 			}
 			builder.extra(new TxtComponentBuilder("#%d - %s %s %s %s %s", sanction.getId(), sanction.getStatus().getNameColored(),
 					sanction.getType().getName(!sanction.isPermanent()), names, sanction.getReason(),
-					sanction.getExpires() > 0 ? Utils.timeToDuration(sanction.getBanTime()) : sanction.getType() != OlympaSanctionType.KICK ? "&cPermanant" : "")
+					sanction.getExpires() > 0 ? Utils.timeToDuration(sanction.getBanTime()) : sanction.isPermanent() ? "&cPermanant" : "")
 					.onHoverText(sanction.toBaseComplement()).onClickCommand("/histban %d", sanction.getId()));
 		}
 		sender.sendMessage(builder.build());

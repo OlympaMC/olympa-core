@@ -1,4 +1,4 @@
-version: 1.42
+version: 1.43
 status: 'Ouvert'
 maintenance:
    messages:
@@ -88,6 +88,7 @@ ban:
       - month
       - months
       - mois
+      - mo
       second:
       - second
       - seconds

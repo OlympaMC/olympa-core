@@ -43,6 +43,7 @@ public class SanctionExecute {
 				bungeeCommand.sendError(e);
 				return null;
 			}
+		me.setCreated(Utils.getCurrentTimeInSeconds());
 		List<String> targetsString = Arrays.asList(args[0].split(","));
 		for (String target : targetsString)
 			if (RegexMatcher.IP.is(target))
@@ -84,6 +85,7 @@ public class SanctionExecute {
 	private List<Object> targetsRaw = new ArrayList<>();
 	private List<String> unknownTargetType = new ArrayList<>();
 	long expire = 0;
+	long created = 0;
 	@Nullable
 	String reason;
 
@@ -141,6 +143,10 @@ public class SanctionExecute {
 	 */
 	public void setExpire(long expire) {
 		this.expire = expire;
+	}
+	
+	public void setCreated(long created) {
+		this.created = created;
 	}
 
 	public void setReason(String reason) {
@@ -251,18 +257,18 @@ public class SanctionExecute {
 	private boolean detectSanctions() {
 		for (Object t : targetsRaw)
 			try {
-				if (t instanceof InetAddress)
-					targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(((InetAddress) t).getHostAddress()), t));
-				else if (t instanceof UUID) {
-					OlympaPlayer op = new AccountProvider((UUID) t).get();
+				if (t instanceof InetAddress adress)
+					targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(adress.getHostAddress()), t));
+				else if (t instanceof UUID uuid) {
+					OlympaPlayer op = new AccountProvider(uuid).get();
 					if (op != null)
 						targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(op.getId()), t));
-				} else if (t instanceof String) {
-					OlympaPlayer op = AccountProvider.getter().get((String) t);
+				} else if (t instanceof String name) {
+					OlympaPlayer op = AccountProvider.getter().get(name);
 					if (op != null)
 						targets.add(new SanctionExecuteTarget(BanMySQL.getSanctions(op.getId()), t));
-				} else if (t instanceof Long)
-					targets.add(new SanctionExecuteTarget(Arrays.asList(BanMySQL.getSanction((Long) t)), t));
+				} else if (t instanceof Long id)
+					targets.add(new SanctionExecuteTarget(Arrays.asList(BanMySQL.getSanction(id)), t));
 			} catch (SQLException e) {
 				e.printStackTrace();
 				sendError(e);

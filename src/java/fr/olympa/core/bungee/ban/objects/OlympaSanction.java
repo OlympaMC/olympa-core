@@ -261,11 +261,11 @@ public class OlympaSanction implements Sanction {
 		}
 		ComponentBuilder cb = new ComponentBuilder(ColorUtils.color("&6Information sanction n°&e" + getId() + "\n"));
 		cb.append(ColorUtils.color("&e#" + id + "\n"));
-		cb.append(ColorUtils.color("&eJoueur: &e" + playerNames + "\n"));
-		cb.append(ColorUtils.color("&eStaff: &e" + getAuthorName() + "\n"));
-		cb.append(ColorUtils.color("&eType: &e" + getType().getName(!isPermanent()) + "\n"));
-		cb.append(ColorUtils.color("&eRaison: &e" + getReason() + "\n"));
-		cb.append(ColorUtils.color("&eCrée: &e" + Utils.timestampToDateAndHour(getCreated()) + " " + Utils.tsToShortDur(getCreated()) + "\n"));
+		cb.append(ColorUtils.color("&eJoueur: &7" + playerNames + "\n"));
+		cb.append(ColorUtils.color("&eStaff: &7" + getAuthorName() + "\n"));
+		cb.append(ColorUtils.color("&eType: &7" + getType().getName(!isPermanent()) + "\n"));
+		cb.append(ColorUtils.color("&eRaison: &7" + getReason() + "\n"));
+		cb.append(ColorUtils.color("&eCrée: &7" + Utils.timestampToDateAndHour(getCreated()) + " " + Utils.tsToShortDur(getCreated()) + "\n"));
 		if (getExpires() != 0) {
 			cb.append(ColorUtils.color("&eExpire: &7" + Utils.timestampToDateAndHour(getExpires()) + "\n"));
 			if (getExpires() >= Utils.getCurrentTimeInSeconds())
