@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
+
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.player.OlympaPlayerInformations;
 import fr.olympa.api.common.report.OlympaReport;
@@ -25,6 +27,7 @@ import fr.olympa.api.common.sql.SQLColumn;
 import fr.olympa.api.common.sql.SQLTable;
 import fr.olympa.api.common.sql.statement.OlympaStatement;
 import fr.olympa.api.common.sql.statement.StatementType;
+import fr.olympa.api.utils.Utils;
 import fr.olympa.core.common.provider.AccountProvider;
 import fr.olympa.core.common.sql.DbConnection;
 
@@ -157,10 +160,13 @@ public class ReportMySQL {
 		}
 	}
 
+	@Nullable
 	public static Stream<Entry<OlympaPlayerInformations, List<OlympaReport>>> getConnectedReports() throws SQLException {
 		Collection<OlympaPlayer> players = AccountProvider.getter().getAll();
+		if (players.isEmpty())
+			return null;
 		Map<OlympaPlayerInformations, List<OlympaReport>> data = new HashMap<>();
-		OlympaStatement opStatement = new OlympaStatement(StatementType.SELECT, tableName, new String[] { "target_id" }, players.stream().limit(players.size() - 1).toArray(String[]::new), null, null, 0, 0,
+		OlympaStatement opStatement = new OlympaStatement(StatementType.SELECT, tableName, new String[] { "target_id" }, Utils.fillArray("target_id", players.size() - 1), null, null, 0, 0,
 				new String[] {});
 		List<OlympaReport> reports = new ArrayList<>();
 		try (PreparedStatement statement = opStatement.createStatement()) {
