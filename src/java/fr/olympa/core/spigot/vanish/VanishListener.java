@@ -222,7 +222,8 @@ public class VanishListener implements Listener {
 				itemInHand.setAmount(itemInHand.getAmount() - 1);
 			else
 				player.getInventory().removeItem(itemInHand);
-		block.setType(itemInHand.getType());
+		block.setType(event.getBlockPlaced().getType());
+		block.setBlockData(event.getBlockPlaced().getBlockData());
 		event.setCancelled(true);
 		sendActionBar(player, "Bloc placé silencieusement.");
 	}
