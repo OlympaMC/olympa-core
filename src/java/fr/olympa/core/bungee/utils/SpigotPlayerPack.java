@@ -21,7 +21,7 @@ public class SpigotPlayerPack {
 	
 	private static final ResourcePackSendPacket EMPTY_RESOURCE_PACK_PACKET = new ResourcePackSendPacket(new ResourcePack("https://drive.google.com/uc?export=download&id=1ZQ9UJeGnXX7k2bT887htSaGfuGFv7wY8", "6F171A3EC8055762D4763308B9149D4078D17B2D"));
 	
-	public static boolean enabled = false;
+	public static boolean enabled = true;
 	
 	public static Map<UUID, PackInfo> hasPack = new HashMap<>();
 	public static int emptySent = 0;
