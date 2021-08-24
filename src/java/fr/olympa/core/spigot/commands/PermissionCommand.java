@@ -271,7 +271,8 @@ public class PermissionCommand extends ComplexCommand {
 
 	@Cmd(args = { "PERMISSION" }, min = 1)
 	public void seeWhoHasPerm(CommandContext cmd) {
-		OlympaPermission permission = cmd.getArgument(0);
+		Entry<String, OlympaPermission> entry = cmd.getArgument(0);
+		OlympaPermission permission = entry.getValue();
 		StringJoiner sj = new StringJoiner(", ");
 		for (OlympaGroup group : OlympaGroup.values())
 			if (permission.hasPermission(group))
