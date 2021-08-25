@@ -122,7 +122,7 @@ public class PermissionCommand extends ComplexCommand {
 		sendMessage(Prefix.DEFAULT_GOOD, "Le joueur &2%s&a n'a plus la permission bukkit &2%s&a.", target.getName(), cmd.<String>getArgument(0));
 	}
 
-	@Cmd(args = { "PERMISSION", "GROUPS|OLYMPA_PLAYERS|ALL", "save" }, min = 2, description = "Donne une permission à un groupe ou un joueur. save (3) permet de sauvegarder la permission en bdd.", syntax = "<group|player|ALL> [save]")
+	@Cmd(args = { "PERMISSION", "GROUPS|OLYMPA_PLAYERS|ALL", "noSave" }, min = 2, description = "Donne une permission à un groupe ou un joueur. save (3) permet de sauvegarder la permission en bdd.", syntax = "<group|player|ALL> [save]")
 	public void allow(CommandContext cmd) {
 		Entry<String, OlympaPermission> entry = cmd.getArgument(0);
 		String permName = entry.getKey();
@@ -170,9 +170,9 @@ public class PermissionCommand extends ComplexCommand {
 			if (cmd.getArgumentsLength() > 2 && "save".equalsIgnoreCase(cmd.getArgument(2)))
 				sendError("Impossible de sauvegarder en bdd une permission pour le groupe.");
 		} else if (op != null) {
-			if (cmd.getArgumentsLength() > 2 && "save".equalsIgnoreCase(cmd.getArgument(2))) {
+			if (cmd.getArgumentsLength() < 2 || !"noSave".equalsIgnoreCase(cmd.getArgument(2))) {
 				((OlympaPlayerObject) op).addCustomPermission(spigotPerm, OlympaCore.getInstance().getOlympaServer());
-				sendMessage(Prefix.DEFAULT_GOOD, "La permission a été sauvegarder en bdd.");
+				sendMessage(Prefix.DEFAULT_GOOD, "La permission a été sauvegarder en bdd pour les serveurs %s.", OlympaCore.getInstance().getOlympaServer().getNameCaps());
 			}
 			if (target != null) {
 				spigotPerm.allowPlayer(target);
@@ -182,7 +182,7 @@ public class PermissionCommand extends ComplexCommand {
 		}
 	}
 
-	@Cmd(args = { "PERMISSION", "GROUPS|OLYMPA_PLAYERS|ALL", "save" }, min = 2, description = "Comme /p allow mais pour enlever. all (2) désactive pour tous le monde (sauf haut-staff).", syntax = "<group|player|ALL> [save]")
+	@Cmd(args = { "PERMISSION", "GROUPS|OLYMPA_PLAYERS|ALL", "noSave" }, min = 2, description = "Comme /p allow mais pour enlever. all (2) désactive pour tous le monde (sauf haut-staff).", syntax = "<group|player|ALL> [save]")
 	public void disallow(CommandContext cmd) {
 		Entry<String, OlympaPermission> entry = cmd.getArgument(0);
 		String permName = entry.getKey();
@@ -224,8 +224,8 @@ public class PermissionCommand extends ComplexCommand {
 			if (cmd.getArgumentsLength() > 2 && "save".equalsIgnoreCase(cmd.getArgument(2)))
 				sendError("Impossible de sauvegarder en bdd une permission pour le groupe.");
 		} else if (op != null) {
-			if (cmd.getArgumentsLength() > 2 && "save".equalsIgnoreCase(cmd.getArgument(2))) {
-				((OlympaPlayerObject) op).addCustomPermission(spigotPerm, OlympaCore.getInstance().getOlympaServer());
+			if (cmd.getArgumentsLength() < 2 || !"noSave".equalsIgnoreCase(cmd.getArgument(2))) {
+				((OlympaPlayerObject) op).removeCustomPermission(spigotPerm, null);
 				sendMessage(Prefix.DEFAULT_GOOD, "La permission a été sauvegarder en bdd.");
 			}
 			if (target != null) {

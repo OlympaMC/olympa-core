@@ -50,7 +50,7 @@ public class OlympaPlayerDeserializer implements JsonDeserializer<OlympaPlayer> 
 		if (object.has("teamspeakId"))
 			player.teamspeakId = object.get("teamspeakId").getAsInt();
 		if (object.has("customPermissions"))
-			((Map<String, String>) context.deserialize(object.get("customPermissions"), Map.class)).forEach((permission, server) -> player.customPermissions.put(permission, OlympaServer.valueOf(permission)));
+			((Map<String, String>) context.deserialize(object.get("customPermissions"), Map.class)).forEach((permission, server) -> player.customPermissions.put(permission, OlympaServer.valueOf(server)));
 		return player;
 	}
 
