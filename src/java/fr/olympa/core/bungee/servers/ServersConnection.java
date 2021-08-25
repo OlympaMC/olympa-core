@@ -186,7 +186,7 @@ public class ServersConnection {
 		if (!player.isConnected())
 			return;
 		BungeeTaskManager taskHandler = (BungeeTaskManager) LinkSpigotBungee.getInstance().getTask();
-		ScheduledTask task = taskHandler.scheduleSyncRepeatingTaskAndGet("tryconnect_player_" + player.getUniqueId(), new QueueSpigotServerTask(player, olympaServer), 0, 20, TimeUnit.SECONDS);
+		ScheduledTask task = taskHandler.scheduleSyncRepeatingTaskAndGet("tryconnect_player_" + player.getUniqueId(), new QueueSpigotServerTask(player, olympaServer), 3, 20, TimeUnit.SECONDS);
 		addConnection(new WaitingConnection(player.getUniqueId(), olympaServer, task, isChangeServer));
 	}
 }
