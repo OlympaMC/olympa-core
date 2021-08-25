@@ -16,6 +16,7 @@ import fr.olympa.api.common.player.Gender;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.provider.AccountProviderAPI;
 import fr.olympa.api.common.provider.OlympaPlayerObject;
+import fr.olympa.api.common.server.OlympaServer;
 
 public class OlympaPlayerDeserializer implements JsonDeserializer<OlympaPlayer> {
 
@@ -49,7 +50,7 @@ public class OlympaPlayerDeserializer implements JsonDeserializer<OlympaPlayer> 
 		if (object.has("teamspeakId"))
 			player.teamspeakId = object.get("teamspeakId").getAsInt();
 		if (object.has("customPermissions"))
-			player.customPermissions = context.deserialize(object.get("customPermissions"), TreeMap.class);
+			((Map<String, String>) context.deserialize(object.get("customPermissions"), Map.class)).forEach((permission, server) -> player.customPermissions.put(permission, OlympaServer.valueOf(permission)));
 		return player;
 	}
 
