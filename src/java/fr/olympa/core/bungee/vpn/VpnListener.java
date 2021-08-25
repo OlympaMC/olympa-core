@@ -3,9 +3,7 @@ package fr.olympa.core.bungee.vpn;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -16,7 +14,6 @@ import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.motd.MotdListener;
 import fr.olympa.core.bungee.security.SecurityHandler;
 import fr.olympa.core.common.provider.AccountProvider;
-import fr.olympa.core.spigot.OlympaCore;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
@@ -85,14 +82,16 @@ public class VpnListener implements Listener {
 				if (lastConnected < online)
 					lastConnected = online;
 				long time = Utils.getCurrentTimeInSeconds();
-				if (time - 10 > lastModif) {
+				if (time - 30 > lastModif) {
 					lastModif = time;
-					if (objective < lastConnected)
-						lastConnected--;
-					else if (objective / 2 > lastConnected)
-						lastConnected += new Random().nextInt(5) + 1;
-					else
-						lastConnected++;
+					if (objective != lastConnected) {
+						if (objective < lastConnected)
+							lastConnected--;
+						else if (objective / 2 > lastConnected)
+							lastConnected += new Random().nextInt(5) + 1;
+						else
+							lastConnected++;
+					}
 					
 				}
 			}

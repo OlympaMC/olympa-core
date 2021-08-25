@@ -1,9 +1,15 @@
 package fr.olympa.core.spigot.vanish;
 
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -24,6 +30,22 @@ import fr.olympa.core.spigot.OlympaCore;
 public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 
 	NametagHandler handler;
+	Map<String, TriConsumer<Player, OlympaPlayer, Boolean>> consumerRegister = new HashMap<>();
+
+	/**
+	 * @param name
+	 * @param biConsumer key = olympaPlayer value = willBecomeVanished
+	 * @return false if other handler has already register with same name. Parameters override this old entry
+	 */
+	@Override
+	public boolean registerHandler(String name, TriConsumer<Player, OlympaPlayer, Boolean> biConsumer) {
+		return consumerRegister.put(name, biConsumer) == null;
+	}
+
+	@Override
+	public boolean unRegisterHandler(String name) {
+		return consumerRegister.remove(name) != null;
+	}
 
 	@Override
 	public boolean enable(OlympaCore plugin) {
@@ -77,6 +99,7 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 		if (showMessage)
 			Prefix.DEFAULT_BAD.sendMessage(player, "Tu n'es plus en vanish.");
 		olympaPlayer.setVanish(false);
+		consumerRegister.values().forEach(consumer -> consumer.accept(player, olympaPlayer, false));
 	}
 
 	@Override
@@ -102,6 +125,7 @@ public class VanishHandler implements IVanishApi, ModuleApi<OlympaCore> {
 		if (showMessage)
 			Prefix.DEFAULT_GOOD.sendMessage(player, "Tu es désormais en vanish.");
 		olympaPlayer.setVanish(true);
+		consumerRegister.values().forEach(consumer -> consumer.accept(player, olympaPlayer, true));
 	}
 
 	//	@Override
