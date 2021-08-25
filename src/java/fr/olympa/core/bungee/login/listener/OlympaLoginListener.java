@@ -10,7 +10,6 @@ import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
-import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import fr.olympa.core.bungee.utils.SpigotPlayerPack;
 import fr.olympa.core.common.provider.AccountProvider;
@@ -100,7 +99,7 @@ public class OlympaLoginListener implements Listener {
 						olympaServer = OlympaServer.DEV;
 					if (olympaServer != null) {
 						ServerInfo server = ServersConnection.getBestServer(olympaServer, null);
-						if (server == null || !MonitorServers.getMonitor(server).isOpen()) {
+						if (server == null || !OlympaBungee.getInstance().getMonitoring().getMonitor(server).isOpen()) {
 							tryConnect = true;
 							ServersConnection.tryConnect(player, olympaServer, true);
 						} else {

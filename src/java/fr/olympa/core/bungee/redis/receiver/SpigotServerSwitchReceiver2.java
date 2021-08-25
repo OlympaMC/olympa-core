@@ -5,7 +5,6 @@ import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -27,7 +26,7 @@ public class SpigotServerSwitchReceiver2 extends JedisPubSub {
 		if (server == null)
 			serverName = args[1];
 		else {
-			ServerInfoAdvancedBungee monitorInfo = MonitorServers.getMonitor(server);
+			ServerInfoAdvancedBungee monitorInfo = OlympaBungee.getInstance().getMonitoring().getMonitor(server);
 			if (monitorInfo == null)
 				serverName = Utils.capitalize(server.getName());
 			else

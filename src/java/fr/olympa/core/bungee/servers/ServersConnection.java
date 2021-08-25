@@ -25,6 +25,7 @@ import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.common.sort.Sorting;
 import fr.olympa.api.spigot.utils.ProtocolAPI;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -68,7 +69,7 @@ public class ServersConnection {
 	}
 
 	public static boolean canPlayerConnect(ServerInfo server) {
-		ServerInfoAdvanced monitor = MonitorServers.getMonitor(server);
+		ServerInfoAdvanced monitor = OlympaBungee.getInstance().getMonitoring().getMonitor(server);
 		return monitor != null && monitor.getStatus().canConnect();
 	}
 
@@ -78,9 +79,9 @@ public class ServersConnection {
 
 	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except, @Nullable ProxiedPlayer w8forConnect) {
 		if (!olympaServer.hasMultiServers())
-			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(ServerInfoAdvancedBungee::getServerInfo).orElse(null);
+			return OlympaBungee.getInstance().getMonitoring().getServers(olympaServer).values().stream().findFirst().map(ServerInfoAdvancedBungee::getServerInfo).orElse(null);
 
-		List<ServerInfoAdvancedBungee> servers = MonitorServers.getServers(olympaServer).values().stream()
+		List<ServerInfoAdvancedBungee> servers = OlympaBungee.getInstance().getMonitoring().getServers(olympaServer).values().stream()
 				.filter(x -> x.hasMinimalInfo() && x.getStatus().canConnect() && (except == null || !except.getName().equals(x.getName()))
 						&& (!x.getOlympaServer().hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
 				.sorted(new Sorting<>(Map.of(server -> server.getOnlinePlayers(), false, server -> server.getServerId(), true)))
@@ -103,8 +104,8 @@ public class ServersConnection {
 		}
 
 		// Ouvre un serveur
-		ServerInfo serverToOpen = MonitorServers.getServersMap().entrySet().stream().filter(e -> (except == null || !e.getKey().getName().equals(except.getName()))
-				&& MonitorServers.getServers(olympaServer).values().stream().anyMatch(mInfo -> mInfo.getName().equals(e.getKey().getName())
+		ServerInfo serverToOpen = OlympaBungee.getInstance().getMonitoring().getServersMap().entrySet().stream().filter(e -> (except == null || !e.getKey().getName().equals(except.getName()))
+				&& OlympaBungee.getInstance().getMonitoring().getServers(olympaServer).values().stream().anyMatch(mInfo -> mInfo.getName().equals(e.getKey().getName())
 						&& mInfo.getStatus().equals(ServerStatus.CLOSE) && mInfo.isUsualError()))
 				.map(Entry::getKey).findFirst().orElse(null);
 		if (serverToOpen != null) {

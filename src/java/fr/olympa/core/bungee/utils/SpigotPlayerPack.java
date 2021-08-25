@@ -12,7 +12,6 @@ import fr.olympa.core.bungee.packets.ResourcePackSendPacket;
 import fr.olympa.core.bungee.packets.ResourcePackStatusPacket;
 import fr.olympa.core.bungee.packets.ResourcePackStatusPacket.ResourcePackStatus;
 import fr.olympa.core.bungee.redis.RedisBungeeSend;
-import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
@@ -49,8 +48,8 @@ public class SpigotPlayerPack {
 	public static void serverConnected(ProxiedPlayer player, Server server) {
 		if (!enabled) return;
 		if (!hasPack.containsKey(player.getUniqueId())) return;
-		OlympaServer connectingServer = MonitorServers.getMonitor(server.getInfo()).getOlympaServer();
-		if (!connectingServer.hasPack() && !MonitorServers.getMonitor(hasPack.get(player.getUniqueId()).server()).getOlympaServer().equals(connectingServer)) {
+		OlympaServer connectingServer = OlympaBungee.getInstance().getMonitoring().getMonitor(server.getInfo()).getOlympaServer();
+		if (!connectingServer.hasPack() && !OlympaBungee.getInstance().getMonitoring().getMonitor(hasPack.get(player.getUniqueId()).server()).getOlympaServer().equals(connectingServer)) {
 			hasPack.remove(player.getUniqueId());
 			player.unsafe().sendPacket(EMPTY_RESOURCE_PACK_PACKET);
 			emptySent++;

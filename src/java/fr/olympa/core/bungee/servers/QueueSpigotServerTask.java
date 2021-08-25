@@ -6,6 +6,7 @@ import fr.olympa.api.common.server.OlympaServer;
 import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -47,7 +48,7 @@ public class QueueSpigotServerTask implements Runnable {
 			return;
 		}
 		String serverName;
-		ServerInfoAdvanced monitorInfo = MonitorServers.getMonitor(server);
+		ServerInfoAdvanced monitorInfo = OlympaBungee.getInstance().getMonitoring().getMonitor(server);
 		if (monitorInfo == null)
 			serverName = Utils.capitalize(server.getName());
 		else

@@ -6,7 +6,7 @@ import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.spigot.utils.TPSUtils;
-import fr.olympa.core.bungee.servers.MonitorServers;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -20,10 +20,13 @@ public class ListServerCommand extends BungeeCommand {
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		TxtComponentBuilder out = new TxtComponentBuilder("&6Liste des serveurs :").extraSpliterBN();
-		MonitorServers.getServersSorted().forEach(serverInfo -> {
+		OlympaBungee.getInstance().getMonitoring().getServersSorted().forEach(serverInfo -> {
 			try {
 				boolean hasFullInfo = serverInfo.hasFullInfos();
 				ServerStatus status = serverInfo.getStatus();
+				if (serverInfo.isUsualError()) {
+					return;
+				}
 				TxtComponentBuilder out2 = new TxtComponentBuilder("&7[%s&7]", status.getNameColored()).extraSpliter(" ");
 				out2.extra("%s%s", status.getColor(), serverInfo.getName());
 				if (serverInfo.getOnlinePlayers() != null)

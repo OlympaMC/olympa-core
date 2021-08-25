@@ -13,7 +13,7 @@ import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
-import fr.olympa.core.bungee.servers.MonitorServers;
+import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
 import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
@@ -34,7 +34,7 @@ public class ListPlayerCommand extends BungeeCommand {
 
 		Map<ServerInfoAdvancedBungee, List<ProxiedPlayer>> servers = new HashMap<>();
 		globalPlayers.forEach(player -> {
-			servers.computeIfAbsent(player.getServer() == null ? null : MonitorServers.getMonitor(player.getServer().getInfo()), server -> new ArrayList<>()).add(player);
+			servers.computeIfAbsent(player.getServer() == null ? null : OlympaBungee.getInstance().getMonitoring().getMonitor(player.getServer().getInfo()), server -> new ArrayList<>()).add(player);
 		});
 
 		boolean canSeeVanish = OlympaCorePermissionsBungee.VANISH_SEE_ADMIN.hasSenderPermissionBungee(sender);

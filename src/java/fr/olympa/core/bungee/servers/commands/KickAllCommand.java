@@ -10,7 +10,6 @@ import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -33,7 +32,7 @@ public class KickAllCommand extends BungeeCommand {
 			sendError("Serveur introuvable.");
 			return;
 		}
-		List<ServerInfo> lobbies = MonitorServers.getServers(OlympaServer.LOBBY).values().stream()
+		List<ServerInfo> lobbies = OlympaBungee.getInstance().getMonitoring().getServers(OlympaServer.LOBBY).values().stream()
 				.filter(x -> x.hasMinimalInfo() && x.getStatus().canConnect() && !x.getName().equals(server.getName())
 						&& x.getMaxPlayers() * 0.9 > x.getOnlinePlayers())/*.sorted((o1, o2) -> o1.get)*/.map(ServerInfoAdvancedBungee::getServerInfo).toList();
 		if (lobbies.isEmpty()) {

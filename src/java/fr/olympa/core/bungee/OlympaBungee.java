@@ -197,7 +197,7 @@ public class OlympaBungee extends OlympaBungeeCore {
 			new AllPluginsCommand(this).register();
 			new BanListCommand(this).register();
 
-			MonitorServers.init(this);
+			setMonitoring(new MonitorServers(this));
 			SQLGroup.init();
 
 			CacheStats.addCache("VPN", VpnHandler.cache);
@@ -281,11 +281,11 @@ public class OlympaBungee extends OlympaBungeeCore {
 
 	@Override
 	public Collection<ServerInfoAdvanced> getMonitorServers() {
-		return MonitorServers.getServers().stream().map(monitorInfoBungee -> (ServerInfoAdvanced) monitorInfoBungee).collect(Collectors.toList());
+		return getMonitoring().getServers().stream().map(monitorInfoBungee -> (ServerInfoAdvanced) monitorInfoBungee).collect(Collectors.toList());
 	}
 
 	@Override
 	public Map<OlympaServer, Map<Integer, ServerInfoAdvancedBungee>> getServersByTypeWithBungee() {
-		return MonitorServers.getServersByTypeWithBungee();
+		return getMonitoring().getServersByTypeWithBungee();
 	}
 }

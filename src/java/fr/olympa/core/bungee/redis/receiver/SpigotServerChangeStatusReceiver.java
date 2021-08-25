@@ -5,7 +5,6 @@ import java.util.Map;
 import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.bungee.servers.ServersConnection;
 import net.md_5.bungee.api.config.ServerInfo;
 import redis.clients.jedis.JedisPubSub;
@@ -19,10 +18,10 @@ public class SpigotServerChangeStatusReceiver extends JedisPubSub {
 		if (serverInfo != null) {
 			ServerStatus status = ServerStatus.get(Integer.parseInt(args[1]));
 			ServerStatus previous = ServerStatus.UNKNOWN;
-			ServerInfoAdvancedBungee info = MonitorServers.getMonitor(serverInfo);
+			ServerInfoAdvancedBungee info = OlympaBungee.getInstance().getMonitoring().getMonitor(serverInfo);
 			String serverName;
 			if (info != null) {
-				Map<Integer, ServerInfoAdvancedBungee> previousInfoServers = MonitorServers.getServers(info.getOlympaServer());
+				Map<Integer, ServerInfoAdvancedBungee> previousInfoServers = OlympaBungee.getInstance().getMonitoring().getServers(info.getOlympaServer());
 				if (previousInfoServers != null) {
 					ServerInfoAdvancedBungee previousInfo = previousInfoServers.get(info.getServerId());
 					if (previousInfo != null)
@@ -30,7 +29,7 @@ public class SpigotServerChangeStatusReceiver extends JedisPubSub {
 				}
 				info.setStatus(status);
 				serverName = info.getName();
-				MonitorServers.updateServer(serverInfo, info.getOlympaServer(), info);
+				OlympaBungee.getInstance().getMonitoring().updateServer(serverInfo, info.getOlympaServer(), info);
 			} else
 				serverName = serverInfo.getName();
 			OlympaBungee.getInstance().sendMessage("§7Serveur §e" + serverName + "§7 : " + previous.getNameColored() + " §7-> " + status.getNameColored() + " (via redis)");

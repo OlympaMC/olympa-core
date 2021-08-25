@@ -13,7 +13,6 @@ import fr.olympa.api.common.plugin.PluginInfoAdvanced;
 import fr.olympa.api.common.server.ServerInfoAdvanced;
 import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.servers.MonitorServers;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -31,7 +30,7 @@ public class CreditCommand extends BungeeCommand {
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		TxtComponentBuilder out = new TxtComponentBuilder("&eListe non exhaustive des développeurs de nos plugins > ").extraSpliter("\n\n");
-		Collection<ServerInfoAdvancedBungee> allServers = MonitorServers.getServers();
+		Collection<ServerInfoAdvancedBungee> allServers = OlympaBungee.getInstance().getMonitoring().getServers();
 		List<String> serversNames = allServers.stream().filter(mib -> mib.hasFullInfos()).map(mib -> mib.getOlympaServer().getNameCaps()).distinct().collect(Collectors.toList());
 		ServerInfoAdvancedBungee bungeeServerInfo = new ServerInfoAdvancedBungee(OlympaBungee.getInstance());
 		List<String> authorPluginOlympaList = new ArrayList<>();

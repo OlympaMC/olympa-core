@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
 
+import fr.olympa.api.bungee.servers.BungeeMonitoring;
 import fr.olympa.api.bungee.task.BungeeTaskManager;
 import fr.olympa.api.common.redis.RedisClass;
 import fr.olympa.api.common.server.OlympaServer;
@@ -25,20 +26,38 @@ import fr.olympa.core.bungee.redis.receiver.SpigotAskMonitorInfoReceiver;
 import io.netty.handler.timeout.ReadTimeoutException;
 import net.md_5.bungee.api.config.ServerInfo;
 
-public class MonitorServers {
+public class MonitorServers implements BungeeMonitoring {
 
-	private static Map<OlympaServer, Map<Integer, ServerInfoAdvancedBungee>> olympaServers = Arrays.stream(OlympaServer.values()).collect(ImmutableMap.toImmutableMap(x -> x, x -> new HashMap<>()));
-	private static Map<ServerInfo, ServerInfoAdvancedBungee> bungeeServers = new ConcurrentHashMap<>();
+	private Map<OlympaServer, Map<Integer, ServerInfoAdvancedBungee>> olympaServers = Arrays.stream(OlympaServer.values()).collect(ImmutableMap.toImmutableMap(x -> x, x -> new HashMap<>()));
+	private Map<ServerInfo, ServerInfoAdvancedBungee> bungeeServers = new ConcurrentHashMap<>();
 
-	public static Map<Integer, ServerInfoAdvancedBungee> getServers(OlympaServer server) {
+
+//	public void init(OlympaBungee plugin) {
+//		new MonitorServers(plugin);
+//	}
+
+	public MonitorServers(OlympaBungee plugin) {
+		BungeeTaskManager task = plugin.getTask();
+		task.scheduleSyncRepeatingTask("monitor_serveurs", () -> {
+			for (ServerInfo serverInfo : plugin.getProxy().getServersCopy().values())
+				updateServer(serverInfo, false, null);
+			if (Utils.getCurrentTimeInSeconds() - SpigotAskMonitorInfoReceiver.lastTimeAsk > 30)
+				RedisClass.SERVER_INFO_ADVANCED.sendServerInfos(bungeeServers.values().stream().map(mib -> mib).collect(Collectors.toList()));
+		}, 1, 25, TimeUnit.SECONDS);
+	}
+	
+	@Override
+	public Map<Integer, ServerInfoAdvancedBungee> getServers(OlympaServer server) {
 		return olympaServers.get(server);
 	}
 
-	public static Map<OlympaServer, Map<Integer, ServerInfoAdvancedBungee>> getServersByType() {
+	@Override
+	public Map<OlympaServer, Map<Integer, ServerInfoAdvancedBungee>> getServersByType() {
 		return olympaServers;
 	}
 
-	public static Map<OlympaServer, Map<Integer, ServerInfoAdvancedBungee>> getServersByTypeWithBungee() {
+	@Override
+	public Map<OlympaServer, Map<Integer, ServerInfoAdvancedBungee>> getServersByTypeWithBungee() {
 		Map<OlympaServer, Map<Integer, ServerInfoAdvancedBungee>> map = new HashMap<>();
 		Map<Integer, ServerInfoAdvancedBungee> map2nd = new HashMap<>();
 		map2nd.put(1, new ServerInfoAdvancedBungee(OlympaBungee.getInstance()));
@@ -47,22 +66,26 @@ public class MonitorServers {
 		return olympaServers;
 	}
 
-	public static ServerInfoAdvancedBungee getMonitor(ServerInfo server) {
+	@Override
+	public ServerInfoAdvancedBungee getMonitor(ServerInfo server) {
 		return bungeeServers.get(server);
 	}
 
-	public static Collection<ServerInfoAdvancedBungee> getServers() {
+	@Override
+	public Collection<ServerInfoAdvancedBungee> getServers() {
 		return bungeeServers.values();
 	}
 
-	public static Collection<ServerInfoAdvancedBungee> getServersWithBungee() {
+	@Override
+	public Collection<ServerInfoAdvancedBungee> getServersWithBungee() {
 		List<ServerInfoAdvancedBungee> list = new ArrayList<>();
 		list.add(new ServerInfoAdvancedBungee(OlympaBungee.getInstance()));
 		list.addAll(bungeeServers.values());
 		return bungeeServers.values();
 	}
 
-	public static Stream<ServerInfoAdvancedBungee> getServersSorted() {
+	@Override
+	public Stream<ServerInfoAdvancedBungee> getServersSorted() {
 		return bungeeServers.values().stream().sorted((o1, o2) -> {
 			int i = Integer.compare(o1.getStatus().ordinal(), o2.getStatus().ordinal());
 			if (i == 0)
@@ -75,11 +98,13 @@ public class MonitorServers {
 		});
 	}
 
-	public static Map<ServerInfo, ServerInfoAdvancedBungee> getServersMap() {
+	@Override
+	public Map<ServerInfo, ServerInfoAdvancedBungee> getServersMap() {
 		return bungeeServers;
 	}
 
-	public static void updateServer(ServerInfo serverInfo, boolean instantUpdate, Consumer<ServerInfo> sucess) {
+	@Override
+	public void updateServer(ServerInfo serverInfo, boolean instantUpdate, Consumer<ServerInfo> sucess) {
 		long nano = System.nanoTime();
 		serverInfo.ping((result, error) -> {
 			ServerInfoAdvancedBungee oldMonitor = getMonitor(serverInfo);
@@ -103,21 +128,9 @@ public class MonitorServers {
 		});
 	}
 
-	public static void updateServer(ServerInfo serverInfo, OlympaServer olympaServer, ServerInfoAdvancedBungee info) {
+	@Override
+	public void updateServer(ServerInfo serverInfo, OlympaServer olympaServer, ServerInfoAdvancedBungee info) {
 		bungeeServers.put(serverInfo, info);
 	}
 
-	public static void init(OlympaBungee plugin) {
-		new MonitorServers(plugin);
-	}
-
-	private MonitorServers(OlympaBungee plugin) {
-		BungeeTaskManager task = plugin.getTask();
-		task.scheduleSyncRepeatingTask("monitor_serveurs", () -> {
-			for (ServerInfo serverInfo : plugin.getProxy().getServersCopy().values())
-				updateServer(serverInfo, false, null);
-			if (Utils.getCurrentTimeInSeconds() - SpigotAskMonitorInfoReceiver.lastTimeAsk > 30)
-				RedisClass.SERVER_INFO_ADVANCED.sendServerInfos(bungeeServers.values().stream().map(mib -> mib).collect(Collectors.toList()));
-		}, 1, 25, TimeUnit.SECONDS);
-	}
 }

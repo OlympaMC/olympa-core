@@ -15,7 +15,7 @@ import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.common.sort.Sorting;
 import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.core.bungee.servers.MonitorServers;
+import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -84,9 +84,9 @@ public class ServerConnection {
 	@Deprecated
 	public ServerInfoAdvancedBungee getBestServer(OlympaPlayer olympaPlayer, ProtocolAPI protocol) {
 		if (!olympaServer.hasMultiServers() && otherServer == null)
-			return MonitorServers.getServers(olympaServer).values().stream().filter(serv -> serv.canConnect(olympaPlayer)).findFirst().orElse(null);
+			return OlympaBungee.getInstance().getMonitoring().getServers(olympaServer).values().stream().filter(serv -> serv.canConnect(olympaPlayer)).findFirst().orElse(null);
 		List<ServerInfoAdvancedBungee> serversCanBeReady;
-		serversCanBeReady = MonitorServers.getServers(olympaServer).values().stream().filter(serv -> serv.isOpen()).collect(Collectors.toList());
+		serversCanBeReady = OlympaBungee.getInstance().getMonitoring().getServers(olympaServer).values().stream().filter(serv -> serv.isOpen()).collect(Collectors.toList());
 		if (serversCanBeReady.isEmpty()) {
 			player.sendMessage(Prefix.QUEUE.formatMessageB("&cAucun serveur &4%s&c n'est disponible.", olympaServer.getNameCaps()));
 			// TODO open server
@@ -127,7 +127,7 @@ public class ServerConnection {
 	public ServerInfo findOther() {
 		if (!olympaServer.hasMultiServers())
 			return null;
-		List<ServerInfoAdvancedBungee> monitorInfos = MonitorServers.getServers(olympaServer).entrySet().stream()
+		List<ServerInfoAdvancedBungee> monitorInfos = OlympaBungee.getInstance().getMonitoring().getServers(olympaServer).entrySet().stream()
 				.filter(e -> (otherServer == null || !e.getValue().getServerInfo().equals(otherServer)) && e.getValue().getStatus().canConnect()).map(e -> e.getValue())
 				.collect(Collectors.toList());
 		if (monitorInfos.isEmpty())

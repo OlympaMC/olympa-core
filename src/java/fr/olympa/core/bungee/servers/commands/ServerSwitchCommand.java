@@ -8,7 +8,6 @@ import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.servers.MonitorServers;
 import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -34,7 +33,7 @@ public class ServerSwitchCommand extends BungeeComplexCommand {
 		} else
 			target = cmd.getArgument(1);
 		ProxiedPlayer finalTarget = target;
-		ServerInfoAdvancedBungee monitorInfo = MonitorServers.getMonitor(server);
+		ServerInfoAdvancedBungee monitorInfo = OlympaBungee.getInstance().getMonitoring().getMonitor(server);
 		if (monitorInfo == null) {
 			sendError("Impossible d'aller vers le serveur §2%s§a, son état est inconnu.", Utils.capitalize(server.getName()));
 			return;
