@@ -27,6 +27,7 @@ public class ConnectionQueueListener implements Listener {
 				event.setCancelReason(BungeeUtils.connectScreen("&cIl y a déjà une connexion en attente avec le pseudo %s, réessaye dans %s.", name, QueueHandler.getTimeToW8String(name)));
 			else if (timeToW8 == -2)
 				event.setCancelReason(BungeeUtils.connectScreen("&cL'attente pour te connecter est de &4%s&c\n&4Réessaye plus tard.", QueueHandler.getQueueTimeString()));
+			return;
 		}
 
 		while (QueueHandler.isInQueue(name) && connection.isConnected())
@@ -34,7 +35,7 @@ public class ConnectionQueueListener implements Listener {
 				Thread.sleep(timeToW8);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-				event.setCancelReason(BungeeUtils.connectScreen("§cUne erreur est survenue."));
+				event.setCancelReason(BungeeUtils.connectScreen("§cUne erreur est survenue avec la file d'attente\n&4Code d'erreur : #BungeeConnectionQueue."));
 				event.setCancelled(true);
 				return;
 			}

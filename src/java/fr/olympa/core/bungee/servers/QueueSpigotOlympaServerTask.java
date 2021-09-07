@@ -44,7 +44,7 @@ public class QueueSpigotOlympaServerTask implements Runnable {
 		//		ServerInfo server = ServersConnection.getBestServer(olympaServer, null);
 		ServerInfo server = ProxyServer.getInstance().getServerInfo(serverInfo.getName());
 		if (server == null) {
-			TextComponent text = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_BAD + ColorUtils.color("Le serveur " + olympaServer.getNameCaps() + " n'est actuellement disponible, merci de patienter...")));
+			TextComponent text = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_BAD + ColorUtils.color("Le serveur " + olympaServer.getNameCaps() + " n'est actuellement pas disponible, merci de patienter...")));
 			text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(ColorUtils.color("&cClique ici pour sortir de la file d'attente"))));
 			text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/leavequeue"));
 			proxiedPlayer.sendMessage(text);
@@ -57,7 +57,7 @@ public class QueueSpigotOlympaServerTask implements Runnable {
 		else
 			serverName = monitorInfo.getHumanName();
 		if (!ServersConnection.canPlayerConnect(server)) {
-			TextComponent text = new TextComponent(TextComponent.fromLegacyText(Prefix.DEFAULT_BAD + ColorUtils.color("Tu es dans la file d'attente du &4" + olympaServer.getNameCaps() + "&c...")));
+			TextComponent text = new TextComponent(Prefix.QUEUE.formatMessageB("En attente du &4" + serverName + "&c... &7[&4QUITTER&7]&c.", serverName));
 			text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(ColorUtils.color("&cClique ici pour sortir de la file d'attente"))));
 			text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/leavequeue"));
 			proxiedPlayer.sendMessage(text);
@@ -72,11 +72,11 @@ public class QueueSpigotOlympaServerTask implements Runnable {
 		proxiedPlayer.connect(server, (succes, error) -> {
 			if (succes)
 				proxiedPlayer.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_GOOD, "Connexion au serveur %s établie !", serverName));
-			else {
-				proxiedPlayer.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Échec de la connexion au serveur &4%s&c: &4%s&c.", serverName, error.getMessage()));
+			else if (error != null) {
+				proxiedPlayer.sendMessage(TxtComponentBuilder.of(Prefix.DEFAULT_BAD, "Échec de la connexion au serveur &4%s&c: &4%s&c. ", serverName, error.getMessage()));
 				ServersConnection.removeTryToConnect(proxiedPlayer);
 			}
-		}, false, Reason.PLUGIN, 10000);
+		}, false, Reason.PLUGIN, 60000);
 	}
 
 }
