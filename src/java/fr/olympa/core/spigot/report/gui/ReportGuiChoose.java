@@ -28,7 +28,7 @@ public class ReportGuiChoose extends OlympaGUI {
 		if (potentials.isEmpty())
 			potentials = Bukkit.getOnlinePlayers().stream().limit(6 * 9).collect(Collectors.toList());
 		List<OlympaItemBuild> items = potentials.stream().map(p -> new OlympaItemBuild("&cReport &4" + p.getName()).skullowner(p)).collect(Collectors.toList());
-		ReportGuiChoose gui = new ReportGuiChoose(items.size() / 9, "&6Report");
+		ReportGuiChoose gui = new ReportGuiChoose(items.size(), "&6Report");
 		int slot = gui.inv.getSize() / 2 - items.size() / 2;
 		for (OlympaItemBuild item : items)
 			gui.inv.setItem(slot++, item.build());
