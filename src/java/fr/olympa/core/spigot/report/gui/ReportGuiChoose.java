@@ -9,11 +9,13 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import fr.olympa.api.spigot.gui.OlympaGUI;
 import fr.olympa.api.spigot.item.OlympaItemBuild;
+import fr.olympa.api.utils.Prefix;
 
 public class ReportGuiChoose extends OlympaGUI {
 
@@ -47,7 +49,13 @@ public class ReportGuiChoose extends OlympaGUI {
 	public boolean onClick(Player player, ItemStack current, int slot, ClickType click) {
 		if (current == null)
 			return true;
-		OfflinePlayer target = ((SkullMeta) current.getItemMeta()).getOwningPlayer();
+		SkullMeta itemMeta = ((SkullMeta) current.getItemMeta());
+		OfflinePlayer target = itemMeta.getOwningPlayer();
+		if (target == null) { // TODO It is always null, need to fix this (item is player head with good texture)
+			Prefix.DEFAULT_BAD.sendMessage(player, "Le joueur est introuvable.");
+			player.closeInventory(Reason.PLUGIN);
+			return true;
+		}
 		ReportGui.open(player, target, null);
 		return true;
 	}
