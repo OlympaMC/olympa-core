@@ -23,27 +23,26 @@ public class ReportGuiChoose extends OlympaGUI {
 		EntityDamageEvent lastDmgCause = player.getLastDamageCause();
 		if (player.getKiller() != null)
 			potentials.add(player.getKiller());
-		if (lastDmgCause != null && lastDmgCause.getEntity() instanceof Player)
-			potentials.add((Player) lastDmgCause.getEntity());
+		if (lastDmgCause != null && lastDmgCause.getEntity() instanceof Player lastDmgPlayer)
+			potentials.add(lastDmgPlayer);
 		if (potentials.isEmpty())
 			potentials = Bukkit.getOnlinePlayers().stream().limit(6 * 9).collect(Collectors.toList());
 		List<OlympaItemBuild> items = potentials.stream().map(p -> new OlympaItemBuild("&cReport &4" + p.getName()).skullowner(p)).collect(Collectors.toList());
-		ReportGuiChoose gui = new ReportGuiChoose("&6Report", items.size() / 9);
+		ReportGuiChoose gui = new ReportGuiChoose(items.size() / 9, "&6Report");
 		int slot = gui.inv.getSize() / 2 - items.size() / 2;
 		for (OlympaItemBuild item : items)
 			gui.inv.setItem(slot++, item.build());
 		gui.create(player);
 	}
 
-	public ReportGuiChoose(String name, int rows) {
-		super(name, rows);
+	public ReportGuiChoose(int placeNeeded, String name) {
+		super(placeNeeded, name);
 	}
 
 	@Override
 	public boolean onClick(Player player, ItemStack current, int slot, ClickType click) {
 		if (current == null)
 			return true;
-
 		OfflinePlayer target = ((SkullMeta) current.getItemMeta()).getOwningPlayer();
 		ReportGui.open(player, target, null);
 		return true;
