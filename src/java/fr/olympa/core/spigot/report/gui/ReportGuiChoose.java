@@ -30,8 +30,12 @@ public class ReportGuiChoose extends OlympaGUI {
 		List<OlympaItemBuild> items = potentials.stream().map(p -> new OlympaItemBuild("&cReport &4" + p.getName()).skullowner(p)).collect(Collectors.toList());
 		ReportGuiChoose gui = new ReportGuiChoose(items.size(), "&6Report");
 		int slot = gui.inv.getSize() / 2 - items.size() / 2;
-		for (OlympaItemBuild item : items)
-			gui.inv.setItem(slot++, item.build());
+		for (OlympaItemBuild item : items) {
+			int finalSlotForItem = slot;
+			item.buildPlayerHead(itemFinal -> gui.inv.setItem(finalSlotForItem, itemFinal));
+			slot++;
+//			gui.inv.setItem(slot++, item.build());
+		}
 		gui.create(player);
 	}
 
