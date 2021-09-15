@@ -105,7 +105,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 				String statusString = maintconfig.getString("settings.status");
 				maintenanceStatus = ServerStatus.get(statusString);
 				String statusmsg = "";
-				if (message.equals(""))
+				if (!message.equals(""))
 					statusmsg = "(" + message.replace("\n", "") + ")";
 				sendMessage(ColorUtils.color("&6Le mode maintenance est en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
 				break;

@@ -28,7 +28,7 @@ public class VpnListener implements Listener {
 	private int lastConnected = 0;
 	private long lastModif = 0;
 	private LocalTime start = LocalTime.parse("08:00:00");
-	private LocalTime end = LocalTime.parse("22:00:00");
+	private LocalTime end = LocalTime.parse("23:00:00");
 	private Set<String> hostingIp = new HashSet<>();
 	private Set<String> notHostingIp= new HashSet<>();
 	
@@ -82,7 +82,7 @@ public class VpnListener implements Listener {
 				if (lastConnected < online)
 					lastConnected = online;
 				long time = Utils.getCurrentTimeInSeconds();
-				if (time - 30 > lastModif) {
+				if (time - 120 > lastModif) {
 					lastModif = time;
 					if (objective != lastConnected) {
 						if (objective < lastConnected)
@@ -96,7 +96,7 @@ public class VpnListener implements Listener {
 				}
 			}
 			ping.getPlayers().setOnline(lastConnected);
-			OlympaBungee.getInstance().sendMessage("&eSending fake online count to ip hosting %s > %d for %d player connected", connection.getAddress().getAddress().getHostAddress(), lastConnected, online);
+			//OlympaBungee.getInstance().sendMessage("&eSending fake online count to ip hosting %s > %d for %d player connected", connection.getAddress().getAddress().getHostAddress(), lastConnected, online);
 		}
 	}
 
@@ -114,7 +114,7 @@ public class VpnListener implements Listener {
 			return;
 		}
 		if (olympaVpn == null) {
-			event.setCancelReason(BungeeUtils.connectScreen("&cImpossible de se connecter au serveur avec ton IP. Contacte un Développeur ou Admin."));
+			event.setCancelReason(BungeeUtils.connectScreen("&cImpossible de se connecter au serveur avec ton IP. Contact un Développeur ou Admin."));
 			event.setCancelled(true);
 			return;
 		}

@@ -14,6 +14,7 @@ import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.security.SecurityHandler;
 import net.md_5.bungee.api.Favicon;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -55,7 +56,7 @@ public class MotdListener implements Listener {
 		}
 		if (connectIp == null || !connectIp.equals("localhost")) {
 			// Vérifie si l'adresse est correct
-			if (connectIp == null || !connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net")) {
+			if (connectIp == null || !connectDomain.equalsIgnoreCase("olympa.fr") && SecurityHandler.getInstance().checkCorrectEntredIp) {
 				ping.setDescriptionComponent(new TextComponent(MOTD_BASE + Chat.centerMotD("§4§l⚠ §cUtilise la bonne IP: §4§nplay.olympa.fr§r")));
 				return;
 			}
