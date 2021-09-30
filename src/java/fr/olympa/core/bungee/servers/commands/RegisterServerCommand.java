@@ -2,11 +2,13 @@ package fr.olympa.core.bungee.servers.commands;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.SocketAddress;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+
 import net.md_5.bungee.Util;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -19,11 +21,19 @@ import net.md_5.bungee.config.YamlConfiguration;
 
 public class RegisterServerCommand extends BungeeCommand {
 	
+	private Method load;
+	
 	public RegisterServerCommand(Plugin plugin) {
 		super(plugin, "registerserver", "Ajoute un serveur à la volée et le sauvegarde en config.", OlympaCorePermissionsBungee.SERVER_REGISTER_COMMAND);
 		
 		minArg = 3;
 		usageString = "<server name> <server ip i.e. localhost:11111> <motd>";
+		
+		try {
+			load = Class.forName("io.github.waterfallmc.waterfall.conf.WaterfallConfiguration").getDeclaredMethod("load");
+		}catch (ReflectiveOperationException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -54,6 +64,14 @@ public class RegisterServerCommand extends BungeeCommand {
 			bungeeConfig.set("servers." + serverInfo.getName() + ".restricted", false);
 			
 			configurationProvider.save(bungeeConfig, file);
+			if (load != null) {
+				try {
+					load.invoke(ProxyServer.getInstance().getConfig());
+				}catch (ReflectiveOperationException e) {
+					e.printStackTrace();
+				}
+			}
+			
 			sendSuccess("Serveur %s ajouté à la configuration!", name);
 		}catch (IOException e) {
 			sendError(e);
