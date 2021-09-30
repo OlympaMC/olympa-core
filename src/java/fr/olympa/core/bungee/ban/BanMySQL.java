@@ -260,12 +260,26 @@ public class BanMySQL {
 	public static boolean isSanctionActive(Object target, OlympaSanctionType banType) {
 		return getSanctionActive(target, banType) != null;
 	}
-
+	
 	public static List<OlympaSanction> getLastSanctions(int i) throws SQLException {
 		List<OlympaSanction> sanctions = new ArrayList<>();
 		Connection connection = OlympaBungee.getInstance().getDatabase();
 		PreparedStatement pstate = connection.prepareStatement("SELECT * FROM sanctions ORDER BY created DESC LIMIT ?;");
 		pstate.setLong(1, i);
+		ResultSet resultSet = pstate.executeQuery();
+		while (resultSet.next()) {
+			OlympaSanction sanction = getSanction(resultSet);
+			if (sanction != null)
+				sanctions.add(sanction);
+		}
+		pstate.close();
+		return sanctions;
+	}
+
+	public static List<OlympaSanction> getLastSanctions() throws SQLException {
+		List<OlympaSanction> sanctions = new ArrayList<>();
+		Connection connection = OlympaBungee.getInstance().getDatabase();
+		PreparedStatement pstate = connection.prepareStatement("SELECT * FROM sanctions ORDER BY created DESC;");
 		ResultSet resultSet = pstate.executeQuery();
 		while (resultSet.next()) {
 			OlympaSanction sanction = getSanction(resultSet);
