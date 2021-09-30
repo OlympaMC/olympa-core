@@ -272,7 +272,7 @@ public class OlympaSanction implements Sanction {
 				cb.append(ColorUtils.color("&eDurée restante: &7" + Utils.tsToShortDur(getExpires()) + "\n"));
 			cb.append(ColorUtils.color("&eDurée de base: &7" + Utils.tsToShortDur(Utils.getCurrentTimeInSeconds() + getBanTime()) + "\n"));
 		} else if (getType() != OlympaSanctionType.KICK)
-			cb.append(ColorUtils.color("&cSanction permanante"));
+			cb.append(ColorUtils.color("&cSanction permanante\n"));
 		cb.append(ColorUtils.color("&eStatut: &7" + getStatus().getNameColored()));
 
 		return cb.create();

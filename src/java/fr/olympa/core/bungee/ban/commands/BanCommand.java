@@ -49,6 +49,7 @@ public class BanCommand extends BungeeCommand {
 						units.add(time + u);
 				return Utils.startWords(args[1], units);
 			}
+			break;
 		case 3:
 			List<String> reasons = Arrays.asList("Cheat", "Insulte", "Provocation", "Spam", "Harcèlement", "Publicité");
 			return Utils.startWords(args[2], reasons);

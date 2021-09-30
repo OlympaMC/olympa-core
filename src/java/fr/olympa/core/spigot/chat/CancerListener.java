@@ -90,12 +90,14 @@ public class CancerListener implements Listener {
 				link = matcher.group();
 			else
 				link = matcher2.group();
-			Set<String> linkWhitelist = new HashSet<>(OlympaCore.getInstance().getConfig().getStringList("chat.linkwhitelist"));
-			if (linkWhitelist.stream().noneMatch(l -> link.contains(l))) {
-				event.setCancelled(true);
-				Prefix.BAD.sendMessage(player, "Les liens sont interdits.");
-				Chat.sendToStaff("Lien", player, message, link);
-				return;
+			if (Bukkit.getPlayer(link) == null) {
+				Set<String> linkWhitelist = new HashSet<>(OlympaCore.getInstance().getConfig().getStringList("chat.linkwhitelist"));
+				if (linkWhitelist.stream().noneMatch(l -> link.contains(l))) {
+					event.setCancelled(true);
+					Prefix.BAD.sendMessage(player, "Les liens sont interdits.");
+					Chat.sendToStaff("Lien", player, message, link);
+					return;
+				}
 			}
 		}
 
@@ -103,10 +105,12 @@ public class CancerListener implements Listener {
 		matcher = matchIpv4.matcher(msgNFD);
 		if (matcher.find()) {
 			String ip = matcher.group();
-			event.setCancelled(true);
-			Prefix.BAD.sendMessage(player, "Les adresses IPs sont interdites.");
-			Chat.sendToStaff("IP", player, message, ip);
-			return;
+			if (Bukkit.getPlayer(ip) == null) {
+				event.setCancelled(true);
+				Prefix.BAD.sendMessage(player, "Les adresses IPs sont interdites.");
+				Chat.sendToStaff("IP", player, message, ip);
+				return;
+			}
 		}
 
 		/**
