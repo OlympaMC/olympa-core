@@ -3,20 +3,15 @@ package fr.olympa.core.bungee.ban.commands;
 import java.sql.SQLException;
 import java.util.List;
 
+import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.command.Paginator;
-import fr.olympa.api.common.command.PaginatorDatabase;
 import fr.olympa.api.common.match.RegexMatcher;
-import fr.olympa.api.common.report.OlympaReport;
-import fr.olympa.api.common.report.ReportStatus;
-import fr.olympa.api.common.sanction.OlympaSanctionType;
-import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
-import fr.olympa.core.spigot.OlympaCore;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -98,6 +93,6 @@ public class BanListCommand extends BungeeCommand {
 		}
 		sender.sendMessage(builder.build());*/
 		BanPage paginator = new BanPage();
-		OlympaCore.getInstance().getTask().runTaskAsynchronously(() -> sender.sendMessage(paginator.getPage(numbers)));
+		LinkSpigotBungee.getInstance().getTask().runTaskAsynchronously(() -> sender.sendMessage(paginator.getPage(numbers)));
 	}
 }
