@@ -44,8 +44,8 @@ public class OlympaCorePermissionsBungee {
 	public static final OlympaBungeePermission SERVER_SWITCH_COMMAND = new OlympaBungeePermission(OlympaGroup.YOUTUBER);
 	public static final OlympaBungeePermission FIND_COMMAND = new OlympaBungeePermission(OlympaGroup.BUILDER);
 	public static final OlympaBungeePermission SERVER_KICKALL_COMMAND = new OlympaBungeePermission(OlympaGroup.DEVP);
-	public static final OlympaBungeePermission SERVER_START_COMMAND = new OlympaBungeePermission(OlympaGroup.GAMEMASTER);
-	public static final OlympaBungeePermission SERVER_RESTART_BUNGEE_COMMAND = new OlympaBungeePermission(OlympaGroup.GAMEMASTER);
+	public static final OlympaBungeePermission SERVER_START_COMMAND = new OlympaBungeePermission(OlympaGroup.GAMEDESIGNER);
+	public static final OlympaBungeePermission SERVER_RESTART_BUNGEE_COMMAND = new OlympaBungeePermission(OlympaGroup.GAMEDESIGNER);
 	public static final OlympaBungeePermission SERVER_REGISTER_COMMAND = new OlympaBungeePermission(OlympaGroup.RESP_TECH);
 	public static final OlympaBungeePermission LOBBY_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);
 	public static final OlympaBungeePermission BPING_COMMAND = new OlympaBungeePermission(OlympaGroup.PLAYER);

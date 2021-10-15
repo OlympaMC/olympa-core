@@ -202,7 +202,7 @@ public class ReportMsg {
 			protected BaseComponent getObjectDescription(OlympaReport r) {
 				r.resolveAll();
 				ReportStatus status = r.getStatus();
-				TxtComponentBuilder txtBuildeur = new TxtComponentBuilder("%s%s -> %s &e(%s) %s", status.getColor(), r.getReasonNameUpper(), status.getName(), r.getAuthorName(), Utils.tsToShortDur(r.getLastUpdate()));
+				TxtComponentBuilder txtBuildeur = new TxtComponentBuilder("%s%s -> %s &e(%s) %s", status.getColor(), r.getReasonNameUpper(), status.getName(), r.getTargetName(), Utils.tsToShortDur(r.getLastUpdate()));
 				txtBuildeur.onHoverText(String.join("\n", r.getLore()));
 				txtBuildeur.onClickCommand("/report seeId " + r.getId());
 				return txtBuildeur.build();
