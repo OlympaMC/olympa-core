@@ -1,16 +1,21 @@
 package fr.olympa.core.bungee.security;
 
+import java.net.InetSocketAddress;
+import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import fr.olympa.api.player.OlympaConsole;
-import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.bungee.customevent.OlympaPlayerLoginEvent;
+import fr.olympa.api.bungee.utils.BungeeUtils;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.player.OlympaConsole;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.utils.CacheStats;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
-import fr.olympa.core.bungee.utils.BungeeUtils;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -25,12 +30,17 @@ import net.md_5.bungee.event.EventPriority;
 @SuppressWarnings("deprecation")
 public class BasicSecurityListener implements Listener {
 
-	private Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build();
+	private static final Cache<String, String> cache = CacheBuilder.newBuilder().recordStats().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(100).build();
 
-	@EventHandler
+	{
+		CacheStats.addCache("WHO_PING", BasicSecurityListener.cache);
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on0Ping(ProxyPingEvent event) {
 		PendingConnection connection = event.getConnection();
 		cache.put(connection.getAddress().getAddress().getHostAddress(), "");
+		InetSocketAddress test = (InetSocketAddress) connection.getSocketAddress();
 	}
 
 	@EventHandler
@@ -39,19 +49,16 @@ public class BasicSecurityListener implements Listener {
 		cache.put(player.getAddress().getAddress().getHostAddress(), "");
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = -128)
 	public void on1PreLogin(PreLoginEvent event) {
-		if (event.isCancelled()) {
+		if (event.isCancelled())
 			return;
-		}
 		PendingConnection connection = event.getConnection();
 		String name = connection.getName();
 		String ip = connection.getAddress().getAddress().getHostAddress();
 
-		// ProtocolSupport.
-
-		if (!name.matches("[a-zA-Z0-9_]*")) {
-			event.setCancelReason(BungeeUtils.connectScreen("&6Ton pseudo doit contenir uniquement des chiffres, des lettres et des tiret bas."));
+		if (!RegexMatcher.USERNAME.is(name)) {
+			event.setCancelReason(BungeeUtils.connectScreen("&6Ton pseudo doit contenir uniquement des chiffres, des lettres et des tiret bas et entre 4 et 16 caractères."));
 			event.setCancelled(true);
 			return;
 		}
@@ -60,19 +67,19 @@ public class BasicSecurityListener implements Listener {
 		String connectDomain = Utils.getAfterFirst(connectIp, ".");
 		String subdomain = event.getConnection().getVirtualHost().getHostName().split("\\.")[0];
 
+		SecurityHandler securityHandler = SecurityHandler.getInstance();
 		// Vérifie si l'adresse est correct
-		if (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net") || !subdomain.equalsIgnoreCase("play") && !subdomain.equalsIgnoreCase("buildeur")) {
-			ProxiedPlayer player = ProxyServer.getInstance().getPlayer(name);
-			if (player != null) {
-				event.setCancelReason(BungeeUtils.connectScreen("&7[&cSécurité&7] &cTu dois te connecter avec l'adresse &nplay.olympa.fr&c."));
-				event.setCancelled(true);
-			}
+		if (RegexMatcher.IP.is(connectIp) && securityHandler.isCheckCorrectEntredIpNumber()
+				|| securityHandler.isCheckCorrectEntredIp() && (!connectDomain.equalsIgnoreCase("olympa.fr") && !connectDomain.equalsIgnoreCase("olympa.net")
+						|| !subdomain.equalsIgnoreCase("play") && !subdomain.equalsIgnoreCase("buildeur") && !subdomain.equalsIgnoreCase("dev"))) {
+			event.setCancelReason(BungeeUtils.connectScreen("&7[&cSécurité&7] &cTu dois te connecter avec l'adresse &nplay.olympa.fr&c."));
+			event.setCancelled(true);
 		}
 
-		if (SecurityHandler.activated) {
+		if (securityHandler.isPingBeforeJoin() || securityHandler.getAntibot().isEnable()) {
 			String test = cache.asMap().get(ip);
 			if (test == null) {
-				event.setCancelReason(BungeeUtils.connectScreen("&7[&cSécurité&7] &2Actualise la liste des serveurs pour te connecter."));
+				event.setCancelReason(BungeeUtils.connectScreen("&7[&cSécurité&7] &2Actualise la liste des serveurs pour te connecter.&r"));
 				event.setCancelled(true);
 				return;
 			}
@@ -86,8 +93,18 @@ public class BasicSecurityListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}
-			event.setCancelReason(BungeeUtils.connectScreen("&cTon compte est déjà connecté."));
-			event.setCancelled(true);
+			String turne = "";
+			OlympaPlayer olympaPlayer;
+			try {
+				olympaPlayer = new AccountProvider(target.getUniqueId()).get();
+			} catch (SQLException e) {
+				olympaPlayer = null;
+				e.printStackTrace();
+			}
+			if (olympaPlayer != null)
+				turne = olympaPlayer.getGender().getTurne();
+			target.disconnect(BungeeUtils.connectScreen("&cTu t'es connecté" + turne + " depuis une autre fenêtre sur ton réseau."));
+			event.setCancelled(false);
 		}
 
 		/*
@@ -100,9 +117,8 @@ public class BasicSecurityListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on2Login(LoginEvent event) {
-		if (event.isCancelled()) {
+		if (event.isCancelled())
 			return;
-		}
 		UUID playerUUID = event.getConnection().getUniqueId();
 		String playername = event.getConnection().getName();
 		if (playerUUID == OlympaConsole.getUniqueId() || playername.equalsIgnoreCase(OlympaConsole.getName())) {
@@ -116,9 +132,8 @@ public class BasicSecurityListener implements Listener {
 	public void on3OlympaPlayerLogin(OlympaPlayerLoginEvent event) {
 		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
 		String ip = event.getIp();
-		if (!olympaPlayer.getIp().equals(ip)) {
+		if (!olympaPlayer.getIp().equals(ip))
 			olympaPlayer.addNewIp(ip);
-		}
 		cache.invalidate(ip);
 	}
 

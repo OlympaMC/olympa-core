@@ -23,8 +23,11 @@ public class FakeMsg {
 	}
 
 	public void send(Player player) {
-		String finalMsg = format.replaceFirst("%s", playerName);
-		finalMsg = finalMsg.replaceFirst("%s", msg);
+		String finalMsg = format;
+		if (finalMsg.contains("%s"))
+			finalMsg = format.replaceFirst("%s", playerName);
+		if (finalMsg.contains("%s"))
+			finalMsg = finalMsg.replaceFirst("%s", msg);
 		player.sendMessage(finalMsg);
 	}
 

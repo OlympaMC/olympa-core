@@ -1,65 +1,144 @@
 package fr.olympa.core.bungee.vpn;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import com.google.common.base.Charsets;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalCause;
 import com.google.common.io.CharStreams;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.Gson;
 
+import fr.olympa.api.utils.TimeEvaluator;
+import fr.olympa.core.bungee.connectionqueue.QueueHandler;
 import net.md_5.bungee.api.connection.Connection;
+import net.md_5.bungee.api.connection.PendingConnection;
 
 @SuppressWarnings("deprecation")
 public class VpnHandler {
 
-	public static OlympaVpn getInfo(Connection con) {
-		String ip = con.getAddress().getAddress().getHostAddress();
+	private static List<String> inCheck = new ArrayList<>();
+	public static Cache<String, OlympaVpn> cache = CacheBuilder.newBuilder().recordStats().expireAfterWrite(1, TimeUnit.MINUTES).removalListener(notification -> {
+		OlympaVpn olympaVpn = (OlympaVpn) notification.getValue();
+		//		OlympaBungee.getInstance().sendMessage("&6DEBUG VPN > notification %s id %d ip %s", notification.getCause(), olympaVpn.getId(), notification.getKey());
+
+		if (notification.getCause() == RemovalCause.REPLACED)
+			return;
 		try {
-			URL url = new URL("http://ip-api.com/json/%ip?fields=17034769".replace("%ip", ip));
-			URLConnection connection = url.openConnection(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ip, con.getAddress().getPort())));
-			connection.setUseCaches(false);
-			String result = CharStreams.toString(new InputStreamReader(connection.getURL().openStream(), Charsets.UTF_8));
-			System.out.println("String: " + result);
-			return OlympaVpn.fromJson(result);
-		} catch (IOException e) {
+			save(olympaVpn);
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
+	}).build();
+
+	private static synchronized void save(OlympaVpn olympaVpn) throws SQLException {
+		if (!olympaVpn.isUpWithDB())
+			//			OlympaBungee.getInstance().sendMessage("&6DEBUG VPN > save id %d", olympaVpn.getId());
+			VpnSql.saveIp(olympaVpn);
+		//		else
+		//			OlympaBungee.getInstance().sendMessage("&6DEBUG VPN > id %d is already up with db", olympaVpn.getId());
 	}
 
-	public static boolean isVPN(Connection con) {
-		String ip = con.getAddress().getAddress().getHostAddress();
-		try {
-			URL url = new URL("http://proxycheck.io/v2/" + ip + "?key=2i9y52-019793-1d7248-01e861&vpn=1&asn=1&node=1&time=1&inf=0&port=1&seen=1&days=7&tag=msg");
-			URLConnection connection = url.openConnection(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ip, con.getAddress().getPort())));
-			connection.setUseCaches(false);
-			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getURL().openStream(), Charsets.UTF_8));
-			StringBuilder stringBuilder = new StringBuilder();
-			String lineNotFount;
-			while ((lineNotFount = in.readLine()) != null) {
-				stringBuilder.append(lineNotFount + "\n");
+	public static void saveAll() {
+		for (OlympaVpn info : cache.asMap().values())
+			try {
+				save(info);
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-			in.close();
+	}
 
-			JsonParser jp = new JsonParser();
-			JsonElement root = jp.parse(stringBuilder.toString());
-			JsonObject rootobj = root.getAsJsonObject();
-			if (rootobj.get("status").getAsString().equals("ok")) {
-				JsonObject infoJson = rootobj.getAsJsonObject(ip);
-				boolean isVPN = infoJson.get("proxy").getAsString().equals("yes");
-				return isVPN;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+	private static void add(OlympaVpn olympaVpn) {
+		cache.put(olympaVpn.getIp(), olympaVpn);
+	}
+
+	public static OlympaVpn get(String ip) throws SQLException {
+		OlympaVpn olympaVpn = cache.getIfPresent(ip);
+		if (olympaVpn == null) {
+			olympaVpn = VpnSql.getIpInfo(ip);
+			if (olympaVpn != null)
+				add(olympaVpn);
 		}
-		return false;
+		return olympaVpn;
+	}
+
+	public static OlympaVpn createVpnInfo(Connection con, String ip, boolean addToDb) throws IOException, SQLException {
+		OlympaVpn olympaVpn = null;
+		URL url = new URL(String.format("http://ip-api.com/json/%s?fields=17034769", ip));
+		URLConnection connection;
+		TimeEvaluator time = new TimeEvaluator("VPN " + ip);
+		if (con != null)
+			connection = url.openConnection(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(con.getAddress().getAddress().getHostAddress(), con.getAddress().getPort())));
+		else
+			connection = url.openConnection();
+		connection.setUseCaches(false);
+		String result = CharStreams.toString(new InputStreamReader(connection.getURL().openStream(), StandardCharsets.UTF_8));
+		time.stop();
+		olympaVpn = OlympaVpn.fromJson(result);
+		if (!olympaVpn.isOk(ip))
+			throw new IllegalAccessError("OlympaVpn incomplete : " + new Gson().toJson(olympaVpn));
+		time.print(olympaVpn.getInfos());
+		if (addToDb) {
+			olympaVpn.setDefaultTimesIfNeeded();
+			add(olympaVpn);
+			olympaVpn = VpnSql.addIp(olympaVpn);
+		}
+		return olympaVpn;
+	}
+
+	public static OlympaVpn createVpnInfo(String ip) throws IOException, SQLException {
+		return createVpnInfo(null, ip, true);
+	}
+
+	protected static OlympaVpn checkIP(PendingConnection connection) throws SQLException, IOException, InterruptedException {
+		String username = connection.getName();
+		String ip = connection.getAddress().getAddress().getHostAddress();
+		if (ip.equalsIgnoreCase("127.0.0.1") || ip.startsWith("172.17."))
+			return null;
+		OlympaVpn olympaVpn = cache.getIfPresent(ip);
+		if (olympaVpn == null && inCheck.contains(ip)) {
+			while (inCheck.contains(ip))
+				Thread.sleep(500L);
+			olympaVpn = cache.getIfPresent(ip);
+		}
+		if (olympaVpn == null || !olympaVpn.isOk(ip)) {
+			inCheck.add(ip);
+			olympaVpn = VpnHandler.get(ip);
+			if (olympaVpn == null) {
+				if (QueueHandler.hasTooManyInQueue()) {
+					inCheck.remove(ip);
+					return null;
+				}
+				try {
+					olympaVpn = VpnHandler.createVpnInfo(connection, ip, true);
+					olympaVpn.setDefaultTimesIfNeeded();
+				} catch (Exception | NoClassDefFoundError e) {
+					inCheck.remove(ip);
+					throw e;
+				}
+			} else if (olympaVpn.isOutDate())
+				try {
+					OlympaVpn newVpn = VpnHandler.createVpnInfo(connection, ip, false);
+					olympaVpn.update(newVpn);
+					olympaVpn.addUser(username);
+					VpnSql.saveIp(olympaVpn);
+				} catch (Exception | NoClassDefFoundError e) {
+					inCheck.remove(ip);
+					throw e;
+				}
+			inCheck.remove(ip);
+		}
+		olympaVpn.addUser(username);
+		return olympaVpn;
 	}
 
 }

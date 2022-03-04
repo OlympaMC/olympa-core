@@ -3,4 +3,5 @@ bin
 target
 .project
 .classpath
-deploy.sh
+/.gradle/
+/build/

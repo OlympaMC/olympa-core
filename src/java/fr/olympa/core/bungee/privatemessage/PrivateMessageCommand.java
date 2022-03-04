@@ -5,26 +5,26 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class PrivateMessageCommand extends BungeeCommand implements TabExecutor {
-	
+public class PrivateMessageCommand extends BungeeCommand {
+
 	public PrivateMessageCommand(Plugin plugin) {
 		super(plugin, "msg", "m", "mp", "dm", "w", "whisper", "message", "email", "tell");
 		minArg = 2;
+		description = "Envoyer un message privé.";
 		usageString = "<joueur> <message>";
 		PrivateMessage.privateMessageCommand.add(command);
 		PrivateMessage.privateMessageCommand.addAll(Arrays.asList(aliases));
 	}
-	
+
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
 		if (!(sender instanceof ProxiedPlayer)) {
@@ -34,28 +34,26 @@ public class PrivateMessageCommand extends BungeeCommand implements TabExecutor 
 		ProxiedPlayer proxiedPlayer = (ProxiedPlayer) sender;
 		ProxiedPlayer targetPlayer = ProxyServer.getInstance().getPlayer(args[0]);
 		if (targetPlayer == null || PrivateMessageToggleCommand.players.contains(targetPlayer.getUniqueId())) {
-			sendMessage(Prefix.DEFAULT_BAD, "Le joueur &4%s&c n'est pas connecté ou pas disponible.".replace("%s", args[0]));
+			sendMessage(Prefix.DEFAULT_BAD, "Le joueur &4%s&c n'est pas connecté ou indisponible.".replace("%s", args[0]));
 			return;
 		}
-		
+
 		if (targetPlayer == proxiedPlayer) {
 			sendMessage(Prefix.DEFAULT_BAD, "Tu ne peux pas t'envoyer des messages.");
 			return;
 		}
-		
+
 		StringBuilder stringBuilder = new StringBuilder();
 		for (int i = 1; i < args.length; i++)
 			stringBuilder.append(args[i] + " ");
 		String message = stringBuilder.toString();
-		
 		PrivateMessage.send(proxiedPlayer, targetPlayer, message);
-		
 		PrivateMessage.setReply(proxiedPlayer, targetPlayer);
 		PrivateMessage.setReply(targetPlayer, proxiedPlayer);
 	}
-	
+
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public Iterable<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		Set<String> players = OlympaBungee.getInstance().getProxy().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toSet());
 		if (args.length == 0)
 			return players;

@@ -4,103 +4,68 @@ import java.sql.SQLException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.player.OlympaPlayerInformations;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.utils.ColorUtils;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.player.OlympaConsole;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.player.OlympaPlayerInformations;
+import fr.olympa.api.common.report.OlympaReport;
+import fr.olympa.api.common.report.ReportReason;
+import fr.olympa.api.spigot.customevents.OlympaReportAddSpigotEvent;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.common.provider.AccountProvider;
 import fr.olympa.core.spigot.OlympaCore;
+import fr.olympa.core.spigot.redis.RedisSpigotSend;
 import fr.olympa.core.spigot.report.connections.ReportMySQL;
-import fr.olympa.core.spigot.report.customevent.OlympaReportAddEvent;
-import fr.olympa.core.spigot.report.items.ReportReason;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public class ReportHandler {
 
-	public static void report(Player author, OfflinePlayer target, ReportReason reason, String note) {
-		OlympaPlayer authorOlympaPlayer = AccountProvider.get(author.getUniqueId());
+	public static void report(Player author, OfflinePlayer target, ReportReason reason, String note) throws SQLException {
+		OlympaPlayerInformations authorOlympaPlayer;
+		ConsoleCommandSender consoleCommand = null;
+		if (author != null)
+			authorOlympaPlayer = AccountProvider.getter().getPlayerInformations(author.getUniqueId());
+		else {
+			authorOlympaPlayer = AccountProvider.getter().getPlayerInformations(OlympaConsole.getId());
+			consoleCommand = Bukkit.getConsoleSender();
+		}
 		OlympaPlayer targetOlympaPlayer;
+		String serverName = OlympaCore.getInstance().getServerName();
+		String targetServer;
+		if (target.isOnline())
+			targetServer = serverName;
+		else
+			targetServer = "";
 		try {
 			targetOlympaPlayer = new AccountProvider(target.getUniqueId()).get();
 		} catch (SQLException e) {
-			author.sendMessage(ColorUtils.color(Prefix.DEFAULT_BAD + "Une erreur est survenu, ton report n'a pas été enregistrer ..."));
-			OlympaCore.getInstance().sendMessage("&4REPORT &cImpossible de récupérer l'id olympaPlayer de " + target.getName());
-			e.printStackTrace();
-			return;
+			throw new SQLException("&4REPORT &cImpossible de récupérer l'id olympaPlayer de " + target.getName());
 		}
-		OlympaReport report = new OlympaReport(targetOlympaPlayer.getId(), authorOlympaPlayer.getId(), reason, OlympaCore.getInstance().getServer().getName(), note);
+		OlympaReport report = new OlympaReport(targetOlympaPlayer.getId(), authorOlympaPlayer.getId(), reason, OlympaCore.getInstance().getServerName(), note);
+		report.setAuthorName(authorOlympaPlayer.getName());
+		report.setTargetName(target.getName());
 		try {
-			long id = ReportMySQL.createReport(report);
-			report.setId(id);
-			author.sendMessage(ColorUtils.color(Prefix.DEFAULT_GOOD + "Tu as signaler &2" + target.getName() + "&a pour &2" + reason.getReason() + "&a."));
+			ReportMySQL.createReport(report);
+			String msg = ColorUtils.color(Prefix.DEFAULT_GOOD + "Tu as signaler &2" + target.getName() + "&a pour &2" + reason.getReason() + "&a.");
+			if (author != null)
+				author.sendMessage(msg);
+			else
+				consoleCommand.sendMessage(msg);
+
 		} catch (SQLException e) {
 			e.printStackTrace();
-			author.sendMessage(ColorUtils.color(Prefix.DEFAULT_BAD + "Une erreur est survenu, ton report n'a pas été sauvegardé mais le staff connecté est au courant."));
+			String msg = ColorUtils.color(Prefix.DEFAULT_BAD + "Une erreur est survenu, ton report n'a pas été sauvegardé mais le staff connecté est au courant.");
+			if (author != null) {
+				author.closeInventory();
+				author.sendMessage(msg);
+			} else
+				consoleCommand.sendMessage(msg);
 		}
-		Bukkit.getPluginManager().callEvent(new OlympaReportAddEvent(author, target, report));
-		sendAlert(report);
-	}
-
-	public static void sendAlert(OlympaReport report) {
-		OlympaPlayerInformations author = AccountProvider.getPlayerInformations(report.getAuthorId());
-		OlympaPlayer target1 = MySQL.getPlayer(report.getTargetId());
-		OlympaPlayer targetRefresh = AccountProvider.get(target1.getUniqueId());
-		if (targetRefresh == null) {
-			targetRefresh = new AccountProvider(target1.getUniqueId()).getFromRedis();
-		}
-		if (targetRefresh != null) {
-			target1 = targetRefresh;
-		}
-		OlympaPlayer target = target1;
-		OlympaCorePermissions.REPORT_SEEREPORT.getPlayers(players -> {
-			TextComponent out = new TextComponent();
-
-			TextComponent tc = new TextComponent("[REPORT] ");
-			tc.setColor(ChatColor.DARK_PURPLE);
-			out.addExtra(tc);
-
-			tc = new TextComponent(target.getName() + " ");
-			if (target.isConnected()) {
-				tc.setColor(ChatColor.LIGHT_PURPLE);
-				tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Joueur encore connecté").color(ChatColor.GREEN).create()));
-			} else {
-				tc.setColor(ChatColor.RED);
-				tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Joueur déconnecté").color(ChatColor.RED).create()));
-			}
-			out.addExtra(tc);
-
-			tc = new TextComponent(" par ");
-			tc.setColor(ChatColor.DARK_PURPLE);
-			out.addExtra(tc);
-
-			tc = new TextComponent(author.getName() + " ");
-			tc.setColor(ChatColor.LIGHT_PURPLE);
-			out.addExtra(tc);
-
-			tc = new TextComponent(" pour ");
-			tc.setColor(ChatColor.DARK_PURPLE);
-			out.addExtra(tc);
-
-			tc = new TextComponent(report.getReason().getReason());
-			tc.setColor(ChatColor.LIGHT_PURPLE);
-			out.addExtra(tc);
-
-			tc = new TextComponent(".");
-			tc.setColor(ChatColor.DARK_PURPLE);
-			out.addExtra(tc);
-
-			out.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Clique pour avoir plus d'info").color(ChatColor.YELLOW).create()));
-			out.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "reportsee " + report.getId()));
-			players.forEach(p -> p.spigot().sendMessage(out));
-			Bukkit.getConsoleSender().spigot().sendMessage(out);
-		});
+		Bukkit.getPluginManager().callEvent(new OlympaReportAddSpigotEvent(author, target, report));
+		//		if (!RedisSpigotSend.sendReport(report))
+		RedisSpigotSend.sendReport(report);
+		ReportMsg.sendAlert(report, authorOlympaPlayer.getName(), targetOlympaPlayer.getName(), targetServer);
 	}
 }

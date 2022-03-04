@@ -3,9 +3,10 @@ package fr.olympa.core.bungee.privatemessage;
 import java.util.Arrays;
 import java.util.UUID;
 
+import fr.olympa.api.bungee.command.BungeeCommand;
+import fr.olympa.api.bungee.utils.BungeeUtils;
+import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -19,6 +20,7 @@ public class ReplyCommand extends BungeeCommand {
 		PrivateMessage.replyCommand.add(command);
 		PrivateMessage.replyCommand.addAll(Arrays.asList(aliases));
 		allowConsole = false;
+		description = "Répondre au dernier message privé.";
 		minArg = 1;
 		usageString = "<message>";
 	}
@@ -30,18 +32,18 @@ public class ReplyCommand extends BungeeCommand {
 
 		UUID targetUUID = PrivateMessage.getReply(proxiedPlayer);
 		if (targetUUID == null) {
-			sender.sendMessage(Prefix.DEFAULT_GOOD + BungeeUtils.color("&cTu n'as personne à qui répondre."));
+			sender.sendMessage(Prefix.DEFAULT_GOOD + ColorUtils.color("&cTu n'as personne à qui répondre."));
 			return;
 		}
 		final ProxiedPlayer targetPlayer = ProxyServer.getInstance().getPlayer(targetUUID);
 		if (targetPlayer == null) {
-			sender.sendMessage(Prefix.DEFAULT_BAD + BungeeUtils.color("&4" + BungeeUtils.getName(targetUUID) + "&c n'est plus connecté."));
+			sender.sendMessage(Prefix.DEFAULT_BAD + ColorUtils.color("&4" + BungeeUtils.getName(targetUUID) + "&c n'est plus connecté."));
 			return;
 		}
 
 		String message = String.join(" ", Arrays.copyOfRange(args, 0, args.length));
 
 		PrivateMessage.send(proxiedPlayer, targetPlayer, message);
-
+		PrivateMessage.setReply(targetPlayer, proxiedPlayer);
 	}
 }

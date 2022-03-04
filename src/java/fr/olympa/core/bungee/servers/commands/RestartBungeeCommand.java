@@ -1,43 +1,25 @@
 package fr.olympa.core.bungee.servers.commands;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.function.Consumer;
 
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.core.bungee.api.command.BungeeCommand;
+import fr.olympa.api.bungee.command.BungeeCommand;
+import fr.olympa.api.common.bash.OlympaRuntime;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 
+@SuppressWarnings("deprecation")
 public class RestartBungeeCommand extends BungeeCommand {
 
 	public RestartBungeeCommand(Plugin plugin) {
-		super(plugin, "restartbungee", OlympaCorePermissions.SERVER_RESTART_COMMAND);
+		super(plugin, "bungeerestart", OlympaCorePermissionsBungee.SERVER_RESTART_BUNGEE_COMMAND, "brestart");
 		allowConsole = true;
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String[] args) {
-		restart();
-	}
-
-	public void restart() {
+		Consumer<String> function = proxiedPlayer != null ? out -> sender.sendMessage(out) : null;
+		Runtime.getRuntime().addShutdownHook(OlympaRuntime.action("sh start.sh", function));
 		plugin.getProxy().stop();
-		new Thread((Runnable) () -> {
-			try {
-				String s;
-				Process p;
-				p = Runtime.getRuntime().exec("sh start.sh");
-				BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-				StringBuilder sb = new StringBuilder();
-				while ((s = br.readLine()) != null)
-					sb.append(s);
-				System.out.println(sb.toString());
-				p.waitFor();
-				p.destroy();
-			} catch (IOException | InterruptedException e) {
-				e.printStackTrace();
-			}
-		}).start();
 	}
 }

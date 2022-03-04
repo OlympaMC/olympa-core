@@ -6,51 +6,54 @@ import net.md_5.bungee.api.ChatColor;
 
 public enum OlympaSanctionStatus {
 
-	EXPIRE(0, "Expiré", ChatColor.GRAY),
-	ACTIVE(1, "Actif", ChatColor.RED),
-	CANCEL(2, "Annulé", ChatColor.GREEN),
-	DELETE(3, "Supprimé", ChatColor.GREEN);
+	EXPIRE("Expiré", ChatColor.GRAY, "exp"),
+	ACTIVE("Actif", ChatColor.RED, ""),
+	END("Fini", ChatColor.GRAY, "end"),
+	CANCEL("Annulé", ChatColor.GREEN, "un"),
+	DELETE("Supprimé", ChatColor.GREEN, "del");
 
 	public static OlympaSanctionStatus getStatus(int i) {
 		return Arrays.stream(OlympaSanctionStatus.values()).filter(olympaBanStatus -> olympaBanStatus.getId() == i).findFirst().orElse(null);
 	}
 
-	int id;
-
 	String name;
 	ChatColor color;
+	String prefix;
 
-	private OlympaSanctionStatus(int id, String name, ChatColor color) {
-		this.id = id;
+	private OlympaSanctionStatus(String name, ChatColor color, String prefix) {
 		this.name = name;
 		this.color = color;
+		this.prefix = prefix;
 	}
 
 	public ChatColor getColor() {
-		return this.color;
+		return color;
+	}
+
+	public String getPrefix() {
+		return prefix;
 	}
 
 	public int getId() {
-		return this.id;
+		return ordinal();
 	}
 
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	public String getNameColored() {
-		return this.color + this.name;
+		return color + name;
 	}
 
 	public boolean isStatus(OlympaSanctionStatus status) {
-		if (this == status) {
+		if (this == status)
 			return true;
-		}
 		return false;
 	}
 
 	@Override
 	public String toString() {
-		return String.valueOf(this.id);
+		return String.valueOf(ordinal());
 	}
 }

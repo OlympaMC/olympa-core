@@ -1,92 +1,123 @@
 package fr.olympa.core.bungee.vpn;
 
+import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
-import fr.olympa.core.bungee.utils.BungeeUtils;
+import fr.olympa.api.bungee.utils.BungeeUtils;
+import fr.olympa.api.common.chat.Chat;
+import fr.olympa.api.utils.Utils;
+import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.bungee.motd.MotdListener;
+import fr.olympa.core.bungee.security.SecurityHandler;
+import fr.olympa.core.common.provider.AccountProvider;
+import net.md_5.bungee.api.ServerPing;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.event.LoginEvent;
+import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
 public class VpnListener implements Listener {
 
-//	@EventHandler
-//	public void onOlympaPlayerLogin(OlympaPlayerLoginEvent event) {
-//		Connection connection = event.getPlayer();
-//		OlympaPlayer olympaPlayer = event.getOlympaPlayer();
-//		String ip = event.getIp();
-//		if (olympaPlayer == null
-//				|| !olympaPlayer.hasPermission(OlympaCorePermissions.VPN_BYPASS)) {
-//			boolean isVpn = false;
-//			try {
-//				OlympaVpn olympaVpn = VpnSql.getIpInfo(ip);
-//				if (olympaVpn == null) {
-//					isVpn = OlympaVpn.isVPN(connection);
-//					if (olympaPlayer != null) {
-//						VpnSql.setIp(olympaPlayer, ip, isVpn);
-//					} else {
-//						VpnSql.setIp(ip,
-//								isVpn);
-//					}
-//				} else {
-//					isVpn = olympaVpn.isVpn();
-//					if (!olympaVpn.hasUser(olympaPlayer.getId())) {
-//						olympaVpn.addUser(olympaPlayer);
-//					}
-//				}
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			}
-//			if (isVpn) {
-//				event.setCancelReason("&cImpossible d'utiliser un VPN. \n\n&e&lSi tu pense qu'il y a une erreur, contacte un membre du staff.");
-//				event.setCancelled(true);
-//				return;
-//			}
-//		}
-//	}
-
-	@SuppressWarnings("deprecation")
+	private int lastConnected = 0;
+	private long lastModif = 0;
+	private LocalTime start = LocalTime.parse("08:00:00");
+	private LocalTime end = LocalTime.parse("23:00:00");
+	private Set<String> hostingIp = new HashSet<>();
+	private Set<String> notHostingIp= new HashSet<>();
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPreLogin(LoginEvent event) {
+	public void onPing(ProxyPingEvent event) {
 		PendingConnection connection = event.getConnection();
-		String username = connection.getName();
+		ServerPing ping = event.getResponse();
 		String ip = connection.getAddress().getAddress().getHostAddress();
-		OlympaVpn olympaVpn = null;
+		if (!SecurityHandler.getInstance().isCheckVpnOnMotd())
+			return;
+		OlympaVpn olympaVpn;
 		try {
-			olympaVpn = VpnSql.getIpInfo(ip);
-
-			if (olympaVpn == null) {
-				olympaVpn = VpnHandler.getInfo(event.getConnection());
-				if (!olympaVpn.isOk()) {
-					return;
-				}
-				olympaVpn.addUser(username, connection.isOnlineMode());
-				VpnSql.addIp(olympaVpn);
-
-			} else if (olympaVpn.getAs() == null) {
-				OlympaVpn newOlympaVpn = VpnHandler.getInfo(event.getConnection());
-				if (!newOlympaVpn.isOk()) {
-					return;
-				}
-				newOlympaVpn.setUsers(olympaVpn.getUsers());
-				if (!newOlympaVpn.hasUser(username, connection.isOnlineMode())) {
-					newOlympaVpn.addUser(username, connection.isOnlineMode());
-				}
-				VpnSql.saveIp(newOlympaVpn);
-
-			} else if (!olympaVpn.hasUser(username, connection.isOnlineMode())) {
-				olympaVpn.addUser(username, connection.isOnlineMode());
-				VpnSql.saveIp(olympaVpn);
-			}
-		} catch (SQLException e) {
+			olympaVpn = VpnHandler.checkIP(connection);
+		} catch (SQLException | IOException | NullPointerException | InterruptedException e) {
 			e.printStackTrace();
 			return;
 		}
-		if (olympaVpn != null && (olympaVpn.isProxy() || olympaVpn.isHosting())) {
-			event.setCancelReason(BungeeUtils.connectScreen("&cImpossible d'utiliser un VPN.\n\n&e&lSi tu pense qu'il y a une erreur, contacte un membre du staff."));
+		if (olympaVpn == null) return;
+		if (olympaVpn.isProxy() && !olympaVpn.hasWhitelistUsers())
+			ping.setDescriptionComponent(new TextComponent(MotdListener.MOTD_BASE + Chat.centerMotD("§4&l⚠ §cLes VPN sont interdit.&r")));
+		
+		if (olympaVpn.isHosting() && !notHostingIp.contains(ip)) {
+			if (!hostingIp.contains(ip)) {
+				try {
+					if (!AccountProvider.getter().getSQL().getPlayersByAllIp(ip).isEmpty()) {
+						notHostingIp.add(ip);
+						return;
+					} else
+						hostingIp.add(ip);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			int online = ping.getPlayers().getOnline(); 
+			LocalTime target = LocalTime.now();
+			boolean canUp = target.isAfter(start) && target.isBefore(end);
+			if (!canUp) {
+				if (lastConnected > online) {
+					lastConnected--;
+				} else {
+					lastConnected = online;
+				}
+			} else {
+				int objective;
+				if (online < 50)
+					objective = online * 3;
+				else if (online < 100)
+					objective = online * 2;
+				else
+					objective = online + 75;
+				if (lastConnected < online)
+					lastConnected = online;
+				long time = Utils.getCurrentTimeInSeconds();
+				if (time - 120 > lastModif) {
+					lastModif = time;
+					if (objective != lastConnected) {
+						if (objective < lastConnected)
+							lastConnected--;
+						else if (objective / 2 > lastConnected)
+							lastConnected += new Random().nextInt(5) + 1;
+						else
+							lastConnected++;
+					}
+					
+				}
+			}
+			ping.getPlayers().setOnline(lastConnected);
+			//OlympaBungee.getInstance().sendMessage("&eSending fake online count to ip hosting %s > %d for %d player connected", connection.getAddress().getAddress().getHostAddress(), lastConnected, online);
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onLoginEvent(LoginEvent event) {
+		PendingConnection connection = event.getConnection();
+		if (!SecurityHandler.getInstance().isCheckVpn())
+			return;
+		OlympaVpn olympaVpn;
+		try {
+			olympaVpn = VpnHandler.checkIP(connection);
+		} catch (SQLException | NullPointerException | IOException | InterruptedException e) {
+			e.printStackTrace();
+			return;
+		}
+		if (olympaVpn == null) {
+			event.setCancelReason(BungeeUtils.connectScreen("&cImpossible de se connecter au serveur avec ton IP. Contact un Développeur ou Admin."));
 			event.setCancelled(true);
 			return;
 		}
+		SecurityHandler.getInstance().getAntibot().getCase().checkVpn(event, connection, olympaVpn);
 	}
 }
