@@ -1,8 +1,8 @@
 package fr.olympa.core.bungee.maintenance;
 
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.bungee.utils.BungeeUtils;
+import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.config.Configuration;
@@ -30,7 +30,7 @@ public class MaintenanceListener implements Listener {
 			event.setCancelled(true);
 			bungee.sendMessage("&d" + playername + " ne peux pas se connecter (serveur en dev)");
 		} else if (status == ServerStatus.SOON) {
-			event.setCancelReason(BungeeUtils.connectScreen("&cNous ouvrons bientôt !.\n\n&3Plus d'infos sur le &bTwitter &n@Olympa_fr\\n&3Ou &bDiscord &nwww.discord.olympa.fr"));
+			event.setCancelReason(BungeeUtils.connectScreen("&cNous ouvrons bientôt !.\n\n&3Plus d'infos sur le &bTwitter &n@Olympa_fr\n&3Ou &bDiscord &nwww.discord.olympa.fr"));
 			event.setCancelled(true);
 			bungee.sendMessage("&d" + playername + " ne peux pas se connecter (serveur en maintenance : open soon)");
 		} else if (status == ServerStatus.BETA) {
@@ -38,9 +38,9 @@ public class MaintenanceListener implements Listener {
 			event.setCancelled(true);
 			bungee.sendMessage("&d" + playername + " ne peux pas se connecter (serveur en maintenance : beta)");
 		} else if (status == ServerStatus.CLOSE_BETA) {
-			event.setCancelReason(BungeeUtils.connectScreen("&cLa bêta est fermée, désolé."));
+			event.setCancelReason(BungeeUtils.connectScreen("&cLe serveur est en bêta fermée, désolé."));
 			event.setCancelled(true);
-			bungee.sendMessage("&d" + playername + " ne peux pas se connecter (serveur en maintenance : beta fermer)");
+			bungee.sendMessage("&d" + playername + " ne peux pas se connecter (serveur en bêta fermée)");
 		} else if (status == ServerStatus.MAINTENANCE || status == ServerStatus.CLOSE) {
 			if (message != null && !message.isEmpty())
 				message = "\n\n&c&nRaison:&c " + message;

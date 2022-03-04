@@ -7,41 +7,50 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.player.OlympaPlayerInformations;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.sql.MySQL;
+import com.google.gson.annotations.Expose;
+
+import fr.olympa.api.bungee.utils.BungeeUtils;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.player.OlympaPlayerInformations;
+import fr.olympa.api.common.sanction.OlympaSanctionType;
+import fr.olympa.api.common.sanction.Sanction;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.utils.BungeeUtils;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-public class OlympaSanction {
+public class OlympaSanction implements Sanction {
 
+	@Override
 	public String getTarget() {
 		return target;
 	}
 
-	public static int getNextId() {
-		return 0;
-		// TODO add
-		// return MySQL.getNextId("sanctions", "id");
-	}
-
+	@Expose
 	private long id;
+	@Expose
 	private OlympaSanctionType type;
+	@Expose
 	private OlympaSanctionTargetType targetType;
+	@Expose
 	private String target;
+	@Expose
 	private String reason;
+	@Expose
 	private long author;
+	@Expose
 	private long expires;
+	@Expose
 	private long created;
+	@Expose
 	private OlympaSanctionStatus status;
+	@Expose
 	private List<OlympaSanctionHistory> history;
+	@Expose
 	private Set<OlympaPlayerInformations> playersInformations;
 
 	/**
@@ -99,22 +108,27 @@ public class OlympaSanction {
 		this.history.add(history);
 	}
 
+	@Override
 	public long getAuthor() {
 		return author;
 	}
 
+	@Override
 	public String getAuthorName() {
 		return BungeeUtils.getName(getAuthor());
 	}
 
+	@Override
 	public long getBanTime() {
 		return expires - created;
 	}
 
+	@Override
 	public long getCreated() {
 		return created;
 	}
 
+	@Override
 	public long getExpires() {
 		return expires;
 	}
@@ -127,10 +141,12 @@ public class OlympaSanction {
 		return history;
 	}
 
+	@Override
 	public long getId() {
 		return id;
 	}
 
+	@Override
 	public String getReason() {
 		return reason;
 	}
@@ -146,6 +162,7 @@ public class OlympaSanction {
 		return targetType;
 	}
 
+	@Override
 	public boolean isTarget(OlympaPlayer olympaPlayer) {
 		OlympaSanctionTargetType targetType2 = getTargetType();
 		if (targetType2 == OlympaSanctionTargetType.OLYMPA_ID)
@@ -154,12 +171,14 @@ public class OlympaSanction {
 			return olympaPlayer.getIp().equals(getTargetIp());
 	}
 
+	@Override
 	public String getTargetIp() {
 		if (getTargetType() != OlympaSanctionTargetType.IP)
 			return null;
 		return target;
 	}
 
+	@Override
 	public Long getTargetId() {
 		if (getTargetType() != OlympaSanctionTargetType.OLYMPA_ID)
 			return null;
@@ -170,27 +189,31 @@ public class OlympaSanction {
 	//		playerInformations = olympaPlayers;
 	//	}
 
+	@Override
 	@SuppressWarnings("deprecation")
 	public Set<ProxiedPlayer> getOnlinePlayers() {
 		Set<ProxiedPlayer> onlinePlayers = new HashSet<>();
-		if (getTargetType() == OlympaSanctionTargetType.OLYMPA_ID)
-			onlinePlayers.add(ProxyServer.getInstance().getPlayer(AccountProvider.getPlayerInformations(getTargetId()).getUUID()));
-		else
+		if (getTargetType() == OlympaSanctionTargetType.OLYMPA_ID) {
+			ProxiedPlayer player = ProxyServer.getInstance().getPlayer(AccountProvider.getter().getPlayerInformations(getTargetId()).getUUID());
+			if (player != null)
+				onlinePlayers.add(player);
+		} else
 			onlinePlayers = ProxyServer.getInstance().getPlayers().stream().filter(p -> p.getAddress().getAddress().getHostName().equals(getTargetIp())).collect(Collectors.toSet());
 		return onlinePlayers;
 	}
 
+	@Override
 	public Set<OlympaPlayerInformations> getPlayersInfos() throws SQLException {
 		if (playersInformations == null)
 			if (getTargetType() == OlympaSanctionTargetType.OLYMPA_ID) {
 				playersInformations = new HashSet<>();
-				playersInformations.add(AccountProvider.getPlayerInformations(getTargetId()));
+				playersInformations.add(AccountProvider.getter().getPlayerInformations(getTargetId()));
 			} else
-				playersInformations = MySQL.getPlayersByIp(target).stream().map(op -> AccountProvider.getPlayerInformations(op)).collect(Collectors.toSet());
-
+				playersInformations = AccountProvider.getter().getSQL().getPlayersByIp(target).stream().map(op -> AccountProvider.getter().getPlayerInformations(op)).collect(Collectors.toSet());
 		return playersInformations;
 	}
 
+	@Override
 	public String getPlayersNames() throws SQLException {
 		return getPlayersInfos().stream().map(OlympaPlayerInformations::getName).collect(Collectors.joining(", "));
 	}
@@ -199,10 +222,12 @@ public class OlympaSanction {
 		return status;
 	}
 
+	@Override
 	public OlympaSanctionType getType() {
 		return type;
 	}
 
+	@Override
 	public boolean isPermanent() {
 		return expires == 0 && type != OlympaSanctionType.KICK;
 	}
@@ -211,6 +236,7 @@ public class OlympaSanction {
 		this.history.remove(history);
 	}
 
+	@Override
 	public void setId(long id2) {
 		id = id2;
 	}
@@ -225,6 +251,7 @@ public class OlympaSanction {
 
 	// ###########################################################################################################################################################
 
+	@Override
 	public BaseComponent[] toBaseComplement() {
 		String playerNames = "null";
 		try {
@@ -232,19 +259,23 @@ public class OlympaSanction {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return new ComponentBuilder(ColorUtils.color("&6Information sanction n°&e" + getId() + "\n\n"))
-				.append(ColorUtils.color("&6Joueur: &e" + playerNames + "\n"))
-				.append(ColorUtils.color("&6Auteur: &e" + getAuthorName() + "\n"))
-				.append(ColorUtils.color("&6Type: &e" + getType().getName(isPermanent()) + "\n"))
-				.append(ColorUtils.color("&6Raison: &e" + getReason() + "\n"))
-				.append(ColorUtils.color("&6Crée: &e" + Utils.timestampToDateAndHour(getCreated()) + "\n"))
-				.append(ColorUtils.color("&6Expire: &e" + (getExpires() != 0 ? Utils.timestampToDateAndHour(getExpires()) + "\n&6Durée de base: &e" + Utils
-						.timestampToDuration(Utils.getCurrentTimeInSeconds() + getBanTime())
-						+ (getExpires() >= Utils.getCurrentTimeInSeconds() ? "\n&6Durée restante: &e" + Utils
-								.timestampToDuration(getExpires()) : "")
-						: "permanant") + "\n"))
-				.append(ColorUtils.color("&6Statut: &e" + getStatus().getColor() + getStatus().getName()))
-				.create();
+		ComponentBuilder cb = new ComponentBuilder(ColorUtils.color("&6Information sanction n°&e" + getId() + "\n"));
+		cb.append(ColorUtils.color("&e#" + id + "\n"));
+		cb.append(ColorUtils.color("&eJoueur: &7" + playerNames + "\n"));
+		cb.append(ColorUtils.color("&eStaff: &7" + getAuthorName() + "\n"));
+		cb.append(ColorUtils.color("&eType: &7" + getType().getName(!isPermanent()) + "\n"));
+		cb.append(ColorUtils.color("&eRaison: &7" + getReason() + "\n"));
+		cb.append(ColorUtils.color("&eCrée: &7" + Utils.timestampToDateAndHour(getCreated()) + " " + Utils.tsToShortDur(getCreated()) + "\n"));
+		if (getExpires() != 0) {
+			cb.append(ColorUtils.color("&eExpire: &7" + Utils.timestampToDateAndHour(getExpires()) + "\n"));
+			if (getExpires() >= Utils.getCurrentTimeInSeconds())
+				cb.append(ColorUtils.color("&eDurée restante: &7" + Utils.tsToShortDur(getExpires()) + "\n"));
+			cb.append(ColorUtils.color("&eDurée de base: &7" + Utils.tsToShortDur(Utils.getCurrentTimeInSeconds() + getBanTime()) + "\n"));
+		} else if (getType() != OlympaSanctionType.KICK)
+			cb.append(ColorUtils.color("&cSanction permanante\n"));
+		cb.append(ColorUtils.color("&eStatut: &7" + getStatus().getNameColored()));
+
+		return cb.create();
 	}
 
 }

@@ -8,7 +8,8 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.player.OlympaPlayer;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.sanction.OlympaSanctionType;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionHistory;
@@ -26,6 +27,12 @@ public class SanctionHandler {
 	static private List<OlympaSanction> mutes = new ArrayList<>();
 
 	public static void addMute(OlympaSanction mute) {
+		OlympaSanction oldMute = getMuteById(mute.getId());
+		if (oldMute != null)
+			if (oldMute.getHistorys().size() > mute.getHistorys().size())
+				new IllegalAccessException("Impossible d'ajouter un mute en cache qui est déjà cache. Le mute en cache à l'air plus récent que celui ajouté. Mute ID: " + mute.getId()).printStackTrace();
+			else
+				mutes.remove(oldMute);
 		mutes.add(mute);
 	}
 
@@ -33,7 +40,9 @@ public class SanctionHandler {
 		OlympaSanction mute;
 		List<OlympaSanction> mutes = getMutes(player.getUniqueId());
 		Set<OlympaSanction> mutes2 = mutes.stream().map(mapper).collect(Collectors.toSet());
-		mutes.removeAll(mutes2.stream().filter(m -> m.getStatus() != OlympaSanctionStatus.ACTIVE).collect(Collectors.toSet()));
+		Set<OlympaSanction> expiredMutes = mutes2.stream().filter(m -> m.getStatus() != OlympaSanctionStatus.ACTIVE).collect(Collectors.toSet());
+		expiredMutes.forEach(os -> removeMute(os));
+		mutes.removeAll(expiredMutes);
 		mute = mutes2.stream().filter(m -> m.getStatus() == OlympaSanctionStatus.ACTIVE).findFirst().orElse(null);
 		return mute;
 	}
@@ -58,15 +67,21 @@ public class SanctionHandler {
 
 	public static OlympaSanction expireIfNeeded(OlympaSanction sanction) {
 		OlympaSanctionStatus status = sanction.getStatus();
-		if (status == OlympaSanctionStatus.ACTIVE && sanction.getExpires() != 0 && Utils.getCurrentTimeInSeconds() >= sanction.getExpires())
+		if (status == OlympaSanctionStatus.ACTIVE && sanction.getExpires() != 0 && Utils.getCurrentTimeInSeconds() >= sanction.getExpires()) {
+			if (sanction.getType() == OlympaSanctionType.MUTE || sanction.getType() == OlympaSanctionType.MUTEIP)
+				removeMute(sanction);
 			return changeStatus(sanction, new OlympaSanctionHistory(OlympaSanctionStatus.EXPIRE));
+		}
 		return sanction;
 	}
 
 	public static OlympaSanction endIfNeeded(OlympaSanction sanction) {
 		OlympaSanctionStatus status = sanction.getStatus();
-		if ((status == OlympaSanctionStatus.ACTIVE || status == OlympaSanctionStatus.EXPIRE) && sanction.getExpires() != 0 && Utils.getCurrentTimeInSeconds() >= sanction.getExpires())
+		if ((status == OlympaSanctionStatus.ACTIVE || status == OlympaSanctionStatus.EXPIRE) && sanction.getExpires() != 0 && Utils.getCurrentTimeInSeconds() >= sanction.getExpires()) {
+			if (sanction.getType() == OlympaSanctionType.MUTE || sanction.getType() == OlympaSanctionType.MUTEIP)
+				removeMute(sanction);
 			return changeStatus(sanction, new OlympaSanctionHistory(OlympaSanctionStatus.END));
+		}
 		return sanction;
 	}
 
@@ -77,7 +92,8 @@ public class SanctionHandler {
 		if (status != OlympaSanctionStatus.ACTIVE)
 			return false;
 		if (sanction.getExpires() != 0 && Utils.getCurrentTimeInSeconds() > sanction.getExpires()) {
-			//			removeMute(sanction); // only for mute
+			if (sanction.getType() == OlympaSanctionType.MUTE || sanction.getType() == OlympaSanctionType.MUTEIP)
+				removeMute(sanction); // only for mute
 			changeStatus(sanction, new OlympaSanctionHistory(OlympaSanctionStatus.EXPIRE));
 			return true;
 		}
@@ -105,7 +121,9 @@ public class SanctionHandler {
 		return mutes.stream().filter(olympaMute -> olympaMute.getTargetId() != null && olympaMute.getTargetId() == olympaId || olympaMute.getTargetIp() != null && olympaMute.getTargetIp().equals(ip)).findFirst().orElse(null);
 	}
 
-	// ID or IP
+	/**
+	 * @param target is IP or ID
+	 */
 	public static OlympaSanction getMute(String target) {
 		return mutes.stream().filter(olympaMute -> olympaMute.getTarget().equals(target)).findFirst().orElse(null);
 	}
@@ -129,8 +147,18 @@ public class SanctionHandler {
 		return mutes.stream().filter(olympaMute -> olympaMute.getTargetId() != null && olympaMute.getTargetId() == olympaPlayerId).findFirst().orElse(null);
 	}
 
+	public static OlympaSanction getMuteById(long id) {
+		return mutes.stream().filter(olympaMute -> olympaMute.getId() == id).findFirst().orElse(null);
+	}
+
 	public static void removeMute(OlympaSanction mute) {
-		mutes.remove(mute);
+		if (mute.getType() != OlympaSanctionType.MUTE && mute.getType() != OlympaSanctionType.MUTEIP)
+			new IllegalAccessException("§cCan't remove mute from bungee cache for type " + mute.getType().getName()).printStackTrace();
+		else if (!mutes.remove(mute)) {
+			OlympaSanction cacheMute = getMuteById(mute.getId());
+			if (cacheMute != null)
+				mutes.remove(cacheMute);
+		}
 	}
 
 	//	public static void removeMute(OlympaPlayer olympaPlayer) {
@@ -138,7 +166,7 @@ public class SanctionHandler {
 	//	}
 	public static boolean removeMute(String target) throws SQLException {
 		OlympaSanction mute = getMute(target);
-		if (mute.getPlayersInfos().size() > 1)
+		if (mute == null || mute.getPlayersInfos().size() > 1)
 			return false;
 		removeMute(mute);
 		return true;

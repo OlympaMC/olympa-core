@@ -1,24 +1,23 @@
 package fr.olympa.core.bungee.ban.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.common.sanction.OlympaSanctionType;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class UnbanCommand extends BungeeCommand {
 
 	public UnbanCommand(Plugin plugin) {
-		super(plugin, "unban", OlympaCorePermissions.BAN_UNBAN_COMMAND, "pardon");
+		super(plugin, "unban", OlympaCorePermissionsBungee.BAN_UNBAN_COMMAND, "pardon", "unbann");
 		minArg = 2;
 		usageString = "<joueur|uuid|ip> <motif>";
 	}
@@ -66,14 +65,14 @@ public class UnbanCommand extends BungeeCommand {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
-		if (args.length == 1) {
-			// -> usless code, change to banned players
-			List<String> postentielNames = Utils.startWords(args[0], OlympaBungee.getInstance().getProxy().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toSet()));
-			return postentielNames;
-		} else if (args.length == 2) {
-			List<String> reasons = Arrays.asList("Demande de déban", "Erreur", "Tromper de Joueur", "Augmentation de peine", "Réduction de peine");
+		switch (args.length) {
+		case 1:
+			return Utils.startWords(args[0], AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));
+		case 2:
+			List<String> reasons = Arrays.asList("Demande de démute acceptée", "Erreur", "Tromper de Joueur", "Augmentation de peine", "Réduction de peine");
 			return Utils.startWords(args[1], reasons);
+		default:
+			return new ArrayList<>();
 		}
-		return null;
 	}
 }

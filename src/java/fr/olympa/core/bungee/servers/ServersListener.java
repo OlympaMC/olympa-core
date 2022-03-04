@@ -4,17 +4,17 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.server.OlympaServer;
+import fr.olympa.api.bungee.utils.BungeeUtils;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.chat.TxtComponentBuilder;
+import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
+import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.api.utils.spigot.ProtocolAPI;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.datamanagment.AuthListener;
-import fr.olympa.core.bungee.utils.BungeeUtils;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -27,26 +27,27 @@ public class ServersListener implements Listener {
 	@EventHandler
 	public void onServerKick(ServerKickEvent event) {
 		ServerInfo serverKicked = event.getKickedFrom();
+		ServerInfoAdvancedBungee servInfo = OlympaBungee.getInstance().getMonitoring().getMonitor(serverKicked);
 		ProxiedPlayer player = event.getPlayer();
-		Entry<OlympaServer, Integer> entryOlympaServer = MonitorInfo.getOlympaServer(serverKicked.getName());
+		Entry<OlympaServer, Integer> entryOlympaServer = OlympaServer.getOlympaServerWithId(serverKicked.getName());
 		OlympaServer olympaServer = entryOlympaServer != null ? entryOlympaServer.getKey() : null;
 		if (olympaServer == null || olympaServer == OlympaServer.AUTH) {
 			event.setCancelled(false);
 			return;
 		}
-		String kickReason = ChatColor.stripColor(BaseComponent.toLegacyText(event.getKickReasonComponent()));
+		String kickReason = ColorUtils.stripColor(BaseComponent.toLegacyText(event.getKickReasonComponent()));
 
-		if (AuthListener.wait.contains(player.getName()))
+		if (AuthListener.containsWait(player))
 			return; // il est en cours de suppression = il a quitté le serveur de lui-même
 
-		OlympaBungee.getInstance().sendMessage("§6" + player.getName() + "§7 a été kick pour \"§e" + kickReason + "§7\" (état : " + event.getState() + ")");
+		OlympaBungee.getInstance().sendMessage("§6" + player.getName() + "§7 a été kick pour \"§e" + kickReason + "§7\" (état : " + event.getState() + ") " + event.getCause().name());
 		if (kickReason.contains("whitelist")) {
-			event.setKickReasonComponent(TextComponent.fromLegacyText(Prefix.BAD + "Tu n'a pas accès au serveur &4" + serverKicked.getName() + "&c."));
+			TxtComponentBuilder.of(Prefix.NONE, "Tu n'as pas accès au serveur &4%s&c.", serverKicked.getName());
 			return;
 		}
-		if (kickReason.contains("restarting") || kickReason.contains("closed")) {
+		if (kickReason.contains("restarting") || kickReason.contains("Server closed") || kickReason.equals("The server you were previously on went down, you have been connected to a fallback server")) {
 			ServerInfo serverFallback = null;
-			if (olympaServer.hasMultiServers()) {
+			if (olympaServer.hasMultiServers() && olympaServer.sendToOtherServer()) {
 				serverFallback = ServersConnection.getBestServer(olympaServer, serverKicked);
 				if (serverFallback != null) {
 					event.setCancelled(true);
@@ -61,38 +62,55 @@ public class ServersListener implements Listener {
 			if (serverFallback == null)
 				serverFallback = ServersConnection.getBestServer(OlympaServer.AUTH, serverKicked);
 			if (serverFallback == null) {
-				TextComponent msg = BungeeUtils.connectScreen("&eLe &6" + Utils.capitalize(serverKicked.getName()) + "&e redémarre, merci de te reconnecter dans quelques secondes...");
+				String msg = BungeeUtils.connectScreen("&eLe &6%s&e redémarre, merci de te reconnecter dans quelques secondes...", Utils.capitalize(serverKicked.getName()));
 				player.sendMessage(msg);
-				event.setKickReasonComponent(new ComponentBuilder(msg).create());
+				event.setKickReason(msg);
 				return;
 			}
 			event.setCancelled(true);
 			event.setCancelServer(serverFallback);
 			player.sendMessage(TextComponent.fromLegacyText(Prefix.DEFAULT_GOOD + ColorUtils.color(
-					"Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter environ 30 secondes avant d'être reconnecté automatiquement.")));
-			ServersConnection.tryConnect(player, olympaServer, true);
+					"Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter quelques secondes avant d'être reconnecté automatiquement.")));
+//			if (servInfo != null) {
+//				new QueueSpigotOlympaServerTask(player, servInfo);
+//				ServersConnection.addConnection(new WaitingConnection(player.getUniqueId(), servInfo, null, false));
+//			} else
+				ServersConnection.tryConnect(player, olympaServer, true);
 			return;
-		} else if (kickReason.contains("Outdated client! Please use")) {
-			String serverVersion = kickReason.replaceFirst("Outdated client! Please use ", "");
-			List<ProtocolAPI> playerVersion = ProtocolAPI.getAll(player.getPendingConnection().getVersion());
-			event.setKickReasonComponent(TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du Serveur %s > Ta version (%s)", serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
-		} else if (kickReason.contains("Outdated server! I'm still on")) {
+		}
+		if (kickReason.startsWith("Outdated server! I'm still on")) {
 			String serverVersion = kickReason.replaceFirst("Outdated server! I'm still on ", "");
 			List<ProtocolAPI> playerVersion = ProtocolAPI.getAll(player.getPendingConnection().getVersion());
-			event.setKickReasonComponent(TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du Serveur %s < Ta version (%s)", serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
+			event.setCancelled(true);
+			event.setCancelServer(null);
+			event.setKickReasonComponent(
+					TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du %s %s < Ta version (%s)",
+							serverKicked.getName(), serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
+			return;
+		}
+		if (kickReason.startsWith("Outdated client! Please use")) {
+			String serverVersion = kickReason.replaceFirst("Outdated client! Please use ", "");
+			List<ProtocolAPI> playerVersion = ProtocolAPI.getAll(player.getPendingConnection().getVersion());
+			event.setCancelled(true);
+			event.setCancelServer(null);
+			event.setKickReasonComponent(
+					TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Version du %s %s > Ta version (%s)",
+							serverKicked.getName(), serverVersion, playerVersion.stream().map(ProtocolAPI::getName).collect(Collectors.joining(", ")))));
+			return;
 		}
 		if (!kickReason.contains("ban")) {
-			if (!player.getServer().getInfo().getName().equals(serverKicked.getName())) {
-				event.setCancelled(true);
-				event.setCancelServer(null);
-				//				player.sendMessage(TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Impossible de se connecter au serveur &4%s&c : &4%s&c.", serverKicked.getName(), kickReason)));
-				return;
-			}
+			//			if (player.getServer() != null && player.getServer().getInfo().getName().equals(serverKicked.getName())) {
+			//				event.setCancelled(true);
+			//				event.setCancelServer(null);
+			//				player.sendMessage(TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Impossible de se connecter au serveur &4%s&c : &4%s&c.", serverKicked.getName(), kickReason)));
+			//				return;
+			//			}
 			ServerInfo serverInfolobby = ServersConnection.getBestServer(OlympaServer.LOBBY, serverKicked);
-			if (serverInfolobby == null)
+			if (serverInfolobby == null || !serverInfolobby.canAccess(player))
 				return;
 			event.setCancelled(true);
 			event.setCancelServer(serverInfolobby);
+			OlympaBungee.getInstance().sendMessage("§6" + player.getName() + "§7 a envoyé au \"§e" + serverInfolobby.getName() + "§7\".");
 			player.sendMessage(TextComponent.fromLegacyText(Prefix.BAD.formatMessage("Tu as été kick de &4%s&c pour &4%s&c.", serverKicked.getName(), kickReason)));
 		}
 	}

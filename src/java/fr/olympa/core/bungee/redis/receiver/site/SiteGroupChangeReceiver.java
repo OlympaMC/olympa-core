@@ -4,12 +4,12 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 import fr.olympa.api.bungee.customevent.BungeeOlympaGroupChangeEvent;
-import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
-import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.common.groups.OlympaGroup;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import redis.clients.jedis.JedisPubSub;
@@ -18,7 +18,7 @@ public class SiteGroupChangeReceiver extends JedisPubSub {
 	@Override
 	public void onMessage(String channel, String message) {
 		String[] args = message.split(";");
-		UUID uuid = (UUID) RegexMatcher.UUID.parse(args[2]);
+		UUID uuid = RegexMatcher.UUID.parse(args[2]);
 		String[] infoGroup = args[1].split(":");
 		OlympaGroup groupChanged = OlympaGroup.getById(Integer.parseInt(infoGroup[0]));
 		long timestamp;
@@ -52,7 +52,7 @@ public class SiteGroupChangeReceiver extends JedisPubSub {
 		default:
 			break;
 		}
-		OlympaBungee.getInstance().sendMessage("&a[DEBUG] PLAYER CHANGE GROUPE from Redis for " + olympaPlayer.getName() + " from site");
+		OlympaBungee.getInstance().sendRedis("§aChangement de groupe pour §2§l" + olympaPlayer.getName() + "§a depuis le site.");
 		ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
 		ProxyServer.getInstance().getPluginManager().callEvent(new BungeeOlympaGroupChangeEvent(player, olympaPlayer, groupChanged, timestamp, state));
 	}

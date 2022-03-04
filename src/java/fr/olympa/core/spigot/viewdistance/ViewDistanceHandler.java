@@ -1,6 +1,6 @@
 package fr.olympa.core.spigot.viewdistance;
 
-import fr.olympa.api.utils.spigot.TPS;
+import fr.olympa.api.spigot.utils.TPS;
 
 public class ViewDistanceHandler {
 

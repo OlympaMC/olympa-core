@@ -8,14 +8,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import fr.olympa.api.command.OlympaCommand;
-import fr.olympa.api.permission.OlympaSpigotPermission;
+import fr.olympa.api.common.permission.OlympaSpigotPermission;
+import fr.olympa.api.spigot.command.OlympaCommand;
 import fr.olympa.core.spigot.OlympaCore;
 
 public class StaffCommand extends OlympaCommand {
 
 	public StaffCommand(Plugin plugin) {
-		super(plugin, "staff", "Permet de voir le staff.", (OlympaSpigotPermission) null);
+		super(plugin, "staff", "Affiche une liste des joueurs du staff.", (OlympaSpigotPermission) null);
 		isAsynchronous = true;
 		allowConsole = false;
 	}
@@ -24,7 +24,7 @@ public class StaffCommand extends OlympaCommand {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		StaffGui staffGui;
 		try {
-			staffGui = new StaffGui();
+			staffGui = new StaffGui(player);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			sendError(e);

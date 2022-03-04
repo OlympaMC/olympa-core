@@ -9,19 +9,23 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
+import fr.olympa.api.bungee.customevent.OlympaPlayerLoginEvent;
 import fr.olympa.api.bungee.mojangapi.MojangAPI;
 import fr.olympa.api.bungee.mojangapi.objects.UuidResponse;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.provider.BungeeNewPlayerEvent;
-import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.utils.GsonCustomizedObjectTypeAdapter;
+import fr.olympa.api.bungee.player.CachePlayer;
+import fr.olympa.api.bungee.player.DataHandler;
+import fr.olympa.api.bungee.utils.BungeeUtils;
+import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.antibot.AntiBotHandler;
-import fr.olympa.core.bungee.login.events.OlympaPlayerLoginEvent;
 import fr.olympa.core.bungee.security.SecurityHandler;
-import fr.olympa.core.bungee.utils.BungeeUtils;
+import fr.olympa.core.bungee.utils.SpigotPlayerPack;
+import fr.olympa.core.common.provider.AccountProvider;
+import fr.olympa.core.common.provider.BungeeNewPlayerEvent;
+import fr.olympa.core.common.utils.GsonCustomizedObjectTypeAdapter;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -36,7 +40,13 @@ import net.md_5.bungee.event.EventPriority;
 @SuppressWarnings("deprecation")
 public class AuthListener implements Listener {
 
-	public static Set<String> wait = new HashSet<>();
+	private static Set<String> wait = new HashSet<>();
+
+	public static boolean containsWait(ProxiedPlayer proxiedPlayer) {
+		return wait.contains(proxiedPlayer.getName());
+	}
+
+	private static Cache<String, UuidResponse> newPlayerPremium = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build();
 
 	@EventHandler
 	public void on1PreLogin(PreLoginEvent event) {
@@ -55,38 +65,35 @@ public class AuthListener implements Listener {
 				return;
 			}
 		CachePlayer cache = new CachePlayer(name);
-
 		OlympaPlayer olympaPlayer;
 		try {
-			olympaPlayer = AccountProvider.get(name);
+			olympaPlayer = AccountProvider.getter().get(name);
 		} catch (Exception | NoClassDefFoundError e) {
 			e.printStackTrace();
-			event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#SQLBungeeLost"));
+			event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue.\n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#SQLBungeeLost"));
 			event.setCancelled(true);
 			return;
 		}
 
 		// Si le joueur ne s'est jamais connecté
 		if (olympaPlayer == null) {
-			if (AntiBotHandler.isEnable()) {
-				event.setCancelReason(BungeeUtils.connectScreen("&eBienvenue %s sur Olympa\n" +
-						"&6On dirait que tu nous rejoins au mauvais moment, nous subissons une attaque de bot :(\n" +
-						"&ePour vérifier que tu n'es pas un robot, tu dois t'inscrire sur le site : &e&nwww.olympa.fr\n" +
-						"&6Tu pourra ensuite te connecter ici.\n\n" +
-						"&eTu peux aussi attendre, le temps que l'attaque de bots s'arrête.", name));
-				event.setCancelled(true);
+			if (!SecurityHandler.getInstance().getAntibot().getCase().canfirstConnectionCrack(event))
 				return;
-			}
 
-			UuidResponse response;
-			try {
-				// On regarde si le pseudo est utilisé par un compte premium
-				response = MojangAPI.getFromName(connection);
-			} catch (IOException e) {
-				e.printStackTrace();
-				event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenu avec les serveurs d'authentifications de Mojang.\n&eCode d'erreur: &l#BungeeMojangNewPlayer"));
+			UuidResponse response = newPlayerPremium.asMap().get(name);
+			if (response == null)
+				try {
+					// On regarde si le pseudo est utilisé par un compte premium
+					response = MojangAPI.getFromName(connection);
+				} catch (IOException e) {
+					e.printStackTrace();
+					event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue avec les serveurs d'authentifications de Mojang.\n&eCode d'erreur: &l#BungeeMojangNewPlayer"));
+					event.setCancelled(true);
+					return;
+				}
+			else if (response.addRetry() % 2 == 0) {
+				event.setCancelReason(BungeeUtils.connectScreen("&eSi tu utilise un compte crack, change de pseudo, celui-ci est déjà utilisé.\n\n&eSi tu utilise un compte premium, réesaye de te connecter ou/et relancer Minecraft."));
 				event.setCancelled(true);
-				return;
 			}
 			UUID uuidPremium = null;
 
@@ -104,7 +111,7 @@ public class AuthListener implements Listener {
 
 				// Vérifie si le joueur n'a pas changé de nom.
 				try {
-					olympaPlayer = MySQL.getPlayerByPremiumUuid(uuidPremium);
+					olympaPlayer = AccountProvider.getter().getSQL().getPlayerByPremiumUuid(uuidPremium);
 				} catch (SQLException e) {
 					e.printStackTrace();
 					event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. \n\n&e&lMerci de la signaler au staff.\n&eCode d'erreur: &l#SQLBungeePreLogin"));
@@ -120,8 +127,10 @@ public class AuthListener implements Listener {
 						return;
 					}
 					OlympaBungee.getInstance().sendMessage("§cChangement de pseudo de %s (anciennement %s), UUID: ", name, olympaPlayer.getName(), uuidPremium);
-				} else
+				} else {
+					newPlayerPremium.put(name, response);
 					OlympaBungee.getInstance().sendMessage("§cNouveau Joueur %s, UUID: %s", name, uuidPremium);
+				}
 			} else {
 				connection.setOnlineMode(false);
 				OlympaBungee.getInstance().sendMessage("§7Joueur crack sans données §e" + name);
@@ -147,24 +156,32 @@ public class AuthListener implements Listener {
 					return;
 				}*/
 				if (!name.equals(olympaPlayer.getName())) {
-					event.setCancelReason(BungeeUtils.connectScreen("&aTu as mal écrit ton pseudo, connecte toi avec &2" + olympaPlayer.getName() + "&a.\n&eLà tu utilise le pseudo " + name + "."));
+					event.setCancelReason(BungeeUtils.connectScreen("&aTu as mal écrit ton pseudo, connecte toi avec &2" + olympaPlayer.getName() + "&a.\n&eTu utilises actuellement le pseudo " + name + "."));
 					event.setCancelled(true);
 					return;
 				}
 			} else
 				connection.setOnlineMode(true);
 		}
-		if (!connection.isOnlineMode() && !SecurityHandler.ALLOW_CRACK) {
-			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Crack sont temporairement désactivées. Désolé du dérangement.\nMerci de réessayer plus tard ..."));
+		SecurityHandler securityHandler = SecurityHandler.getInstance();
+		if (!connection.isOnlineMode() && !securityHandler.isAllowCrack()) {
+			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Crack sont temporairement désactivées. Désolé du dérangement.\nMerci de réessayer plus tard..."));
 			event.setCancelled(true);
 			return;
-		} else if (connection.isOnlineMode() && !SecurityHandler.ALLOW_PREMIUM) {
-			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Premium sont temporairement désactivées. Désolé du dérangement.\nMerci de réessayer plus tard ..."));
+		} else if (connection.isOnlineMode() && !securityHandler.isAllowPremium()) {
+			event.setCancelReason(BungeeUtils.connectScreen("&cLes versions Premium sont temporairement désactivées. Désolé du dérangement.\nMerci de réessayer plus tard..."));
 			event.setCancelled(true);
 			return;
 		}
 		cache.setSubDomain(event.getConnection());
-		DataHandler.addPlayer(cache);
+		try {
+			DataHandler.addPlayer(cache); // Arrive de temps en temps
+		} catch (Exception e) {
+			e.printStackTrace();
+			event.setCancelReason(BungeeUtils.connectScreen("&cUne erreur est survenue. Signale au staff. #ErrorCantData"));
+			event.setCancelled(true);
+			return;
+		}
 	}
 
 	@EventHandler(priority = (byte) 128)
@@ -205,11 +222,11 @@ public class AuthListener implements Listener {
 				UUID uuidCrack = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(StandardCharsets.UTF_8));
 
 				// Vérifie que l'uuid n'est pas déjà utiliser
-				OlympaPlayer uuidAlreadyExist = MySQL.getPlayer(uuidCrack);
+				OlympaPlayer uuidAlreadyExist = AccountProvider.getter().getSQL().getPlayer(uuidCrack);
 				if (uuidAlreadyExist != null)
 					do {
 						uuidCrack = UUID.randomUUID();
-						uuidAlreadyExist = MySQL.getPlayer(uuidCrack);
+						uuidAlreadyExist = AccountProvider.getter().getSQL().getPlayer(uuidCrack);
 					} while (uuidAlreadyExist != null);
 
 				olympaAccount = new AccountProvider(uuidCrack);
@@ -281,7 +298,7 @@ public class AuthListener implements Listener {
 			wait.remove(player.getName());
 			OlympaPlayer olympaPlayer = olympaAccount.getFromRedis();
 			if (olympaPlayer == null) {
-				System.out.println("ATTENTION le joueur " + player.getUniqueId() + " n'avait pas de donnés dans redis.");
+				OlympaBungee.getInstance().sendMessage("§4ERROR §cLe joueur " + player.getUniqueId() + " n'avait pas de données dans redis.");
 				return;
 			}
 			olympaPlayer.setLastConnection(Utils.getCurrentTimeInSeconds());
@@ -289,6 +306,7 @@ public class AuthListener implements Listener {
 			olympaAccount.removeFromRedis();
 			//olympaAccount.saveToDb(olympaPlayer);
 		}, 4, TimeUnit.SECONDS);
+		SpigotPlayerPack.playerLeaves(player);
 		OlympaBungee.getInstance().sendMessage("§7Déconnexion du joueur §e" + player.getName() + (event.getPlayer().getServer() == null ? "" : " §7(serveur §6" + event.getPlayer().getServer().getInfo().getName() + "§7)"));
 	}
 

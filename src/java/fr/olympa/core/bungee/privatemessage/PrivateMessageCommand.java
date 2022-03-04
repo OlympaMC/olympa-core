@@ -19,6 +19,7 @@ public class PrivateMessageCommand extends BungeeCommand {
 	public PrivateMessageCommand(Plugin plugin) {
 		super(plugin, "msg", "m", "mp", "dm", "w", "whisper", "message", "email", "tell");
 		minArg = 2;
+		description = "Envoyer un message privé.";
 		usageString = "<joueur> <message>";
 		PrivateMessage.privateMessageCommand.add(command);
 		PrivateMessage.privateMessageCommand.addAll(Arrays.asList(aliases));
@@ -33,7 +34,7 @@ public class PrivateMessageCommand extends BungeeCommand {
 		ProxiedPlayer proxiedPlayer = (ProxiedPlayer) sender;
 		ProxiedPlayer targetPlayer = ProxyServer.getInstance().getPlayer(args[0]);
 		if (targetPlayer == null || PrivateMessageToggleCommand.players.contains(targetPlayer.getUniqueId())) {
-			sendMessage(Prefix.DEFAULT_BAD, "Le joueur &4%s&c n'est pas connecté ou pas disponible.".replace("%s", args[0]));
+			sendMessage(Prefix.DEFAULT_BAD, "Le joueur &4%s&c n'est pas connecté ou indisponible.".replace("%s", args[0]));
 			return;
 		}
 
@@ -52,7 +53,7 @@ public class PrivateMessageCommand extends BungeeCommand {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public Iterable<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		Set<String> players = OlympaBungee.getInstance().getProxy().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toSet());
 		if (args.length == 0)
 			return players;

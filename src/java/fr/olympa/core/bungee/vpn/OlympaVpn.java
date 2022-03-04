@@ -1,13 +1,23 @@
 package fr.olympa.core.bungee.vpn;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 
+import fr.olympa.api.LinkSpigotBungee;
+import fr.olympa.api.utils.Utils;
+
 public class OlympaVpn {
+
+	// 3 month
+	private static long outdateTime = LinkSpigotBungee.upTime - 8035200;
+
 	public static OlympaVpn fromJson(String json) {
 		return new Gson().fromJson(json, OlympaVpn.class);
 	}
@@ -25,8 +35,10 @@ public class OlympaVpn {
 	boolean upWithDB = false;
 	List<String> users;
 	List<String> whitelistUsers;
+	long time;
+	long lastUpdate;
 
-	public OlympaVpn(long id, String query, Boolean proxy, Boolean mobile, Boolean hosting, String usersString, String country, String city, String org, String as, String whitelist) {
+	public OlympaVpn(long id, String query, Boolean proxy, Boolean mobile, Boolean hosting, String usersString, String country, String city, String org, String as, String whitelist, Timestamp lastUpdate, Date date) {
 		this.id = id;
 		this.query = query;
 		if (mobile)
@@ -43,10 +55,15 @@ public class OlympaVpn {
 			users = Arrays.stream(usersString.split(";")).collect(Collectors.toList());
 		if (whitelist != null && !whitelist.isEmpty())
 			whitelistUsers = Arrays.stream(whitelist.split(";")).collect(Collectors.toList());
+		this.lastUpdate = lastUpdate.getTime() / 1000L;
+		if (date != null)
+			time = date.getTime() / 1000L;
+		else
+			setCreatedDateTime();
 	}
 
 	public void addUser(String username) {
-		if (username == null)
+		if (username == null || username.isBlank())
 			return;
 		if (users == null)
 			users = new ArrayList<>();
@@ -101,6 +118,14 @@ public class OlympaVpn {
 		return whitelistUsers;
 	}
 
+	public long getTime() {
+		return time;
+	}
+
+	public long getLastUpdate() {
+		return lastUpdate;
+	}
+
 	public boolean hasUser(String username) {
 		return users != null && users.contains(username);
 	}
@@ -141,4 +166,42 @@ public class OlympaVpn {
 		return upWithDB;
 	}
 
+	private void setCreatedDateTime() {
+		time = Utils.getCurrentTimeInSeconds();
+	}
+
+	public void setDefaultTimesIfNeeded() {
+		if (time != 0)
+			return;
+		setCreatedDateTime();
+		lastUpdate = time;
+	}
+
+	public boolean isOutDate() {
+		return lastUpdate == 0 || lastUpdate < outdateTime;
+	}
+
+	public void update(OlympaVpn createVpnInfo) {
+		query = createVpnInfo.getIp();
+		if (isMobile())
+			mobile = createVpnInfo.isMobile();
+		if (isProxy())
+			proxy = createVpnInfo.isProxy();
+		if (isHosting())
+			hosting = createVpnInfo.isHosting();
+		country = createVpnInfo.getCountry();
+		city = createVpnInfo.getCity();
+		org = createVpnInfo.getOrg();
+		as = createVpnInfo.getAs();
+		lastUpdate = Utils.getCurrentTimeInSeconds();
+	}
+
+	public String getInfos() {
+		StringJoiner sj = new StringJoiner(", ");
+		sj.add("Pays " + country);
+		sj.add("isVPN " + proxy);
+		sj.add("isMobile " + mobile);
+		sj.add("isHost " + hosting);
+		return sj.toString();
+	}
 }

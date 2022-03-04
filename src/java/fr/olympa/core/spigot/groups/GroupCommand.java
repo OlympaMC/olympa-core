@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.Consumer;
@@ -16,21 +17,20 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.command.OlympaCommand;
-import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent;
-import fr.olympa.api.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
-import fr.olympa.api.groups.OlympaGroup;
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.Gender;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.groups.OlympaGroup;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.player.Gender;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.spigot.command.OlympaCommand;
+import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent;
+import fr.olympa.api.spigot.customevents.AsyncOlympaPlayerChangeGroupEvent.ChangeType;
+import fr.olympa.api.spigot.utils.SpigotUtils;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.api.utils.UtilsCore;
-import fr.olympa.api.utils.spigot.SpigotUtils;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.core.common.provider.AccountProvider;
+import fr.olympa.core.common.utils.UtilsCore;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.redis.RedisSpigotSend;
 
@@ -38,7 +38,7 @@ import fr.olympa.core.spigot.redis.RedisSpigotSend;
 public class GroupCommand extends OlympaCommand {
 
 	public GroupCommand(Plugin plugin) {
-		super(plugin, "group", "Permet la gestion des groupes de Olympa.", OlympaCorePermissions.GROUP_COMMAND, "groupe", "rank");
+		super(plugin, "group", "Permet de gérer les groupes d'un joueur Olympa.", OlympaCorePermissionsSpigot.GROUP_COMMAND, "groupe", "rank");
 		addArgs(false, "JOUEUR");
 		addArgs(false, "group");
 		addArgs(false, "time");
@@ -63,9 +63,9 @@ public class GroupCommand extends OlympaCommand {
 			target = Bukkit.getPlayer(args[0]);
 			if (target == null)
 				try {
-					olympaTarget = AccountProvider.get(args[0]);
+					olympaTarget = AccountProvider.getter().get(args[0]);
 					if (olympaTarget == null) {
-						this.sendUnknownPlayer(args[0], MySQL.getNamesBySimilarName(args[0]));
+						this.sendUnknownPlayer(args[0], AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));
 						return true;
 					} else
 						olympaAccount = new AccountProvider(olympaTarget.getUniqueId());
@@ -83,8 +83,8 @@ public class GroupCommand extends OlympaCommand {
 			return true;
 		}
 		if (args.length <= 1) {
-			TreeMap<OlympaGroup, Long> groups = olympaTarget.getGroups();
-			String targetNamePrefix = olympaTarget.getGroupPrefix() + olympaTarget.getName() + Prefix.INFO.getColor();
+			Map<OlympaGroup, Long> groups = olympaTarget.getGroups();
+			String targetNamePrefix = olympaTarget.getNameWithPrefix() + Prefix.INFO.getColor();
 			String groupString = olympaTarget.getGroupsToHumainString();
 			sendInfo("%player est dans le%s groupe%s %group."
 					.replace("%player", targetNamePrefix)
@@ -118,7 +118,7 @@ public class GroupCommand extends OlympaCommand {
 			//					return true;
 
 			Gender gender = olympaTarget.getGender();
-			TreeMap<OlympaGroup, Long> oldGroups = olympaTarget.getGroups();
+			Map<OlympaGroup, Long> oldGroups = olympaTarget.getGroups();
 			String timestampString = new String();
 			if (timestamp != 0)
 				timestampString = " /groupendant &2" + Utils.timestampToDuration(timestamp) + "&a";
@@ -134,7 +134,7 @@ public class GroupCommand extends OlympaCommand {
 					}
 					state = ChangeType.ADD;
 					olympaTarget.addGroup(newGroup, timestamp);
-					Entry<OlympaGroup, Long> entry = olympaTarget.getGroups().firstEntry();
+					Entry<OlympaGroup, Long> entry = ((TreeMap<OlympaGroup, Long>) olympaTarget.getGroups()).firstEntry();
 					OlympaGroup principalGroup = entry.getKey();
 					Long timestamp2 = entry.getValue();
 					String timestampString2 = new String();
@@ -147,7 +147,9 @@ public class GroupCommand extends OlympaCommand {
 						return true;
 					}
 					olympaTarget.removeGroup(newGroup);
-					Entry<OlympaGroup, Long> entry = olympaTarget.getGroups().firstEntry();
+					if (olympaTarget.getGroups().isEmpty())
+						olympaTarget.addGroup(OlympaGroup.PLAYER);
+					Entry<OlympaGroup, Long> entry = ((TreeMap<OlympaGroup, Long>) olympaTarget.getGroups()).firstEntry();
 					OlympaGroup principalGroup = entry.getKey();
 					Long timestamp2 = entry.getValue();
 					String timestampString2 = new String();
@@ -204,7 +206,7 @@ public class GroupCommand extends OlympaCommand {
 			List<String> potentialArgs = new ArrayList<>();
 			potentialArgs.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
 			if (args[0].length() > 2)
-				potentialArgs.addAll(MySQL.getNamesBySimilarName(args[0]));
+				potentialArgs.addAll(AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));
 			return Utils.startWords(args[0], potentialArgs);
 		} else if (args.length == 2)
 			return Utils.startWords(args[1], Arrays.stream(OlympaGroup.values()).map(OlympaGroup::getName).collect(Collectors.toList()));

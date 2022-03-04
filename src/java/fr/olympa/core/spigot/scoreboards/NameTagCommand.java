@@ -7,11 +7,12 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
-import fr.olympa.api.command.complex.Cmd;
-import fr.olympa.api.command.complex.CommandContext;
-import fr.olympa.api.command.complex.ComplexCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.scoreboard.tab.Nametag;
+import fr.olympa.api.common.command.complex.Cmd;
+import fr.olympa.api.common.command.complex.CommandContext;
+import fr.olympa.api.spigot.command.ComplexCommand;
+import fr.olympa.api.spigot.scoreboard.tab.Nametag;
+import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.scoreboards.api.NametagAPI;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
@@ -23,21 +24,34 @@ public class NameTagCommand extends ComplexCommand {
 	private NametagAPI api;
 
 	public NameTagCommand(OlympaCore plugin, NametagAPI api) {
-		//		super(plugin, "nametag", "Gestion et test des nameTag", OlympaCorePermissions.NAMETAG_COMMAND, "nt");
-		super(plugin, "nametag", "Gestion et test des nameTag", OlympaCorePermissions.SPIGOT_LAG_COMMAND, "nt");
+		super(plugin, "nametag", "Gestion et test des nameTag.", OlympaCorePermissionsSpigot.NAMETAG_COMMAND);
 		this.api = api;
 	}
 
-	@Cmd(args = { "prefix", "suffix", "INTEGER", "PLAYERS" }, min = 2)
+	@Cmd(args = { "prefix", "suffix", "INTEGER", "PLAYERS" }, min = 2, player = true)
 	public void set(CommandContext cmd) {
 		String prefix = cmd.getArgument(0);
 		String suffix = cmd.getArgument(1);
 		int sortPriority = cmd.getArgumentsLength() > 2 ? cmd.getArgument(2) : 0;
-		Player player = cmd.getArgumentsLength() > 3 ? cmd.getArgument(3) : getPlayer();
 		Nametag nameTag = new Nametag();
 		nameTag.appendPrefix(prefix);
 		nameTag.appendSuffix(suffix);
-		api.manager.changeFakeNametag(player.getName(), nameTag, sortPriority, List.of(getPlayer()));
+		api.manager.changeFakeNametag(getPlayer().getName(), nameTag, sortPriority, List.of(getPlayer()));
+		sendMessage(Prefix.DEFAULT_GOOD, "NameTag modifié en '%s&a', uniquement pour toi.", nameTag.toString());
+	}
+
+	@Cmd(args = { "PLAYERS", "prefix", "suffix", "INTEGER", "PLAYERS" }, min = 3)
+	public void setToPlayer(CommandContext cmd) {
+		Player target = cmd.getArgument(0);
+		String prefix = cmd.getArgument(1);
+		String suffix = cmd.getArgument(2);
+		int sortPriority = cmd.getArgumentsLength() > 3 ? cmd.getArgument(3) : 0;
+		Player toTarget = cmd.getArgumentsLength() > 4 ? cmd.getArgument(4) : target;
+		Nametag nameTag = new Nametag();
+		nameTag.appendPrefix(prefix);
+		nameTag.appendSuffix(suffix);
+		api.manager.changeFakeNametag(target.getName(), nameTag, sortPriority, List.of(toTarget));
+		sendMessage(Prefix.DEFAULT_GOOD, "NameTag modifié en '%s&a', uniquement pour %s.", nameTag.toString(), target.getName());
 	}
 
 	@Cmd()

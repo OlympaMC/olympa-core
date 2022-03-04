@@ -5,21 +5,21 @@ import java.util.Arrays;
 import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.sanction.OlympaSanctionType;
+import fr.olympa.api.common.utils.SanctionUtils;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class BanCommand extends BungeeCommand implements TabExecutor {
+public class BanCommand extends BungeeCommand {
 
 	public BanCommand(Plugin plugin) {
-		super(plugin, "ban", OlympaCorePermissions.BAN_BAN_COMMAND, "tempban");
+		super(plugin, "ban", "Permet de bannir ou tempbannir un joueur ou une ip", OlympaCorePermissionsBungee.BAN_BAN_COMMAND, "tempban", "bann");
 		minArg = 2;
 		usageString = "<joueur|uuid|id|ip> [temps] <motif>";
 	}
@@ -32,23 +32,28 @@ public class BanCommand extends BungeeCommand implements TabExecutor {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		switch (args.length) {
 		case 1:
-			return Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
+			return Utils.startWords(args[0], AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));
 		case 2:
 			List<String> units = new ArrayList<>();
 			if (args[1].isBlank())
-				return Arrays.asList("15min", "30min", "1h", "2h", "12h", "1j", "2j", "3j", "7j", "1mo", "1an");
-			for (List<String> unit : SanctionUtils.units)
-				for (String u : unit)
-					units.add(args[1] + u);
-			return Utils.startWords(args[1], units);
+				return Arrays.asList("1h", "2h", "3h", "6h", "12h", "1j", "2j", "3j", "7j", "1mo", "1an");
+			if (RegexMatcher.INT.is(args[1])) {
+				Integer time = RegexMatcher.INT.extractAndParse(args[1]);
+				if (time == null)
+					return null;
+				for (List<String> unit : SanctionUtils.units)
+					for (String u : unit)
+						units.add(time + u);
+				return Utils.startWords(args[1], units);
+			}
+			break;
 		case 3:
 			List<String> reasons = Arrays.asList("Cheat", "Insulte", "Provocation", "Spam", "Harcèlement", "Publicité");
 			return Utils.startWords(args[2], reasons);
-		default:
-			return new ArrayList<>();
 		}
+		return new ArrayList<>();
 	}
 }

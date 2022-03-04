@@ -1,10 +1,10 @@
 package fr.olympa.core.bungee.login.listener;
 
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.bungee.player.DataHandler;
+import fr.olympa.api.common.player.OlympaPlayer;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.core.bungee.datamanagment.DataHandler;
 import fr.olympa.core.bungee.login.HandlerLogin;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -16,10 +16,15 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
+/**
+ * TODO add message for information, /discord link, /changepassword ...
+ *
+ */
 public class LoginChatListener implements Listener {
 
 	private TextComponent joinMessageCrackNew;
@@ -40,7 +45,7 @@ public class LoginChatListener implements Listener {
 
 		joinMessageCrackNew = base.duplicate();
 		TextComponent link = new TextComponent();
-		addLegacyText(link, "§aCrée ton compte avec §2/register <mot de passe>§a ou §2clique ici§a.");
+		addLegacyText(link, "§aCrée ton compte avec §2/register <mot de passe>§a <- Clique.");
 		link.setHoverEvent(hoverTooltip);
 		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/register "));
 		joinMessageCrackNew.addExtra(link);
@@ -48,19 +53,11 @@ public class LoginChatListener implements Listener {
 
 		joinMessageCrackCreated = base.duplicate();
 		link = new TextComponent();
-		addLegacyText(link, "§aTon mot de passe est le même sur le site et le forum.\n§aFais §2/login <mot de passe>§a ou §2clique ici §a.");
+		addLegacyText(link, "§aTon mot de passe est le même sur le site et le forum.\n§aFais §2/login <mot de passe>§a.");
 		link.setHoverEvent(hoverTooltip);
 		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/login "));
 		joinMessageCrackCreated.addExtra(link);
 		joinMessageCrackCreated.addExtra(end);
-
-		joinMessagePremiumNew = base.duplicate();
-		link = new TextComponent();
-		addLegacyText(link, "§aCrée-toi un compte sur le site avec §2/register <mot de passe>§a ou §2clique ici §a.");
-		link.setHoverEvent(hoverTooltip);
-		link.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/register "));
-		joinMessagePremiumNew.addExtra(link);
-		joinMessagePremiumNew.addExtra(end);
 
 		joinMessagePremiumCreated = base.duplicate();
 		joinMessagePremiumCreated.addExtra(end);
@@ -69,6 +66,15 @@ public class LoginChatListener implements Listener {
 	private void addLegacyText(TextComponent component, String legacyText) {
 		for (BaseComponent compo : TextComponent.fromLegacyText(legacyText))
 			component.addExtra(compo);
+	}
+
+	@EventHandler
+	public void onChat(TabCompleteEvent event) {
+		if (!(event.getReceiver() instanceof ProxiedPlayer))
+			return;
+		ProxiedPlayer player = (ProxiedPlayer) event.getReceiver();
+		if (DataHandler.isUnlogged(player))
+			event.setCancelled(true);
 	}
 
 	@EventHandler

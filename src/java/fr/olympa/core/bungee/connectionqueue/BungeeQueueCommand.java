@@ -3,16 +3,16 @@ package fr.olympa.core.bungee.connectionqueue;
 import java.text.DecimalFormat;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.match.RegexMatcher;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.common.match.RegexMatcher;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class BungeeQueueCommand extends BungeeCommand {
 
 	public BungeeQueueCommand(Plugin plugin) {
-		super(plugin, "bungeequeue", OlympaCorePermissions.BUNGEE_QUEUE_COMMAND, "bqueue");
+		super(plugin, "bungeequeue", OlympaCorePermissionsBungee.BUNGEE_QUEUE_COMMAND, "bqueue");
 		minArg = 1;
 	}
 

@@ -1,5 +1,5 @@
-version: 1.41
-status: 'Développement'
+version: 1.43
+status: 'Ouvert'
 maintenance:
    messages:
       usage: '&cUsage &7» &c/maintenance [on|off|dev|add|remove|list|status] <raison|joueur>'
@@ -88,6 +88,7 @@ ban:
       - month
       - months
       - mois
+      - mo
       second:
       - second
       - seconds
@@ -132,7 +133,6 @@ chat:
    - "|nike|"
    - "|ftg"
    - "|con|"
-   - "|cone|"
    - "|conne|"
    - "|connes|"
    - "|fdp|"

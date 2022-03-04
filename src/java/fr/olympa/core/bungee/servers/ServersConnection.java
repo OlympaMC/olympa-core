@@ -1,6 +1,8 @@
 package fr.olympa.core.bungee.servers;
 
+import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -9,11 +11,22 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import fr.olympa.api.LinkSpigotBungee;
 import fr.olympa.api.bungee.task.BungeeTaskManager;
-import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.server.ServerStatus;
-import fr.olympa.api.utils.machine.OlympaRuntime;
+import fr.olympa.api.common.bash.OlympaRuntime;
+import fr.olympa.api.common.match.MatcherPattern;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerInfoAdvanced;
+import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
+import fr.olympa.api.common.server.ServerStatus;
+import fr.olympa.api.common.sort.Sorting;
+import fr.olympa.api.spigot.utils.ProtocolAPI;
+import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -56,7 +69,7 @@ public class ServersConnection {
 	}
 
 	public static boolean canPlayerConnect(ServerInfo server) {
-		MonitorInfo monitor = MonitorServers.getMonitor(server);
+		ServerInfoAdvanced monitor = OlympaBungee.getInstance().getMonitoring().getMonitor(server);
 		return monitor != null && monitor.getStatus().canConnect();
 	}
 
@@ -64,24 +77,42 @@ public class ServersConnection {
 		return getBestServer(olympaServer, except, null);
 	}
 
-	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except, ProxiedPlayer w8forConnect) {
+	public static ServerInfo getBestServer(OlympaServer olympaServer, ServerInfo except, @Nullable ProxiedPlayer w8forConnect) {
 		if (!olympaServer.hasMultiServers())
-			return MonitorServers.getServers(olympaServer).values().stream().findFirst().map(MonitorInfo::getServerInfo).orElse(null);
+			return OlympaBungee.getInstance().getMonitoring().getServers(olympaServer).values().stream().findFirst().map(ServerInfoAdvancedBungee::getServerInfo).orElse(null);
 
-		Map<ServerInfo, Integer> servers = MonitorServers.getServers(olympaServer).values().stream()
-				.filter(x -> x.getStatus().canConnect() && (except == null || !except.getName().equals(x.getName())) && (!olympaServer.hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
-				.collect(Collectors.toMap((si) -> si.getServerInfo(), (si) -> si.getMaxPlayers() - si.getOnlinePlayers()));
-		ServerInfo bestServer = servers.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(Entry::getKey).findFirst().orElse(null);
-		if (bestServer != null)
-			return bestServer;
+		List<ServerInfoAdvancedBungee> servers = OlympaBungee.getInstance().getMonitoring().getServers(olympaServer).values().stream()
+				.filter(x -> x.hasMinimalInfo() && x.getStatus().canConnect() && (except == null || !except.getName().equals(x.getName()))
+						&& (!x.getOlympaServer().hasMultiServers() || x.getMaxPlayers() * 0.9 - x.getOnlinePlayers() > 0))
+				.sorted(new Sorting<>(Map.of(server -> server.getOnlinePlayers(), false, server -> server.getServerId(), true)))
+				.collect(Collectors.toList());
+		if (!servers.isEmpty()) {
+			if (w8forConnect != null)
+				try {
+					OlympaPlayer olympaPlayer = new AccountProvider(w8forConnect.getUniqueId()).get();
+					ProtocolAPI version = ProtocolAPI.getHighestVersion(w8forConnect.getPendingConnection().getVersion());
+					if (olympaPlayer != null && version != null) {
+						ServerInfoAdvancedBungee serv = servers.stream().filter(sr -> sr.canConnect(olympaPlayer, version)).findFirst().orElse(null);
+						if (serv != null)
+							return serv.getServerInfo();
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+					return null;
+				}
+			return servers.get(0).getServerInfo();
+		}
 
 		// Ouvre un serveur
-		ServerInfo serverToOpen = MonitorServers.getServersMap().entrySet().stream().filter(e -> (except == null || !e.getKey().getName().equals(except.getName())) && MonitorServers.getServers(olympaServer).values().stream()
-				.anyMatch(mInfo -> mInfo.getName().equals(e.getKey().getName()) && mInfo.getStatus().equals(ServerStatus.CLOSE) && mInfo.isUsualError())).map(Entry::getKey).findFirst().orElse(null);
+		ServerInfo serverToOpen = OlympaBungee.getInstance().getMonitoring().getServersMap().entrySet().stream().filter(e -> (except == null || !e.getKey().getName().equals(except.getName()))
+				&& OlympaBungee.getInstance().getMonitoring().getServers(olympaServer).values().stream().anyMatch(mInfo -> mInfo.getName().equals(e.getKey().getName())
+						&& mInfo.getStatus().equals(ServerStatus.CLOSE) && mInfo.isUsualError()))
+				.map(Entry::getKey).findFirst().orElse(null);
 		if (serverToOpen != null) {
-			if (!waitToStart.contains(serverToOpen)) {
+			waitToStart.contains(serverToOpen);
+			if (!waitToStart.contains(serverToOpen) && waitToStart.size() <= 2) {
 				waitToStart.add(serverToOpen);
-				LinkSpigotBungee.Provider.link.getTask().runTaskLater(() -> {
+				LinkSpigotBungee.getInstance().getTask().runTaskLater(() -> {
 					waitToStart.remove(serverToOpen);
 				}, 1, TimeUnit.MINUTES);
 				OlympaRuntime.action("start", serverToOpen.getName()).start();
@@ -89,11 +120,16 @@ public class ServersConnection {
 			if (w8forConnect != null) {
 				while (waitToStart.contains(serverToOpen))
 					try {
+						if (!w8forConnect.isConnected())
+							break;
 						w8forConnect.getPendingConnection().unsafe().sendPacket(new KeepAlive(ThreadLocalRandom.current().nextLong()));
+						LinkSpigotBungee.getInstance().sendMessage("&6Wait serveur %s to start, %s's thread is sleeping for 5s", serverToOpen.getName(), w8forConnect.getName());
 						Thread.sleep(5000);
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
+				if (!w8forConnect.isConnected())
+					return null;
 				return serverToOpen;
 			}
 		}
@@ -102,6 +138,7 @@ public class ServersConnection {
 	}
 
 	@SuppressWarnings("deprecation")
+	@Nullable
 	public static ServerInfo getServerByNameOrIpPort(String nameOrIpPort) {
 		Map<String, ServerInfo> servers = ProxyServer.getInstance().getServers();
 		ServerInfo server = servers.get(nameOrIpPort);
@@ -109,8 +146,12 @@ public class ServersConnection {
 			String[] ipPort = nameOrIpPort.split(":");
 			if (ipPort.length >= 2) {
 				String ip = ipPort[0].replace("localhost", "127.0.0.1");
+				MatcherPattern<Integer> regexInt = RegexMatcher.INT;
+				if (!regexInt.startWith(ipPort[1]))
+					throw new IllegalAccessError(String.format("%s need to be a INT (a port like 25565) but it is not.", ipPort[1]));
+				Integer port = regexInt.extractAndParse(ipPort[1]);
 				server = servers.values().stream().filter(sr -> {
-					return sr.getAddress().getAddress().getHostAddress().equals(ip) && sr.getAddress().getPort() == Integer.parseInt(ipPort[1]);
+					return sr.getAddress().getAddress().getHostAddress().equals(ip) && sr.getAddress().getPort() == port;
 				}).findFirst().orElse(null);
 			}
 		}
@@ -130,7 +171,7 @@ public class ServersConnection {
 			wc.isChangeServer = false;
 			return b;
 		}
-		BungeeTaskManager taskHandler = (BungeeTaskManager) LinkSpigotBungee.Provider.link.getTask();
+		BungeeTaskManager taskHandler = (BungeeTaskManager) LinkSpigotBungee.getInstance().getTask();
 		ScheduledTask task = wc.task;
 		if (task != null) {
 			taskHandler.cancelTaskById(task.getId());
@@ -143,8 +184,10 @@ public class ServersConnection {
 
 	public static void tryConnect(ProxiedPlayer player, OlympaServer olympaServer, boolean isChangeServer) {
 		removeTryToConnect(player);
-		BungeeTaskManager taskHandler = (BungeeTaskManager) LinkSpigotBungee.Provider.link.getTask();
-		ScheduledTask task = taskHandler.scheduleSyncRepeatingTaskAndGet("tryconnect_player_" + player.getUniqueId(), new QueueSpigotTask(player, olympaServer), 0, 20, TimeUnit.SECONDS);
+		if (!player.isConnected())
+			return;
+		BungeeTaskManager taskHandler = (BungeeTaskManager) LinkSpigotBungee.getInstance().getTask();
+		ScheduledTask task = taskHandler.scheduleSyncRepeatingTaskAndGet("tryconnect_player_" + player.getUniqueId(), new QueueSpigotServerTask(player, olympaServer), 3, 20, TimeUnit.SECONDS);
 		addConnection(new WaitingConnection(player.getUniqueId(), olympaServer, task, isChangeServer));
 	}
 }

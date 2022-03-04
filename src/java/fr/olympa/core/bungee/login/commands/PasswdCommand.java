@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.provider.AccountProvider;
 import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -61,7 +61,7 @@ public class PasswdCommand extends BungeeCommand {
 			}
 		} else {
 			try {
-				olympaPlayer = AccountProvider.get(args[0]);
+				olympaPlayer = AccountProvider.getter().get(args[0]);
 			} catch (SQLException e) {
 				this.sendError(e.getMessage());
 				e.printStackTrace();

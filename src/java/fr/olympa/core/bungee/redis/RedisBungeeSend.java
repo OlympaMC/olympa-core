@@ -3,17 +3,24 @@ package fr.olympa.core.bungee.redis;
 import java.net.InetSocketAddress;
 import java.util.UUID;
 
-import com.google.gson.Gson;
-
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.redis.RedisAccess;
-import fr.olympa.api.redis.RedisChannel;
-import fr.olympa.api.server.OlympaServer;
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.LinkSpigotBungee;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.redis.RedisChannel;
+import fr.olympa.core.bungee.ban.objects.OlympaSanction;
+import fr.olympa.core.common.redis.RedisAccess;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import redis.clients.jedis.Jedis;
 
 public class RedisBungeeSend {
+
+	// TODO Bungee recever
+	public static void sendSanction(ServerInfo serverFrom, UUID uuid, OlympaSanction sanction) {
+		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
+			jedis.publish(RedisChannel.SPIGOT_SEND_SANCTION.name(), serverFrom.getName() + ";" + uuid.toString() + ";" + LinkSpigotBungee.getInstance().getGson().toJson(sanction));
+		}
+		RedisAccess.INSTANCE.disconnect();
+	}
 
 	public static void askGiveOlympaPlayer(ServerInfo serverFrom, ServerInfo serverTo, UUID uuid) {
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
@@ -24,14 +31,14 @@ public class RedisBungeeSend {
 
 	public static void sendOlympaPlayer(ServerInfo target, OlympaPlayer olympaPlayer) {
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			jedis.publish(RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name(), target.getName() + ";" + new Gson().toJson(olympaPlayer));
+			jedis.publish(RedisChannel.BUNGEE_SEND_OLYMPAPLAYER.name(), target.getName() + ";" + LinkSpigotBungee.getInstance().getGson().toJson(olympaPlayer));
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
 
 	public static void sendOlympaPlayerFirstConnection(ServerInfo target, OlympaPlayer olympaPlayer) {
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			jedis.publish(RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name(), "bungee;" + target.getName() + ";" + new Gson().toJson(olympaPlayer));
+			jedis.publish(RedisChannel.SPIGOT_SEND_OLYMPAPLAYER.name(), "bungee;" + target.getName() + ";" + LinkSpigotBungee.getInstance().getGson().toJson(olympaPlayer));
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
@@ -52,16 +59,18 @@ public class RedisBungeeSend {
 		RedisAccess.INSTANCE.disconnect();
 	}
 
-	public static void sendServerInfos(OlympaServer olympaServer, int players, ServerStatus status) {
-		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
-			jedis.publish(RedisChannel.BUNGEE_SEND_SERVERSINFOS.name(), olympaServer.name() + ":" + players + ":" + status.getId());
-		}
-	}
-
 	public static void sendPlayerServer(String serverName, String playerUUID, String playerServer) {
 		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
 			jedis.publish(RedisChannel.BUNGEE_SEND_PLAYERSERVER.name(), serverName + ";" + playerUUID + ";" + playerServer);
 		}
 		RedisAccess.INSTANCE.disconnect();
 	}
+
+	public static void sendPlayerPack(ProxiedPlayer p, boolean set) {
+		try (Jedis jedis = RedisAccess.INSTANCE.connect()) {
+			jedis.publish(RedisChannel.BUNGEE_PLAYER_RESOUREPACK.name(), p.getName() + ";" + p.getServer().getInfo().getName() + ";" + Boolean.toString(set));
+		}
+		RedisAccess.INSTANCE.disconnect();
+	}
+
 }

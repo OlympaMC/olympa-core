@@ -4,28 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.sql.MySQL;
-import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
-import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;
-import fr.olympa.core.bungee.ban.objects.OlympaSanction;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.config.Configuration;
 
 public class BanHistoryCommand extends BungeeCommand {
 
 	public BanHistoryCommand(OlympaBungee plugin) {
-		super(plugin, "banhistory", OlympaCorePermissions.BAN_HISTORY_COMMAND, "banhist", "mutehist", "kickhist", "hist", "histban");
+		super(plugin, "banhistory", "Affiche le casier d'un joueur ou ip", OlympaCorePermissionsBungee.BAN_HISTORY_COMMAND, "banhist", "mutehist", "kickhist", "hist", "histban");
 		minArg = 1;
 		usageString = "<joueur|uuid|id|ip>";
 	}
@@ -50,7 +39,7 @@ public class BanHistoryCommand extends BungeeCommand {
 	//				target = String.valueOf(op.getId());
 	//			} else if (RegexMatcher.USERNAME.is(identifier)) {
 	//				OlympaPlayer op;
-	//				op = AccountProvider.get(identifier);
+	//				op = AccountProvider.getter().get(identifier);
 	//				target = String.valueOf(op.getId());
 	//			} else {
 	//				Configuration config = OlympaBungee.getInstance().getConfig();
@@ -69,7 +58,7 @@ public class BanHistoryCommand extends BungeeCommand {
 		banArg.printInfo();
 	}
 
-	@SuppressWarnings("deprecation")
+	/*@SuppressWarnings("deprecation")
 	public static void histSanctions(CommandSender sender, String target) {
 		Configuration config = OlympaBungee.getInstance().getConfig();
 		List<OlympaSanction> sanctions = BanMySQL.getSanctions(target);
@@ -118,7 +107,7 @@ public class BanHistoryCommand extends BungeeCommand {
 				msg.addExtra(s);
 		});
 		sender.sendMessage(msg);
-	}
+	}*/
 
 	//	@Override
 	//	public void onCommand(CommandSender sender, String[] args) {
@@ -152,10 +141,10 @@ public class BanHistoryCommand extends BungeeCommand {
 	//	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		switch (args.length) {
 		case 1:
-			List<String> list = Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
+			List<String> list = Utils.startWords(args[0], AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));
 			return list;
 		default:
 			return new ArrayList<>();

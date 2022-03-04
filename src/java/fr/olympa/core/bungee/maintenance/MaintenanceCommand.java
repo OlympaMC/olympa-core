@@ -7,11 +7,11 @@ import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
 import fr.olympa.api.bungee.config.BungeeCustomConfig;
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.server.ServerStatus;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.server.ServerStatus;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.TabExecutor;
@@ -29,7 +29,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 	static List<String> arg2 = new ArrayList<>();
 
 	public MaintenanceCommand(Plugin plugin) {
-		super(plugin, "maintenance", OlympaCorePermissions.MAINTENANCE_COMMAND, "maint");
+		super(plugin, "maintenance", OlympaCorePermissionsBungee.MAINTENANCE_COMMAND, "maint");
 		minArg = 1;
 		arg2.addAll(Arrays.asList("status", "add", "remove", "list"));
 		arg2.addAll(ServerStatus.getCommandsArgs());
@@ -105,7 +105,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 				String statusString = maintconfig.getString("settings.status");
 				maintenanceStatus = ServerStatus.get(statusString);
 				String statusmsg = "";
-				if (message.equals(""))
+				if (!message.equals(""))
 					statusmsg = "(" + message.replace("\n", "") + ")";
 				sendMessage(ColorUtils.color("&6Le mode maintenance est en mode " + maintenanceStatus.getNameColored() + "&6" + statusmsg + "."));
 				break;
@@ -117,7 +117,7 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		switch (args.length) {
 		case 0:
 			return arg2;
@@ -140,6 +140,8 @@ public class MaintenanceCommand extends BungeeCommand implements TabExecutor {
 
 	@SuppressWarnings("deprecation")
 	private void setServerStatus(ServerStatus status, String message, CommandSender player) {
+		OlympaBungee core = OlympaBungee.getInstance();
+		core.setStatus(status);
 		BungeeCustomConfig customConfig = OlympaBungee.getInstance().getMaintCustomConfig();
 		Configuration config = customConfig.getConfig();
 		config.set("settings.status", status.getName());

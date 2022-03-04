@@ -4,15 +4,15 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.sanction.OlympaSanctionType;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -28,7 +28,7 @@ public class IpHistory {
 		List<OlympaSanction> bans = BanMySQL.getSanctions(ip);
 		List<OlympaPlayer> players = null;
 		try {
-			players = MySQL.getPlayersByIp(ip);
+			players = AccountProvider.getter().getSQL().getPlayersByIp(ip);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return;

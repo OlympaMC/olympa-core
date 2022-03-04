@@ -7,10 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.player.OlympaConsole;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.player.OlympaConsole;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.utils.Prefix;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -39,29 +40,33 @@ public class PrivateMessage {
 	public static void send(CommandSender sender, ProxiedPlayer target, String message) {
 		// play sound mob.cat.meow
 
-		OlympaPlayer emeraldPlayer = null;
-		OlympaPlayer emeraldTarget;
+		OlympaPlayer olympaPlayer = null;
+		OlympaPlayer olympaTarget;
 		try {
 			if (sender instanceof ProxiedPlayer)
-				emeraldPlayer = new AccountProvider(((ProxiedPlayer) sender).getUniqueId()).get();
+				olympaPlayer = new AccountProvider(((ProxiedPlayer) sender).getUniqueId()).get();
 			else if (OlympaConsole.getDevConnected() != null)
-				emeraldPlayer = OlympaConsole.getDevConnected();
-			emeraldTarget = new AccountProvider(target.getUniqueId()).get();
+				olympaPlayer = OlympaConsole.getDevConnected();
+			olympaTarget = new AccountProvider(target.getUniqueId()).get();
 		} catch (SQLException e) {
 			sender.sendMessage(ColorUtils.color("&cUne erreur est survenue, impossible d'envoyer ce message."));
 			e.printStackTrace();
 			return;
 		}
+		if (olympaTarget == null) {
+			sender.sendMessage(Prefix.DEFAULT_BAD.formatMessageB("Le joueur &4%s&c n'est pas connecté ou indisponible.".replace("%s", target.getName())));
+			return;
+		}
 
-		TextComponent msgPlayer = new TextComponent(TextComponent.fromLegacyText(ColorUtils.color("&6Message &c\u2B06 " + emeraldTarget.getGroupPrefix() + target.getName() + "&b : ")));
-		msgPlayer.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ColorUtils.color("&aRépondre à " + emeraldTarget.getGroupPrefix() + target.getName())).create()));
+		TextComponent msgPlayer = new TextComponent(TextComponent.fromLegacyText(ColorUtils.color("&6Message &c\u2B06 " + olympaTarget.getNameWithPrefix() + "&b : ")));
+		msgPlayer.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ColorUtils.color("&aRépondre à " + olympaTarget.getGroupPrefix() + target.getName())).create()));
 		msgPlayer.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + target.getName() + " "));
 		msgPlayer.addExtra(new TextComponent(TextComponent.fromLegacyText(message)));
 		sender.sendMessage(msgPlayer);
 
 		String groupPrefix = "";
-		if (emeraldPlayer != null)
-			groupPrefix = emeraldPlayer.getGroupPrefix();
+		if (olympaPlayer != null)
+			groupPrefix = olympaPlayer.getGroupPrefix();
 		TextComponent msgTarget = new TextComponent(TextComponent.fromLegacyText(ColorUtils.color("&6Message &a\u2B07 " + groupPrefix + sender.getName() + "&b : ")));
 		msgTarget.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ColorUtils.color("&aRépondre à " + groupPrefix + sender.getName())).create()));
 		msgTarget.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + sender.getName() + " "));

@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.UUID;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.chat.ColorUtils;
+import fr.olympa.api.bungee.utils.BungeeUtils;
+import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.core.bungee.utils.BungeeUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -20,6 +20,7 @@ public class ReplyCommand extends BungeeCommand {
 		PrivateMessage.replyCommand.add(command);
 		PrivateMessage.replyCommand.addAll(Arrays.asList(aliases));
 		allowConsole = false;
+		description = "Répondre au dernier message privé.";
 		minArg = 1;
 		usageString = "<message>";
 	}
@@ -43,6 +44,6 @@ public class ReplyCommand extends BungeeCommand {
 		String message = String.join(" ", Arrays.copyOfRange(args, 0, args.length));
 
 		PrivateMessage.send(proxiedPlayer, targetPlayer, message);
-
+		PrivateMessage.setReply(targetPlayer, proxiedPlayer);
 	}
 }

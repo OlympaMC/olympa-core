@@ -5,20 +5,21 @@ import java.util.Arrays;
 import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.sql.MySQL;
+import fr.olympa.api.common.match.RegexMatcher;
+import fr.olympa.api.common.sanction.OlympaSanctionType;
+import fr.olympa.api.common.utils.SanctionUtils;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.core.bungee.ban.SanctionUtils;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class MuteCommand extends BungeeCommand {
 
 	public MuteCommand(Plugin plugin) {
-		super(plugin, "mute", OlympaCorePermissions.BAN_MUTE_COMMAND, "tempmute");
+		super(plugin, "mute", OlympaCorePermissionsBungee.BAN_MUTE_COMMAND, "tempmute");
 		minArg = 2;
 		usageString = "<joueur|uuid|ip> [temps] <motif>";
 	}
@@ -61,17 +62,19 @@ public class MuteCommand extends BungeeCommand {
 	//	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		switch (args.length) {
 		case 1:
-			List<String> postentielNames = Utils.startWords(args[0], MySQL.getNamesBySimilarName(args[0]));
+			List<String> postentielNames = Utils.startWords(args[0], AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));
 			return postentielNames;
 		case 2:
 			List<String> units = new ArrayList<>();
+			Integer time;
+			if (args[1].isBlank() || (time = RegexMatcher.INT.extractAndParse(args[1])) == null)
+				return Arrays.asList("15min", "30min", "1h", "2h", "3h", "6h", "12h", "1j");
 			for (List<String> unit : SanctionUtils.units)
 				for (String u : unit)
-					for (int i = 1; i < 20; i++)
-						units.add(i + u);
+					units.add(time + u);
 			return Utils.startWords(args[1], units);
 		case 3:
 			List<String> reasons = Arrays.asList("Insulte", "Provocation", "Spam", "Harcèlement", "Publicité");

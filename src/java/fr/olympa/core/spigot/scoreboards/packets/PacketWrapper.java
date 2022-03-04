@@ -1,35 +1,33 @@
 package fr.olympa.core.spigot.scoreboards.packets;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.google.gson.Gson;
 
 import fr.olympa.api.LinkSpigotBungee;
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.scoreboard.tab.FakeTeam;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.spigot.scoreboard.tab.FakeTeam;
 import fr.olympa.core.spigot.module.CoreModules;
 import fr.olympa.core.spigot.scoreboards.NameTagManager;
 import fr.olympa.core.spigot.scoreboards.utils.UtilsScoreboard;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
+import net.minecraft.server.v1_16_R3.IChatBaseComponent;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class PacketWrapper {
 
-	private static Constructor<?> chatComponentText;
 	private static Class<? extends Enum> typeEnumChatFormat;
 
 	static {
 		try {
 			if (!PacketAccessor.isLegacyVersion()) {
 				String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-				Class<?> typeChatComponentText = Class.forName("net.minecraft.server." + version + ".ChatComponentText");
-				chatComponentText = typeChatComponentText.getConstructor(String.class);
 				typeEnumChatFormat = (Class<? extends Enum>) Class.forName("net.minecraft.server." + version + ".EnumChatFormat");
 			}
 		} catch (Exception e) {
@@ -41,7 +39,7 @@ public class PacketWrapper {
 		if (!team.isValidTeam())
 			throw new IllegalAccessError("FakeTeam team is not valid : " + new Gson().toJson(team));
 		if (CoreModules.NAME_TAG.isDebugEnabled())
-			LinkSpigotBungee.Provider.link.sendMessage("Team &cDelete&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), team.getMembers() != null ? String.join(", ", team.getMembers()) : null);
+			LinkSpigotBungee.getInstance().sendMessage("Team &cDelete&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), team.getMembers() != null ? String.join(", ", team.getMembers()) : null);
 		FakeTeam.removeId(team);
 		return new PacketWrapper(team.getName(), 1);
 	}
@@ -50,7 +48,7 @@ public class PacketWrapper {
 		if (!team.isValidTeam())
 			throw new IllegalAccessError("FakeTeam team is not valid : " + new Gson().toJson(team));
 		if (CoreModules.NAME_TAG.isDebugEnabled())
-			LinkSpigotBungee.Provider.link.sendMessage("Team &2Create&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), String.join(", ", team.getMembers()));
+			LinkSpigotBungee.getInstance().sendMessage("Team &2Create&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), String.join(", ", team.getMembers()));
 		return new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers());
 	}
 	//
@@ -62,7 +60,7 @@ public class PacketWrapper {
 		if (!team.isValidTeam())
 			throw new IllegalAccessError("FakeTeam team is not valid : " + new Gson().toJson(team));
 		if (CoreModules.NAME_TAG.isDebugEnabled())
-			LinkSpigotBungee.Provider.link.sendMessage("Team &2add member&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), String.join(", ", members));
+			LinkSpigotBungee.getInstance().sendMessage("Team &2add member&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), String.join(", ", members));
 		return new PacketWrapper(team.getName(), 3, members);
 	}
 
@@ -70,7 +68,7 @@ public class PacketWrapper {
 		if (!team.isValidTeam())
 			throw new IllegalAccessError("FakeTeam team is not valid : " + new Gson().toJson(team));
 		if (CoreModules.NAME_TAG.isDebugEnabled())
-			LinkSpigotBungee.Provider.link.sendMessage("Team &cremove member&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), String.join(", ", members));
+			LinkSpigotBungee.getInstance().sendMessage("Team &cremove member&6 %s '%s' '%s' for %s", team.getName(), team.getPrefix(), team.getSuffix(), String.join(", ", members));
 		return new PacketWrapper(team.getName(), 4, members);
 	}
 
@@ -94,23 +92,22 @@ public class PacketWrapper {
 					PacketAccessor.PREFIX.set(packet, prefix);
 					PacketAccessor.SUFFIX.set(packet, suffix);
 				} else {
-					String colorCode = null;
-					String color = ChatColor.getLastColors(prefix);
-					PacketAccessor.PREFIX.set(packet, chatComponentText.newInstance(prefix));
-					if (!color.isEmpty()) {
-						colorCode = color.substring(color.length() - 1);
-						String chatColor = ChatColor.getByChar(colorCode).name();
-
-						if (chatColor.equalsIgnoreCase("MAGIC"))
-							chatColor = "OBFUSCATED";
-
-						Enum<?> colorEnum = Enum.valueOf(typeEnumChatFormat, chatColor);
+					net.md_5.bungee.api.ChatColor color = ColorUtils.getLastColor(prefix);
+					PacketAccessor.PREFIX.set(packet, toComponent(prefix));
+					if (color != null) {
+						String colorCode = null;
+						if (color.toString().length() == 14)
+							colorCode = ColorUtils.getNearestForLegacyColor(color).name();
+						else
+							colorCode = color.name();
+						if (colorCode.equalsIgnoreCase("MAGIC"))
+							colorCode = "OBFUSCATED";
+						Enum<?> colorEnum = Enum.valueOf(typeEnumChatFormat, colorCode);
 						PacketAccessor.TEAM_COLOR.set(packet, colorEnum);
+						suffix = color.toString() + suffix;
 					}
-					if (colorCode != null)
-						suffix = ChatColor.getByChar(colorCode) + suffix;
-					PacketAccessor.SUFFIX.set(packet, chatComponentText.newInstance(suffix));
-					PacketAccessor.DISPLAY_NAME.set(packet, chatComponentText.newInstance(name));
+					PacketAccessor.SUFFIX.set(packet, toComponent(suffix));
+					PacketAccessor.DISPLAY_NAME.set(packet, toComponent(name));
 				}
 				PacketAccessor.PACK_OPTION.set(packet, 1);
 				if (PacketAccessor.VISIBILITY != null)
@@ -128,19 +125,23 @@ public class PacketWrapper {
 		setupDefaults(name, param);
 	}
 
+	private IChatBaseComponent toComponent(String string) {
+		return IChatBaseComponent.ChatSerializer.a(ComponentSerializer.toString(new TextComponent(TextComponent.fromLegacyText(string))));
+	}
+
 	public void send() {
 		PacketAccessor.sendPacket(UtilsScoreboard.getOnline(), packet);
 	}
 
 	public void send(Collection<? extends Player> players) {
 		if (CoreModules.NAME_TAG.isDebugEnabled())
-			LinkSpigotBungee.Provider.link.sendMessage("To players %s", ColorUtils.joinPlayer('a', '2', players));
+			LinkSpigotBungee.getInstance().sendMessage("To players %s", ColorUtils.joinPlayer('a', '2', players));
 		PacketAccessor.sendPacket(players, packet);
 	}
 
 	public void send(Player player) {
 		if (CoreModules.NAME_TAG.isDebugEnabled())
-			LinkSpigotBungee.Provider.link.sendMessage("To player &2%s", player.getName());
+			LinkSpigotBungee.getInstance().sendMessage("To player &2%s", player.getName());
 		PacketAccessor.sendPacket(player, packet);
 	}
 

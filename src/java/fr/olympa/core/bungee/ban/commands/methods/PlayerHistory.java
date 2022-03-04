@@ -5,15 +5,15 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.sanction.OlympaSanctionType;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.BanMySQL;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -40,11 +40,11 @@ public class PlayerHistory {
 		Configuration config = OlympaBungee.getInstance().getConfig();
 		try {
 			if (target != null)
-				olympaTarget = AccountProvider.get(target.getUniqueId());
+				olympaTarget = AccountProvider.getter().get(target.getUniqueId());
 			else if (uuid != null)
-				olympaTarget = AccountProvider.getFromDatabase(uuid);
+				olympaTarget = AccountProvider.getter().getFromDatabase(uuid);
 			else if (name != null)
-				olympaTarget = AccountProvider.getFromDatabase(name);
+				olympaTarget = AccountProvider.getter().getFromDatabase(name);
 		} catch (SQLException e) {
 			sender.sendMessage(config.getString("ban.messages.errordb"));
 			e.printStackTrace();
@@ -63,7 +63,7 @@ public class PlayerHistory {
 			return;
 		}
 
-		TextComponent msg = new TextComponent(ColorUtils.color("&6Historique des sanctions de " + olympaTarget.getGroupPrefix() + olympaTarget.getName() + "&6:\n"));
+		TextComponent msg = new TextComponent(ColorUtils.color("&6Historique des sanctions de " + olympaTarget.getNameWithPrefix() + "&6:\n"));
 		msg.addExtra(ColorUtils.color("&6Bans: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.BAN).count() + " "));
 		msg.addExtra(ColorUtils.color("&6Mute: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.MUTE).count() + " "));
 		msg.addExtra(ColorUtils.color("&6Kick: &e" + bans.stream().filter(b -> b.getType() == OlympaSanctionType.KICK).count() + "\n"));

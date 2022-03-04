@@ -6,20 +6,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -27,26 +20,19 @@ import org.bukkit.craftbukkit.v1_16_R3.CraftChunk;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Shulker;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
-import com.google.common.collect.Sets;
-
-import fr.olympa.api.command.complex.Cmd;
-import fr.olympa.api.command.complex.CommandContext;
-import fr.olympa.api.command.complex.ComplexCommand;
-import fr.olympa.api.editor.RegionEditor;
-import fr.olympa.api.item.ItemUtils;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.region.Region;
-import fr.olympa.api.region.tracking.RegionManager;
-import fr.olympa.api.region.tracking.TrackedRegion;
+import fr.olympa.api.common.command.complex.Cmd;
+import fr.olympa.api.common.command.complex.CommandContext;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.spigot.command.ComplexCommand;
+import fr.olympa.api.spigot.editor.RegionEditor;
+import fr.olympa.api.spigot.item.ItemUtils;
 import fr.olympa.api.utils.Prefix;
-import fr.olympa.api.utils.spigot.SpigotUtils;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.core.common.provider.AccountProvider;
 import fr.olympa.core.spigot.OlympaCore;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.TileEntity;
@@ -55,11 +41,10 @@ import net.minecraft.server.v1_16_R3.TileEntityTypes;
 public class UtilsCommand extends ComplexCommand {
 
 	public UtilsCommand(Plugin plugin) {
-		super(plugin, "utils", "Commandes diverses", OlympaCorePermissions.UTILS_COMMAND);
+		super(plugin, "utils", "Commandes de développement diverses.", OlympaCorePermissionsSpigot.UTILS_COMMAND);
 
-		super.addArgumentParser("FILE", sender -> Arrays.stream(OlympaCore.getInstance().getDataFolder().listFiles()).map(File::getName).collect(Collectors.toList()), x -> new File(OlympaCore.getInstance().getDataFolder(), x), null);
-		super.addArgumentParser("REGION", sender -> new ArrayList<>(OlympaCore.getInstance().getRegionManager().getTrackedRegions().keySet()), OlympaCore.getInstance().getRegionManager().getTrackedRegions()::get,
-				x -> "Cette région n'existe pas !");
+		super.addArgumentParser("FILE", (sender, arg) -> Arrays.stream(OlympaCore.getInstance().getDataFolder().listFiles()).map(File::getName).collect(Collectors.toList()),
+				x -> new File(OlympaCore.getInstance().getDataFolder(), x), null);
 	}
 
 	@Cmd(player = true)
@@ -136,7 +121,7 @@ public class UtilsCommand extends ComplexCommand {
 			return;
 		}
 		try {
-			OlympaPlayer op = AccountProvider.get(arg1);
+			OlympaPlayer op = AccountProvider.getter().get(arg1);
 			if (op == null) {
 				sendMessage(Prefix.DEFAULT_GOOD, "UUID Crack théorique (générer à partir du pseudo actuel %s) : %s\nCe joueur n'a pas de données en bdd.", playerName, uuidCrack);
 				return;
@@ -149,65 +134,6 @@ public class UtilsCommand extends ComplexCommand {
 			return;
 		}
 		sendMessage(Prefix.DEFAULT_GOOD, "UUID Crack théorique (générer à partir du pseudo actuel %s) : %s\nUUID serveur (en bdd) %s\nUUID Premium (en bdd) %s.", playerName, uuidCrack, uuidActual, uuidPremium);
-	}
-
-	@Cmd(player = true)
-	public void regions(CommandContext cmd) {
-		RegionManager regionManager = OlympaCore.getInstance().getRegionManager();
-		Collection<TrackedRegion> trackedRegions = regionManager.getTrackedRegions().values();
-
-		sendInfo("Régions trackées : %d", trackedRegions.size());
-		sendInfo("Total de points : %d", trackedRegions.stream().mapToInt(x -> x.getRegion().getLocations().size()).sum());
-
-		Set<TrackedRegion> playerRegions = regionManager.getCachedPlayerRegions(getPlayer());
-		if (playerRegions == null)
-			playerRegions = Collections.EMPTY_SET;
-		sendInfo("Vous êtes actuellement dans les régions : §l%s", playerRegions.stream().map(x -> x.getID()).collect(Collectors.joining(", ", "[", "]")));
-
-		Set<TrackedRegion> applicable = trackedRegions.stream().filter(x -> x.getRegion().isIn(getPlayer())).collect(Collectors.toSet());
-		sendInfo("Différences entre les régions en cache et les régions calculées : §l%s", Sets.symmetricDifference(playerRegions, applicable).stream().map(x -> x.getID()).collect(Collectors.joining(", ", "[", "]")));
-	}
-
-	@Cmd(min = 4, args = { "", "INTEGER", "INTEGER", "INTEGER" })
-	public void testRegion(CommandContext cmd) {
-		World world = Bukkit.getWorld((String) cmd.getArgument(0));
-		int x = cmd.getArgument(1);
-		int y = cmd.getArgument(2);
-		int z = cmd.getArgument(3);
-		for (TrackedRegion trackedRegion : OlympaCore.getInstance().getRegionManager().getTrackedRegions().values())
-			if (trackedRegion.getRegion().isIn(world, x, y, z))
-				sendInfo("Is in " + trackedRegion.getID());
-			else
-				sendInfo("Not in " + trackedRegion.getID());
-	}
-
-	@Cmd(min = 1, args = "REGION", syntax = "<region id>")
-	public void displayRegion(CommandContext cmd) {
-		TrackedRegion region = cmd.getArgument(0);
-		for (Location location : region.getRegion().getLocations()) {
-			Shulker shulker = location.getWorld().spawn(location, Shulker.class);
-			shulker.setPersistent(false);
-			shulker.setAI(false);
-			shulker.setGravity(false);
-			shulker.setInvulnerable(true);
-			shulker.setSilent(true);
-			shulker.setGlowing(true);
-		}
-		sendSuccess("La région %s a été affichée.", region.getID());
-	}
-
-	@Cmd(min = 1, args = "REGION", syntax = "<region id>")
-	public void regionInfo(CommandContext cmd) {
-		TrackedRegion trackedRegion = cmd.getArgument(0);
-		Region region = trackedRegion.getRegion();
-		sendSuccess("Région §e%s §a(%s)", trackedRegion.getID(), region.getWorld().getName());
-		sendSuccess("Type: §e%s", region.getClass().getSimpleName());
-		sendSuccess("Min: §e%s §a| Max: §e%s", SpigotUtils.convertLocationToHumanString(region.getMin()), SpigotUtils.convertLocationToHumanString(region.getMax()));
-		sendSuccess("%d points:", region.getLocations().size());
-		for (Location location : region.getLocations())
-			sendMessage(Prefix.DEFAULT, "- " + SpigotUtils.convertLocationToHumanString(location));
-		sendSuccess("%d flag(s): §e%s", trackedRegion.getFlags().size(), trackedRegion.getFlags().stream().map(flag -> flag.getClass().getSimpleName()).collect(Collectors.joining(",", "[", "]")));
-		sendSuccess("Priorité: §e%s", trackedRegion.getPriority().name());
 	}
 
 	@Cmd(player = true, min = 1, syntax = "<player name>")

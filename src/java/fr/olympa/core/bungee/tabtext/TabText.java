@@ -3,7 +3,8 @@ package fr.olympa.core.bungee.tabtext;
 import java.util.Collection;
 import java.util.StringJoiner;
 
-import fr.olympa.api.chat.ColorUtils;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import net.md_5.bungee.api.ProxyServer;
@@ -35,7 +36,9 @@ public class TabText {
 	private static String getHeader() {
 		StringJoiner sj = new StringJoiner("\n");
 		sj.add("&e&lOlympa &eΩ");
-		sj.add("&6Versions 1.9 à 1.16");
+		ProtocolAPI firstVersion = ProtocolAPI.getFirstVersion();
+		ProtocolAPI lastVersion = ProtocolAPI.getLastVersion();
+		sj.add("&6Versions " + firstVersion.getName() + " à " + lastVersion.getName());
 		return ColorUtils.color(sj.toString());
 
 	}

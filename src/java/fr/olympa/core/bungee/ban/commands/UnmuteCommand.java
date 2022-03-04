@@ -1,23 +1,23 @@
 package fr.olympa.core.bungee.ban.commands;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.common.sanction.OlympaSanctionType;
 import fr.olympa.api.utils.Utils;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.execute.SanctionExecute;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
+import fr.olympa.core.common.provider.AccountProvider;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class UnmuteCommand extends BungeeCommand {
 
 	public UnmuteCommand(OlympaBungee plugin) {
-		super(plugin, "unmute", OlympaCorePermissions.BAN_UNMUTE_COMMAND, "umute");
+		super(plugin, "unmute", OlympaCorePermissionsBungee.BAN_UNMUTE_COMMAND, "umute");
 		usageString = "<joueur|uuid|id|ip> <motif>";
 		minArg = 2;
 	}
@@ -54,10 +54,13 @@ public class UnmuteCommand extends BungeeCommand {
 	//	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		switch (args.length) {
 		case 1:
-			return Utils.startWords(args[0], ProxyServer.getInstance().getPlayers().stream().map(ProxiedPlayer::getName).collect(Collectors.toList()));
+			return Utils.startWords(args[0], AccountProvider.getter().getSQL().getNamesBySimilarName(args[0]));
+		case 2:
+			List<String> reasons = Arrays.asList("Demande de déban acceptée", "Erreur", "Tromper de Joueur", "Augmentation de peine", "Réduction de peine");
+			return Utils.startWords(args[1], reasons);
 		default:
 			return new ArrayList<>();
 		}

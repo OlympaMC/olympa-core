@@ -5,19 +5,25 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.common.bash.OlympaRuntime;
 import fr.olympa.api.utils.Utils;
-import fr.olympa.api.utils.machine.OlympaRuntime;
 import fr.olympa.core.bungee.OlympaBungee;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsBungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.plugin.TabExecutor;
 
 @SuppressWarnings("deprecation")
-public class StartServerCommand extends BungeeCommand implements TabExecutor {
+public class StartServerCommand extends BungeeCommand {
+
+	private static String commandName;
+
+	public static String getCommandName() {
+		return commandName;
+	}
 
 	public StartServerCommand(Plugin plugin) {
-		super(plugin, "startserver", OlympaCorePermissions.SERVER_START_COMMAND);
+		super(plugin, "startserver", OlympaCorePermissionsBungee.SERVER_START_COMMAND);
+		commandName = command;
 		minArg = 1;
 		usageString = "<" + plugin.getProxy().getServers().entrySet().stream().map(entry -> entry.getKey()).collect(Collectors.joining("|")) + ">";
 	}
@@ -29,7 +35,7 @@ public class StartServerCommand extends BungeeCommand implements TabExecutor {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public Iterable<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		if (args.length == 0)
 			return OlympaBungee.getInstance().getProxy().getServers().keySet();
 		else if (args.length == 1)

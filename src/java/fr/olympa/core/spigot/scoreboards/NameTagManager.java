@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 
-import fr.olympa.api.scoreboard.tab.FakeTeam;
-import fr.olympa.api.scoreboard.tab.Nametag;
+import fr.olympa.api.spigot.scoreboard.tab.FakeTeam;
+import fr.olympa.api.spigot.scoreboard.tab.Nametag;
 import fr.olympa.api.utils.CacheStats;
 import fr.olympa.core.spigot.scoreboards.packets.PacketWrapper;
 
@@ -41,6 +41,7 @@ public class NameTagManager {
 		playerTeams.forEach((fakeTeam, players) -> {
 			PacketWrapper.delete(fakeTeam).send(players);
 		});
+		playerTeams.clear();
 	}
 
 	public void changeFakeNametag(String playerName, Nametag nameTag, int sortPriority, Collection<Player> toPlayers) {
@@ -56,13 +57,21 @@ public class NameTagManager {
 		if (nameTag.isEmpty())
 			return;
 		//		new PacketWrapper(team.getName(), team.getPrefix(), team.getSuffix(), 0, team.getMembers()).send(toPlayers);
-		Set<FakeTeam> allTeams = getTeamsOfPlayer(playerName);
-		FakeTeam team = new FakeTeam(nameTag.getPrefix().isBlank() ? "" : nameTag.getPrefix() + " ", nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix(), sortPriority);
+		Set<FakeTeam> allTeamsOfPlayer = getTeamsOfPlayer(playerName);
+		String prefix = nameTag.getPrefix();
+		String suffix = nameTag.getSuffix();
+		/*String rawPrefix = nameTag.getPrefix();
+		if (ChatColor.stripColor(rawPrefix).isBlank())
+			prefix = rawPrefix;
+		else
+			prefix = rawPrefix + " ";
+		suffix = nameTag.getSuffix().isBlank() ? "" : " " + nameTag.getSuffix();*/
+		FakeTeam team = new FakeTeam(prefix, suffix, sortPriority);
 		team.addMember(playerName);
 		team.addViewers(toPlayers);
 		PacketWrapper.create(team).send(toPlayers);
 		playerTeams.put(team, toPlayers);
-		for (FakeTeam t : allTeams) {
+		for (FakeTeam t : allTeamsOfPlayer) {
 			if (t.getId() == team.getId())
 				continue;
 			//			t.removeMember(playerName);
@@ -110,7 +119,7 @@ public class NameTagManager {
 
 	/*private final HashMap<String, FakeTeam> TEAMS = new HashMap<>();
 	private final HashMap<String, FakeTeam> CACHED_FAKE_TEAMS = new HashMap<>();
-	
+
 	private void addPlayerToTeam(String player, String prefix, String suffix, int sortPriority) {
 		FakeTeam previous = getFakeTeam(player);
 		if (previous != null && previous.isSimilar(prefix, suffix))
@@ -135,48 +144,48 @@ public class NameTagManager {
 			cache(offlinePlayer.getName(), joining);
 		}
 	}
-	
+
 	private void addPlayerToTeamPackets(FakeTeam fakeTeam, String player) {
 		new PacketWrapper(fakeTeam.getName(), 3, Collections.singletonList(player)).send();
 	}
-	
+
 	private void addTeamPackets(FakeTeam fakeTeam) {
 		new PacketWrapper(fakeTeam.getName(), fakeTeam.getPrefix(), fakeTeam.getSuffix(), 0, fakeTeam.getMembers()).send();
 	}
-	
+
 	private void cache(String player, FakeTeam fakeTeam) {
 		CACHED_FAKE_TEAMS.put(player, fakeTeam);
 	}
-	
+
 	private FakeTeam decache(String player) {
 		return CACHED_FAKE_TEAMS.remove(player);
 	}
-	
+
 	public FakeTeam getFakeTeam(String player) {
 		return CACHED_FAKE_TEAMS.get(player);
 	}
-	
+
 	private FakeTeam getFakeTeam(String prefix, String suffix) {
 		for (FakeTeam fakeTeam : TEAMS.values())
 			if (fakeTeam.isSimilar(prefix, suffix))
 				return fakeTeam;
 		return null;
 	}
-	
+
 	private boolean removePlayerFromTeamPackets(FakeTeam fakeTeam, List<String> players) {
 		new PacketWrapper(fakeTeam.getName(), 4, players).send();
 		fakeTeam.getMembers().removeAll(players);
 		return fakeTeam.getMembers().isEmpty();
 	}
-	
+
 	private boolean removePlayerFromTeamPackets(FakeTeam fakeTeam, String... players) {
 		return removePlayerFromTeamPackets(fakeTeam, Arrays.asList(players));
 	}
-	
+
 	private void removeTeamPackets(FakeTeam fakeTeam) {
 		new PacketWrapper(fakeTeam.getName(), fakeTeam.getPrefix(), fakeTeam.getSuffix(), 1, new ArrayList<>()).send();
 	}
-	
+
 	public void reset() {
 		for (FakeTeam fakeTeam : TEAMS.values()) {
 			removePlayerFromTeamPackets(fakeTeam, fakeTeam.getMembers());
@@ -185,11 +194,11 @@ public class NameTagManager {
 		CACHED_FAKE_TEAMS.clear();
 		TEAMS.clear();
 	}
-	
+
 	public FakeTeam reset(String player) {
 		return reset(player, decache(player));
 	}
-	
+
 	private FakeTeam reset(String player, FakeTeam fakeTeam) {
 		if (fakeTeam != null && fakeTeam.getMembers().remove(player)) {
 			boolean delete;
@@ -200,25 +209,25 @@ public class NameTagManager {
 				OfflinePlayer toRemoveOffline = Bukkit.getOfflinePlayer(player);
 				delete = removePlayerFromTeamPackets(fakeTeam, toRemoveOffline.getName());
 			}
-	
+
 			if (delete) {
 				removeTeamPackets(fakeTeam);
 				TEAMS.remove(fakeTeam.getName());
 			}
 		}
-	
+
 		return fakeTeam;
 	}
-	
+
 	public void sendTeams(Player player) {
 		for (FakeTeam fakeTeam : TEAMS.values())
 			new PacketWrapper(fakeTeam.getName(), fakeTeam.getPrefix(), fakeTeam.getSuffix(), 0, fakeTeam.getMembers()).send(player);
 	}
-	
+
 	public void setNametag(String player, String prefix, String suffix) {
 		setNametag(player, prefix, suffix, -1);
 	}
-	
+
 	public void setNametag(String player, String prefix, String suffix, int sortPriority) {
 		addPlayerToTeam(player, prefix != null ? prefix : "", suffix != null ? suffix : "", sortPriority);
 	}*/

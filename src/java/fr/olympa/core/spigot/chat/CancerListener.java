@@ -2,7 +2,9 @@ package fr.olympa.core.spigot.chat;
 
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,13 +15,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import fr.olympa.api.chat.ColorUtils;
-import fr.olympa.api.permission.OlympaCorePermissions;
-import fr.olympa.api.player.OlympaPlayer;
-import fr.olympa.api.provider.AccountProvider;
-import fr.olympa.api.server.OlympaServerSettings;
+import fr.olympa.api.common.chat.ColorUtils;
+import fr.olympa.api.common.player.OlympaPlayer;
+import fr.olympa.api.common.server.OlympaServerSettings;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
+import fr.olympa.core.common.permission.list.OlympaCorePermissionsSpigot;
+import fr.olympa.core.common.provider.AccountProvider;
 import fr.olympa.core.spigot.OlympaCore;
 import fr.olympa.core.spigot.chat.Chat.OlympaChat;
 
@@ -27,11 +29,11 @@ public class CancerListener implements Listener {
 
 	// private Pattern matchIpv6 = Pattern.compile(
 	// "^(?>(?>([a-f0-9]{1,4})(?>:(?1)){7}|(?!(?:.*[a-f0-9](?>:|$)){8,})((?1)(?>:(?1)){0,6})?::(?2)?)|(?>(?>(?1)(?>:(?1)){5}:|(?!(?:.*[a-f0-9]:){6,})(?3)?::(?>((?1)(?>:(?1)){0,4}):)?)?(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(?>.(?4)){3}))$");
-	private Pattern matchIpv4 = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
-	private Pattern matchLink = Pattern.compile("(https?:\\/\\/(www\\.)?)?([-\\w]+(\\.|[0-9]))+(fr|org|net|com|xxx|name|xyr|gg|ly|be|lu)\\S*");
-	private Pattern matchLink2 = Pattern.compile("^(https?:\\/\\/)?(www|play|pvp)\\.([-\\w]+(\\.|[0-9]))+(fr|org|net|com|xxx|name|xyr|gg|ly|be|lu|shop)$");
-	private Pattern matchFlood = Pattern.compile("(.)\\1{3,}");
-	private Pattern matchNoWord = Pattern.compile("[^\\w\\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÐÒÓÔÕÖÙÚÛÜÝŸ\\-=+÷²!@#%^&§*();,.?\\\"':{}|\\[\\]<>~\\\\€$£µ\\/°]+");
+	public static final Pattern matchIpv4 = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
+	public static final Pattern matchLink = Pattern.compile("(https?:\\/\\/(www\\.)?)?([-\\w]+(\\.|[0-9]))+(fr|org|net|com|xxx|name|xyr|gg|ly|be|lu)\\S*");
+	public static final Pattern matchLink2 = Pattern.compile("^(https?:\\/\\/)?(www|play|pvp)\\.([-\\w]+(\\.|[0-9]))+(fr|org|net|com|xxx|name|xyr|gg|ly|be|lu|shop)$");
+	public static final Pattern matchFlood = Pattern.compile("(.)\\1{3,}");
+	public static final Pattern matchNoWord = Pattern.compile("[^\\w\\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÐÒÓÔÕÖÙÚÛÜÝŸ\\-=+÷²!@#%^&§*();,.?\\\"':{}|\\[\\]<>~\\\\€$£µ\\/°]+");
 
 	@EventHandler
 	public void onPlayerChatEvent(AsyncPlayerChatEvent event) {
@@ -41,22 +43,22 @@ public class CancerListener implements Listener {
 		Player player = event.getPlayer();
 		OlympaServerSettings serverSettings = OlympaServerSettings.getInstance();
 
-		OlympaPlayer olympaPlayer = new AccountProvider(player.getUniqueId()).getFromCache();
+		OlympaPlayer olympaPlayer = AccountProvider.getter().get(player.getUniqueId());
 
 		OlympaChat olympaTchat = Chat.getPlayer(player.getUniqueId());
 
 		// Si le chat est mute, cancel message
 		if (serverSettings.isChatMute()) {
-			if (OlympaCorePermissions.CHAT_MUTEDBYPASS.hasPermission(olympaPlayer)) {
-				player.sendMessage(ColorUtils.color(Prefix.INFO + "Le chat est désactivé pour les autres joueurs."));
+			if (OlympaCorePermissionsSpigot.CHAT_MUTEDBYPASS.hasPermission(olympaPlayer)) {
+				Prefix.INFO.sendMessage(player, "Le chat est désactivé pour les autres joueurs.");
 				return;
 			}
-			player.sendMessage(ColorUtils.color(Prefix.BAD + "Le chat est désactivé."));
+			Prefix.BAD.sendMessage(player, "Le chat est désactivé.");
 			event.setCancelled(true);
 			return;
 		}
 
-		if (OlympaCorePermissions.CHAT_BYPASS.hasPermission(olympaPlayer))
+		if (OlympaCorePermissionsSpigot.CHAT_BYPASS.hasPermission(olympaPlayer))
 			return;
 
 		String message = event.getMessage();
@@ -65,14 +67,14 @@ public class CancerListener implements Listener {
 		long time = currentTime - olympaTchat.getLastMsgTime();
 		if (olympaTchat.isLastMsg(msgNFD) && time < 10) {
 			event.setCancelled(true);
-			player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci de ne pas répéter le même message."));
+			Prefix.BAD.sendMessage(player, "Merci de ne pas répéter le même message.");
 			return;
 		}
 
 		// Si le chat est slow, met un cooldown entre chaque message
 		if (serverSettings.isChatSlow() && time < serverSettings.getTimeCooldown()) {
 			event.setCancelled(true);
-			player.sendMessage(ColorUtils.join(Prefix.BAD + "Merci de patienter %s secondes entre chaque messages.", String.valueOf(serverSettings.getTimeCooldown())));
+			Prefix.BAD.sendMessage(player, "Merci de patienter %d secondes entre chaque message.", serverSettings.getTimeCooldown());
 			olympaTchat.setLastMsgTime(currentTime);
 			return;
 		}
@@ -81,18 +83,21 @@ public class CancerListener implements Listener {
 		// Si le message contient des liens, cancel message
 		Matcher matcher = matchLink.matcher(msgNFD);
 		Matcher matcher2 = matchLink2.matcher(msgNFD);
-		if (matcher.find() || matcher2.find()) {
+		boolean find1 = matcher.find();
+		if (find1 || matcher2.find()) {
 			String link;
-			if (matcher.find())
+			if (find1)
 				link = matcher.group();
 			else
 				link = matcher2.group();
-			Set<String> linkWhitelist = new HashSet<>(OlympaCore.getInstance().getConfig().getStringList("chat.linkwhitelist"));
-			if (!linkWhitelist.stream().anyMatch(l -> link.contains(l))) {
-				event.setCancelled(true);
-				player.sendMessage(ColorUtils.color(Prefix.BAD + "Les liens sont interdits."));
-				Chat.sendToStaff("Lien", player, message, link);
-				return;
+			if (Bukkit.getPlayer(link) == null) {
+				Set<String> linkWhitelist = new HashSet<>(OlympaCore.getInstance().getConfig().getStringList("chat.linkwhitelist"));
+				if (linkWhitelist.stream().noneMatch(l -> link.contains(l))) {
+					event.setCancelled(true);
+					Prefix.BAD.sendMessage(player, "Les liens sont interdits.");
+					Chat.sendToStaff("Lien", player, message, link);
+					return;
+				}
 			}
 		}
 
@@ -100,10 +105,12 @@ public class CancerListener implements Listener {
 		matcher = matchIpv4.matcher(msgNFD);
 		if (matcher.find()) {
 			String ip = matcher.group();
-			event.setCancelled(true);
-			player.sendMessage(ColorUtils.color(Prefix.BAD + "Les adresses IPs sont interdites."));
-			Chat.sendToStaff("IP", player, message, ip);
-			return;
+			if (Bukkit.getPlayer(ip) == null) {
+				event.setCancelled(true);
+				Prefix.BAD.sendMessage(player, "Les adresses IPs sont interdites.");
+				Chat.sendToStaff("IP", player, message, ip);
+				return;
+			}
 		}
 
 		/**
@@ -118,7 +125,7 @@ public class CancerListener implements Listener {
 			matcher = regex.matcher(msgNFD);
 			if (matcher.find() && Bukkit.getPlayer(matcher.group()) == null) {
 				event.setCancelled(true);
-				player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci de rester correct."));
+				Prefix.BAD.sendMessage(player, "Merci de rester correct.");
 				Chat.sendToStaff("Insulte", player, message);
 				return;
 			}
@@ -151,45 +158,45 @@ public class CancerListener implements Listener {
 		try {
 			matcher = matchFlood.matcher(message);
 			int i = 0;
-			boolean find = false;
 			if (matcher.find())
 				for (String wordFlooded : message.split(" ")) {
 					if (Bukkit.getPlayer(wordFlooded) != null)
 						continue;
 					matcher = matchFlood.matcher(wordFlooded);
 					i = 0;
+					List<String> floodChars = new ArrayList<>();
 					while (matcher.find()) {
 						String charsFlooded = matcher.group();
+						floodChars.add(charsFlooded);
 						String charFlooded = matcher.group(1);
 						String wordWithoutFlood = wordFlooded.replace(charsFlooded, charFlooded);
 						message = message.replace(wordFlooded, wordWithoutFlood);
-						find = true;
 						if (++i > 50) {
-							OlympaCore.getInstance().sendMessage("&4ERROR &cBoucle infini dans la gestion de chat pour le flood.");
+							new IllegalAccessError("&4ERROR &cBoucle infini dans la gestion de chat pour le flood.").printStackTrace();
 							break;
 						}
 					}
-					if (find) {
+					if (!floodChars.isEmpty()) {
 						event.setMessage(message);
-						player.sendMessage(ColorUtils.color(Prefix.BAD + "Merci d'éviter le flood."));
+						player.sendMessage(Prefix.BAD.formatMessage("Merci d'éviter le flood tel que &4%s&c.", String.join("&c, &4", floodChars)));
 					}
 				}
 			i = 0;
-			find = false;
-			// Si le message contient des charatères non autorisé
+			// Si le message contient des caractères non autorisé
 			matcher = matchNoWord.matcher(message);
+			List<String> badChars = new ArrayList<>();
 			while (matcher.find()) {
 				String chars = matcher.group();
+				badChars.add(chars);
 				message = message.replace(chars, "");
 				if (++i > 200) {
 					OlympaCore.getInstance().sendMessage("&4ERROR &cBoucle infini dans la gestion de chat pour les symboles interdits.");
 					break;
 				}
-				find = true;
 			}
-			if (find) {
+			if (!badChars.isEmpty()) {
 				event.setMessage(message);
-				player.sendMessage(ColorUtils.color(Prefix.BAD + "Les symboles chelou sont interdit."));
+				player.sendMessage(Prefix.BAD.formatMessage("L'utilisation de symboles non standards tels que &4%s&c est restreinte.", String.join("&c, &4", badChars)));
 			}
 		} catch (Exception | NoClassDefFoundError e) {
 			e.printStackTrace();

@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.UUID;
 
 import fr.olympa.api.bungee.command.BungeeCommand;
-import fr.olympa.api.permission.OlympaCorePermissions;
+import fr.olympa.api.bungee.staffchat.StaffChatHandler;
+import fr.olympa.api.common.permission.list.OlympaAPIPermissionsBungee;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
 import net.md_5.bungee.api.CommandSender;
@@ -16,7 +17,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 public class StaffChatCommand extends BungeeCommand implements TabExecutor {
 
 	public StaffChatCommand(Plugin plugin) {
-		super(plugin, "staffchat", OlympaCorePermissions.STAFF_CHAT, "sc");
+		super(plugin, "staffchat", OlympaAPIPermissionsBungee.STAFF_CHAT, "sc");
 		usageString = "<on|off|message>";
 	}
 
@@ -57,7 +58,7 @@ public class StaffChatCommand extends BungeeCommand implements TabExecutor {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+	public Iterable<String> onTabComplete(CommandSender sender, BungeeCommand command, String[] args) {
 		if (args.length == 0) {
 
 			List<String> reasons = Arrays.asList("on", "off");

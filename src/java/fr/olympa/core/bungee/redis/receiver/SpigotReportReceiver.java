@@ -2,7 +2,7 @@ package fr.olympa.core.bungee.redis.receiver;
 
 import com.google.gson.Gson;
 
-import fr.olympa.api.report.OlympaReport;
+import fr.olympa.api.common.report.OlympaReport;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.spigot.report.ReportMsg;
 import net.md_5.bungee.api.ProxyServer;
@@ -13,12 +13,12 @@ public class SpigotReportReceiver extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
+		OlympaBungee.getInstance().sendRedis("Report reçu: " + message);
 		OlympaReport report = new Gson().fromJson(message, OlympaReport.class);
-		ProxiedPlayer targetPlayer = ProxyServer.getInstance().getPlayer(report.targetName);
+		ProxiedPlayer targetPlayer = ProxyServer.getInstance().getPlayer(report.getTargetName());
 		String targetServer = null;
 		if (targetPlayer != null)
 			targetServer = targetPlayer.getServer().getInfo().getName();
-		ReportMsg.sendAlert(report, report.authorName, report.targetName, targetServer);
-		OlympaBungee.getInstance().sendMessage("&a[Redis] Report receive " + message);
+		ReportMsg.sendAlert(report, report.getAuthorName(), report.getTargetName(), targetServer);
 	}
 }
