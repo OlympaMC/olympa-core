@@ -11,12 +11,12 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import fr.olympa.api.sql.statement.OlympaStatement;
+import fr.olympa.api.common.sanction.OlympaSanctionType;
+import fr.olympa.api.common.sql.statement.OlympaStatement;
 import fr.olympa.core.bungee.OlympaBungee;
 import fr.olympa.core.bungee.ban.objects.OlympaSanction;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionHistory;
 import fr.olympa.core.bungee.ban.objects.OlympaSanctionStatus;
-import fr.olympa.core.bungee.ban.objects.OlympaSanctionType;
 
 public class BanMySQL {
 
@@ -44,7 +44,7 @@ public class BanMySQL {
 		OlympaStatement statement = new OlympaStatement("INSERT INTO sanctions (type_id, target, reason, author_id, expires, created, status_id) VALUES (?, ?, ?, ?, ?, ?, ?)", true);
 		try (PreparedStatement pstate = statement.createStatement()) {
 			int i = 1;
-			pstate.setInt(i++, olympaban.getType().getId());
+//			pstate.setInt(i++, olympaban.getType().getId());
 			pstate.setString(i++, olympaban.getTarget());
 			pstate.setString(i++, olympaban.getReason());
 			pstate.setLong(i++, olympaban.getAuthor());
@@ -251,4 +251,34 @@ public class BanMySQL {
 	public static boolean isSanctionActive(Object target, OlympaSanctionType banType) {
 		return getSanctionActive(target, banType) != null;
 	}
+	
+	public static List<OlympaSanction> getLastSanctions(int i) throws SQLException {
+		List<OlympaSanction> sanctions = new ArrayList<>();
+		Connection connection = OlympaBungee.getInstance().getDatabase();
+		PreparedStatement pstate = connection.prepareStatement("SELECT * FROM sanctions ORDER BY created DESC LIMIT ?;");
+		pstate.setLong(1, i);
+		ResultSet resultSet = pstate.executeQuery();
+		while (resultSet.next()) {
+			OlympaSanction sanction = getSanction(resultSet);
+			if (sanction != null)
+				sanctions.add(sanction);
+		}
+		pstate.close();
+		return sanctions;
+	}
+
+	public static List<OlympaSanction> getLastSanctions() throws SQLException {
+		List<OlympaSanction> sanctions = new ArrayList<>();
+		Connection connection = OlympaBungee.getInstance().getDatabase();
+		PreparedStatement pstate = connection.prepareStatement("SELECT * FROM sanctions ORDER BY created DESC;");
+		ResultSet resultSet = pstate.executeQuery();
+		while (resultSet.next()) {
+			OlympaSanction sanction = getSanction(resultSet);
+			if (sanction != null)
+				sanctions.add(sanction);
+		}
+		pstate.close();
+		return sanctions;
+	}
+
 }

@@ -56,14 +56,7 @@ public class BanListAuthorCommand extends BungeeCommand {
 			sendImpossibleWithConsole();
 			return;
 		}
-		List<OlympaSanction> sanctions;
-		try {
-			sanctions = BanMySQL.getSanctionByAuthor(target.getId());
-		} catch (SQLException e) {
-			sendError(e);
-			e.printStackTrace();
-			return;
-		}
+		List<OlympaSanction> sanctions = BanMySQL.getSanctionByAuthor(target.getId());
 		TxtComponentBuilder builder = new TxtComponentBuilder(Prefix.DEFAULT_GOOD, "Toute les sanctions faites par %s : %d.", target.getName(), sanctions.size())
 				.extraSpliterBN();
 		for (OlympaSanction sanction : sanctions) {

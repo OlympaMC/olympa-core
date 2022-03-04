@@ -164,8 +164,8 @@ public class InfoCommand extends BungeeCommand implements TabExecutor {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		List<OlympaSanction> sanctions = BanMySQL.getSanctionByOlympaPlayer(target);
-		out.addExtra(new TxtComponentBuilder("§3Sanctions : §b" + sanctions.size()).onHoverText("&eClique pour voir les sanctions").onClickCommand("/banhist %s", target.getName()).build());
+//		List<OlympaSanction> sanctions = BanMySQL.getSanctionByOlympaPlayer(target);
+//		out.addExtra(new TxtComponentBuilder("§3Sanctions : §b" + sanctions.size()).onHoverText("&eClique pour voir les sanctions").onClickCommand("/banhist %s", target.getName()).build());
 		sendMessage(out);
 	}
 
