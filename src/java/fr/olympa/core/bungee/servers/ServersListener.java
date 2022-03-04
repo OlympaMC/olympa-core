@@ -8,6 +8,7 @@ import fr.olympa.api.bungee.utils.BungeeUtils;
 import fr.olympa.api.common.chat.ColorUtils;
 import fr.olympa.api.common.chat.TxtComponentBuilder;
 import fr.olympa.api.common.server.OlympaServer;
+import fr.olympa.api.common.server.ServerInfoAdvancedBungee;
 import fr.olympa.api.spigot.utils.ProtocolAPI;
 import fr.olympa.api.utils.Prefix;
 import fr.olympa.api.utils.Utils;
@@ -26,6 +27,7 @@ public class ServersListener implements Listener {
 	@EventHandler
 	public void onServerKick(ServerKickEvent event) {
 		ServerInfo serverKicked = event.getKickedFrom();
+		ServerInfoAdvancedBungee servInfo = OlympaBungee.getInstance().getMonitoring().getMonitor(serverKicked);
 		ProxiedPlayer player = event.getPlayer();
 		Entry<OlympaServer, Integer> entryOlympaServer = OlympaServer.getOlympaServerWithId(serverKicked.getName());
 		OlympaServer olympaServer = entryOlympaServer != null ? entryOlympaServer.getKey() : null;
@@ -69,7 +71,11 @@ public class ServersListener implements Listener {
 			event.setCancelServer(serverFallback);
 			player.sendMessage(TextComponent.fromLegacyText(Prefix.DEFAULT_GOOD + ColorUtils.color(
 					"Le serveur &2" + Utils.capitalize(serverKicked.getName()) + "&a redémarre, merci de patienter quelques secondes avant d'être reconnecté automatiquement.")));
-			ServersConnection.tryConnect(player, olympaServer, true);
+//			if (servInfo != null) {
+//				new QueueSpigotOlympaServerTask(player, servInfo);
+//				ServersConnection.addConnection(new WaitingConnection(player.getUniqueId(), servInfo, null, false));
+//			} else
+				ServersConnection.tryConnect(player, olympaServer, true);
 			return;
 		}
 		if (kickReason.startsWith("Outdated server! I'm still on")) {
